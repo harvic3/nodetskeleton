@@ -1,4 +1,4 @@
-# NodeJs Skeleton with TypeScript (NodeTSkeleton)
+# NodeJs Skeleton with TypeScript (NodeTSkeleton) 💀
 
 A `NodeJs` skeleton to use `TypeScript` with `ExpressJs`, `KoaJs` or any other `web server framework`.
 
