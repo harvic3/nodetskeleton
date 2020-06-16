@@ -1,6 +1,6 @@
 # NodeJs Skeleton with TypeScript
 
-A nodejs skeleton to use typescript with ExpressJs, KoaJs or any other web server framework.
+A nodejs skeleton to use typescript with `ExpressJs`, `KoaJs` or any other `web server framework`.
 
 ## Using Koa
 
@@ -52,6 +52,10 @@ npm update
 
 This project is cofigured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for WindowsNT.
 
+### Observation
+
+Copies of those files `launch.json` and `tasks.json` were attached at the end of this document.
+
 ## Run Test
 
 > The tests are only for the domain of the application, not for the configuration of the project, they are two different things. 
@@ -76,7 +80,76 @@ npm run test
 
 > Remember to put some `stop point` in the code, for example in some method of the `wsController`.
 
+## Build for production
 
+> To get the code you can use in a productive environment run:
+
+```console
+npm run build
+```
+
+> The result code will be stored in the `dist` directory.
+
+> You can also add your `scripts` in the `package.json` file and use them with your deployment strategies, even with `docker`.
+
+> To be able to `debug`, the system generates `javascript map files` in the `dist` directory, but this is only for testing purposes. When the `build` command runs, everything inside the `dist` directory is removed and only the `necessary code` is generated.
+
+```console
+tsc
+```
+> With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
+
+## Setting files (.vscode)
+
+> Files for `.vscode` folder
+
+// launch.json
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch via NPM",
+      "program": "${workspaceFolder}/src/index.ts",
+      "console": "integratedTerminal",
+      "preLaunchTask": "tsc: build-tsconfig",
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    }
+  ]
+}
+```
+
+// tasks.json
+```json
+{
+	"version": "2.0.0",
+	"tasks": [		
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "tsc: build-tsconfig",
+			"options": {
+				"shell": {
+					"executable": "cmd.exe", // For windows
+					"args": ["/d", "/c"], // For windows
+					// "executable": "bash", // For linux
+					// "args": ["-l", "-i"] // For linux
+				}
+			}
+		}
+	]
+}
+```
 
 ## Warning 
 > Use this resource at your own risk.
