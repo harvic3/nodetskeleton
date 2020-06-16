@@ -1,6 +1,6 @@
 # NodeJs Skeleton with TypeScript
 
-A nodejs skeleton to use typescript with `ExpressJs`, `KoaJs` or any other `web server framework`.
+A `NodeJs` skeleton to use `TypeScript` with `ExpressJs`, `KoaJs` or any other `web server framework`.
 
 ## Using Koa
 
