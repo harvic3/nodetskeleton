@@ -14,8 +14,15 @@ describe("when sum two numbers", () => {
 });
 
 describe("when sum array numbers", () => {
-  
-  it("should sum if they area all numbers", async () => {
+  it("should show a error if any is null", () => {
+    expect(exampleService.sumArrayNumbers([1,null,3,4,5,6]))
+    .rejects.toEqual(HttpError(404, "Any number can be null"));
+  });
+  it("should show a error if two or more numbers are null", () => {
+    expect(exampleService.sumArrayNumbers([1,null,3,null,5,6]))
+    .rejects.toEqual(HttpError(404, "Any number can be null"));
+  });
+  it("should sum if they are all numbers", async () => {
     expect(await exampleService.sumArrayNumbers([0,1,1,2,3,5])).toBe(12);
   });
 });
