@@ -32,32 +32,38 @@
 
 
 // For ExpressJs
-import { Request, Response } from "../config/";
+import { Request, Response, NextFunction } from "../config/";
 import * as moment from "moment";
 import { ExampleService } from "../services/example.service";
 
 const exampleService = new ExampleService();
 
-export const pong = (req: Request, res: Response) => {
+export const pong = (req: Request, res: Response, next: NextFunction) => {
   res.send(`pong at ${moment.now()}`);
 }
 
-export const hello = (req: Request, res: Response) => {
+export const hello = (req: Request, res: Response, next: NextFunction) => {
   res.send(`hello ${req.query.name}`);
 }
 
-export const echo = (req: Request, res: Response) => {
+export const echo = (req: Request, res: Response, next: NextFunction) => {
   const body = req.body;
   body.date = moment.now();
   res.json(body);
 }
 
-export const sumTwoNumbers = (req: Request, res: Response) => {
+export const sumTwoNumbers = (req: Request, res: Response, next: NextFunction) => {
   const body = req.body;
   res.json(exampleService.sumTwoNumbers(body.numberA, body.numberB));
 }
 
-export const sumArrayNumbers = async (req: Request, res: Response) => {
+export const sumArrayNumbers = async (req: Request, res: Response, next: NextFunction) => {
   const body = req.body;
-  res.json(await exampleService.sumArrayNumbers(body.numbers));
+  exampleService.sumArrayNumbers(body.numbers)
+  .then(result => {    
+    res.json(result);
+  })
+  .catch(err => {
+    next(err);
+  });
 }

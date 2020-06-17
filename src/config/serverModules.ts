@@ -15,7 +15,7 @@
 // For ExpressJs
 import * as Server from "express";
 import * as BodyParser from "body-parser";
-export { Request, Response } from "express";
+export { Request, Response, NextFunction } from "express";
 
 export default {
   Server,

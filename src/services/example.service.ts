@@ -9,10 +9,12 @@ export class ExampleService implements IExampleService {
     return numberA + numberB;
   }
   async sumArrayNumbers(numbers: number[]): Promise<number> {
-    if (numbers.indexOf(null) >= 0){
-      throw HttpError(404, "Any number can be null");
-    }
-    return numbers.reduce((acumulator, value) => acumulator + value, 0);
+    return new Promise<number>((resolve, reject) => {
+      if (numbers.indexOf(null) >= 0) {
+        reject(HttpError(404, "Any number can be null"));
+      }
+      resolve(numbers.reduce((acumulator, value) => acumulator + value, 0));
+    });
   }
 }
 

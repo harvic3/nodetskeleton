@@ -1,7 +1,7 @@
 import "dotenv";
 import ServerModules from "./serverModules";
 // export { Context } from "./serverModules"; //For Koa
-export { Request, Response } from "./serverModules"; // For expressjs
+export { Request, Response, NextFunction } from "./serverModules"; // For expressjs
 
 const dev = "development";
 
