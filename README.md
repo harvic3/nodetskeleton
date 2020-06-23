@@ -164,6 +164,7 @@ tsc
 - Tests for example DDD code.
 - Dtos mapping library.
 - Library to be used to validate the request models.
+- DI strategy.
 
 
 ## Warning 
