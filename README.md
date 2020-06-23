@@ -159,5 +159,15 @@ tsc
 }
 ```
 
+# TODO
+
+- Tests for example DDD code.
+- Dtos mapping library.
+- Library to be used to validate the request models.
+
+
 ## Warning 
 > Use this resource at your own risk.
+
+`You are welcome to contribute to this project, dare to do so.`
+`If you are interested you can contact me by this means.`

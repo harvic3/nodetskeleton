@@ -14,7 +14,7 @@
 //     this.LoadHandleError();
 //   }
 
-//   public LoadMiddlewares() {
+//   public LoadMiddlewares(): void {
 //     // Add other midlewares here
 //     this.app.use(bodyParser());
 //   }
@@ -26,7 +26,7 @@
 //     });
 //   }
 
-//   private LoadHandleError() {
+//   private LoadHandleError(): void {
 //     this.app.on("error", (err, context) => {
 //       const result = new Result();
 //       if (err.status) {
@@ -58,7 +58,7 @@ import Result from "../../application/result/Result";
 export default class App {
   public app: Application;
 
-  constructor(controllers: any[]) {
+  constructor(controllers: unknown[]) {
     this.app = config.coreModules.Server();
     this.LoadMiddlewares();
     this.LoadControllers(controllers);

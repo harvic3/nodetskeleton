@@ -21,19 +21,34 @@
 
 //   private InitializeRoutes() {
 //     this.router.post(`${apiRoot}/feeling`, this.GetFeelingText);
-//     this.router.post(`${apiRoot}/feeling/highest`, this.GetHighestFeelingSentence);
-//     this.router.post(`${apiRoot}/feeling/lowest`, this.GetHighestFeelingSentence);
+//     this.router.post(
+//       `${apiRoot}/feeling/highest`,
+//       this.GetHighestFeelingSentence,
+//     );
+//     this.router.post(
+//       `${apiRoot}/feeling/lowest`,
+//       this.GetHighestFeelingSentence,
+//     );
 //   }
 
 //   GetFeelingText = async (ctx: Context): Promise<void> => {
-//     this.HandleResult(ctx, await this.textFeelingService.GetFeelingText(ctx.request.body.text));
-//   }
+//     this.HandleResult(
+//       ctx,
+//       await this.textFeelingService.GetFeelingText(ctx.request.body.text),
+//     );
+//   };
 //   GetHighestFeelingSentence = async (ctx: Context): Promise<void> => {
-//     this.HandleResult(ctx, await this.textFeelingService.GetFeelingText(ctx.request.body.text));
-//   }
+//     this.HandleResult(
+//       ctx,
+//       await this.textFeelingService.GetFeelingText(ctx.request.body.text),
+//     );
+//   };
 //   GetLowestFeelingSentence = async (ctx: Context): Promise<void> => {
-//     this.HandleResult(ctx, await this.textFeelingService.GetFeelingText(ctx.request.body.text));
-//   }
+//     this.HandleResult(
+//       ctx,
+//       await this.textFeelingService.GetFeelingText(ctx.request.body.text),
+//     );
+//   };
 // }
 
 // For ExpressJs

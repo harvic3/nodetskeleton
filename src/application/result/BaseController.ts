@@ -3,7 +3,7 @@
 // import { Context } from "../../infraestructure/config";
 
 // export default class BaseController {
-//   HandleResult(ctx: Context, result: IResult): any {
+//   HandleResult(ctx: Context, result: IResult): void {
 //     ctx.status = result.statusCode;
 //     ctx.body = result;
 //   }
