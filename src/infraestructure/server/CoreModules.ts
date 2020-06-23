@@ -15,11 +15,10 @@
 // For ExpressJs
 import * as Server from "express";
 import * as BodyParser from "body-parser";
-export { Request, Response, NextFunction } from "express";
+export { Request, Response, NextFunction, Application } from "express";
 
 export default {
   Server,
   Router: Server.Router,
   BodyParser,
-}
-
+};

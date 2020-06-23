@@ -2,19 +2,23 @@
 
 A `NodeJs` skeleton to use `TypeScript` with `ExpressJs`, `KoaJs` or any other `web server framework`.
 
+The main philosophy of `NodeTskeleton` is that the `domain` of your solution should be independent of the framework you use, therefore your code should not be adapted to a specific framework, it should work in any framework.
+
 ## Using Koa
 
 > Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
 
 > Remove the `express` code from the following files:
 
-- On file `config/serveModules.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/infraestructure/server/App.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `config/index.ts` remove express line code and remove `//` for line corresponding to `KoaJs`
+- On file `src/infraestructure/server/CoreModules.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `routes/index.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/infraestructure/config/index.ts` remove express line code and remove `//` for line corresponding to `KoaJs`
 
-- On file `controllers/hwController.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/controllers/TextFeeling.controller.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+
+- On file `src/application/result/BaseController.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 
 And then, continue with the `installation` step described at the end of this manual.
 
@@ -24,7 +28,7 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 
 > Delete all commented code (correspondig to `KoaJs`) in the following files:
 
-`config/serveModules.ts`, `config/index.ts`, `routes/index.ts`, `controllers/hwController.ts` 
+`server/CoreModules.ts`, `config/index.ts`, `routes/index.ts`, `controllers/TextFeeling.controller.ts`, `application/result/BaseController.ts`
 
 And then, continue with the `installation` step described at the end of this manual.
 
@@ -33,6 +37,10 @@ And then, continue with the `installation` step described at the end of this man
 > You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework.
 
 And then, continue with the next step (`installation`).
+
+## Infrastucture
+
+The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infraestructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/result/...` is included as a standardized response model.
 
 ## Installation
 

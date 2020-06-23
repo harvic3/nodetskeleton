@@ -1,3 +1,14 @@
-import * as server from "./server";
+import App from "./infraestructure/server/App";
 
-server.start;
+// Region controllers
+import TextFeelingController from "./controllers/TextFeeling.controller";
+
+// End controllers
+
+const controllers = [
+  new TextFeelingController(),
+];
+
+const app = new App(controllers);
+
+app.Listen();

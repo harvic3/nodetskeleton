@@ -1,7 +1,7 @@
 import "dotenv";
-import ServerModules from "./serverModules";
-// export { Context } from "./serverModules"; //For Koa
-export { Request, Response, NextFunction } from "./serverModules"; // For expressjs
+import ServerModules from "../server/CoreModules";
+// export { Context } from "../server/CoreModules"; //For Koa
+export { Request, Response, NextFunction, Application } from "../server/CoreModules"; // For expressjs
 
 const dev = "development";
 
@@ -22,6 +22,10 @@ export default {
       dev,
       pdn: "production",
       test: "testing",
+    },
+    defaultError: {
+      code: 500,
+      message: "Oh sorry, something went wrong!",
     },
   },
 };

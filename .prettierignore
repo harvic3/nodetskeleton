@@ -2,3 +2,6 @@
 .env
 .envEXAMPLE
 README.md
+.eslintrc.js
+
+
