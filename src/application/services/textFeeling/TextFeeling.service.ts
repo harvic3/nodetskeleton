@@ -5,7 +5,7 @@ import { Sentence } from "../../../domain/sentence/Sentence";
 import { IResult } from "../../result/generic/Result.interface";
 import { ITextFeeling } from "../../../domain/textFeeling/TextFeeling.interface";
 import { TextFeeling } from "../../../domain/textFeeling/TextFeeling";
-import { IFeelingQueryService } from "../../../domainServices/queryServices/IFeelingQuery.service";
+import { IFeelingQueryService } from "../../../domainServices/queryServices/IFeelingQuery.service.interface";
 
 export default class TextFeelingService implements ITextFeelingService {
   private textFeelingQueryService: IFeelingQueryService;

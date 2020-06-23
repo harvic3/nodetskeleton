@@ -1,12 +1,12 @@
 import HttpClient from "../../infraestructure/httpClient";
 import ClientHeaders from "../../infraestructure/httpClient/Headers";
 import * as HttpError from "http-errors";
-import { IFeelingRepository } from "./Feeling.repo.interface";
 import { ITextFeeling } from "../../domain/textFeeling/TextFeeling.interface";
-import { TextFeelinRepoDto } from "../dtos/TextFeelingRepo.dto";
+import { TextFeelinRepoModel } from "./models/TextFeelingRepo.model";
 import { TextFeeling } from "../../domain/textFeeling/TextFeeling";
 import { Sentiment } from "../../domain/sentence/Sentiment";
 import { TextDto } from "../dtos/TextReq.dto";
+import { IFeelingRepository } from "./Feeling.repo.interface";
 
 const textFeelingApi = "https://sentim-api.herokuapp.com/api/v1/";
 
@@ -18,7 +18,7 @@ export default class TextFeelingRepo implements IFeelingRepository {
     const content = new TextDto();
     content.text = text;
     try {
-      const tResponse = await HttpClient.SendAsync<TextFeelinRepoDto>(
+      const tResponse = await HttpClient.SendAsync<TextFeelinRepoModel>(
         textFeelingApi,
         HttpClient.Method.POST,
         content,

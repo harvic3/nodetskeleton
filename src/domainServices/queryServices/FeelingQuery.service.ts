@@ -1,4 +1,4 @@
-import { IFeelingQueryService } from "./IFeelingQuery.service";
+import { IFeelingQueryService } from "./IFeelingQuery.service.interface";
 import { IFeelingRepository } from "../../application/repositories/Feeling.repo.interface";
 import { ITextFeeling } from "../../domain/textFeeling/TextFeeling.interface";
 
