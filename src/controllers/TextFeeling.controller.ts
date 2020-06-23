@@ -36,8 +36,6 @@
 //   }
 // }
 
-
-
 // For ExpressJs
 import config from "../infraestructure/config";
 import BaseController from "../application/result/BaseController";
@@ -61,30 +59,59 @@ export default class TextFeelingController extends BaseController {
   }
 
   private InitializeRoutes() {
-    this.router.post('/feeling', jsonParser, asyncHandler(this.GetFeelingText));
-    this.router.post('/feeling/highest', jsonParser, asyncHandler(this.GetHighestFeelingSentence));
-    this.router.post('/feeling/lowest', jsonParser, asyncHandler(this.GetHighestFeelingSentence));
+    this.router.post("/feeling", jsonParser, asyncHandler(this.GetFeelingText));
+    this.router.post(
+      "/feeling/highest",
+      jsonParser,
+      asyncHandler(this.GetHighestFeelingSentence),
+    );
+    this.router.post(
+      "/feeling/lowest",
+      jsonParser,
+      asyncHandler(this.GetHighestFeelingSentence),
+    );
   }
 
-  GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {    
+  GetFeelingText = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      this.HandleResult(res, await this.textFeelingService.GetFeelingText(req.body.text));
+      this.HandleResult(
+        res,
+        await this.textFeelingService.GetFeelingText(req.body.text),
+      );
     } catch (error) {
-      next(error);      
+      next(error);
     }
-  }
-  GetHighestFeelingSentence = async (req: Request, res: Response, next: NextFunction): Promise<void> => {    
+  };
+  GetHighestFeelingSentence = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      this.HandleResult(res, await this.textFeelingService.GetHighestFeelingSentence(req.body.text));
+      this.HandleResult(
+        res,
+        await this.textFeelingService.GetHighestFeelingSentence(req.body.text),
+      );
     } catch (error) {
-      next(error);      
+      next(error);
     }
-  }
-  GetLowestFeelingSentence = async (req: Request, res: Response, next: NextFunction): Promise<void> => {   
+  };
+  GetLowestFeelingSentence = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      this.HandleResult(res, await this.textFeelingService.GetLowestFeelingSentence(req.body.text));
+      this.HandleResult(
+        res,
+        await this.textFeelingService.GetLowestFeelingSentence(req.body.text),
+      );
     } catch (error) {
-      next(error);      
+      next(error);
     }
-  }
+  };
 }

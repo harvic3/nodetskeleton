@@ -10,11 +10,11 @@ The main philosophy of `NodeTskeleton` is that the `domain` of your solution sho
 
 > Remove the `express` code from the following files:
 
-- On file `src/infraestructure/server/App.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
-
 - On file `src/infraestructure/server/CoreModules.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 
 - On file `src/infraestructure/config/index.ts` remove express line code and remove `//` for line corresponding to `KoaJs`
+
+- On file `src/infraestructure/server/App.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 
 - On file `src/controllers/TextFeeling.controller.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
 

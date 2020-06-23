@@ -9,7 +9,7 @@ import { IFeelingQueryService } from "../../../domainServices/queryServices/IFee
 
 export default class TextFeelingService implements ITextFeelingService {
   private textFeelingQueryService: IFeelingQueryService;
-  public constructor(textFeelingQueryService: IFeelingQueryService){
+  public constructor(textFeelingQueryService: IFeelingQueryService) {
     this.textFeelingQueryService = textFeelingQueryService;
   }
   async GetFeelingText(text: string): Promise<IResult<ITextFeeling>> {
@@ -35,5 +35,5 @@ export default class TextFeelingService implements ITextFeelingService {
     const textFeeling = await this.textFeelingQueryService.AnaliceText(text);
     result.SetSuccessful(textFeeling.GetLowestFeelingSentence());
     return result;
-  }  
+  }
 }

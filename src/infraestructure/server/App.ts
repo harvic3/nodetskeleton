@@ -58,7 +58,7 @@ import Result from "../../application/result/Result";
 export default class App {
   public app: Application;
 
-  constructor(controllers: any[]){
+  constructor(controllers: any[]) {
     this.app = config.coreModules.Server();
     this.LoadMiddlewares();
     this.LoadControllers(controllers);
@@ -91,7 +91,9 @@ export default class App {
 
   public Listen(): void {
     this.app.listen(config.server.port, () => {
-      console.log(`server running on ${config.server.host}:${config.server.port}`);
+      console.log(
+        `server running on ${config.server.host}:${config.server.port}`,
+      );
     });
   }
 }

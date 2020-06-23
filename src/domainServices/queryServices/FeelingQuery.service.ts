@@ -4,7 +4,7 @@ import { ITextFeeling } from "../../domain/textFeeling/TextFeeling.interface";
 
 export class FeelingQueryService implements IFeelingQueryService {
   private repository: IFeelingRepository;
-  public constructor(repository: IFeelingRepository){
+  public constructor(repository: IFeelingRepository) {
     this.repository = repository;
   }
   async AnaliceText(text: string): Promise<ITextFeeling> {

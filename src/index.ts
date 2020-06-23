@@ -5,9 +5,7 @@ import TextFeelingController from "./controllers/TextFeeling.controller";
 
 // End controllers
 
-const controllers = [
-  new TextFeelingController(),
-];
+const controllers = [new TextFeelingController()];
 
 const app = new App(controllers);
 

@@ -1,4 +1,4 @@
-import { IResult as IBaseResult } from "../Result.interface"
+import { IResult as IBaseResult } from "../Result.interface";
 
 export interface IResult<T> extends IBaseResult {
   data: T;

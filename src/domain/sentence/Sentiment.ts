@@ -1,5 +1,5 @@
 export class Sentiment {
-  constructor(polarity: number, type: string){
+  constructor(polarity: number, type: string) {
     this.polarity = polarity;
     this.type = type;
   }

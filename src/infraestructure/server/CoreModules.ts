@@ -10,8 +10,6 @@
 //   BodyParser,
 // }
 
-
-
 // For ExpressJs
 import * as Server from "express";
 import * as BodyParser from "body-parser";

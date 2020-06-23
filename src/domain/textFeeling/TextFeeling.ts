@@ -9,7 +9,7 @@ export class TextFeeling implements ITextFeeling {
   }
   content: string;
   sentiment: Sentiment;
-  sentences: Sentence[];  
+  sentences: Sentence[];
   GetSentencesNumber(): number {
     return this.sentences.length;
   }
@@ -19,15 +19,19 @@ export class TextFeeling implements ITextFeeling {
   GetHighestFeelingSentence(): Sentence {
     if (this.sentences.length == 0) return null;
     const highest = this.sentences.reduce((sentence, evaluate) => {
-      return (evaluate.sentiment.polarity > sentence.sentiment.polarity) ? evaluate : sentence;
+      return evaluate.sentiment.polarity > sentence.sentiment.polarity
+        ? evaluate
+        : sentence;
     });
     return highest;
   }
   GetLowestFeelingSentence(): Sentence {
     if (this.sentences.length == 0) return null;
     const lowest = this.sentences.reduce((sentence, evaluate) => {
-      return (evaluate.sentiment.polarity < sentence.sentiment.polarity) ? evaluate : sentence;
+      return evaluate.sentiment.polarity < sentence.sentiment.polarity
+        ? evaluate
+        : sentence;
     });
     return lowest;
-  }  
+  }
 }
