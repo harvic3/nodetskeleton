@@ -6,7 +6,7 @@ import { TextFeelinRepoModel } from "./models/TextFeelingRepo.model";
 import { TextFeeling } from "../../domain/textFeeling/TextFeeling";
 import { Sentiment } from "../../domain/sentence/Sentiment";
 import { TextDto } from "../dtos/TextReq.dto";
-import { IFeelingQueryService } from "../../domainServices/queryServices/IFeelingQuery.service.interface";
+import { IFeelingQueryService } from "../services/queryServices/IFeelingQuery.service.interface";
 
 const textFeelingApi = "https://sentim-api.herokuapp.com/api/v1/";
 
