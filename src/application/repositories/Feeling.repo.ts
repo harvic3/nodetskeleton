@@ -6,11 +6,11 @@ import { TextFeelinRepoModel } from "./models/TextFeelingRepo.model";
 import { TextFeeling } from "../../domain/textFeeling/TextFeeling";
 import { Sentiment } from "../../domain/sentence/Sentiment";
 import { TextDto } from "../dtos/TextReq.dto";
-import { IFeelingRepository } from "./Feeling.repo.interface";
+import { IFeelingQueryService } from "../../domainServices/queryServices/IFeelingQuery.service.interface";
 
 const textFeelingApi = "https://sentim-api.herokuapp.com/api/v1/";
 
-export default class TextFeelingRepo implements IFeelingRepository {
+export default class TextFeelingRepo implements IFeelingQueryService {
   async AnaliceText(text: string): Promise<ITextFeeling> {
     const headers = new ClientHeaders();
     headers.Add("Content-Type", "application/json");

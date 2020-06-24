@@ -1,11 +1,11 @@
 import App from "./infraestructure/server/App";
 
 // Region controllers
-import TextFeelingController from "./controllers/TextFeeling.controller";
+import textFeelingController from "./controllers/TextFeeling.controller";
 
 // End controllers
 
-const controllers = [new TextFeelingController()];
+const controllers = [textFeelingController];
 
 const app = new App(controllers);
 

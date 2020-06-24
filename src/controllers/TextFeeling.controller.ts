@@ -63,7 +63,7 @@ import * as asyncHandler from "express-async-await";
 
 const jsonParser = config.coreModules.BodyParser.json();
 
-export default class TextFeelingController extends BaseController {
+class TextFeelingController extends BaseController {
   public router = config.coreModules.Router();
   private textFeelingService: ITextFeelingService;
 
@@ -130,3 +130,7 @@ export default class TextFeelingController extends BaseController {
     }
   };
 }
+
+const instance = new TextFeelingController();
+
+export default instance;
