@@ -3,19 +3,19 @@ export default class TResponse<T> {
   success = true;
   statusCode: number;
   message: string;
-  error: any;
-  SetResponse(data: any) {
+  error: Error;
+  SetResponse(data: any): void {
     this.response = data;
   }
-  SetStatusCode(code: number) {
+  SetStatusCode(code: number): void {
     this.statusCode = code;
   }
-  SetErrorMessage(message: string) {
+  SetErrorMessage(message: string): void {
     this.message = message;
     this.success = false;
   }
-  SetError(data: any) {
-    this.error = data;
+  SetError(error: Error): void {
+    this.error = error;
     this.success = false;
   }
 }

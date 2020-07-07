@@ -1,12 +1,11 @@
 import "dotenv";
 import ServerModules from "../server/CoreModules";
-// export { Context } from "../server/CoreModules"; //For Koa
-export {
-  Request,
-  Response,
-  NextFunction,
-  Application,
-} from "../server/CoreModules"; // For expressjs
+// export { Context, Next } from "../server/CoreModules"; //For Koa
+export { Request, Response, NextFunction, Application } from "../server/CoreModules"; // For expressjs
+
+import * as esLocal from "../locals/es.local.json";
+import * as enLocal from "../locals/en.local.json";
+import * as localKeys from "../locals/keys.json";
 
 const dev = "development";
 
@@ -31,6 +30,13 @@ export default {
     defaultError: {
       code: 500,
       message: "Oh sorry, something went wrong!",
+    },
+  },
+  locals: {
+    keys: localKeys,
+    langs: {
+      es: esLocal,
+      en: enLocal,
     },
   },
 };

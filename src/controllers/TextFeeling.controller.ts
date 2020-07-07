@@ -59,12 +59,8 @@ import { Request, Response, NextFunction } from "../infraestructure/config";
 import { ITextFeelingService } from "../application/services/textFeeling/TextFeeling.service.interface";
 import TextFeelingService from "../application/services/textFeeling/TextFeeling.service";
 import FeelingRepo from "../application/repositories/Feeling.repo";
-import * as asyncHandler from "express-async-await";
-
-const jsonParser = config.coreModules.BodyParser.json();
 
 class TextFeelingController extends BaseController {
-  public router = config.coreModules.Router();
   private textFeelingService: ITextFeelingService;
 
   public constructor() {
@@ -74,29 +70,14 @@ class TextFeelingController extends BaseController {
   }
 
   private InitializeRoutes() {
-    this.router.post("/feeling", jsonParser, asyncHandler(this.GetFeelingText));
-    this.router.post(
-      "/feeling/highest",
-      jsonParser,
-      asyncHandler(this.GetHighestFeelingSentence),
-    );
-    this.router.post(
-      "/feeling/lowest",
-      jsonParser,
-      asyncHandler(this.GetHighestFeelingSentence),
-    );
+    this.router.post("/feeling", this.GetFeelingText);
+    this.router.post("/feeling/highest", this.GetHighestFeelingSentence);
+    this.router.post("/feeling/lowest", this.GetHighestFeelingSentence);
   }
 
-  GetFeelingText = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      this.HandleResult(
-        res,
-        await this.textFeelingService.GetFeelingText(req.body.text),
-      );
+      this.HandleResult(res, await this.textFeelingService.GetFeelingText(req.body.text));
     } catch (error) {
       next(error);
     }
@@ -121,10 +102,7 @@ class TextFeelingController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      this.HandleResult(
-        res,
-        await this.textFeelingService.GetLowestFeelingSentence(req.body.text),
-      );
+      this.HandleResult(res, await this.textFeelingService.GetLowestFeelingSentence(req.body.text));
     } catch (error) {
       next(error);
     }

@@ -8,12 +8,17 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": false,
     "experimentalDecorators": false,
+    "resolveJsonModule": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": false,
     "alwaysStrict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    ".vscode",
+    "coverage",
+  ],
   "include": ["./src/**/*"]
 }

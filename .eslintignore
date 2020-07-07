@@ -8,3 +8,6 @@ coverage/*
 /src/public/
 # custom definition files
 /src/types/
+README.md
+.env
+.env.EXAMPLE

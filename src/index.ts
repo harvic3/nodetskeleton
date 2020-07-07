@@ -1,3 +1,4 @@
+import "express-async-errors"; // For ExpressJs only
 import App from "./infraestructure/server/App";
 
 // Region controllers
