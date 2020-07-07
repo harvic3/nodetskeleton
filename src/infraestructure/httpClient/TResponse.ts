@@ -1,10 +1,10 @@
 export default class TResponse<T> {
-  response: T;
+  response: T | string | Buffer | ArrayBuffer | PromiseLike<T>;
   success = true;
   statusCode: number;
   message: string;
   error: Error;
-  SetResponse(data: any): void {
+  SetResponse(data: string | T | Buffer | ArrayBuffer | PromiseLike<T>): void {
     this.response = data;
   }
   SetStatusCode(code: number): void {

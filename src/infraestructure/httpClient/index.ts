@@ -1,39 +1,51 @@
-import * as httpm from "typed-rest-client/HttpClient";
+import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
 import TResponse from "./TResponse";
-import ClientHeaders from "./Headers";
+import resources from "../locals/index";
+import { Options } from "./Options";
+import { ApplicationError } from "../error/ApplicationError";
+export { BodyInit as BodyType, Headers } from "node-fetch";
 
-export class HttpClient {
-  httpClient: httpm.HttpClient;
-  public constructor(clientName = "custom-client") {
-    this.httpClient = new httpm.HttpClient(clientName);
-  }
+const serialization = {
+  json: "json",
+  string: "string",
+  buffer: "buffer",
+  arrayBuffer: "arrayBuffer",
+};
+
+class HttpClient {
   Method = {
-    GET: "get",
-    POST: "post",
-    PUT: "put",
-    DELETE: "del",
-    PATCH: "patch",
-    HEAD: "head",
+    GET: "GET",
+    POST: "POST",
+    PUT: "PUT",
+    DEL: "DELETE",
+    PATCH: "PATCH",
+    HEAD: "HEAD",
   };
+  SerializationMethod = serialization;
   async SendAsync<T>(
     url: string,
     method = this.Method.GET,
-    body?: unknown,
-    headers?: ClientHeaders,
+    {
+      body,
+      headers,
+      options,
+      serializationMethod = this.SerializationMethod.json,
+    }: {
+      body?: BodyType;
+      headers?: Headers;
+      options?: Options;
+      serializationMethod?: string;
+    },
   ): Promise<TResponse<T>> {
+    const request = BuildRequest(url, method, body, headers, options);
     const result = new TResponse<T>();
     try {
-      let httpResponse: httpm.HttpClientResponse;
-      if (method == this.Method.GET || method == this.Method.DELETE || method == this.Method.HEAD) {
-        httpResponse = await this.httpClient[method](url, headers.Keys);
+      const response = await fetch(url, request);
+      if (response.ok) {
+        result.SetResponse(await ProcessResponseData<T>(response, serializationMethod));
       } else {
-        httpResponse = await this.httpClient[method](url, JSON.stringify(body), headers.Keys);
-      }
-      if (httpResponse.message.statusCode == 200) {
-        result.SetResponse(await ProcessResponseData(httpResponse));
-      } else {
-        result.SetStatusCode(httpResponse.message.statusCode);
-        result.SetErrorMessage(httpResponse.message.statusMessage);
+        result.SetStatusCode(response.status);
+        result.SetErrorMessage(response.statusText);
       }
     } catch (error) {
       result.SetErrorMessage(error.message);
@@ -44,11 +56,63 @@ export class HttpClient {
   }
 }
 
-async function ProcessResponseData(response: httpm.HttpClientResponse): Promise<unknown> {
-  const data = await response.readBody();
-  try {
-    return JSON.parse(data);
-  } catch (error) {
-    return data;
+function BuildRequest(
+  url: string,
+  method: string,
+  body?: BodyType,
+  headers?: Headers,
+  options?: RequestInit,
+): Request {
+  if (!options) {
+    options = new Options();
   }
+  options.method = method;
+  if (body) {
+    options.body = body;
+  }
+  if (headers) {
+    options.headers = headers;
+  }
+  const request = new Request(url, options);
+  const optionsKey = Object.keys(options);
+  optionsKey.forEach((key) => {
+    if (key !== "method" && key !== "body" && key !== "headers") {
+      request[key] = options[key];
+    }
+  });
+  return request;
 }
+
+async function ProcessResponseData<T>(
+  response: Response,
+  serializationMethod: string,
+): Promise<T | string | Buffer | ArrayBuffer> {
+  let data: string | T | Buffer | ArrayBuffer | PromiseLike<T>;
+  try {
+    switch (serializationMethod) {
+      case serialization.buffer:
+        data = await response.buffer();
+        break;
+      case serialization.arrayBuffer:
+        data = await response.arrayBuffer();
+        break;
+      case serialization.string:
+        data = await response.text();
+        break;
+      default:
+        data = await response.json();
+        break;
+    }
+  } catch (error) {
+    throw new ApplicationError(
+      resources.Get(resources.keys.PROCESSING_DATA_ERROR),
+      500,
+      JSON.stringify(error),
+    );
+  }
+  return data;
+}
+
+const instance = new HttpClient();
+
+export default instance;

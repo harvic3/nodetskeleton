@@ -52,7 +52,6 @@
 // }
 
 // For ExpressJs
-import config from "../infraestructure/config";
 import BaseController from "../application/result/BaseController";
 import { Request, Response, NextFunction } from "../infraestructure/config";
 
