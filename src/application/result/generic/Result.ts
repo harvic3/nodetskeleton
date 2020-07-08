@@ -17,9 +17,7 @@ export default class Result<T> implements IResult<T> {
   Successful(message: string, statusCode?: number): void;
   Successful(message?: string, statusCode?: number) {
     if (message != null) this.message = message;
-    statusCode != null
-      ? (this.statusCode = statusCode)
-      : (this.statusCode = 200);
+    statusCode != null ? (this.statusCode = statusCode) : (this.statusCode = 200);
     this.success = true;
   }
   SetMessage(message: string): void {
@@ -36,9 +34,7 @@ export default class Result<T> implements IResult<T> {
   SetSuccessful(data: T, message: string, statusCode?: number): void;
   SetSuccessful(data: T, message?: string, statusCode?: number) {
     if (message != null) this.message = message;
-    statusCode != null
-      ? (this.statusCode = statusCode)
-      : (this.statusCode = 200);
+    statusCode != null ? (this.statusCode = statusCode) : (this.statusCode = 200);
     this.data = data;
     this.success = true;
   }

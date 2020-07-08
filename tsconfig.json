@@ -1,6 +1,9 @@
 {
   "version": "3.9.5",
   "compilerOptions": {
+    "lib": [
+      "es2016"
+    ],
     "outDir": "./dist/",  
     "sourceMap": true,
     "target": "es6",

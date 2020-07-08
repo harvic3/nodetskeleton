@@ -1,10 +1,10 @@
 // // For KoaJS
 // import { Context, Next } from "../../config";
-// import Resource from "../../locals/index";
+// import resources from "../../locals/index";
 
 // export default function () {
 //   return async function (ctx: Context, next: Next): Promise<void> {
-//     Resource.Init(ctx.headers.acceptLanguage || ctx.request.query.lang || "en");
+//     resources.Init(ctx.headers.acceptLanguage || ctx.request.query.lang || "en");
 //     await next();
 //   };
 // }

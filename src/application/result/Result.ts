@@ -23,9 +23,7 @@ export default class Result implements IResult {
   Successful(message: string, statusCode?: number): void;
   Successful(message?: string, statusCode?: number) {
     if (message != null) this.message = message;
-    statusCode != null
-      ? (this.statusCode = statusCode)
-      : (this.statusCode = 200);
+    statusCode != null ? (this.statusCode = statusCode) : (this.statusCode = 200);
     this.success = true;
   }
 }

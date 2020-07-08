@@ -44,9 +44,9 @@ class HttpClient {
       if (response.ok) {
         result.SetResponse(await ProcessResponseData<T>(response, serializationMethod));
       } else {
-        result.SetStatusCode(response.status);
         result.SetErrorMessage(response.statusText);
       }
+      result.SetStatusCode(response.status);
     } catch (error) {
       result.SetErrorMessage(error.message);
       result.SetStatusCode(error.code || null);
@@ -87,7 +87,7 @@ async function ProcessResponseData<T>(
   response: Response,
   serializationMethod: string,
 ): Promise<T | string | Buffer | ArrayBuffer> {
-  let data: string | T | Buffer | ArrayBuffer | PromiseLike<T>;
+  let data: T | string | Buffer | ArrayBuffer | PromiseLike<T>;
   try {
     switch (serializationMethod) {
       case serialization.buffer:
@@ -105,7 +105,7 @@ async function ProcessResponseData<T>(
     }
   } catch (error) {
     throw new ApplicationError(
-      resources.Get(resources.keys.PROCESSING_DATA_ERROR),
+      resources.Get(resources.keys.PROCESSING_DATA_CLIENT_ERROR),
       500,
       JSON.stringify(error),
     );

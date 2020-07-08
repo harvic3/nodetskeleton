@@ -32,7 +32,7 @@
 //   private LoadHandleError(): void {
 //     this.app.on("error", (err: ApplicationError, context: Context) => {
 //       const result = new Result();
-//       if (err.name && err.name == "ApplicationError") {
+//       if (err.name && err.name === "ApplicationError") {
 //         console.log("Controlled application error", err.message);
 //         result.SetError(err.message, err.code);
 //       } else {
@@ -87,7 +87,7 @@ export default class App {
   private LoadHandleError(): void {
     this.app.use((err: ApplicationError, req: Request, res: Response, next: NextFunction) => {
       const result = new Result();
-      if (err.name && err.name == "ApplicationError") {
+      if (err.name && err.name === "ApplicationError") {
         console.log("Controlled application error", err.message);
         result.SetError(err.message, err.code);
       } else {
