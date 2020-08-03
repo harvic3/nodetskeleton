@@ -1,4 +1,4 @@
-import validator, { Validator } from "../validation/validator/index";
+import validator, { Validator } from "../validator/index";
 import * as resultCodes from "../result/resultCodes.json";
 import resources, { resourceKeys, Resources } from "../locals/index";
 import { IMap } from "../mapper/IMap";

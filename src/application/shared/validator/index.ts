@@ -1,6 +1,6 @@
-import { IResult } from "../../result/Result.interface";
-import resources, { resourceKeys } from "../../locals/index";
-import * as resultCodes from "../../result/resultCodes.json";
+import { IResult } from "../result/Result.interface";
+import resources, { resourceKeys } from "../locals/index";
+import * as resultCodes from "../result/resultCodes.json";
 
 export class Validator {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
