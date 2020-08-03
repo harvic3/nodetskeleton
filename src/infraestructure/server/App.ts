@@ -1,17 +1,17 @@
-// // For KoaJs
+// For KoaJs
 // import config from "../config";
-// import Result from "../../application/result/Result";
-// import { ApplicationError } from "../error/ApplicationError";
+// import { Server, BodyParser, cors } from "./CoreModules";
+// import BaseController from "../../adapters/controllers/BaseController";
 // import localization from "../middlewares/localization";
-// import BaseController from "../../application/result/BaseController";
+// import handleError from "../middlewares/handleError";
 
-// const bodyParser = config.coreModules.BodyParser;
+// const bodyParser = BodyParser;
 
 // export default class App {
-//   public app: any;
+//   public app: Server;
 
 //   constructor(controllers: BaseController[]) {
-//     this.app = new config.coreModules.Server();
+//     this.app = new Server();
 //     this.LoadMiddlewares();
 //     this.LoadControllers(controllers);
 //     this.LoadHandleError();
@@ -30,51 +30,35 @@
 //   }
 
 //   private LoadHandleError(): void {
-//     this.app.on("error", (err: ApplicationError, context: Context) => {
-//       const result = new Result();
-//       if (err.name && err.name === "ApplicationError") {
-//         console.log("Controlled application error", err.message);
-//         result.SetError(err.message, err.code);
-//       } else {
-//         console.log("No controlled application error", err);
-//         result.SetMessage(config.params.defaultError.message);
-//       }
-//       context.status = result.statusCode;
-//       context.body = result;
-//     });
+//     this.app.on("error", handleError());
 //   }
 
 //   public Listen(): void {
 //     this.app.listen(config.server.port, () => {
-//       console.log(
-//         `server running on ${config.server.host}:${config.server.port}`,
-//       );
+//       console.log(`Server running on ${config.server.host}:${config.server.port}`);
 //     });
 //   }
 // }
 
 // For ExpressJs
 import config from "../config";
-import { Application, Request, Response, NextFunction } from "../config";
-import Result from "../../application/result/Result";
-import { ApplicationError } from "../error/ApplicationError";
+import { Server, BodyParser, Application } from "../server/CoreModules";
+import BaseController from "../../adapters/controllers/BaseController";
 import localization from "../middlewares/localization";
-import BaseController from "../../application/result/BaseController";
-
-const jsonParser = config.coreModules.BodyParser.json();
+import handleError from "../middlewares/handleError";
 
 export default class App {
   public app: Application;
 
   constructor(controllers: BaseController[]) {
-    this.app = config.coreModules.Server();
+    this.app = Server();
     this.LoadMiddlewares();
     this.LoadControllers(controllers);
     this.LoadHandleError();
   }
 
   public LoadMiddlewares(): void {
-    this.app.use(jsonParser);
+    this.app.use(BodyParser.json());
     this.app.use(localization());
   }
 
@@ -85,25 +69,12 @@ export default class App {
   }
 
   private LoadHandleError(): void {
-    this.app.use((err: ApplicationError, req: Request, res: Response, next: NextFunction) => {
-      const result = new Result();
-      if (err.name && err.name === "ApplicationError") {
-        console.log("Controlled application error", err.message);
-        result.SetError(err.message, err.code);
-      } else {
-        console.log("No controlled application error", err);
-        result.SetMessage(config.params.defaultError.message);
-      }
-      if (res.headersSent) {
-        return next(result);
-      }
-      res.status(result.statusCode).send(result);
-    });
+    this.app.use(handleError());
   }
 
   public Listen(): void {
     this.app.listen(config.server.port, () => {
-      console.log(`server running on ${config.server.host}:${config.server.port}`);
+      console.log(`Server running on ${config.server.host}:${config.server.port}`);
     });
   }
 }

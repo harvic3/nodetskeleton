@@ -2,21 +2,16 @@
 // import * as Server from "koa";
 // import * as Router from "koa-router";
 // import * as BodyParser from "koa-bodyparser";
-// export { Context } from "koa";
+// import * as cors from "@koa/cors";
 
-// export default {
-//   Server,
-//   Router,
-//   BodyParser,
-// }
+// export { Context, Next } from "koa";
+// export { Server, Router, BodyParser, cors };
 
 // For ExpressJs
 import * as Server from "express";
 import * as BodyParser from "body-parser";
-export { Request, Response, NextFunction, Application } from "express";
 
-export default {
-  Server,
-  Router: Server.Router,
-  BodyParser,
-};
+const Router = Server.Router;
+
+export { Request, Response, NextFunction, Application, Router as RouterType } from "express";
+export { Server, Router, BodyParser };

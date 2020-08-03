@@ -1,25 +1,15 @@
-import "dotenv";
-import ServerModules from "../server/CoreModules";
-// export { Context, Next } from "../server/CoreModules"; //For Koa
-export { Request, Response, NextFunction, Application } from "../server/CoreModules"; // For expressjs
-
-import * as esLocal from "../locals/es.local.json";
-import * as enLocal from "../locals/en.local.json";
-import * as localKeys from "../locals/keys.json";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const dev = "development";
 
 export default {
-  env: process.env.ENVIRONMENT || dev,
-  coreModules: {
-    Server: ServerModules.Server,
-    Router: ServerModules.Router,
-    BodyParser: ServerModules.BodyParser,
-  },
+  env: process.env.NODE_ENV || dev,
   server: {
     root: process.env.SERVER_ROOT || "/api",
     host: process.env.SERVER_HOST || "localhost",
     port: process.env.SERVER_PORT || 5030,
+    origins: process.env.ORIGINS || "http://localhost:3000",
   },
   params: {
     envs: {
@@ -29,14 +19,8 @@ export default {
     },
     defaultError: {
       code: 500,
-      message: "Oh sorry, something went wrong!",
+      message: "SOMETHING_WENT_WRONG",
     },
-  },
-  locals: {
-    keys: localKeys,
-    langs: {
-      es: esLocal,
-      en: enLocal,
-    },
+    defaultLang: "en",
   },
 };

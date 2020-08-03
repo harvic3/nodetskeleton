@@ -1,8 +1,9 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
 import TResponse from "./TResponse";
-import resources from "../locals/index";
+import resources, { resourceKeys } from "../../application/shared/locals/index";
+import * as resultCodes from "../../application/shared/result/resultCodes.json";
 import { Options } from "./Options";
-import { ApplicationError } from "../error/ApplicationError";
+import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 export { BodyInit as BodyType, Headers } from "node-fetch";
 
 const serialization = {
@@ -13,7 +14,7 @@ const serialization = {
 };
 
 class HttpClient {
-  Method = {
+  Methods = {
     GET: "GET",
     POST: "POST",
     PUT: "PUT",
@@ -24,7 +25,7 @@ class HttpClient {
   SerializationMethod = serialization;
   async SendAsync<T>(
     url: string,
-    method = this.Method.GET,
+    method = this.Methods.GET,
     {
       body,
       headers,
@@ -87,30 +88,26 @@ async function ProcessResponseData<T>(
   response: Response,
   serializationMethod: string,
 ): Promise<T | string | Buffer | ArrayBuffer> {
-  let data: T | string | Buffer | ArrayBuffer | PromiseLike<T>;
   try {
     switch (serializationMethod) {
       case serialization.buffer:
-        data = await response.buffer();
-        break;
+        return await response.buffer();
       case serialization.arrayBuffer:
-        data = await response.arrayBuffer();
-        break;
+        return await response.arrayBuffer();
       case serialization.string:
-        data = await response.text();
+        return await response.text();
         break;
       default:
-        data = await response.json();
-        break;
+        return await response.json();
     }
   } catch (error) {
     throw new ApplicationError(
-      resources.Get(resources.keys.PROCESSING_DATA_CLIENT_ERROR),
-      500,
+      resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+      resultCodes.INTERNAL_SERVER_ERROR,
+      error.code,
       JSON.stringify(error),
     );
   }
-  return data;
 }
 
 const instance = new HttpClient();

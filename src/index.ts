@@ -1,12 +1,12 @@
 import "express-async-errors"; // For ExpressJs only
 import App from "./infraestructure/server/App";
+import BaseController from "./adapters/controllers/BaseController";
 
 // Region controllers
-import textFeelingController from "./controllers/TextFeeling.controller";
-
+import textFeelingController from "./adapters/controllers/textFeeling/TextFeeling.controller";
 // End controllers
 
-const controllers = [textFeelingController];
+const controllers: BaseController[] = [textFeelingController];
 
 const app = new App(controllers);
 

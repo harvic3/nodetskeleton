@@ -1,0 +1,6 @@
+{
+  "SOMETHING_WENT_WRONG": "Oh sorry, something went wrong with current action!",
+  "SOME_PARAMETERS_ARE_MISSING": "Some parameters are missing: {{missingParams}}.",
+  "PROCESSING_DATA_CLIENT_ERROR": "Error processing http client data.",
+  "AUTHORIZATION_REQUIRED": "Authorization is required."
+}
