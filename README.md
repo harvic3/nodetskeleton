@@ -1,4 +1,4 @@
-# NodeTSkeleton 💀
+# NodeTSkeleton <img height="50" src="https://i.ibb.co/BZkYR9H/esqueletots.png" alt="esqueletots" border="0">
 
 `NodeTskeleton` is a `Clean Arquitecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
 
@@ -10,7 +10,19 @@ The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture 
 
 ## Philosophy
 
-...building... comming soon.
+Applications are generally developed to be used by people, so people should be the focus of them.
+
+For this reason `user stories` are written, stories that give us information about the type of user `(role)`, procedures that the user performs in a part of the application `(module)`, important information that serves to `structure the solution` of our application, and in practice, how is this?
+
+The user stories must be in the `src/application` path of our solution, there we create a directory that we will call `modules` and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
+
+<div style="text-align:center"> <img src="https://i.ibb.co/jvczPhW/Structure-Tskeleton.png" alt="Structure-Tskeleton" border="10" /> </div>
+
+> Observations:
+
+- If your application has no roles, then there's no mess, it's just modules. ;)
+
+- Note that you can repeat modules between roles, because a module can be used by different roles, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
 ## Included tools
 
@@ -194,7 +206,7 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 /*...*/
 ```
 
-# Dependency injection strategy
+## Dependency injection strategy
 
 For `dependency injection`, no external libraries (such as InversifyJs) are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
 
@@ -271,7 +283,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 - On directories `src/infraestructure/middlewares` remove `ExpressJs` code for each middleware and remove `//` for lines corresponding to `KoaJs`
 
-And then, continue with the `installation` step described at the end of this manual.
+And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
 ## Using with ExpressJs
 
@@ -284,7 +296,7 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 `application/result/BaseController.ts`,
 `src/infraestructure/middlewares`
 
-And then, continue with the `installation` step described at the end of this manual.
+And then, continue with the `installation` step described in this manual.
 
 ## Using with another web framework
 
