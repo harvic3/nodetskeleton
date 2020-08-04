@@ -1,11 +1,10 @@
 export class ApplicationError extends Error {
-  public constructor(message: string, httpStatusCode: number, errorCode?: number, stack?: string) {
+  public constructor(message: string, errorCode: number, stack?: string) {
     super(message);
     this.name = "ApplicationError";
-    this.httpStatusCode = httpStatusCode;
-    this.code = errorCode;
+    this.errorCode = errorCode;
     this.stack = stack;
   }
   httpStatusCode: number;
-  code: number;
+  errorCode: number;
 }

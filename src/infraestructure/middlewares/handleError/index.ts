@@ -10,7 +10,7 @@
 //     const result = new Result();
 //     if (err.name && err.name === "ApplicationError") {
 //       console.log("Controlled application error", err.message);
-//       result.SetError(err.message, err.code);
+//       result.SetError(err.message, err.errorCode);
 //     } else {
 //       console.log("No controlled application error", err);
 //       result.SetError(
@@ -39,7 +39,7 @@ export default function () {
     const result = new Result();
     if (err.name && err.name === "ApplicationError") {
       console.log("Controlled application error", err.message);
-      result.SetError(err.message, err.code);
+      result.SetError(err.message, err.errorCode);
     } else {
       console.log("No controlled application error", err);
       result.SetError(config.params.defaultError.message, config.params.defaultError.code);

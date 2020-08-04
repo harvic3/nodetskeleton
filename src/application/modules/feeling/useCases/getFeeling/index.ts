@@ -13,10 +13,17 @@ export class UseCaseGetFeeling extends BaseUseCase {
 
   async Execute(textDto: TextDto): Promise<IResult<TextFeelingDto>> {
     const result = new Result<TextFeelingDto>();
-    if (!this.validator.IsValidEntry(result, { textDto: textDto, text: textDto.text })) {
+    if (!this.validator.IsValidEntry(result, { textDto: textDto, text: textDto?.text })) {
       return result;
     }
     const textFeeling = await this.textFeelingService.GetFeelingText(textDto.text);
+    if (!textFeeling) {
+      result.SetError(
+        this.resources.Get(this.resourceKeys.TEXT_FEELING_SERVICE_ERROR),
+        this.resultCodes.INTERNAL_SERVER_ERROR,
+      );
+      return result;
+    }
     const textFeelingDto = this.mapper.MapObject<TextFeeling, TextFeelingDto>(
       textFeeling,
       new TextFeelingDto(),

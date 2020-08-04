@@ -9,4 +9,6 @@ export interface ITextFeeling {
   GetFeelingText(): Sentiment;
   GetHighestFeelingSentence(): Sentence;
   GetLowestFeelingSentence(): Sentence;
+  SetSentiment(sentiment: Sentiment): void;
+  SetSentences(sentences: Sentence[]): void;
 }

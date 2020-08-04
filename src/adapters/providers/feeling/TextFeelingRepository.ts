@@ -1,11 +1,12 @@
 import httpClient, { Headers } from "../../../infraestructure/httpClient";
-import * as HttpError from "http-errors";
+import { IFeelingQueryService } from "../../../application/modules/feeling/services/queryServices/IFeelingQuery.service.interface";
+import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { ITextFeeling } from "../../../domain/textFeeling/TextFeeling.interface";
 import { TextFeelinRepoModel } from "./models/TextFeeling.model";
 import { TextFeeling } from "../../../domain/textFeeling/TextFeeling";
 import { Sentiment } from "../../../domain/sentence/Sentiment";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
-import { IFeelingQueryService } from "../../../application/modules/feeling/services/queryServices/IFeelingQuery.service.interface";
+import * as resultCodes from "../../../application/shared/result/resultCodes.json";
 
 const textFeelingApi = "https://sentim-api.herokuapp.com/api/v1/";
 
@@ -17,7 +18,7 @@ export default class TextFeelingRepository implements IFeelingQueryService {
     const content = new TextDto();
     content.text = text;
     try {
-      const tResponse = await httpClient.SendAsync<TextFeelinRepoModel>(
+      const tResponse = await httpClient.Send<TextFeelinRepoModel>(
         textFeelingApi,
         httpClient.Methods.POST,
         {
@@ -28,14 +29,22 @@ export default class TextFeelingRepository implements IFeelingQueryService {
       );
       const response = tResponse.response as TextFeelinRepoModel;
       if (!tResponse.success) {
-        throw HttpError(tResponse.statusCode || 500, tResponse.message);
+        throw new ApplicationError(
+          tResponse.message,
+          tResponse.statusCode || resultCodes.INTERNAL_SERVER_ERROR,
+          JSON.stringify(tResponse.error),
+        );
       }
       const result = new TextFeeling(text);
-      result.sentiment = new Sentiment(response.result.polarity, response.result.type);
-      result.sentences = response.sentences;
+      result.SetSentiment(new Sentiment(response.result.polarity, response.result.type));
+      result.SetSentences(response.sentences);
       return result;
     } catch (error) {
-      throw HttpError(error.statusCode || 500, error.message);
+      throw new ApplicationError(
+        error.message,
+        error.code || resultCodes.INTERNAL_SERVER_ERROR,
+        JSON.stringify(error),
+      );
     }
   }
 }

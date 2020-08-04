@@ -1,34 +1,225 @@
-# NodeJs Skeleton with TypeScript (NodeTSkeleton) 💀
+# NodeTSkeleton 💀
 
-A `NodeJs` skeleton to use `TypeScript` with `ExpressJs`, `KoaJs` or any other `web server framework`.
+`NodeTskeleton` is a `Clean Arquitecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
 
-The main philosophy of `NodeTskeleton` is that the `domain` of your solution should be independent of the framework you use, therefore your code should not be adapted to a specific framework, it should work in any framework.
+The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
-## Using Koa
+The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of `database`, `providers`or `services`, the `framework`, `libraries` or any other dependencies.
+
+`NodeTskeleton` has the minimum `tools` necessary for you to develop the `domain` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
+
+## Included tools
+
+`NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
+
+### errors
+
+Is a tool for separating `controlled` from `uncontrolled errors` and allows you to launch application errors according to your business rules, example:
+
+```ts
+throw new ApplicationError(
+	resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+	error.code || resultCodes.INTERNAL_SERVER_ERROR,
+	JSON.stringify(error),
+);
+```
+
+The function of this `class` will be reflected in your `error handler` as it will let you know when an exception was thrown by your `system` or by an `uncontrolled error`, as shown below:
+
+```ts
+return async function (err: ApplicationError, context: Context): Promise<void> {
+	const result = new Result();
+	if (err.name && err.name === "ApplicationError") {
+		console.log("Controlled application error", err.message);
+	} else {
+		console.log("No controlled application error", err);
+	}
+};
+```
+
+### locals
+
+It is a basic `internationalization` tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
+
+```ts
+import resources, { resourceKeys } from "../locals/index";
+
+const simpleMessage = resources.Get(this.resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
+
+const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+	missingParams: keysNotFound.join(", "),
+});
+
+// The contents of the local files are as follows:
+/* 
+// en: 
+{
+	...
+	"SOME_PARAMETERS_ARE_MISSING": "Some parameters are missing: {{missingParams}}.",
+	"YOUR_OWN_NEED": "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
+	...
+}
+// es: 
+{
+	...
+	"SOME_PARAMETERS_ARE_MISSING": "Faltan algunos parámetros: {{missingParams}}.",
+	"YOUR_OWN_NEED": "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
+	...
+}
+...
+*/
+
+// You can add enriched messages according to your own needs, for example:
+const yourEnrichedMessage = resources.GetWithParams(resourceKeys.YOUR_OWN_NEED, {
+	name: firstName, lastName, age: userAge
+});
+//
+```
+
+And you can add all the parameters you need with as many messages in your application as required.
+
+### mapper
+
+The mapper is a tool that will allow us to change the entities to the DTOs within our application, including entity changes between the data model and the domain and vice versa.
+
+This tool maps objects or arrays of objects, for example:
+
+```ts
+// For object
+const textFeelingDto = this.mapper.MapObject<TextFeeling, TextFeelingDto>(
+	textFeeling,
+	new TextFeelingDto(),
+);
+
+// For array object
+const productsDto: ProductDto[] = this.mapper.MapArray<Product, ProductDto>(
+	products,
+	() => this.mapper.Activator(ProductDto),
+);
+```
+
+`Activator` is the function responsible for returning a new instance for each call, otherwise you would have an array with the same object repeated N times. 
+
+### result
+
+`result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
+
+```ts
+export class UseCaseProductGet extends BaseUseCase {
+  constructor(private productQueryService: IProductQueryService) {
+    super();
+  }
+
+  async Execute(idMask: string): Promise<IResult<ProductDto>> {
+		// We create the instance of our type of result at the beginning of the use case.
+		const result = new Result<ProductDto>();
+		// With the resulting object we can control validations within other functions.
+    if (!this.validator.IsValidEntry(result, { productMaskId: idMask })) {
+      return result;
+    }
+    const product: Product = await this.productQueryService.GetByMaskId(idMask);
+    if (!product) {
+			// The result object helps us with the error response and the code.
+      result.SetError(
+        this.resources.Get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
+        this.resultCodes.NOT_FOUND,
+      );
+      return result;
+    }
+		const productDto = this.mapper.MapObject<Product, ProductDto>(product, new ProductDto());
+		// The result object also helps you with the response data.
+		result.SetData(productDto, this.resultCodes.SUCCESS);
+		// And finally you give it back.
+    return result;
+  }
+}
+```
+
+The `result` object may or may not have a `type` of `response`, it fits your needs.
+
+The `result` object can help you in unit tests as shown below:
+
+```ts
+it("should return a 400 error if quantity is null or zero", async () => {
+	itemDto.quantity = null;
+	const result = await addUseCase.Execute(userUid, itemDto);
+	expect(result.success).toBeFalsy();
+	expect(result.error).toBe(
+		resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+			missingParams: "quantity",
+		}),
+	);
+	expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+});
+```
+
+### useCase
+
+The `useCase` is a `base class` for `extending` use cases. 
+
+Its main function is to avoid you having to write the same code in every use case you have to build because it contains the instances of the `common tools` you will use in the case implementations.
+
+The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
+
+### validator
+
+The `validator` is a `very basic` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
+
+```ts
+...
+async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>> {
+	const result = new Result<CarItemDto>();
+	if (
+		!this.validator.IsValidEntry(result, {
+			Car_Item: itemDto,
+			Order_Id: itemDto?.orderId,
+			Product_Detail_Id: itemDto?.productDetailId,
+			Quantity: itemDto?.quantity,
+		})
+	) {
+		/* 
+			The error message on the result object will include a base message and will add to 
+			it all the parameter names that were passed on the object that do not have a valid value.
+		*/
+		return result;
+	}
+	/*...*/
+	return result;
+}
+```
+
+# Using NodeTskeleton
+
+In this `template` is included the example code base for `KoaJs` and `ExpressJs`, but if you have a `web framework of your preference` you must configure those described below according to the framework.
+
+## Using with KoaJs
 
 > Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
 
 > Remove the `express` code from the following files:
 
-- On file `src/infraestructure/server/CoreModules.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/infraestructure/server/CoreModules.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `src/infraestructure/config/index.ts` remove express line code and remove `//` for line corresponding to `KoaJs`
+- On file `src/infraestructure/server/App.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `src/infraestructure/server/App.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/adapters/controllers/textFeeling/TextFeeling.controller.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `src/controllers/TextFeeling.controller.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/adapters/controllers/BaseController.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `src/application/result/BaseController.ts` remove express code and remove `//` for lines corresponding to `KoaJs`
+- On directories `src/infraestructure/middlewares` remove `ExpressJs` code for each middleware and remove `//` for lines corresponding to `KoaJs`
 
 And then, continue with the `installation` step described at the end of this manual.
 
-## Using Express Js
+## Using with ExpressJs
 
 Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file.
 
-> Delete all commented code (correspondig to `KoaJs`) in the following files:
+> Delete all commented code (correspondig to `KoaJs`) in the files into following directories:
 
-`server/CoreModules.ts`, `config/index.ts`, `routes/index.ts`, `controllers/TextFeeling.controller.ts`, `application/result/BaseController.ts`
+`src/infraestructure/server/...`, 
+`src/adapters/controllers/...`, 
+`application/result/BaseController.ts`,
+`src/infraestructure/middlewares`
 
 And then, continue with the `installation` step described at the end of this manual.
 
@@ -58,7 +249,7 @@ npm update
 
 > Third:
 
-This project is cofigured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for WindowsNT.
+This project is cofigured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for `WindowsNT`.
 
 ### Observation
 
@@ -66,9 +257,9 @@ Copies of those files `launch.json` and `tasks.json` were attached at the end of
 
 ## Run Test
 
-> The tests are only for the domain of the application, not for the configuration of the project, they are two different things. 
+> The tests are implemented for each use case in its respective folder. 
 
-> This project includes a domain and its tests which should be used as an example and removed to implement its own business logic.
+> Ideally, each use case of your application should be supported by its respective test.
 
 > The tests use the `Jest` library and can be run in two ways:
 
@@ -86,7 +277,7 @@ npm run test
 
 > In the side menu of `VS Code` go to the `Execute` ▶ option and then at the top select the `Launch via NPM` option in menu and click on the green Play icon ▶️.
 
-> Remember to put some `stop point` in the code, for example in some method of the `wsController`.
+> Remember to put some `stop point` in the code, for example in some method of the `TextFeelingController`.
 
 ## Build for production
 
@@ -159,16 +350,16 @@ tsc
 }
 ```
 
-# TODO
+# Code of Conduct
 
-- Tests for example DDD code.
-- Dtos mapping library.
-- Library to be used to validate the request models.
-- DI strategy.
+The Contributor Covenant Code of Conduct for this project is based on Covenant Contributor which you can find at the following link:
 
+- <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md" target="_blank" >Go to Code of Conduct</a>
 
 ## Warning 
 > Use this resource at your own risk.
 
 `You are welcome to contribute to this project, dare to do so.`
 `If you are interested you can contact me by this means.`
+
+- 📫 <a href="mailto:harvic3@protonmail.com" target="_blank" >Write to him</a>

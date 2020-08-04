@@ -1,30 +1,33 @@
 {
-  "name": "ts-node-skeleton",
+  "name": "nodetskeleton",
   "version": "1.0.0",
   "description": "A skeleton for use typescript with NodeJs",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "jest --coverage --collectCoverageFrom=src/**",
+    "full-test": "rm -rf coverage/* && npm run build && jest --coverage --collectCoverageFrom=src/**",
+    "test": "npm run build && jest --coverage --collectCoverageFrom=src/**",
     "build": "rm -rf dist/* && tsc --sourceMap false",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
-    "precommit": "npm run lint && npm run pretty-quick --staged && npm run test"
+    "precommit": "npm run lint && npm run pretty-quick --staged && npm run test",
+    "start": "node dist/index"
   },
   "repository": {
     "type": "git",
-    "url": "your-repo-url"
+    "url": "https://github.com/harvic3/nodetskeleton"
   },
   "keywords": [
     "node",
     "ts",
     "skeleton",
     "nodejs",
-    "typescript"
+    "typescript",
+    "template"
   ],
   "author": "vickodev",
   "license": "MIT",
-  "homepage": "your-home-page",
+  "homepage": "https://github.com/harvic3/nodetskeleton/blob/master/README.md",
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.7",
@@ -41,6 +44,7 @@
     "eslint-plugin-prettier": "^3.1.3",
     "husky": "^4.2.5",
     "jest": "^26.2.2",
+    "jest-fetch-mock": "^3.0.3",
     "jest-mock-extended": "^1.0.9",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",

@@ -1,16 +1,17 @@
 {
-  "version": "3.9.5",
+  "version": "3.9.7",
   "compilerOptions": {
     "lib": [
-      "es2016"
+      "es5",
+      "es6"
     ],
     "outDir": "./dist/",  
     "sourceMap": true,
-    "target": "es6",
+    "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": false,
@@ -18,10 +19,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": [
-    "node_modules",
-    ".vscode",
-    "coverage",
-  ],
+  "exclude": ["./src/**/*.test.ts"],
   "include": ["./src/**/*"]
 }

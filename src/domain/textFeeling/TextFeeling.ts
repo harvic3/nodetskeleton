@@ -30,4 +30,16 @@ export class TextFeeling implements ITextFeeling {
     });
     return lowest;
   }
+  SetSentiment(sentiment: Sentiment): void {
+    if (sentiment) {
+      this.sentiment = sentiment;
+    }
+  }
+  SetSentences(sentences: Sentence[]): void {
+    if (sentences.length > 0) {
+      sentences.forEach((sentence) => {
+        this.sentences.push(sentence);
+      });
+    }
+  }
 }

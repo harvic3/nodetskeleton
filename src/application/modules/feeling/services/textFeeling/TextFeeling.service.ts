@@ -1,17 +1,14 @@
 import { ITextFeelingService } from "./TextFeeling.service.interface";
 import { Sentiment } from "../../../../../domain/sentence/Sentiment";
+import { TextFeeling } from "../../../../../domain/textFeeling/TextFeeling";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
-import { ITextFeeling } from "../../../../../domain/textFeeling/TextFeeling.interface";
 import { IFeelingQueryService } from "../queryServices/IFeelingQuery.service.interface";
 
 export default class TextFeelingService implements ITextFeelingService {
-  private textFeelingQueryService: IFeelingQueryService;
-  public constructor(textFeelingQueryService: IFeelingQueryService) {
-    this.textFeelingQueryService = textFeelingQueryService;
-  }
-  async GetFeelingText(text: string): Promise<ITextFeeling> {
+  public constructor(private textFeelingQueryService: IFeelingQueryService) {}
+  async GetFeelingText(text: string): Promise<TextFeeling> {
     const textFeeling = await this.textFeelingQueryService.AnaliceText(text);
-    return textFeeling || null;
+    return textFeeling;
   }
   async GetSentimentText(text: string): Promise<Sentiment> {
     const textFeeling = await this.textFeelingQueryService.AnaliceText(text);

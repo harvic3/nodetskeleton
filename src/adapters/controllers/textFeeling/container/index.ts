@@ -1,4 +1,4 @@
-import TextFeelingRepository from "../../../repositories/feeling/TextFeelingRepository";
+import TextFeelingRepository from "../../../providers/feeling/TextFeelingRepository";
 import TextFeelingService from "../../../../application/modules/feeling/services/textFeeling/TextFeeling.service";
 import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
 import { UseCaseGetHighestFeelingSentence } from "../../../../application/modules/feeling/useCases/getHighest";

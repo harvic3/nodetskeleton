@@ -23,7 +23,7 @@ class HttpClient {
     HEAD: "HEAD",
   };
   SerializationMethod = serialization;
-  async SendAsync<T>(
+  async Send<T>(
     url: string,
     method = this.Methods.GET,
     {
@@ -103,8 +103,7 @@ async function ProcessResponseData<T>(
   } catch (error) {
     throw new ApplicationError(
       resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-      resultCodes.INTERNAL_SERVER_ERROR,
-      error.code,
+      error?.code || resultCodes.INTERNAL_SERVER_ERROR,
       JSON.stringify(error),
     );
   }
