@@ -106,32 +106,32 @@ const productsDto: ProductDto[] = this.mapper.MapArray<Product, ProductDto>(
 
 ```ts
 export class UseCaseProductGet extends BaseUseCase {
-  constructor(private productQueryService: IProductQueryService) {
-    super();
-  }
+	constructor(private productQueryService: IProductQueryService) {
+		super();
+	}
 
-  async Execute(idMask: string): Promise<IResult<ProductDto>> {
+	async Execute(idMask: string): Promise<IResult<ProductDto>> {
 		// We create the instance of our type of result at the beginning of the use case.
 		const result = new Result<ProductDto>();
 		// With the resulting object we can control validations within other functions.
-    if (!this.validator.IsValidEntry(result, { productMaskId: idMask })) {
-      return result;
-    }
-    const product: Product = await this.productQueryService.GetByMaskId(idMask);
-    if (!product) {
+		if (!this.validator.IsValidEntry(result, { productMaskId: idMask })) {
+			return result;
+		}
+		const product: Product = await this.productQueryService.GetByMaskId(idMask);
+		if (!product) {
 			// The result object helps us with the error response and the code.
-      result.SetError(
-        this.resources.Get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
-        this.resultCodes.NOT_FOUND,
-      );
-      return result;
-    }
+			result.SetError(
+				this.resources.Get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
+				this.resultCodes.NOT_FOUND,
+			);
+			return result;
+		}
 		const productDto = this.mapper.MapObject<Product, ProductDto>(product, new ProductDto());
 		// The result object also helps you with the response data.
 		result.SetData(productDto, this.resultCodes.SUCCESS);
 		// And finally you give it back.
-    return result;
-  }
+		return result;
+		}
 }
 ```
 
@@ -179,8 +179,8 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 		})
 	) {
 		/* 
-			The error message on the result object will include a base message and will add to 
-			it all the parameter names that were passed on the object that do not have a valid value.
+		The error message on the result object will include a base message and will add to 
+		it all the parameter names that were passed on the object that do not have a valid value.
 		*/
 		return result;
 	}
@@ -226,18 +226,18 @@ import {
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-  public constructor() {
-    super();
-    this.InitializeRoutes();
+	public constructor() {
+		super();
+		this.InitializeRoutes();
 	}
 	/*...*/
 	GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const textDto: TextDto = req.body;
-      this.HandleResult(res, await getFeelingTextUseCase.Execute(textDto));
-    } catch (error) {
-      next(error);
-    }
+		try {
+			const textDto: TextDto = req.body;
+			this.HandleResult(res, await getFeelingTextUseCase.Execute(textDto));
+		} catch (error) {
+			next(error);
+		}
 	};
 	/*...*/
 }
