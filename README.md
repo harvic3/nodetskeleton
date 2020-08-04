@@ -8,6 +8,10 @@ The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture 
 
 `NodeTskeleton` has the minimum `tools` necessary for you to develop the `domain` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
+## Philosophy
+
+...building... comming soon.
+
 ## Included tools
 
 `NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
