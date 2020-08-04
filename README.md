@@ -131,7 +131,7 @@ export class UseCaseProductGet extends BaseUseCase {
 		result.SetData(productDto, this.resultCodes.SUCCESS);
 		// And finally you give it back.
 		return result;
-		}
+	}
 }
 ```
 
@@ -166,7 +166,7 @@ The tools extended by this class are: the `mapper`, the `validator`, the `messag
 The `validator` is a `very basic` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
 
 ```ts
-...
+/*...*/
 async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>> {
 	const result = new Result<CarItemDto>();
 	if (
@@ -187,6 +187,7 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 	/*...*/
 	return result;
 }
+/*...*/
 ```
 
 # Dependency injection strategy
