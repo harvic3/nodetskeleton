@@ -189,6 +189,63 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 }
 ```
 
+# Dependency injection strategy
+
+For `dependency injection`, no external libraries (such as InversifyJs) are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
+
+This strategy is only needed in the `adapter layer` for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
+
+```ts
+// In the path src/adapters/contollers/textFeeling there is a folder called container... the index file has the following: 
+import TextFeelingRepository from "../../../providers/feeling/TextFeelingRepository";
+import TextFeelingService from "../../../../application/modules/feeling/services/textFeeling/TextFeeling.service";
+import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
+import { UseCaseGetHighestFeelingSentence } from "../../../../application/modules/feeling/useCases/getHighest";
+import { UseCaseGetLowestFeelingSentence } from "../../../../application/modules/feeling/useCases/getLowest";
+
+const textFeelingRepo = new TextFeelingRepository();
+const textFeelingService = new TextFeelingService(textFeelingRepo);
+const getFeelingTextUseCase = new UseCaseGetFeeling(textFeelingService);
+const getHighestFeelingSentenceUseCase = new UseCaseGetHighestFeelingSentence(textFeelingService);
+const getLowestFeelingSentenceUseCase = new UseCaseGetLowestFeelingSentence(textFeelingService);
+
+export { getFeelingTextUseCase, getHighestFeelingSentenceUseCase, getLowestFeelingSentenceUseCase };
+```
+
+In this `container` the `instances` of the `use cases` for the specific `controller` are created and here the necessary dependencies for the operation of those use cases are injected, then they are `exported` and in the `controller` they are `imported` and `used` as following:
+
+```ts
+// For ExpressJs
+import BaseController from "../BaseController";
+import { Request, Response, NextFunction } from "../../../infraestructure/server/CoreModules";
+import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import {
+  getFeelingTextUseCase,
+  getHighestFeelingSentenceUseCase,
+  getLowestFeelingSentenceUseCase,
+} from "./container/index";
+
+class TextFeelingController extends BaseController {
+  public constructor() {
+    super();
+    this.InitializeRoutes();
+	}
+	/*...*/
+	GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const textDto: TextDto = req.body;
+      this.HandleResult(res, await getFeelingTextUseCase.Execute(textDto));
+    } catch (error) {
+      next(error);
+    }
+	};
+	/*...*/
+}
+```
+
+As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to your application.
+
+
 # Using NodeTskeleton
 
 In this `template` is included the example code base for `KoaJs` and `ExpressJs`, but if you have a `web framework of your preference` you must configure those described below according to the framework.
