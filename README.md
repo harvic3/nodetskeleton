@@ -171,6 +171,7 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 	const result = new Result<CarItemDto>();
 	if (
 		!this.validator.IsValidEntry(result, {
+			User_Identifier: userUid,
 			Car_Item: itemDto,
 			Order_Id: itemDto?.orderId,
 			Product_Detail_Id: itemDto?.productDetailId,
@@ -223,7 +224,7 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 
 And then, continue with the `installation` step described at the end of this manual.
 
-## Using another web framework
+## Using with another web framework
 
 > You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework.
 
