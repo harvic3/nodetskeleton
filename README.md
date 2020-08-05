@@ -8,7 +8,7 @@ The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture 
 
 `NodeTskeleton` has the minimum `tools` necessary for you to develop the `domain` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
-## Philosophy
+## Philosophy 🧘🏽
 
 Applications are generally developed to be used by people, so people should be the focus of them.
 
@@ -18,17 +18,17 @@ The user stories must be in the `src/application` path of our solution, there we
 
 <div style="text-align:center"> <img src="https://i.ibb.co/jvczPhW/Structure-Tskeleton.png" alt="Structure-Tskeleton" border="10" /> </div>
 
-> Observations:
+### Observations 👀
 
 - If your application has no roles, then there's no mess, it's just modules. ;)
 
 - Note that you can repeat modules between roles, because a module can be used by different roles, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
-## Included tools
+## Included tools 🧰
 
 `NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
 
-### errors
+### errors 
 
 Is a tool for separating `controlled` from `uncontrolled errors` and allows you to launch application errors according to your business rules, example:
 
@@ -206,7 +206,7 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 /*...*/
 ```
 
-## Dependency injection strategy
+## Dependency injection strategy 📦
 
 For `dependency injection`, no external libraries (such as InversifyJs) are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
 
@@ -263,11 +263,11 @@ class TextFeelingController extends BaseController {
 As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to your application.
 
 
-# Using NodeTskeleton
+# Using NodeTskeleton 👾
 
 In this `template` is included the example code base for `KoaJs` and `ExpressJs`, but if you have a `web framework of your preference` you must configure those described below according to the framework.
 
-## Using with KoaJs
+## Using with KoaJs 🦋
 
 > Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
 
@@ -285,7 +285,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
-## Using with ExpressJs
+## Using with ExpressJs 🐛
 
 Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file.
 
@@ -298,17 +298,17 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 
 And then, continue with the `installation` step described in this manual.
 
-## Using with another web framework
+## Using with another web framework 👽
 
 > You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework.
 
 And then, continue with the next step (`installation`).
 
-## Infrastucture
+## Infrastucture 🏗️
 
-The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infraestructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/result/...` is included as a standardized response model.
+The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infraestructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
 
-## Installation
+## Installation 🔥
 
 > First, we must install the dependencies, run: 
 
@@ -326,11 +326,11 @@ npm update
 
 This project is cofigured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for `WindowsNT`.
 
-### Observation
+### Observation 👀
 
 Copies of those files `launch.json` and `tasks.json` were attached at the end of this document.
 
-## Run Test
+## Run Test 🧪
 
 > The tests are implemented for each use case in its respective folder. 
 
@@ -348,13 +348,13 @@ or
 npm run test
 ```
 
-## Application debbuger
+## Application debbuger 🔬
 
 > In the side menu of `VS Code` go to the `Execute` ▶ option and then at the top select the `Launch via NPM` option in menu and click on the green Play icon ▶️.
 
 > Remember to put some `stop point` in the code, for example in some method of the `TextFeelingController`.
 
-## Build for production
+## Build for production ⚙️
 
 > To get the code you can use in a productive environment run:
 
@@ -373,7 +373,7 @@ tsc
 ```
 > With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
 
-## Setting files (.vscode)
+## Setting files (.vscode) 🛠️
 
 > Files for `.vscode` folder
 
@@ -425,13 +425,13 @@ tsc
 }
 ```
 
-# Code of Conduct
+# Code of Conduct 👌
 
 The Contributor Covenant Code of Conduct for this project is based on Covenant Contributor which you can find at the following link:
 
 - <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md" target="_blank" >Go to Code of Conduct</a>
 
-## Warning 
+## Warning 💀
 
 > Use this resource at your own risk.
 
