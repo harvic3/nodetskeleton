@@ -1,4 +1,4 @@
-// // For KoaJs
+// For KoaJs
 // import config from "../../infraestructure/config";
 // import { Router, Context } from "../../infraestructure/server/CoreModules";
 // import { IResult } from "../../application/shared/result/Result.interface";

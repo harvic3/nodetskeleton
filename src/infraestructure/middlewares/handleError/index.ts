@@ -8,7 +8,7 @@
 // export default function () {
 //   return async function (err: ApplicationError, context: Context): Promise<void> {
 //     const result = new Result();
-//     if (err.name && err.name === "ApplicationError") {
+//     if (err?.name === "ApplicationError") {
 //       console.log("Controlled application error", err.message);
 //       result.SetError(err.message, err.errorCode);
 //     } else {
@@ -37,7 +37,7 @@ export default function () {
     next: NextFunction,
   ): Promise<void> {
     const result = new Result();
-    if (err.name && err.name === "ApplicationError") {
+    if (err?.name === "ApplicationError") {
       console.log("Controlled application error", err.message);
       result.SetError(err.message, err.errorCode);
     } else {

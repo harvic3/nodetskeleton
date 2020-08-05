@@ -18,6 +18,7 @@
 //   }
 
 //   public LoadMiddlewares(): void {
+//     // this.app.use(cors());
 //     this.app.use(bodyParser());
 //     this.app.use(localization());
 //   }

@@ -1,4 +1,4 @@
-// For KoaJS
+// For KoaJs
 // import config from "../../config";
 // import { Context, Next } from "../../server/CoreModules";
 // import resources from "../../../application/shared/locals/index";
