@@ -236,7 +236,7 @@ In this `container` the `instances` of the `use cases` for the specific `control
 ```ts
 // For ExpressJs
 import BaseController from "../BaseController";
-import { Request, Response, NextFunction } from "../../../infraestructure/server/CoreModules";
+import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {
   getFeelingTextUseCase,
@@ -277,15 +277,15 @@ The easy way is to switch to the `with-koa branch` in this repository, but if yo
 
 > Remove the `express` code from the following files:
 
-- On file `src/infraestructure/server/CoreModules.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/infrastructure/server/CoreModules.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On file `src/infraestructure/server/App.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
+- On file `src/infrastructure/server/App.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
 - On file `src/adapters/controllers/textFeeling/TextFeeling.controller.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
 - On file `src/adapters/controllers/BaseController.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
 
-- On directories `src/infraestructure/middlewares` remove `ExpressJs` code for each middleware and remove `//` for lines corresponding to `KoaJs`
+- On directories `src/infrastructure/middlewares` remove `ExpressJs` code for each middleware and remove `//` for lines corresponding to `KoaJs`
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
@@ -298,7 +298,7 @@ The controllers should be `exported as default` modules to make the handling of 
 ```ts
 // Controller example with export default
 import BaseController from "../BaseController";
-import { Context } from "../../../infraestructure/server/CoreModules";
+import { Context } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {
   getFeelingTextUseCase,
@@ -382,10 +382,10 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 
 > Delete all commented code (correspondig to `KoaJs`) in the files into following directories:
 
-`src/infraestructure/server/...`, 
+`src/infrastructure/server/...`, 
 `src/adapters/controllers/...`, 
 `application/result/BaseController.ts`,
-`src/infraestructure/middlewares`
+`src/infrastructure/middlewares`
 
 And then, continue with the `installation` step described in this manual.
 
@@ -398,7 +398,7 @@ The controllers should be `exported as default` modules to make the handling of 
 ```ts
 // Controller example with export default
 import BaseController from "../BaseController";
-import { Request, Response, NextFunction } from "../../../infraestructure/server/CoreModules";
+import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {
 	getFeelingTextUseCase,
@@ -481,7 +481,7 @@ And then, continue with the step `installation`.
 
 ## Infrastucture 🏗️
 
-The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infraestructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
+The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infrastructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
 
 ## Installation 🔥
 

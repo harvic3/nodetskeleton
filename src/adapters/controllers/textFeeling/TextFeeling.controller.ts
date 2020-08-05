@@ -1,5 +1,5 @@
 import BaseController from "../BaseController";
-import { Context } from "../../../infraestructure/server/CoreModules";
+import { Context } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {
   getFeelingTextUseCase,

@@ -1,4 +1,4 @@
-import App from "./infraestructure/server/App";
+import App from "./infrastructure/server/App";
 import BaseController from "./adapters/controllers/BaseController";
 
 // Region controllers
