@@ -24,6 +24,8 @@ The user stories must be in the `src/application` path of our solution, there we
 
 - Note that you can repeat modules between roles, because a module can be used by different roles, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
+- This strategy makes the project easy to `navigate`, easy to `scale` and easy to `maintain`, which boils down to `good mental health`.
+
 ## Included tools 🧰
 
 `NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
