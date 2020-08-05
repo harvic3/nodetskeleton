@@ -2,5 +2,5 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   coverageDirectory: "coverage",
-  modulePathIgnorePatterns: ["./src/infraestructure/", "./src/application/shared/"],
+  modulePathIgnorePatterns: ["./src/infrastructure/", "./src/application/shared/"],
 };

@@ -1,6 +1,6 @@
 // For KoaJs
-// import config from "../../infraestructure/config";
-// import { Router, Context } from "../../infraestructure/server/CoreModules";
+// import config from "../../infrastructure/config";
+// import { Router, Context } from "../../infrastructure/server/CoreModules";
 // import { IResult } from "../../application/shared/result/Result.interface";
 
 // export default class BaseController {
