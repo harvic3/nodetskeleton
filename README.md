@@ -271,6 +271,8 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs 🦋
 
+The easy way is to switch to the `with-koa branch` in this repository, but if you want the more elaborate one follow these steps:
+
 > Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
 
 > Remove the `express` code from the following files:
@@ -288,6 +290,8 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
 ## Using with ExpressJs 🐛
+
+The easy way is to switch to the `with-express branch` in this repository, but if you want the more elaborate one follow these steps:
 
 Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file.
 
