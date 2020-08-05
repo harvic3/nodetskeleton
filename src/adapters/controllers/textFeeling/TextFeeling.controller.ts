@@ -40,7 +40,7 @@
 
 // For ExpressJs
 import BaseController from "../BaseController";
-import { Request, Response, NextFunction } from "../../../infraestructure/server/CoreModules";
+import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {
   getFeelingTextUseCase,

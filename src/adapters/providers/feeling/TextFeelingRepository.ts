@@ -1,4 +1,4 @@
-import httpClient, { Headers } from "../../../infraestructure/httpClient";
+import httpClient, { Headers } from "../../../infrastructure/httpClient";
 import { IFeelingQueryService } from "../../../application/modules/feeling/services/queryServices/IFeelingQuery.service.interface";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { ITextFeeling } from "../../../domain/textFeeling/TextFeeling.interface";

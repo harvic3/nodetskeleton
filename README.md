@@ -289,6 +289,91 @@ The easy way is to switch to the `with-koa branch` in this repository, but if yo
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
+### Controllers
+
+The location of the `controllers` must be in the `adapters` directory, there you can place them by responsibility in separate directories.
+
+The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
+
+```ts
+// Controller example with export default
+import BaseController from "../BaseController";
+import { Context } from "../../../infraestructure/server/CoreModules";
+import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import {
+  getFeelingTextUseCase,
+  getHighestFeelingSentenceUseCase,
+  getLowestFeelingSentenceUseCase,
+} from "./container/index";
+
+class TextFeelingController extends BaseController {
+	public constructor() {
+		super();
+		this.InitializeRoutes();
+	}
+	/*...*/
+}
+
+const instance = new TextFeelingController();
+// You can see the default export
+export default instance;
+```
+Example of the handling of the `controllers` in the `index` file of our application:
+
+```ts
+/*...*/
+// Region controllers
+import productController from "./adapters/controllers/product/Product.controller";
+import shoppingCarController from "./adapters/controllers/shoppingCart/ShoppingCar.controller";
+import categoryController from "./adapters/controllers/category/CategoryController";
+/*...*/
+// End controllers
+
+const controllers: BaseController[] = [
+	productController,
+	shoppingCarController,
+	categoryController,
+	/*...*/
+];
+
+const app = new App(controllers);
+/*...*/
+```
+
+### Routes
+
+The strategy is to manage the routes `within` the `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
+
+```ts
+/*...*/
+private InitializeRoutes() {
+	this.router.post("/v1/car", authorization(), this.Create);
+	this.router.get("/v1/car/:idMask", authorization(), this.Get);
+	this.router.post("/v1/car/:idMask", authorization(), this.Buy);
+	this.router.post("/v1/car/:idMask/item", authorization(), this.Add);
+	this.router.put("/v1/car/:idMask/item", authorization(), this.Remove);
+	this.router.delete("/v1/car/:idMask", authorization(), this.Empty);
+	/*...*/
+}
+/*...*/
+```
+
+### Root path
+
+If you need to manage a `root path` in your `application` then this part is configured in the `BaseController` class in `adapters` directory as well:
+
+```ts
+/*...*/
+export default class BaseController {
+  constructor() {
+		this.router = new Router();
+		// This is the line and the parameter comes from `config`.
+    this.router.prefix(config.server.root);
+  }
+}
+/*...*/
+```
+
 ## Using with ExpressJs 🐛
 
 The easy way is to switch to the `with-express branch` in this repository, but if you want the more elaborate one follow these steps:
@@ -304,11 +389,95 @@ Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file
 
 And then, continue with the `installation` step described in this manual.
 
+### Controllers
+
+The location of the `controllers` must be in the `adapters` directory, there you can place them by responsibility in separate directories.
+
+The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
+
+```ts
+// Controller example with export default
+import BaseController from "../BaseController";
+import { Request, Response, NextFunction } from "../../../infraestructure/server/CoreModules";
+import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import {
+	getFeelingTextUseCase,
+	getHighestFeelingSentenceUseCase,
+	getLowestFeelingSentenceUseCase,
+} from "./container/index";
+
+class TextFeelingController extends BaseController {
+	public constructor() {
+		super();
+		this.InitializeRoutes();
+	}
+	/*...*/
+}
+
+const instance = new TextFeelingController();
+// You can see the default export
+export default instance;
+```
+Example of the handling of the `controllers` in the `index` file of our application:
+
+```ts
+/*...*/
+// Region controllers
+import productController from "./adapters/controllers/product/Product.controller";
+import shoppingCarController from "./adapters/controllers/shoppingCart/ShoppingCar.controller";
+import categoryController from "./adapters/controllers/category/CategoryController";
+/*...*/
+// End controllers
+
+const controllers: BaseController[] = [
+	productController,
+	shoppingCarController,
+	categoryController,
+	/*...*/
+];
+
+const app = new App(controllers);
+/*...*/
+```
+
+### Routes
+
+The strategy is to manage the routes `within` the `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
+
+```ts
+/*...*/
+private InitializeRoutes() {
+	this.router.post("/v1/car", authorization(), this.Create);
+	this.router.get("/v1/car/:idMask", authorization(), this.Get);
+	this.router.post("/v1/car/:idMask", authorization(), this.Buy);
+	this.router.post("/v1/car/:idMask/item", authorization(), this.Add);
+	this.router.put("/v1/car/:idMask/item", authorization(), this.Remove);
+	this.router.delete("/v1/car/:idMask", authorization(), this.Empty);
+	/*...*/
+}
+/*...*/
+```
+
+### Root path
+
+If you need to manage a `root path` in your `application` then this part is configured in the `App` `infrastructure server module` that loads the controllers as well:
+
+```ts
+/*...*/
+private LoadControllers(controllers: BaseController[]): void {
+	controllers.forEach((controller) => {
+		// This is the line and the parameter comes from `config`.
+		this.app.use(config.server.root, controller.router);
+	});
+}
+/*...*/
+```
+
 ## Using with another web framework 👽
 
-> You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework.
+> You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework, You must also modify the `Server` module, `Middlewares` in `infrastructure` directory and the `BaseController` and `Controllers` in adapters directory.
 
-And then, continue with the next step (`installation`).
+And then, continue with the step `installation`.
 
 ## Infrastucture 🏗️
 

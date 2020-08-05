@@ -21,7 +21,7 @@
 
 // For ExpressJs
 import { IResult } from "../../application/shared/result/Result.interface";
-import { Router, Response, RouterType } from "../../infraestructure/server/CoreModules";
+import { Router, Response, RouterType } from "../../infrastructure/server/CoreModules";
 
 export default class BaseController {
   constructor() {

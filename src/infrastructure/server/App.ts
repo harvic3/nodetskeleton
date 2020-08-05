@@ -43,7 +43,7 @@
 
 // For ExpressJs
 import config from "../config";
-import { Server, BodyParser, Application } from "../server/CoreModules";
+import { Server, BodyParser, Application } from "./CoreModules";
 import BaseController from "../../adapters/controllers/BaseController";
 import localization from "../middlewares/localization";
 import handleError from "../middlewares/handleError";
