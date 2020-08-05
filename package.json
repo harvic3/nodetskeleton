@@ -58,8 +58,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^9.1.0",
     "moment": "^2.27.0",
-    "node-fetch": "^2.6.0",
-    "typed-rest-client": "^1.7.3"
+    "node-fetch": "^2.6.0"
   },
   "husky": {
     "hooks": {
