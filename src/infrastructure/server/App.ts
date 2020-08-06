@@ -24,6 +24,7 @@ export default class App {
 
   private LoadControllers(controllers: BaseController[]) {
     controllers.forEach((controller) => {
+      controller.router.prefix(config.server.root);
       this.app.use(controller.router.routes());
       this.app.use(controller.router.allowedMethods());
     });
