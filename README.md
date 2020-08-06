@@ -2,7 +2,7 @@
 
 `NodeTskeleton` is a `Clean Arquitecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
 
-The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
+The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`, `"business logic"`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
 The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of `database`, `providers`or `services`, the `framework`, `libraries` or any other dependencies.
 
@@ -20,9 +20,9 @@ The user stories must be in the `src/application` path of our solution, there we
 
 ### Observations 👀
 
-- If your application has no roles, then there's no mess, it's just modules. ;)
+- If your application has no `roles`, then there's no mess, it's just `modules`. ;)
 
-- Note that you can repeat modules between roles, because a module can be used by different roles, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
+- Note that you can `repeat` modules between `roles`, because a `module can be used by different roles`, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
 - This strategy makes the project easy to `navigate`, easy to `scale` and easy to `maintain`, which boils down to `good mental health`.
 
@@ -599,6 +599,32 @@ tsc
 	]
 }
 ```
+
+# Test your Clean Arquitecture 🥁
+
+Something important is to know if we really did the job of building our clean architecture well, and this can be found very easily by following these steps: 
+
+1. Make sure you don't have any pending changes in your application to upload to your repository, otherwise upload them if you do.
+
+2. Identify and remove `adapters` and `infrastucture` `directories` from your solution, as well as the `index.ts` file.
+
+3. Execute the test command `npm t` or `npm run test` and the build command `tsc` or `npm run build` too, and everything should run smoothly, otherwise you violated the principle of dependency invertion.
+
+4. Run the `git checkout .` command to get everything back to normal.
+
+5. Most importantly, no `domain entity` can make use of an `application service` and less of a `provider service` (repository or provider), the `application services use the entities`, the flow goes from the `most external part` of the application `to the most internal part` of it.
+
+# Conclusions (Personal) 💩
+
+- The clean architecture allows us to develop the `use cases` and the `domain` (businnes logic) of an application without worrying about the type of database, web framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
+
+- The clean architecture, the hexagonal architecture, the onion architecture and the port and adapter architecture in the background can be the same, the final purpose is to decouple the business layer of our application from the outside world, basically it leads us to think about designing our solutions from the `inside to outside` and not from the outside to inside.
+
+- When we develop with clean architecture we can more `easily change` any `"external dependency"` of our application without major concerns, obviously there are some that will require more effort than others, for example migrating from a NoSql schema to a SQL schema where probably the queries will be affected, however our business logic can remain intact and work for both models.
+
+- The advantages that clean architecture offers us are very significant; it is one of the `best practices for making scalable software` that `works for your business` and `not for your preferred framework`.
+
+- Clean architecture is basically based on the famous and well-known five `SOLID principles` that we had not mentioned until this moment and that we very little internalized.
 
 # Code of Conduct 👌
 
