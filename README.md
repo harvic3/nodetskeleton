@@ -16,7 +16,7 @@ For this reason `user stories` are written, stories that give us information abo
 
 The user stories must be in the `src/application` path of our solution, there we create a directory that we will call `modules` and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
 
-<div style="text-align:center"> <img src="https://i.ibb.co/jvczPhW/Structure-Tskeleton.png" alt="Structure-Tskeleton" border="10" /> </div>
+<div style="text-align:center"> <img src="https://i.ibb.co/t2mHGmC/Node-Tskeleton.png" alt="Node-Tskeleton" border="10"> </div>
 
 ### Observations 👀
 
