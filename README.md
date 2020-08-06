@@ -360,16 +360,17 @@ private InitializeRoutes() {
 
 ### Root path
 
-If you need to manage a `root path` in your `application` then this part is configured in the `BaseController` class in `adapters` directory as well:
+If you need to manage a `root path` in your `application` then this part is configured in `App`, the `infrastructure server module` that loads the controllers as well:
 
 ```ts
 /*...*/
-export default class BaseController {
-  constructor() {
-		this.router = new Router();
+private LoadControllers(controllers: BaseController[]) {
+	controllers.forEach((controller) => {
 		// This is the line and the parameter comes from `config`.
-    this.router.prefix(config.server.root);
-  }
+		controller.router.prefix(config.server.root);
+		this.app.use(controller.router.routes());
+		this.app.use(controller.router.allowedMethods());
+	});
 }
 /*...*/
 ```
@@ -460,7 +461,7 @@ private InitializeRoutes() {
 
 ### Root path
 
-If you need to manage a `root path` in your `application` then this part is configured in the `App` `infrastructure server module` that loads the controllers as well:
+If you need to manage a `root path` in your `application` then this part is configured in `App`, the `infrastructure server module` that loads the controllers as well:
 
 ```ts
 /*...*/
