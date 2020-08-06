@@ -600,7 +600,7 @@ tsc
 }
 ```
 
-# Test your Clean Arquitecture 🥁
+## Test your Clean Arquitecture 🥁
 
 Something important is to know if we really did the job of building our clean architecture well, and this can be found very easily by following these steps: 
 
@@ -614,7 +614,7 @@ Something important is to know if we really did the job of building our clean ar
 
 5. Most importantly, no `domain entity` can make use of an `application service` and less of a `provider service` (repository or provider), the `application services use the entities`, the flow goes from the `most external part` of the application `to the most internal part` of it.
 
-# Conclusions (Personal) 💩
+## Conclusions (Personal) 💩
 
 - The clean architecture allows us to develop the `use cases` and the `domain` (businnes logic) of an application without worrying about the type of database, web framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
 
@@ -626,7 +626,7 @@ Something important is to know if we really did the job of building our clean ar
 
 - Clean architecture is basically based on the famous and well-known five `SOLID principles` that we had not mentioned until this moment and that we very little internalized.
 
-# Code of Conduct 👌
+## Code of Conduct 👌
 
 The Contributor Covenant Code of Conduct for this project is based on Covenant Contributor which you can find at the following link:
 
