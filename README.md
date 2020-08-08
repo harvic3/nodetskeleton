@@ -173,7 +173,7 @@ it("should return a 400 error if quantity is null or zero", async () => {
 
 ### UseCase
 
-The `useCase` is a `base class` for `extending` use cases. 
+The `UseCase` is a `base class` for `extending` use cases and if you were a retailer you could see it in action in the above explanation of the `Result` tool.
 
 Its main function is to avoid you having to write the same code in every use case you have to build because it contains the instances of the `common tools` you will use in the case implementations.
 
