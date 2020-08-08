@@ -8,7 +8,6 @@ import * as resultCodes from "../../../../shared/result/resultCodes.json";
 import { TextFeeling } from "../../../../../domain/textFeeling/TextFeeling";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
 import { Sentiment } from "../../../../../domain/sentence/Sentiment";
-// enableFetchMocks();
 
 const textFeelingQueryServiceMock = mock<IFeelingQueryService>();
 const textFeelingService = new TextFeelingService(textFeelingQueryServiceMock);
@@ -31,8 +30,8 @@ describe("when try to get a lowest feeling sentence for text", () => {
   it("should return a 400 error if dto is null", async () => {
     const result = await getLowestFeelingUseCase.Execute(null);
     expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
-    expect(result.message).toBe(
-      resources.GetWithParams(resources.Get(resourceKeys.SOME_PARAMETERS_ARE_MISSING), {
+    expect(result.error).toBe(
+      resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "textDto, text",
       }),
     );
@@ -41,8 +40,8 @@ describe("when try to get a lowest feeling sentence for text", () => {
   it("should return a 400 error if text in dto is null", async () => {
     const result = await getLowestFeelingUseCase.Execute({ text: null });
     expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
-    expect(result.message).toBe(
-      resources.GetWithParams(resources.Get(resourceKeys.SOME_PARAMETERS_ARE_MISSING), {
+    expect(result.error).toBe(
+      resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text",
       }),
     );
@@ -52,9 +51,7 @@ describe("when try to get a lowest feeling sentence for text", () => {
     textFeelingQueryServiceMock.AnaliceText.mockResolvedValue(null);
     const result = await getLowestFeelingUseCase.Execute(textDto);
     expect(result.statusCode).toBe(resultCodes.INTERNAL_SERVER_ERROR);
-    expect(result.message).toBe(
-      resources.Get(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR)),
-    );
+    expect(result.error).toBe(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
     expect(result.success).toBeFalsy();
   });
   it("should return success if dto have data and feeling service work", async () => {
