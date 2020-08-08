@@ -74,6 +74,7 @@ const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE
 {
 	...
 	"SOME_PARAMETERS_ARE_MISSING": "Some parameters are missing: {{missingParams}}.",
+	"ITEM_PRODUCT_DOES_NOT_EXIST": "The item product does not exist.",
 	"YOUR_OWN_NEED": "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
 	...
 }
@@ -81,6 +82,7 @@ const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE
 {
 	...
 	"SOME_PARAMETERS_ARE_MISSING": "Faltan algunos parámetros: {{missingParams}}.",
+	"ITEM_PRODUCT_DOES_NOT_EXIST": "El item del producto no existe.",
 	"YOUR_OWN_NEED": "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
 	...
 }
@@ -173,7 +175,7 @@ it("should return a 400 error if quantity is null or zero", async () => {
 
 ### UseCase
 
-The `useCase` is a `base class` for `extending` use cases. 
+The `UseCase` is a `base class` for `extending` use cases and if you were a retailer you could see it in action in the above explanation of the `Result` tool.
 
 Its main function is to avoid you having to write the same code in every use case you have to build because it contains the instances of the `common tools` you will use in the case implementations.
 
@@ -619,7 +621,7 @@ Something important is to know if we really did the job of building our clean ar
 
 - The clean architecture allows us to develop the `use cases` and the `domain` (businnes logic) of an application without worrying about the type of database, web framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
 
-- The clean architecture, the hexagonal architecture, the onion architecture and the port and adapter architecture in the background can be the same, the final purpose is to decouple the business layer of our application from the outside world, basically it leads us to think about designing our solutions from the `inside to outside` and not from the outside to inside.
+- The clean architecture, the hexagonal architecture, the onion architecture and the ports and adapters architecture in the background can be the same, the final purpose is to decouple the business layer of our application from the outside world, basically it leads us to think about designing our solutions from the `inside to outside` and not from the outside to inside.
 
 - When we develop with clean architecture we can more `easily change` any `"external dependency"` of our application without major concerns, obviously there are some that will require more effort than others, for example migrating from a NoSql schema to a SQL schema where probably the queries will be affected, however our business logic can remain intact and work for both models.
 
