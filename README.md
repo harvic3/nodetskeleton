@@ -2,7 +2,7 @@
 
 `NodeTskeleton` is a `Clean Arquitecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
 
-The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`, `"business logic"`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
+The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`, `“business logic”`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
 The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of `database`, `providers`or `services`, the `framework`, `libraries` or any other dependencies.
 
@@ -30,7 +30,7 @@ The user stories must be in the `src/application` path of our solution, there we
 
 `NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
 
-### errors 
+### Errors 
 
 Is a tool for separating `controlled` from `uncontrolled errors` and allows you to launch application errors according to your business rules, example:
 
@@ -55,14 +55,14 @@ return async function (err: ApplicationError, context: Context): Promise<void> {
 };
 ```
 
-### locals
+### Locals
 
 It is a basic `internationalization` tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
 
 ```ts
 import resources, { resourceKeys } from "../locals/index";
 
-const simpleMessage = resources.Get(this.resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
+const simpleMessage = resources.Get(resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
 
 const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
 	missingParams: keysNotFound.join(", "),
@@ -96,7 +96,7 @@ const yourEnrichedMessage = resources.GetWithParams(resourceKeys.YOUR_OWN_NEED, 
 
 And you can add all the parameters you need with as many messages in your application as required.
 
-### mapper
+### Mapper
 
 The mapper is a tool that will allow us to change the entities to the DTOs within our application, including entity changes between the data model and the domain and vice versa.
 
@@ -118,7 +118,7 @@ const productsDto: ProductDto[] = this.mapper.MapArray<Product, ProductDto>(
 
 `Activator` is the function responsible for returning a new instance for each call, otherwise you would have an array with the same object repeated N times. 
 
-### result
+### Result
 
 `result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
 
@@ -171,7 +171,7 @@ it("should return a 400 error if quantity is null or zero", async () => {
 });
 ```
 
-### useCase
+### UseCase
 
 The `useCase` is a `base class` for `extending` use cases. 
 
@@ -179,7 +179,7 @@ Its main function is to avoid you having to write the same code in every use cas
 
 The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
 
-### validator
+### Validator
 
 The `validator` is a `very basic` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
 
@@ -215,7 +215,7 @@ For `dependency injection`, no external libraries (such as InversifyJs) are used
 This strategy is only needed in the `adapter layer` for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
 
 ```ts
-// In the path src/adapters/contollers/textFeeling there is a folder called container... the index file has the following: 
+// In the path src/adapters/contollers/textFeeling there is a folder called container... the index file has the following:
 import TextFeelingRepository from "../../../providers/feeling/TextFeelingRepository";
 import TextFeelingService from "../../../../application/modules/feeling/services/textFeeling/TextFeeling.service";
 import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";

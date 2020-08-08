@@ -17,7 +17,7 @@ class Mapper implements IMap {
   }
   MapArray<S, D>(source: S[], activator: () => D): D[] {
     const destination: D[] = [];
-    if (!source || !(source.length > 0)) {
+    if (source?.length === 0) {
       return destination;
     }
     source.forEach((sElement) => {

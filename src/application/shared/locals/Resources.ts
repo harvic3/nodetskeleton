@@ -32,23 +32,32 @@ export class Resources {
   }
   Init(language: string): void {
     if (!this.locals[language]) {
-      console.log(`Accept-Language "${language}" not found in locals resource.`);
+      console.log(`Accept-Language "${language}" not found in local resources.`);
       return;
     }
     this.language = language;
   }
   Get(resourceName: string): string {
-    if (this.locals[this.language]) {
+    if (this.locals[this.language] && this.locals[this.language][resourceName]) {
       return this.locals[this.language][resourceName];
     }
-    return this.locals[this.defaultLanguage][resourceName];
+    if (this.locals[this.defaultLanguage] && this.locals[this.defaultLanguage][resourceName]) {
+      return this.locals[this.defaultLanguage][resourceName];
+    }
+    throw new Error(`Resource ${resourceName} not found in any local resource.`);
   }
   GetWithParams(resourceName: string, params: { [key: string]: string }): string {
-    let resource;
-    if (this.locals[this.language]) {
+    let resource: string;
+    if (this.locals[this.language] && this.locals[this.language][resourceName]) {
       resource = this.locals[this.language][resourceName];
-    } else {
+    } else if (
+      this.locals[this.defaultLanguage] &&
+      this.locals[this.defaultLanguage][resourceName]
+    ) {
       resource = this.locals[this.defaultLanguage][resourceName];
+    }
+    if (!resource) {
+      throw new Error(`Resource ${resourceName} not found in any local resource.`);
     }
     const keys = Object.keys(params);
     keys.forEach((key) => {
