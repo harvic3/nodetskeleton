@@ -1,6 +1,6 @@
 import config from "../../config";
 import { Context } from "../../server/CoreModules";
-import Result from "../../../application/shared/result/Result";
+import { Result } from "../../../application/shared/result/Result";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import resources from "../../../application/shared/locals/index";
 

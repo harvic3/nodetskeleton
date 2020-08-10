@@ -1,7 +1,7 @@
 import { IResult } from "./Result.interface";
 import { ResultDto } from "../ResultDto";
 
-export default class Result<T> implements IResult<T> {
+export class Result<T> implements IResult<T> {
   data: T | string;
   statusCode: number;
   success: boolean;

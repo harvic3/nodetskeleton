@@ -155,7 +155,13 @@ export class UseCaseProductGet extends BaseUseCase {
 }
 ```
 
-The `result` object may or may not have a `type` of `response`, it fits your needs.
+The `result` object may or may not have a `type` of `response`, it fits your needs, and the `result instance without type` cannot be assigned `data`.
+
+```ts
+const resultWithType = new Result<ProductDto>();
+// or
+const resultWithoutType = new Result();
+```
 
 The `result` object can help you in unit tests as shown below:
 
