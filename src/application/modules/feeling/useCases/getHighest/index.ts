@@ -1,7 +1,7 @@
 import { BaseUseCase } from "../../../../shared/useCase/BaseUseCase";
 import { ITextFeelingService } from "../../services/textFeeling/TextFeeling.service.interface";
 import { IResult } from "../../../../shared/result/generic/Result.interface";
-import Result from "../../../../shared/result/generic/Result";
+import { Result } from "../../../../shared/result/generic/Result";
 import { TextDto } from "../../dtos/TextReq.dto";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
 
