@@ -98,6 +98,10 @@ const yourEnrichedMessage = resources.GetWithParams(resourceKeys.YOUR_OWN_NEED, 
 
 And you can add all the parameters you need with as many messages in your application as required.
 
+This tool is now available as an `NPM package`.
+
+<a href="https://www.npmjs.com/package/resources-tsk" target="_blank" >See in NPM</a>
+
 ### Mapper
 
 The mapper is a tool that will allow us to change the entities to the DTOs within our application, including entity changes between the data model and the domain and vice versa.
@@ -119,6 +123,10 @@ const productsDto: ProductDto[] = this.mapper.MapArray<Product, ProductDto>(
 ```
 
 `Activator` is the function responsible for returning a new instance for each call, otherwise you would have an array with the same object repeated N times. 
+
+This tool is now available as an `NPM package`.
+
+<a href="https://www.npmjs.com/package/mapper-tsk" target="_blank" >See in NPM</a>
 
 ### Result
 
@@ -179,6 +187,10 @@ it("should return a 400 error if quantity is null or zero", async () => {
 });
 ```
 
+This tool is now available as an `NPM package`.
+
+<a href="https://www.npmjs.com/package/result-tsk" target="_blank" >See in NPM</a>
+
 ### UseCase
 
 The `UseCase` is a `base class` for `extending` use cases and if you were a retailer you could see it in action in the above explanation of the `Result` tool.
@@ -215,6 +227,10 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 }
 /*...*/
 ```
+
+This tool is now available as an `NPM package`.
+
+<a href="https://www.npmjs.com/package/validator-tsk" target="_blank" >See in NPM</a>
 
 ## Dependency injection strategy 📦
 
