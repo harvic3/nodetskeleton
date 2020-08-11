@@ -227,6 +227,71 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 }
 /*...*/
 ```
+#### Validations functions (new feature)
+
+The validation functions extend the `IsValidEntry` method to inject `small functions` created for your `own needs`.
+
+The philosophy of this tool is that it adapts to your own needs and not that you adapt to it.
+
+To do this the `IsValidEntry function` input value key pair also accepts `array of small functions` that must perform a specific task with the parameter to be validated.
+
+#### Observation
+
+If you are going to use the `validation functions` feature, you must send as a parameter an array even if it is only a function.
+
+#### Important note
+
+The validation functions should return `NULL` if the parameter for validate `is valid` and a `string message` indicating the reason why the parameter `is not valid`.
+
+```ts
+// Validator functions created to meet your own needs
+function ValidateEmail(email: string): string {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    return null;
+  }
+  return resources.GetWithParams(resourceKeys.NOT_VALID_EMAIL, { email });
+}
+
+function GreaterThan(numberName: string, base: number, evaluate: number): string {
+  if (evaluate && evaluate > base) {
+    return null;
+  }
+  return resources.GetWithParams(resourceKeys.NUMBER_GREATER_THAN, {
+    name: numberName,
+    baseNumber: base.toString(),
+  });
+}
+
+function EvenNumber(numberName: string, evaluate: number): string {
+  if (evaluate && evaluate % 2 === 0) {
+    return null;
+  }
+  return resources.GetWithParams(resourceKeys.MUST_BE_EVEN_NUMBER, {
+    numberName,
+  });
+}
+
+
+// So, in any use case
+const person = new Person("Jhon", "Doe", 21);
+/*...*/
+const result = new Result();
+const validEmail = "myemail@orion.com";
+person.SetEmail(validEmail);
+if (!validator.IsValidEntry(result, {
+	Name: person.name,
+	Last_Name: person.lastName,
+	Age: [
+		() => GreaterThan("Age", 25, person.age),
+		() => EvenNumber("Age", person.age),
+	],
+	Email: [() => ValidateEmail(person.email)],
+})) {
+	return result;
+};
+// result.error would have the following message
+// "Some parameters are missing or not valid: The number Age must be greater than 25, The Age param should be even."
+```
 
 This tool is now available as an `NPM package`.
 

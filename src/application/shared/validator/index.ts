@@ -11,6 +11,14 @@ export class Validator {
     keysToValidate.forEach((key) => {
       if (!paramsToValidate[key]) {
         keysNotFound.push(key);
+      } else if (Array.isArray(paramsToValidate[key])) {
+        const validations: any[] = paramsToValidate[key];
+        validations.forEach((validation) => {
+          const resultMessage = validation();
+          if (resultMessage) {
+            keysNotFound.push(resultMessage);
+          }
+        });
       }
     });
     if (keysNotFound.length > 0) {
