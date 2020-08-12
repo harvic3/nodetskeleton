@@ -1,5 +1,7 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+if (!process?.env?.NODE_ENV) {
+  dotenv.config();
+}
 
 const dev = "development";
 
@@ -8,8 +10,8 @@ export default {
   server: {
     root: process.env.SERVER_ROOT || "/api",
     host: process.env.SERVER_HOST || "localhost",
-    port: process.env.SERVER_PORT || 5030,
-    origins: process.env.ORIGINS || "http://localhost:4501",
+    port: process.env.SERVER_PORT || 3003,
+    origins: process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
   },
   params: {
     envs: {
