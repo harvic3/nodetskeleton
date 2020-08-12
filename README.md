@@ -360,7 +360,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs 🦋
 
-The easy way is to switch to the `with-koa branch` in this repository, but if you want the more elaborate one follow these steps:
+The easy way is go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
 
 > Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
 
@@ -466,7 +466,7 @@ private LoadControllers(controllers: BaseController[]) {
 
 ## Using with ExpressJs 🐛
 
-The easy way is to switch to the `with-express branch` in this repository, but if you want the more elaborate one follow these steps:
+The easy way is go to `repo for ExpressJs` in this <a href="https://github.com/harvic3/nodetskeleton-express" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
 
 Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file.
 

@@ -11,7 +11,8 @@ export default {
     root: process.env.SERVER_ROOT || "/api",
     host: process.env.SERVER_HOST || "localhost",
     port: process.env.SERVER_PORT || 3003,
-    origins: process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
+    origins:
+      process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
   },
   params: {
     envs: {
