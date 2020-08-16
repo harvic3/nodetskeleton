@@ -1,7 +1,7 @@
 // For KoaJS
 // import config from "../../config";
 // import { Context } from "../../server/CoreModules";
-// import { Result } from "../../../application/shared/result/Result";
+// import { Result } from "result-tsk";
 // import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 // import resources from "../../../application/shared/locals/index";
 
@@ -25,7 +25,7 @@
 
 // For ExpressJs
 import config from "../../config";
-import { Result } from "../../../application/shared/result/Result";
+import { Result } from "result-tsk";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Request, Response, NextFunction } from "../../server/CoreModules";
 

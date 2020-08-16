@@ -1,8 +1,8 @@
+import { Resources } from "resources-tsk";
 import * as esLocal from "./es.local.json";
 import * as enLocal from "./en.local.json";
 
 import * as localKeys from "./keys.json";
-import { Resources } from "./Resources";
 
 const locals = {
   es: esLocal,
@@ -13,7 +13,7 @@ const defaultLanguage = "en";
 
 const resourceKeys = localKeys;
 
-const resources = new Resources(defaultLanguage, locals, localKeys);
+const resources = new Resources(locals, localKeys, defaultLanguage);
 
 export { resourceKeys, Resources };
 

@@ -1,7 +1,6 @@
 import { BaseUseCase } from "../../../../shared/useCase/BaseUseCase";
 import { ITextFeelingService } from "../../services/textFeeling/TextFeeling.service.interface";
-import { IResult } from "../../../../shared/result/generic/Result.interface";
-import { Result } from "../../../../shared/result/generic/Result";
+import { IResultT, ResultT } from "result-tsk";
 import { TextDto } from "../../dtos/TextReq.dto";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
 
@@ -10,8 +9,8 @@ export class UseCaseGetLowestFeelingSentence extends BaseUseCase {
     super();
   }
 
-  async Execute(textDto: TextDto): Promise<IResult<Sentence>> {
-    const result = new Result<Sentence>();
+  async Execute(textDto: TextDto): Promise<IResultT<Sentence>> {
+    const result = new ResultT<Sentence>();
     if (!this.validator.IsValidEntry(result, { textDto: textDto, text: textDto?.text })) {
       return result;
     }
