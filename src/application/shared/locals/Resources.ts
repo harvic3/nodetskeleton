@@ -1,6 +1,6 @@
 export class Resources {
   private defaultLanguage: string;
-  private language: string;
+  private globalLanguage: string;
   private locals: { [key: string]: { [key: string]: string } };
   private localKeys: { [key: string]: string };
   constructor(
@@ -35,21 +35,30 @@ export class Resources {
       console.log(`Accept-Language "${language}" not found in local resources.`);
       return;
     }
-    this.language = language;
+    this.globalLanguage = language;
   }
-  Get(resourceName: string): string {
-    if (this.locals[this.language] && this.locals[this.language][resourceName]) {
-      return this.locals[this.language][resourceName];
+  Get(resourceName: string, language: string = null): string {
+    if (language && this.locals[language] && this.locals[language][resourceName]) {
+      return this.locals[language][resourceName];
+    }
+    if (this.locals[this.globalLanguage] && this.locals[this.globalLanguage][resourceName]) {
+      return this.locals[this.globalLanguage][resourceName];
     }
     if (this.locals[this.defaultLanguage] && this.locals[this.defaultLanguage][resourceName]) {
       return this.locals[this.defaultLanguage][resourceName];
     }
     throw new Error(`Resource ${resourceName} not found in any local resource.`);
   }
-  GetWithParams(resourceName: string, params: { [key: string]: string }): string {
-    let resource: string;
-    if (this.locals[this.language] && this.locals[this.language][resourceName]) {
-      resource = this.locals[this.language][resourceName];
+  GetWithParams(
+    resourceName: string,
+    params: { [key: string]: string },
+    language: string = null,
+  ): string {
+    let resource: string = null;
+    if (language && this.locals[language] && this.locals[language][resourceName]) {
+      resource = this.locals[language][resourceName];
+    } else if (this.locals[this.globalLanguage] && this.locals[this.globalLanguage][resourceName]) {
+      resource = this.locals[this.globalLanguage][resourceName];
     } else if (
       this.locals[this.defaultLanguage] &&
       this.locals[this.defaultLanguage][resourceName]
@@ -63,10 +72,8 @@ export class Resources {
     keys.forEach((key) => {
       const pattern = `({{)${key}(}})`;
       const regex = RegExp(pattern);
-      if (regex.test(resource)) {
-        while (regex.test(resource)) {
-          resource = resource.replace(`{{${key}}}`, params[key]);
-        }
+      while (regex.test(resource)) {
+        resource = resource.replace(`{{${key}}}`, params[key]);
       }
     });
     return resource;

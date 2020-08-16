@@ -12,6 +12,7 @@ export class Validator {
       if (!paramsToValidate[key]) {
         keysNotFound.push(key);
       } else if (Array.isArray(paramsToValidate[key])) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const validations: any[] = paramsToValidate[key];
         validations.forEach((validation) => {
           const resultMessage = validation();
