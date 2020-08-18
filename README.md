@@ -199,9 +199,30 @@ Its main function is to avoid you having to write the same code in every use cas
 
 The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
 
+
+```ts
+import { Validator } from "validator-tsk";
+import mapper, { IMap } from "mapper-tsk";
+import * as resultCodes from "../result/resultCodes.json";
+import resources, { resourceKeys, Resources } from "../locals/index";
+
+export class BaseUseCase {
+  constructor() {
+    this.validator = new Validator(resources, resourceKeys.SOME_PARAMETERS_ARE_MISSING);
+    this.resources = resources;
+    this.mapper = mapper;
+  }
+  mapper: IMap;
+  validator: Validator;
+  resources: Resources;
+  resourceKeys: { [key: string]: string } = resourceKeys;
+  resultCodes: { [key: string]: number } = resultCodes;
+}
+```
+
 ### Validator
 
-The `validator` is a `very basic` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
+The `validator` is a `very simple` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
 
 ```ts
 /*...*/
@@ -227,7 +248,16 @@ async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>
 }
 /*...*/
 ```
-#### Validations functions (new feature)
+Suppose that in the above example the `itemDto object` has no `orderId` and no `quantity`, then the `result of the error` in the `object result` based on the message of the `SOME_PARAMETERS_ARE_MISSING` for `english local file` would be something like this:
+
+`Some parameters are missing or not valid: Order_Id, Quantity.`
+
+### Important note
+
+In the `validation process` the `result of messages` obtained `will be inserted` in the `{{missingParams}}` key of the local message.
+> You can change the message, but not the key `{{missingParams}}`.
+
+#### Validations functions (new feature 🤩)
 
 The validation functions extend the `IsValidEntry` method to inject `small functions` created for your `own needs`.
 
@@ -273,10 +303,10 @@ function EvenNumber(numberName: string, evaluate: number): string {
 
 
 // So, in any use case
-const person = new Person("Jhon", "Doe", 21);
+const person = new Person("Carl", "Sagan", 86);
 /*...*/
 const result = new Result();
-const validEmail = "myemail@orion.com";
+const validEmail = "carlsagan@orion.com";
 person.SetEmail(validEmail);
 if (!validator.IsValidEntry(result, {
 	Name: person.name,
@@ -299,7 +329,7 @@ This tool is now available as an `NPM package`.
 
 ## Dependency injection strategy 📦
 
-For `dependency injection`, no external libraries (such as InversifyJs) are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
+For `dependency injection`, no external libraries are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
 
 This strategy is only needed in the `adapter layer` for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
 
@@ -351,8 +381,9 @@ class TextFeelingController extends BaseController {
 }
 ```
 
-As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to your application.
+As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.
 
+But if you prefer or definitelly your project need a library, you can use something like awilix or inversifyJs.
 
 # Using NodeTskeleton 👾
 

@@ -14,6 +14,6 @@ export class BaseUseCase {
   mapper: IMap;
   validator: Validator;
   resources: Resources;
-  resourceKeys = resourceKeys;
-  resultCodes = resultCodes;
+  resourceKeys: { [key: string]: string } = resourceKeys;
+  resultCodes: { [key: string]: number } = resultCodes;
 }
