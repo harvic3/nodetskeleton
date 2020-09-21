@@ -1,6 +1,5 @@
-import { BaseUseCase } from "../../../../shared/useCase/BaseUseCase";
-import { ITextFeelingService } from "../../services/textFeeling/TextFeeling.service.interface";
-import { IResultT, ResultT } from "result-tsk";
+import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ITextFeelingService } from "../../serviceContracts/textFeeling/ITextFeelingService";
 import { TextDto } from "../../dtos/TextReq.dto";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
 

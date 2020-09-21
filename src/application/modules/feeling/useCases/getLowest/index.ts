@@ -1,8 +1,7 @@
-import { BaseUseCase } from "../../../../shared/useCase/BaseUseCase";
-import { ITextFeelingService } from "../../services/textFeeling/TextFeeling.service.interface";
-import { IResultT, ResultT } from "result-tsk";
-import { TextDto } from "../../dtos/TextReq.dto";
+import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ITextFeelingService } from "../../serviceContracts/textFeeling/ITextFeelingService";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
+import { TextDto } from "../../dtos/TextReq.dto";
 
 export class UseCaseGetLowestFeelingSentence extends BaseUseCase {
   public constructor(private textFeelingService: ITextFeelingService) {

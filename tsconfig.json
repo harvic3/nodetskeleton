@@ -2,7 +2,7 @@
   "version": "3.9.7",
   "compilerOptions": {
     "lib": ["es5", "es6"],
-    "outDir": "./dist/",
+    "outDir": "dist",
     "sourceMap": true,
     "target": "es5",
     "module": "commonjs",
@@ -17,6 +17,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["./src/**/*.test.ts"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
   "include": ["./src/**/*"]
 }

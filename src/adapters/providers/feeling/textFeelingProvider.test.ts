@@ -1,5 +1,5 @@
 import fetchMock, { enableFetchMocks } from "jest-fetch-mock";
-import TextFeelingRepository from "./TextFeelingRepository";
+import TextFeelingRepository from "./TextFeelingProvider";
 enableFetchMocks();
 
 const textFeelingRepository = new TextFeelingRepository();
@@ -30,7 +30,7 @@ describe("when try to consume feeling service", () => {
   });
   it("should return a textFeeling object if service work", async () => {
     fetchMock.mockResponseOnce(JSON.stringify(textFeelingServiceResponse));
-    const textFeeling = await textFeelingRepository.AnaliceText(text);
+    const textFeeling = await textFeelingRepository.AnalyzeText(text);
     expect(textFeeling.content).not.toBeNull();
     expect(textFeeling.content).not.toBeNull;
     expect(textFeeling.sentences.length).toBeGreaterThan(0);

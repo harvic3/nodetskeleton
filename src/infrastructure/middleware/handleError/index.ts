@@ -1,4 +1,4 @@
-// For KoaJS
+// For KoaJs
 // import config from "../../config";
 // import { Context } from "../../server/CoreModules";
 // import { Result } from "result-tsk";
@@ -24,10 +24,10 @@
 // }
 
 // For ExpressJs
-import config from "../../config";
-import { Result } from "result-tsk";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Request, Response, NextFunction } from "../../server/CoreModules";
+import { Result } from "result-tsk";
+import config from "../../config";
 
 export default function () {
   return async function (

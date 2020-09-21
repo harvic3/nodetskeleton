@@ -12,7 +12,7 @@ The design of `NodeTskeleton` is based in `Clean Arquitecture`, an architecture 
 
 Applications are generally developed to be used by people, so people should be the focus of them.
 
-For this reason `user stories` are written, stories that give us information about the type of user `(role)`, procedures that the user performs in a part of the application `(module)`, important information that serves to `structure the solution` of our application, and in practice, how is this?
+For this reason `user stories` are written, stories that give us information about the type of user, procedures that the user performs in a part of the application `(module)`, important information that serves to `structure the solution` of our application, and in practice, how is this?
 
 The user stories must be in the `src/application` path of our solution, there we create a directory that we will call `modules` and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
 
@@ -21,6 +21,8 @@ The user stories must be in the `src/application` path of our solution, there we
 ### Observations 👀
 
 - If your application has no `roles`, then there's no mess, it's just `modules`. ;)
+
+- But taking into consideration that if the roles are not yet defined in your application, `the best option` would be to follow a `dynamic role strategy` based on `permissions` and `each use case within the application would be a specific permission` that would feed the strategy of dynamic roles.
 
 - Note that you can `repeat` modules between `roles`, because a `module can be used by different roles`, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
@@ -201,22 +203,25 @@ The tools extended by this class are: the `mapper`, the `validator`, the `messag
 
 
 ```ts
+import resources, { resourceKeys, Resources } from "../locals/index";
+export { IResult, Result, IResultT, ResultT } from "result-tsk";
+import * as resultCodes from "../result/resultCodes.json";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
-import * as resultCodes from "../result/resultCodes.json";
-import resources, { resourceKeys, Resources } from "../locals/index";
+
+const validator = new Validator(resources, resourceKeys.SOME_PARAMETERS_ARE_MISSING);
 
 export class BaseUseCase {
   constructor() {
-    this.validator = new Validator(resources, resourceKeys.SOME_PARAMETERS_ARE_MISSING);
+    this.validator = validator;
     this.resources = resources;
     this.mapper = mapper;
   }
   mapper: IMap;
   validator: Validator;
   resources: Resources;
-  resourceKeys: { [key: string]: string } = resourceKeys;
-  resultCodes: { [key: string]: number } = resultCodes;
+  resourceKeys = resourceKeys;
+  resultCodes = resultCodes;
 }
 ```
 
@@ -335,28 +340,39 @@ This strategy is only needed in the `adapter layer` for `controllers`, `services
 
 ```ts
 // In the path src/adapters/contollers/textFeeling there is a folder called container... the index file has the following:
-import TextFeelingRepository from "../../../providers/feeling/TextFeelingRepository";
-import TextFeelingService from "../../../../application/modules/feeling/services/textFeeling/TextFeeling.service";
-import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
 import { UseCaseGetHighestFeelingSentence } from "../../../../application/modules/feeling/useCases/getHighest";
 import { UseCaseGetLowestFeelingSentence } from "../../../../application/modules/feeling/useCases/getLowest";
+import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
+import { textFeelingService } from "../../../providers/container/index";
 
-const textFeelingRepo = new TextFeelingRepository();
-const textFeelingService = new TextFeelingService(textFeelingRepo);
 const getFeelingTextUseCase = new UseCaseGetFeeling(textFeelingService);
 const getHighestFeelingSentenceUseCase = new UseCaseGetHighestFeelingSentence(textFeelingService);
 const getLowestFeelingSentenceUseCase = new UseCaseGetLowestFeelingSentence(textFeelingService);
 
 export { getFeelingTextUseCase, getHighestFeelingSentenceUseCase, getLowestFeelingSentenceUseCase };
+
+// The same way in src/adapters/providers there is the container folder
+import TextFeelingService from "../../../application/modules/feeling/serviceContracts/textFeeling/TextFeelingService";
+import TextFeelingProvider from "../../providers/feeling/TextFeelingProvider";
+import { HealthProvider } from "../health/HealthProvider";
+
+const textFeelingProvider = new TextFeelingProvider();
+const textFeelingService = new TextFeelingService(textFeelingProvider);
+
+const healthProvider = new HealthProvider();
+
+export { healthProvider, textFeelingService };
+
+// And your repositories (folder src/adapters/repositories) must have the same strategy
 ```
 
 In this `container` the `instances` of the `use cases` for the specific `controller` are created and here the necessary dependencies for the operation of those use cases are injected, then they are `exported` and in the `controller` they are `imported` and `used` as following:
 
 ```ts
 // For ExpressJs
-import BaseController from "../BaseController";
 import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import BaseController from "../BaseController";
 import {
   getFeelingTextUseCase,
   getHighestFeelingSentenceUseCase,

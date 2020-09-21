@@ -1,6 +1,7 @@
 // For KoaJs
-// import { IResult } from "result-tsk";
 // import { Router, Context } from "../../infrastructure/server/CoreModules";
+// export { Context } from "../../infrastructure/server/CoreModules";
+// import { IResult } from "result-tsk";
 
 // export default class BaseController {
 //   constructor() {
@@ -18,8 +19,9 @@
 // }
 
 // For ExpressJs
-import { IResult } from "result-tsk";
+export { Request, Response, NextFunction } from "../../infrastructure/server/CoreModules";
 import { Router, Response, RouterType } from "../../infrastructure/server/CoreModules";
+import { IResult } from "result-tsk";
 
 export default class BaseController {
   constructor() {

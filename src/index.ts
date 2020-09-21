@@ -3,11 +3,12 @@ import App from "./infrastructure/server/App";
 import BaseController from "./adapters/controllers/BaseController";
 
 // Region controllers
+import healthController from "./adapters/controllers/health/HealthController";
 import textFeelingController from "./adapters/controllers/textFeeling/TextFeeling.controller";
 // End controllers
 
-const controllers: BaseController[] = [textFeelingController];
+const controllers: BaseController[] = [healthController, textFeelingController];
 
 const app = new App(controllers);
 
-app.Listen();
+app.Start();

@@ -1,31 +1,20 @@
-import { mock } from "jest-mock-extended";
-import { TextDto } from "../../dtos/TextReq.dto";
-import { UseCaseGetLowestFeelingSentence } from ".";
-import TextFeelingService from "../../services/textFeeling/TextFeeling.service";
-import { IFeelingQueryService } from "../../services/queryServices/IFeelingQuery.service.interface";
+import { IFeelingQueryService } from "../../serviceContracts/queryServices/IFeelingQueryService";
+import TextFeelingService from "../../serviceContracts/textFeeling/TextFeelingService";
 import resources, { resourceKeys } from "../../../../shared/locals/index";
 import * as resultCodes from "../../../../shared/result/resultCodes.json";
-import { TextFeeling } from "../../../../../domain/textFeeling/TextFeeling";
+import { textFeelingResponse } from "../../../../mocks/textFeeling.mock";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
-import { Sentiment } from "../../../../../domain/sentence/Sentiment";
+import { UseCaseGetLowestFeelingSentence } from "./index";
+import { textDto } from "../../../../mocks/textDto.mock";
+import { mock } from "jest-mock-extended";
 
 const textFeelingQueryServiceMock = mock<IFeelingQueryService>();
 const textFeelingService = new TextFeelingService(textFeelingQueryServiceMock);
 const getLowestFeelingUseCase = new UseCaseGetLowestFeelingSentence(textFeelingService);
 
-const textDto = new TextDto();
-textDto.text =
-  "Progressivism is the longed-for true capitalism, an economic model where the control of who gets rich or not is completely a decision of the people and not a decision of politics.";
-
-const textFeelingResponse = new TextFeeling(textDto.text);
-const sentiment = new Sentiment(0.26, "positive");
-const sentence = new Sentence(textDto.text, sentiment);
-textFeelingResponse.SetSentences([sentence]);
-textFeelingResponse.SetSentiment(sentiment);
-
 describe("when try to get a lowest feeling sentence for text", () => {
   beforeEach(() => {
-    textFeelingQueryServiceMock.AnaliceText.mockReset();
+    textFeelingQueryServiceMock.AnalyzeText.mockReset();
   });
   it("should return a 400 error if dto is null", async () => {
     const result = await getLowestFeelingUseCase.Execute(null);
@@ -48,14 +37,14 @@ describe("when try to get a lowest feeling sentence for text", () => {
     expect(result.success).toBeFalsy();
   });
   it("should return a 500 error if feeling service fail", async () => {
-    textFeelingQueryServiceMock.AnaliceText.mockResolvedValue(null);
+    textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(null);
     const result = await getLowestFeelingUseCase.Execute(textDto);
     expect(result.statusCode).toBe(resultCodes.INTERNAL_SERVER_ERROR);
     expect(result.error).toBe(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
     expect(result.success).toBeFalsy();
   });
   it("should return success if dto have data and feeling service work", async () => {
-    textFeelingQueryServiceMock.AnaliceText.mockResolvedValue(textFeelingResponse);
+    textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(textFeelingResponse);
     const result = await getLowestFeelingUseCase.Execute(textDto);
     const sentence = result.data as Sentence;
     expect(result.statusCode).toBe(resultCodes.SUCCESS);
