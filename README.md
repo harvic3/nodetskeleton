@@ -30,7 +30,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Application debugger 🔬](#application-debugger)
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
-  1. [Conclusions (Personal) 💩](#conclusions-(personal))
+  1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
 
@@ -827,11 +827,11 @@ Something important is to know if we really did the job of building our clean ar
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Conclusions (Personal)
+## Conclusions
 
-- The clean architecture allows us to develop the `use cases` and the `domain` (business logic) of an application without worrying about the type of database, web framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
+- The clean architecture allows us to develop the `use cases` and the `domain` (business logic) of an application without worrying about the type of database, web server framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
 
-- The clean architecture, the hexagonal architecture, the onion architecture and the ports and adapters architecture in the background can be the same, the final purpose is to decouple the business layer of our application from the outside world, basically it leads us to think about designing our solutions from the `inside to outside` and not from the outside to inside.
+- The clean architecture, the hexagonal architecture, the onion architecture and the ports and adapters architecture in the background can be the same, the final purpose is to decouple the `business layer` of our application from the `outside world`, basically it leads us to think about designing our solutions from the `inside to outside` and `not` from the `outside to inside`.
 
 - When we develop with clean architecture we can more `easily change` any `"external dependency"` of our application without major concerns, obviously there are some that will require more effort than others, for example migrating from a NoSql schema to a SQL schema where probably the queries will be affected, however our business logic can remain intact and work for both models.
 
