@@ -13,26 +13,26 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 ## Table of contents
 
   1. [Philosophy](#philosophy🧘🏽)
-  1. [Included tools](#included-tools🧰)
+  1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
 		1. [Locals](#locals)
 		1. [Mapper](#mapper)
 		1. [UseCase](#usecase)
 		1. [Validator](#validator)
-  1. [Dependency injection strategy](#dependency-injection-strategy📦)
-  1. [Using NodeTskeleton](#using-nodetskeleton👾)
-		1. [Using with KoaJs](#using-with-koajs🦋)
-  	1. [Using with ExpressJs](#using-with-expressjs🐛)
-  	1. [Using with another web framework 👽](#using-with-another-web-framework👽)
-  1. [Infrastructure](#infrastructure🏗️)
-  1. [Installation](#installation🔥)
+  1. [Dependency injection strategy 📦](#dependency-injection-strategy)
+  1. [Using NodeTskeleton 👾](#using-nodetskeleton)
+		1. [Using with KoaJs 🦋](#using-with-koajs)
+  	1. [Using with ExpressJs 🐛](#using-with-expressjs)
+  	1. [Using with another web framework 👽](#using-with-another-web-framework)
+  1. [Infrastructure 🏗️](#infrastructure)
+  1. [Installation 🔥](#installation)
   1. [Run Test](#run-test🧪)
-  1. [Application debugger](#application-debugger🔬)
-  1. [Build for production](#Build-for-production⚙️)
-  1. [Test your Clean Architecture 🥁](#test-your-clean-architecture🥁)
-  1. [Conclusions (Personal)](#conclusions-(Personal)💩)
-  1. [Code of Conduct](#code-of-conduct👌)
-  1. [Warning](#warning💀)
+  1. [Application debugger 🔬](#application-debugger)
+  1. [Build for production ⚙️](#Build-for-production)
+  1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
+  1. [Conclusions (Personal) 💩](#conclusions-(personal))
+  1. [Code of Conduct 👌](#code-of-conduct)
+  1. [Warning 💀](#warning)
 
 ## Philosophy🧘🏽
 
@@ -60,7 +60,7 @@ The user stories must be in the `src/application` path of our solution, there we
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Included tools🧰
+## Included tools
 
 `NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
 
@@ -377,7 +377,7 @@ This tool is now available as an `NPM package`.
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Dependency injection strategy📦
+## Dependency injection strategy
 
 For `dependency injection`, no external libraries are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
 
@@ -449,14 +449,14 @@ But if you prefer or definitely your project need a library, you can use somethi
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Using NodeTskeleton👾
+## Using NodeTskeleton
 
 In this `template` is included the example code base for `KoaJs` and `ExpressJs`, but if you have a `web framework of your preference` you must configure those described below according to the framework.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Using with KoaJs🦋
+## Using with KoaJs
 
 The easy way is go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
 
@@ -564,7 +564,7 @@ private LoadControllers(controllers: BaseController[]) {
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Using with ExpressJs🐛
+## Using with ExpressJs
 
 The easy way is go to `repo for ExpressJs` in this <a href="https://github.com/harvic3/nodetskeleton-express" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
 
@@ -665,7 +665,7 @@ private LoadControllers(controllers: BaseController[]): void {
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Using with another web framework👽
+## Using with another web framework
 
 > You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework, You must also modify the `Server` module, `Middleware` in `infrastructure` directory and the `BaseController` and `Controllers` in adapters directory.
 
@@ -674,14 +674,14 @@ And then, continue with the step `installation`.
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Infrastructure🏗️
+## Infrastructure
 
 The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infrastructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Installation🔥
+## Installation
 
 > First, we must install the dependencies, run: 
 
@@ -706,7 +706,7 @@ Copies of those files `launch.json` and `tasks.json` were attached at the end of
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Run Test🧪
+## Run Test
 
 > The tests are implemented for each use case in its respective folder. 
 
@@ -727,7 +727,7 @@ npm run test
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Application debugger🔬
+## Application debugger
 
 > In the side menu of `VS Code` go to the `Execute` ▶ option and then at the top select the `Launch via NPM` option in menu and click on the green Play icon ▶️.
 
@@ -736,7 +736,7 @@ npm run test
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Build for production⚙️
+## Build for production
 
 > To get the code you can use in a productive environment run:
 
@@ -810,7 +810,7 @@ tsc
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Test your Clean Architecture🥁
+## Test your Clean Architecture
 
 Something important is to know if we really did the job of building our clean architecture well, and this can be found very easily by following these steps: 
 
@@ -827,7 +827,7 @@ Something important is to know if we really did the job of building our clean ar
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Conclusions (Personal)💩
+## Conclusions (Personal)
 
 - The clean architecture allows us to develop the `use cases` and the `domain` (business logic) of an application without worrying about the type of database, web framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
 
@@ -842,7 +842,7 @@ Something important is to know if we really did the job of building our clean ar
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Code of Conduct👌
+## Code of Conduct
 
 The Contributor Covenant Code of Conduct for this project is based on Covenant Contributor which you can find at the following link:
 
@@ -851,7 +851,7 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Warning💀
+## Warning
 
 > Use this resource at your own risk.
 
