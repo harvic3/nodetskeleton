@@ -12,7 +12,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 
 ## Table of contents
 
-  1. [Philosophy](#philosophy🧘🏽)
+  1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
 		1. [Locals](#locals)
@@ -22,11 +22,11 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
   1. [Using NodeTskeleton 👾](#using-nodetskeleton)
 		1. [Using with KoaJs 🦋](#using-with-koajs)
-  	1. [Using with ExpressJs 🐛](#using-with-expressjs)
-  	1. [Using with another web framework 👽](#using-with-another-web-framework)
+		1. [Using with ExpressJs 🐛](#using-with-expressjs)
+		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
   1. [Infrastructure 🏗️](#infrastructure)
   1. [Installation 🔥](#installation)
-  1. [Run Test](#run-test🧪)
+  1. [Run Test 🧪](#run-test)
   1. [Application debugger 🔬](#application-debugger)
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
@@ -34,7 +34,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
 
-## Philosophy🧘🏽
+## Philosophy
 
 Applications are generally developed to be used by people, so people should be the focus of them.
 
@@ -665,7 +665,7 @@ private LoadControllers(controllers: BaseController[]): void {
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Using with another web framework
+## Using with another web server framework
 
 > You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework, You must also modify the `Server` module, `Middleware` in `infrastructure` directory and the `BaseController` and `Controllers` in adapters directory.
 
