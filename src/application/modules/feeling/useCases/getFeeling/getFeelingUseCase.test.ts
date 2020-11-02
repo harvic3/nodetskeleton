@@ -8,11 +8,15 @@ import { textDto } from "../../../../mocks/textDto.mock";
 import { UseCaseGetFeeling } from "./index";
 import { mock } from "jest-mock-extended";
 
+const defaultLanguage = "en";
 const textFeelingQueryServiceMock = mock<IFeelingQueryService>();
 const textFeelingService = new TextFeelingService(textFeelingQueryServiceMock);
 const getFeelingUseCase = new UseCaseGetFeeling(textFeelingService);
 
 describe("when try to analyze feeling for text", () => {
+  beforeAll(() => {
+    resources.SetDefaultLanguage(defaultLanguage);
+  });
   beforeEach(() => {
     textFeelingQueryServiceMock.AnalyzeText.mockReset();
   });

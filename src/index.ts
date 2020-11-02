@@ -4,7 +4,7 @@ import BaseController from "./adapters/controllers/BaseController";
 
 // Region controllers
 import healthController from "./adapters/controllers/health/HealthController";
-import textFeelingController from "./adapters/controllers/textFeeling/TextFeeling.controller";
+import textFeelingController from "./adapters/controllers/textFeeling/TextFeelingController";
 // End controllers
 
 const controllers: BaseController[] = [healthController, textFeelingController];

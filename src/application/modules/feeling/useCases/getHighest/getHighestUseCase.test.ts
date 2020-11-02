@@ -8,11 +8,15 @@ import { UseCaseGetHighestFeelingSentence } from "./index";
 import { textDto } from "../../../../mocks/textDto.mock";
 import { mock } from "jest-mock-extended";
 
+const defaultLanguage = "en";
 const textFeelingQueryServiceMock = mock<IFeelingQueryService>();
 const textFeelingService = new TextFeelingService(textFeelingQueryServiceMock);
 const getHighestFeelingUseCase = new UseCaseGetHighestFeelingSentence(textFeelingService);
 
 describe("when try to get a highest feeling sentence for text", () => {
+  beforeAll(() => {
+    resources.SetDefaultLanguage(defaultLanguage);
+  });
   beforeEach(() => {
     textFeelingQueryServiceMock.AnalyzeText.mockReset();
   });

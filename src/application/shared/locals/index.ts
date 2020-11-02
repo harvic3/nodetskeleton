@@ -9,11 +9,9 @@ const locals = {
   en: enLocal,
 };
 
-const defaultLanguage = "en";
-
 const resourceKeys = localKeys;
 
-const resources = new Resources(locals, localKeys, defaultLanguage);
+const resources = new Resources(locals, localKeys);
 
 export { resourceKeys, Resources };
 
