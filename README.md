@@ -8,7 +8,7 @@ The main philosophy of `NodeTskeleton` is that your solution (`domain` and `appl
 
 The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of `database`, `providers`or `services`, the `framework`, `libraries` or any other dependencies.
 
-`NodeTskeleton` has the minimum `tools` necessary for you to develop the `domain` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
+`NodeTskeleton` has the minimum `tools` necessary for you to develop the `business logic` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
 ## Table of contents
 
