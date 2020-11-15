@@ -30,6 +30,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Application debugger 🔬](#application-debugger)
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
+  1. [Coupling 🥁](#coupling)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -818,11 +819,20 @@ Something important is to know if we really did the job of building our clean ar
 
 2. Identify and remove `adapters` and `infrastructure` `directories` from your solution, as well as the `index.ts` file.
 
-3. Execute the test command `npm t` or `npm run test` and the build command `tsc` or `npm run build` too, and everything should run smoothly, otherwise you violated the principle of dependency inversion.
+3. Execute the test command `npm t` or `npm run test` and the build command `tsc` or `npm run build` too, and everything should run smoothly, otherwise you violated the principle of dependency inversion or due to bad practice, application layers were coupled that should not be coupled.
 
 4. Run the `git checkout .` command to get everything back to normal.
 
 5. Most importantly, no `domain entity` can make use of an `application service` and less of a `provider service` (repository or provider), the `application services use the entities`, the flow goes from the `most external part` of the application `to the most internal part` of it.
+
+**[⬆ back to the past](#table-of-contents)**
+
+
+## Coupling
+
+For the purpose of giving clarity to the following statement we will define `coupling` as the action of dependence, that is to say that `X depends on Y to function`.
+
+Coupling is not bad if it is well managed, but in a software solution `there should not be coupling` of the `domain and application layers with any other`, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice versa.
 
 **[⬆ back to the past](#table-of-contents)**
 
