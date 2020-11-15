@@ -30,7 +30,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Application debugger 🔬](#application-debugger)
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
-  1. [Coupling 🥁](#coupling)
+  1. [Coupling 🧲](#coupling)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
