@@ -31,10 +31,10 @@ export default class BaseController {
   HandleResult(res: Response, result: IResult): void {
     if (result.success) {
       res
-        .status(result.statusCode)
+        .status(Number(result.statusCode))
         .json(result.message ? result.ToResultDto() : result.ToResultDto().data);
     } else {
-      res.status(result.statusCode).json(result.ToResultDto());
+      res.status(Number(result.statusCode)).json(result.ToResultDto());
     }
   }
 }

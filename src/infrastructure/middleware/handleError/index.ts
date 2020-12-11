@@ -47,6 +47,6 @@ export default function () {
     if (res.headersSent) {
       return next(result);
     }
-    res.status(result.statusCode).send(result);
+    res.status(Number(result.statusCode)).send(result);
   };
 }
