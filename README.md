@@ -72,7 +72,7 @@ Is a tool for separating `controlled` from `uncontrolled errors` and allows you 
 ```ts
 throw new ApplicationError(
 	resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-	error.code || resultCodes.INTERNAL_SERVER_ERROR,
+	error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
 	JSON.stringify(error),
 );
 ```
@@ -246,7 +246,7 @@ The tools extended by this class are: the `mapper`, the `validator`, the `messag
 ```ts
 import resources, { resourceKeys, Resources } from "../locals/index";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
-import * as resultCodes from "../result/resultCodes.json";
+import * as resultCodes from "../result/applicationStatusCodes.json";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 

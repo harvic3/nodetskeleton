@@ -1,7 +1,7 @@
 import { IFeelingQueryService } from "../../serviceContracts/queryServices/IFeelingQueryService";
 import TextFeelingService from "../../serviceContracts/textFeeling/TextFeelingService";
 import resources, { resourceKeys } from "../../../../shared/locals/index";
-import * as resultCodes from "../../../../shared/result/resultCodes.json";
+import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
 import { textFeelingResponse } from "../../../../mocks/textFeeling.mock";
 import { Sentence } from "../../../../../domain/sentence/Sentence";
 import { UseCaseGetHighestFeelingSentence } from "./index";
@@ -22,7 +22,7 @@ describe("when try to get a highest feeling sentence for text", () => {
   });
   it("should return a 400 error if dto is null", async () => {
     const result = await getHighestFeelingUseCase.Execute(null);
-    expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "textDto, text",
@@ -32,7 +32,7 @@ describe("when try to get a highest feeling sentence for text", () => {
   });
   it("should return a 400 error if text in dto is null", async () => {
     const result = await getHighestFeelingUseCase.Execute({ text: null });
-    expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text",
@@ -43,7 +43,7 @@ describe("when try to get a highest feeling sentence for text", () => {
   it("should return a 500 error if feeling service fail", async () => {
     textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(null);
     const result = await getHighestFeelingUseCase.Execute(textDto);
-    expect(result.statusCode).toBe(resultCodes.INTERNAL_SERVER_ERROR);
+    expect(result.statusCode).toBe(applicationStatusCodes.INTERNAL_SERVER_ERROR);
     expect(result.error).toBe(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
     expect(result.success).toBeFalsy();
   });
@@ -51,7 +51,7 @@ describe("when try to get a highest feeling sentence for text", () => {
     textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(textFeelingResponse);
     const result = await getHighestFeelingUseCase.Execute(textDto);
     const sentence = result.data as Sentence;
-    expect(result.statusCode).toBe(resultCodes.SUCCESS);
+    expect(result.statusCode).toBe(applicationStatusCodes.SUCCESS);
     expect(sentence.sentiment).not.toBeNull;
     expect(sentence.sentence).not.toBeNull;
     expect(result.success).toBeTruthy();

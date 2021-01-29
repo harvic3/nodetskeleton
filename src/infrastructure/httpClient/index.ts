@@ -1,7 +1,7 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
 import TResponse from "./TResponse";
 import resources, { resourceKeys } from "../../application/shared/locals/index";
-import * as resultCodes from "../../application/shared/result/resultCodes.json";
+import * as applicationStatusCodes from "../../application/shared/status/applicationStatusCodes.json";
 import { Options } from "./Options";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 export { BodyInit as BodyType, Headers } from "node-fetch";
@@ -96,14 +96,13 @@ async function ProcessResponseData<T>(
         return await response.arrayBuffer();
       case serialization.string:
         return await response.text();
-        break;
       default:
         return await response.json();
     }
   } catch (error) {
     throw new ApplicationError(
       resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-      error?.code || resultCodes.INTERNAL_SERVER_ERROR,
+      error?.code || applicationStatusCodes.INTERNAL_SERVER_ERROR,
       JSON.stringify(error),
     );
   }

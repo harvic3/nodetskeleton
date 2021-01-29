@@ -17,11 +17,11 @@ export class UseCaseGetLowestFeelingSentence extends BaseUseCase {
     if (!sentence) {
       result.SetError(
         this.resources.Get(this.resourceKeys.TEXT_FEELING_SERVICE_ERROR),
-        this.resultCodes.INTERNAL_SERVER_ERROR,
+        this.applicationStatusCode.INTERNAL_SERVER_ERROR,
       );
       return result;
     }
-    result.SetData(sentence, this.resultCodes.SUCCESS);
+    result.SetData(sentence, this.applicationStatusCode.SUCCESS);
     return result;
   }
 }

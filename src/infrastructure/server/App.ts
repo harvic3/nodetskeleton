@@ -1,5 +1,5 @@
 // For KoaJs
-// import BaseController from "../../adapters/controllers/BaseController";
+// import BaseController from "../../adapters/controllers/base/BaseController";
 // import resources from "../../application/shared/locals/index";
 // import { Server, BodyParser, cors } from "./CoreModules";
 // import localization from "../middleware/localization";
@@ -59,11 +59,12 @@
 // }
 
 // For ExpressJs
-import { Server, BodyParser, Application } from "../server/CoreModules";
-import BaseController from "../../adapters/controllers/BaseController";
+import { Server, Application, BodyParser } from "../server/CoreModules";
+import BaseController from "../../adapters/controllers/base/BaseController";
 import resources from "../../application/shared/locals/index";
 import localization from "../middleware/localization";
 import handleError from "../middleware/handleError";
+import * as helmet from "helmet";
 import config from "../config";
 
 export default class App {
@@ -71,20 +72,22 @@ export default class App {
 
   constructor(controllers: BaseController[]) {
     this.app = Server();
+    this.app.set("trust proxy", true);
     this.LoadMiddleware();
     this.LoadControllers(controllers);
     this.LoadHandleError();
-    this.Settings();
+    this.Setup();
   }
 
   public LoadMiddleware(): void {
-    this.app.use(BodyParser.json());
+    this.app.use(helmet());
+    this.app.use(BodyParser());
     this.app.use(localization());
   }
 
   private LoadControllers(controllers: BaseController[]): void {
     controllers.forEach((controller) => {
-      this.app.use(config.server.root, controller.router);
+      this.app.use(config.server.Root, controller.router);
     });
   }
 
@@ -92,14 +95,14 @@ export default class App {
     this.app.use(handleError());
   }
 
-  private Settings(): void {
+  private Setup(): void {
     resources.SetDefaultLanguage(config.params.defaultLang);
   }
 
   public Listen(): void {
-    this.app.listen(config.server.port, () => {
+    this.app.listen(config.server.Port, () => {
       console.log(
-        `Server running on ${config.server.root}${config.server.host}:${config.server.port}`,
+        `Server running on ${config.server.Root}${config.server.Host}:${config.server.Port}`,
       );
     });
   }

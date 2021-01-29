@@ -3,14 +3,17 @@ module.exports = {
   testEnvironment: "node",
   coverageDirectory: "coverage",
   coveragePathIgnorePatterns: [
-    "/node_modules/",
     "/src/infrastructure/",
+    "/src/adapters/controllers/base/",
     "/src/application/mocks/",
+    "/src/application/shared/",
     "/dtos/",
   ],
   modulePathIgnorePatterns: [
     "/src/infrastructure/",
+    "/src/adapters/controllers/base/",
     "/src/application/mocks/",
     "/src/application/shared/",
+    "/src/index.ts",
   ],
 };

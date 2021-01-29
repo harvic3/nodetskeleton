@@ -4,6 +4,7 @@
 // import { Result } from "result-tsk";
 // import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 // import resources from "../../../application/shared/locals/index";
+// import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
 
 // export default function () {
 //   return async function (err: ApplicationError, context: Context): Promise<void> {
@@ -18,12 +19,13 @@
 //         config.params.defaultError.code,
 //       );
 //     }
-//     context.status = result.statusCode;
+//     context.status = HttpStatusResolver.getCode(result.statusCode.toString());
 //     context.body = result.ToResultDto();
 //   };
 // }
 
 // For ExpressJs
+import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Request, Response, NextFunction } from "../../server/CoreModules";
 import { Result } from "result-tsk";
@@ -42,11 +44,11 @@ export default function () {
       result.SetError(err.message, err.errorCode);
     } else {
       console.log("No controlled application error", err);
-      result.SetError(config.params.defaultError.message, config.params.defaultError.code);
+      result.SetError(
+        config.params.defaultApplicationError.message,
+        config.params.defaultApplicationError.code,
+      );
     }
-    if (res.headersSent) {
-      return next(result);
-    }
-    res.status(Number(result.statusCode)).send(result);
+    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
   };
 }

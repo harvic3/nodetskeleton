@@ -1,5 +1,5 @@
 // For KoaJs
-// import BaseController, { Context } from "../BaseController";
+// import BaseController, { Context } from "../base/BaseController";
 // import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 // import {
 //   getFeelingTextUseCase,
@@ -38,7 +38,7 @@
 // export default instance;
 
 // For ExpressJs
-import BaseController from "../BaseController";
+import BaseController from "../base/BaseController";
 import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {

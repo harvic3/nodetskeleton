@@ -1,7 +1,7 @@
 import { IFeelingQueryService } from "../../serviceContracts/queryServices/IFeelingQueryService";
 import TextFeelingService from "../../serviceContracts/textFeeling/TextFeelingService";
 import resources, { resourceKeys } from "../../../../shared/locals/index";
-import * as resultCodes from "../../../../shared/result/resultCodes.json";
+import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
 import { textFeelingResponse } from "../../../../mocks/textFeeling.mock";
 import { TextFeelingDto } from "../../dtos/TextFeeling.dto";
 import { textDto } from "../../../../mocks/textDto.mock";
@@ -22,7 +22,7 @@ describe("when try to analyze feeling for text", () => {
   });
   it("should return a 400 error if dto is null", async () => {
     const result = await getFeelingUseCase.Execute(null);
-    expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "textDto, text",
@@ -32,7 +32,7 @@ describe("when try to analyze feeling for text", () => {
   });
   it("should return a 400 error if text in dto is null", async () => {
     const result = await getFeelingUseCase.Execute({ text: null });
-    expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text",
@@ -43,7 +43,7 @@ describe("when try to analyze feeling for text", () => {
   it("should return a 500 error if feeling service fail", async () => {
     textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(null);
     const result = await getFeelingUseCase.Execute(textDto);
-    expect(result.statusCode).toBe(resultCodes.INTERNAL_SERVER_ERROR);
+    expect(result.statusCode).toBe(applicationStatusCodes.INTERNAL_SERVER_ERROR);
     expect(result.error).toBe(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
     expect(result.success).toBeFalsy();
   });
@@ -51,7 +51,7 @@ describe("when try to analyze feeling for text", () => {
     textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(textFeelingResponse);
     const result = await getFeelingUseCase.Execute(textDto);
     const textFeeling = result.data as TextFeelingDto;
-    expect(result.statusCode).toBe(resultCodes.SUCCESS);
+    expect(result.statusCode).toBe(applicationStatusCodes.SUCCESS);
     expect(textFeeling.content).not.toBeNull;
     expect(textFeeling.sentences.length).toBeGreaterThan(0);
     expect(result.success).toBeTruthy();

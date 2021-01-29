@@ -1,5 +1,5 @@
 // For KoaJs
-// import BaseController, { Context } from "../BaseController";
+// import BaseController, { Context } from "../base/BaseController";
 // import { pongUseCase } from "./container/index";
 
 // class HealthController extends BaseController {
@@ -20,7 +20,7 @@
 // export default instance;
 
 // For ExpressJs
-import BaseController, { Request, Response, NextFunction } from "../BaseController";
+import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
 import { pongUseCase } from "./container/index";
 
 class HealthController extends BaseController {

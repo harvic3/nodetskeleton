@@ -1,14 +1,10 @@
 import { IHealthProvider } from "../../../application/modules/health/providerContracts/IHealthProvider";
-import * as moment from "moment";
+import { DateTime } from "luxon";
 
 export class HealthProvider implements IHealthProvider {
-  Get(): Promise<string> {
-    return new Promise((resolve, rejected) => {
-      const message = `<div><h2>Service online at ${moment().format()}</h2></div>`;
-      if (!message) {
-        rejected(null);
-      }
-      resolve(message);
-    });
+  async Get(): Promise<string> {
+    return Promise.resolve(
+      `<div><h2>NodeTskeleton online at ${DateTime.local().toISO()}</h2></div>`,
+    );
   }
 }

@@ -18,7 +18,7 @@ export class UseCaseGetFeeling extends BaseUseCase {
     if (!textFeeling) {
       result.SetError(
         this.resources.Get(this.resourceKeys.TEXT_FEELING_SERVICE_ERROR),
-        this.resultCodes.INTERNAL_SERVER_ERROR,
+        this.applicationStatusCode.INTERNAL_SERVER_ERROR,
       );
       return result;
     }
@@ -26,7 +26,7 @@ export class UseCaseGetFeeling extends BaseUseCase {
       textFeeling,
       new TextFeelingDto(),
     );
-    result.SetData(textFeelingDto, this.resultCodes.SUCCESS);
+    result.SetData(textFeelingDto, this.applicationStatusCode.SUCCESS);
     return result;
   }
 }

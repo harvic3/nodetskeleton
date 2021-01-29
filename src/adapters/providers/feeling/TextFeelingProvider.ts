@@ -1,14 +1,14 @@
 import httpClient, { Headers } from "../../../infrastructure/httpClient";
 import { IFeelingQueryService } from "../../../application/modules/feeling/serviceContracts/queryServices/IFeelingQueryService";
+import * as applicationStatusCodes from "../../../application/shared/status/applicationStatusCodes.json";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { ITextFeeling } from "../../../domain/textFeeling/TextFeeling.interface";
-import { TextFeelingRepoModel } from "./models/TextFeeling.model";
-import { TextFeeling } from "../../../domain/textFeeling/TextFeeling";
-import { Sentiment } from "../../../domain/sentence/Sentiment";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
-import * as resultCodes from "../../../application/shared/result/resultCodes.json";
+import { TextFeeling } from "../../../domain/textFeeling/TextFeeling";
+import { TextFeelingRepoModel } from "./models/TextFeeling.model";
+import { Sentiment } from "../../../domain/sentence/Sentiment";
 
-const textFeelingApi = "https://sentim-api.herokuapp.com/api/v1/";
+const TEXT_FEELING_MOCK_API = "https://run.mocky.io/v3/601532db-605a-4458-bf5a-e6bbfddaa7b6";
 
 export default class TextFeelingProvider implements IFeelingQueryService {
   async AnalyzeText(text: string): Promise<ITextFeeling> {
@@ -19,7 +19,7 @@ export default class TextFeelingProvider implements IFeelingQueryService {
     content.text = text;
     try {
       const tResponse = await httpClient.Send<TextFeelingRepoModel>(
-        textFeelingApi,
+        TEXT_FEELING_MOCK_API,
         httpClient.Methods.POST,
         {
           body: JSON.stringify(content),
@@ -31,7 +31,7 @@ export default class TextFeelingProvider implements IFeelingQueryService {
       if (!tResponse.success) {
         throw new ApplicationError(
           tResponse.message,
-          tResponse.statusCode || resultCodes.INTERNAL_SERVER_ERROR,
+          tResponse.statusCode || applicationStatusCodes.INTERNAL_SERVER_ERROR,
           JSON.stringify(tResponse.error),
         );
       }
@@ -42,7 +42,7 @@ export default class TextFeelingProvider implements IFeelingQueryService {
     } catch (error) {
       throw new ApplicationError(
         error.message,
-        error.code || resultCodes.INTERNAL_SERVER_ERROR,
+        error.code || applicationStatusCodes.INTERNAL_SERVER_ERROR,
         JSON.stringify(error),
       );
     }
