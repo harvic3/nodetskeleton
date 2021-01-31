@@ -16,7 +16,7 @@
 //     this.LoadMiddleware();
 //     this.LoadControllers(controllers);
 //     this.LoadHandleError();
-//     this.Settings();
+//     this.Setup();
 //   }
 
 //   public LoadMiddleware(): void {
@@ -36,7 +36,7 @@
 //     this.app.on("error", handleError());
 //   }
 
-//   private Settings(): void {
+//   private Setup(): void {
 //     resources.SetDefaultLanguage(config.params.defaultLang);
 //   }
 

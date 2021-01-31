@@ -25,6 +25,7 @@ coverage
 # Dependency directory
 node_modules
 bower_components
+docker-compose
 
 # Editors
 .idea

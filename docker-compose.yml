@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+  nodetskeleton-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs:14.8.0-stretch
+    container_name: nodetskeleton-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NODE_ENV=$NODE_ENV
+      - SERVER_ROOT=$SERVER_ROOT
+      - SERVER_HOST=$SERVER_HOST
+      - SERVER_PORT=$SERVER_PORT
+      - ORIGINS=$ORIGINS
+    ports:
+      - "3040:3003"
+    volumes:
+      - .:/usr/node/app
+      - /usr/node/app/dist
+      - /usr/node/app/node_modules
+    networks:
+      - nodetskeleton-network
+    command: >
+      npm run start
+
+networks:
+  nodetskeleton-network:
+    driver: bridge

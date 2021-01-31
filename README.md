@@ -82,7 +82,7 @@ The function of this `class` will be reflected in your `error handler` as it wil
 ```ts
 return async function (err: ApplicationError, context: Context): Promise<void> {
 	const result = new Result();
-	if (err.name && err.name === "ApplicationError") {
+	if (err?.name === "ApplicationError") {
 		console.log("Controlled application error", err.message);
 	} else {
 		console.log("No controlled application error", err);
@@ -174,7 +174,7 @@ This tool is now available as an `NPM package`.
 `result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
 
 ```ts
-export class UseCaseProductGet extends BaseUseCase {
+export class GetProductUseCase extends BaseUseCase {
 	constructor(private productQueryService: IProductQueryService) {
 		super();
 	}
@@ -191,13 +191,13 @@ export class UseCaseProductGet extends BaseUseCase {
 			// The result object helps us with the error response and the code.
 			result.SetError(
 				this.resources.Get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
-				this.resultCodes.NOT_FOUND,
+				this.applicationStatusCodes.NOT_FOUND,
 			);
 			return result;
 		}
 		const productDto = this.mapper.MapObject<Product, ProductDto>(product, new ProductDto());
 		// The result object also helps you with the response data.
-		result.SetData(productDto, this.resultCodes.SUCCESS);
+		result.SetData(productDto, this.applicationStatusCodes.SUCCESS);
 		// And finally you give it back.
 		return result;
 	}
@@ -246,23 +246,25 @@ The tools extended by this class are: the `mapper`, the `validator`, the `messag
 ```ts
 import resources, { resourceKeys, Resources } from "../locals/index";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
-import * as resultCodes from "../result/applicationStatusCodes.json";
+import * as applicationStatusCodes from "../status/applicationStatusCodes.json";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 
-const validator = new Validator(resources, resourceKeys.SOME_PARAMETERS_ARE_MISSING);
-
 export class BaseUseCase {
   constructor() {
-    this.validator = validator;
-    this.resources = resources;
     this.mapper = mapper;
+    this.resources = resources;
+    this.validator = new Validator(
+      resources,
+      resourceKeys.SOME_PARAMETERS_ARE_MISSING,
+      applicationStatusCode.BAD_REQUEST,
+    );
   }
   mapper: IMap;
   validator: Validator;
   resources: Resources;
   resourceKeys = resourceKeys;
-  resultCodes = resultCodes;
+  applicationStatusCodes = applicationStatusCodes;
 }
 ```
 
@@ -684,6 +686,20 @@ The infrastructure includes a customizable `HttpClient` with its `response model
 
 ## Installation
 
+Depending on your need you have two options, `local` and with `docker compose`, but first of all we need to set up the .env file:
+
+Go to project root directory, create a .env file and inside it copy and paste this content:
+
+```txt
+NODE_ENV=development
+SERVER_ROOT=/api
+SERVER_HOST=localhost
+SERVER_PORT=3003
+ORIGINS=http://localhost:3003
+```
+
+### Local
+
 > First, we must install the dependencies, run: 
 
 ```console
@@ -699,6 +715,36 @@ npm update
 > Third:
 
 This project is configured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for `WindowsNT`.
+
+> Finally, in any internet explorer go to:
+
+`localhost:3003/api/ping`
+
+### Docker Compose
+
+The first two steps are for updating the project, but you can skip to step 3 if you prefer.
+
+> First, we must install the dependencies, run: 
+
+```console
+npm install
+```
+
+> Second, we must update the dependencies, run: 
+
+```console
+npm update
+```
+
+> Third, build the app with the following command:
+
+```console
+docker-compose up -d --build
+```
+
+> Finally, in any internet explorer go to:
+
+`localhost:3040/api/ping`
 
 ### Observation 👀
 
@@ -848,6 +894,12 @@ Coupling is not bad if it is well managed, but in a software solution `there sho
 - The advantages that clean architecture offers us are very significant; it is one of the `best practices for making scalable software` that `works for your business` and `not for your preferred framework`.
 
 - Clean architecture is basically based on the famous and well-known five `SOLID principles` that we had not mentioned until this moment and that we very little internalized.
+
+- If you liked it and you learned something, give me my star in the project that is the way you can thank me, don't be a damn selfish person who doesn't recognize the effort of others.
+
+### Observation 👀
+
+"The world is selfish" because I am surprised by the number of people who visit this project and browse through all its modules and files, but it seems that it is nothing new because they do not leave their star, good for them.
 
 **[⬆ back to the past](#table-of-contents)**
 
