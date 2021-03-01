@@ -13,18 +13,18 @@
 
 //   constructor(controllers: BaseController[]) {
 //     this.app = new Server();
-//     this.LoadMiddleware();
-//     this.LoadControllers(controllers);
-//     this.LoadHandleError();
-//     this.Setup();
+//     this.loadMiddleware();
+//     this.loadControllers(controllers);
+//     this.loadHandleError();
+//     this.setup();
 //   }
 
-//   public LoadMiddleware(): void {
+//   public loadMiddleware(): void {
 //     this.app.use(bodyParser());
 //     this.app.use(localization());
 //   }
 
-//   private LoadControllers(controllers: BaseController[]) {
+//   private loadControllers(controllers: BaseController[]) {
 //     controllers.forEach((controller) => {
 //       controller.router.prefix(config.server.root);
 //       this.app.use(controller.router.routes());
@@ -32,15 +32,15 @@
 //     });
 //   }
 
-//   private LoadHandleError(): void {
+//   private loadHandleError(): void {
 //     this.app.on("error", handleError());
 //   }
 
-//   private Setup(): void {
+//   private setup(): void {
 //     resources.SetDefaultLanguage(config.params.defaultLang);
 //   }
 
-//   private Listen(): void {
+//   private listen(): void {
 //     this.app.listen(config.server.port, () => {
 //       console.log(
 //         `Server running on ${config.server.root}${config.server.host}:${config.server.port}`,
@@ -48,13 +48,13 @@
 //     });
 //   }
 
-//   private RunServices(): void {
+//   private runServices(): void {
 //     // Initialize db and other services here and once started run Listen
-//     this.Listen();
+//     this.listen();
 //   }
 
-//   public Start(): void {
-//     this.RunServices();
+//   public start(): void {
+//     this.runServices();
 //   }
 // }
 
@@ -62,8 +62,8 @@
 import { Server, Application, BodyParser } from "../server/CoreModules";
 import BaseController from "../../adapters/controllers/base/BaseController";
 import resources from "../../application/shared/locals/index";
-import localization from "../middleware/localization";
-import handleError from "../middleware/handleError";
+import LocalizationMiddleware from "../middleware/localization";
+import handlerErrorMiddleware from "../middleware/handleError";
 import * as helmet from "helmet";
 import config from "../config";
 
@@ -73,33 +73,33 @@ export default class App {
   constructor(controllers: BaseController[]) {
     this.app = Server();
     this.app.set("trust proxy", true);
-    this.LoadMiddleware();
-    this.LoadControllers(controllers);
-    this.LoadHandleError();
-    this.Setup();
+    this.loadMiddleware();
+    this.loadControllers(controllers);
+    this.loadHandleError();
+    this.setup();
   }
 
-  public LoadMiddleware(): void {
+  public loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(BodyParser());
-    this.app.use(localization());
+    this.app.use(LocalizationMiddleware.handler);
   }
 
-  private LoadControllers(controllers: BaseController[]): void {
+  private loadControllers(controllers: BaseController[]): void {
     controllers.forEach((controller) => {
       this.app.use(config.server.Root, controller.router);
     });
   }
 
-  private LoadHandleError(): void {
-    this.app.use(handleError());
+  private loadHandleError(): void {
+    this.app.use(handlerErrorMiddleware.handler);
   }
 
-  private Setup(): void {
-    resources.SetDefaultLanguage(config.params.defaultLang);
+  private setup(): void {
+    resources.setDefaultLanguage(config.params.defaultLang);
   }
 
-  public Listen(): void {
+  public listen(): void {
     this.app.listen(config.server.Port, () => {
       console.log(
         `Server running on ${config.server.Root}${config.server.Host}:${config.server.Port}`,
@@ -107,12 +107,12 @@ export default class App {
     });
   }
 
-  private RunServices(): void {
+  private runServices(): void {
     // Initialize db and other services here and once started run Listen
-    this.Listen();
+    this.listen();
   }
 
-  public Start(): void {
-    this.RunServices();
+  public start(): void {
+    this.runServices();
   }
 }

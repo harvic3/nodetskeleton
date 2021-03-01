@@ -15,41 +15,41 @@ const getHighestFeelingUseCase = new UseCaseGetHighestFeelingSentence(textFeelin
 
 describe("when try to get a highest feeling sentence for text", () => {
   beforeAll(() => {
-    resources.SetDefaultLanguage(defaultLanguage);
+    resources.setDefaultLanguage(defaultLanguage);
   });
   beforeEach(() => {
-    textFeelingQueryServiceMock.AnalyzeText.mockReset();
+    textFeelingQueryServiceMock.analyzeText.mockReset();
   });
   it("should return a 400 error if dto is null", async () => {
-    const result = await getHighestFeelingUseCase.Execute(null);
+    const result = await getHighestFeelingUseCase.execute(null);
     expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
-      resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "textDto, text",
       }),
     );
     expect(result.success).toBeFalsy();
   });
   it("should return a 400 error if text in dto is null", async () => {
-    const result = await getHighestFeelingUseCase.Execute({ text: null });
+    const result = await getHighestFeelingUseCase.execute({ text: null });
     expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
-      resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text",
       }),
     );
     expect(result.success).toBeFalsy();
   });
   it("should return a 500 error if feeling service fail", async () => {
-    textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(null);
-    const result = await getHighestFeelingUseCase.Execute(textDto);
+    textFeelingQueryServiceMock.analyzeText.mockResolvedValue(null);
+    const result = await getHighestFeelingUseCase.execute(textDto);
     expect(result.statusCode).toBe(applicationStatusCodes.INTERNAL_SERVER_ERROR);
-    expect(result.error).toBe(resources.Get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
+    expect(result.error).toBe(resources.get(resourceKeys.TEXT_FEELING_SERVICE_ERROR));
     expect(result.success).toBeFalsy();
   });
   it("should return success if dto have data and feeling service work", async () => {
-    textFeelingQueryServiceMock.AnalyzeText.mockResolvedValue(textFeelingResponse);
-    const result = await getHighestFeelingUseCase.Execute(textDto);
+    textFeelingQueryServiceMock.analyzeText.mockResolvedValue(textFeelingResponse);
+    const result = await getHighestFeelingUseCase.execute(textDto);
     const sentence = result.data as Sentence;
     expect(result.statusCode).toBe(applicationStatusCodes.SUCCESS);
     expect(sentence.sentiment).not.toBeNull;

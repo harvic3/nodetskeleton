@@ -71,7 +71,7 @@ Is a tool for separating `controlled` from `uncontrolled errors` and allows you 
 
 ```ts
 throw new ApplicationError(
-	resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+	resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
 	error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
 	JSON.stringify(error),
 );
@@ -99,9 +99,9 @@ It is a basic `internationalization` tool that will allow you to manage and admi
 ```ts
 import resources, { resourceKeys } from "../locals/index";
 
-const simpleMessage = resources.Get(resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
+const simpleMessage = resources.get(resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
 
-const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+const enrichedMessage = resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
 	missingParams: keysNotFound.join(", "),
 });
 
@@ -127,7 +127,7 @@ const enrichedMessage = resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE
 */
 
 // You can add enriched messages according to your own needs, for example:
-const yourEnrichedMessage = resources.GetWithParams(resourceKeys.YOUR_OWN_NEED, {
+const yourEnrichedMessage = resources.getWithParams(resourceKeys.YOUR_OWN_NEED, {
 	name: firstName, lastName, age: userAge
 });
 //
@@ -149,15 +149,15 @@ This tool maps objects or arrays of objects, for example:
 
 ```ts
 // For object
-const textFeelingDto = this.mapper.MapObject<TextFeeling, TextFeelingDto>(
+const textFeelingDto = this.mapper.mapObject<TextFeeling, TextFeelingDto>(
 	textFeeling,
 	new TextFeelingDto(),
 );
 
 // For array object
-const productsDto: ProductDto[] = this.mapper.MapArray<Product, ProductDto>(
+const productsDto: ProductDto[] = this.mapper.mapArray<Product, ProductDto>(
 	products,
-	() => this.mapper.Activator(ProductDto),
+	() => this.mapper.activator(ProductDto),
 );
 ```
 
@@ -179,25 +179,25 @@ export class GetProductUseCase extends BaseUseCase {
 		super();
 	}
 
-	async Execute(idMask: string): Promise<IResult<ProductDto>> {
+	async execute(idMask: string): Promise<IResult<ProductDto>> {
 		// We create the instance of our type of result at the beginning of the use case.
 		const result = new Result<ProductDto>();
 		// With the resulting object we can control validations within other functions.
-		if (!this.validator.IsValidEntry(result, { productMaskId: idMask })) {
+		if (!this.validator.isValidEntry(result, { productMaskId: idMask })) {
 			return result;
 		}
-		const product: Product = await this.productQueryService.GetByMaskId(idMask);
+		const product: Product = await this.productQueryService.getByMaskId(idMask);
 		if (!product) {
 			// The result object helps us with the error response and the code.
-			result.SetError(
-				this.resources.Get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
+			result.setError(
+				this.resources.get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
 				this.applicationStatusCodes.NOT_FOUND,
 			);
 			return result;
 		}
-		const productDto = this.mapper.MapObject<Product, ProductDto>(product, new ProductDto());
+		const productDto = this.mapper.mapObject<Product, ProductDto>(product, new ProductDto());
 		// The result object also helps you with the response data.
-		result.SetData(productDto, this.applicationStatusCodes.SUCCESS);
+		result.setData(productDto, this.applicationStatusCodes.SUCCESS);
 		// And finally you give it back.
 		return result;
 	}
@@ -217,10 +217,10 @@ The `result` object can help you in unit tests as shown below:
 ```ts
 it("should return a 400 error if quantity is null or zero", async () => {
 	itemDto.quantity = null;
-	const result = await addUseCase.Execute(userUid, itemDto);
+	const result = await addUseCase.execute(userUid, itemDto);
 	expect(result.success).toBeFalsy();
 	expect(result.error).toBe(
-		resources.GetWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+		resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
 			missingParams: "quantity",
 		}),
 	);
@@ -276,10 +276,10 @@ The `validator` is a `very simple` but `dynamic tool` and with it you will be ab
 
 ```ts
 /*...*/
-async Execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>> {
+async execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>> {
 	const result = new Result<CarItemDto>();
 	if (
-		!this.validator.IsValidEntry(result, {
+		!this.validator.isValidEntry(result, {
 			User_Identifier: userUid,
 			Car_Item: itemDto,
 			Order_Id: itemDto?.orderId,
@@ -309,11 +309,11 @@ In the `validation process` the `result of messages` obtained `will be inserted`
 
 #### Validations functions (new feature 🤩)
 
-The validation functions extend the `IsValidEntry` method to inject `small functions` created for your `own needs`.
+The validation functions extend the `isValidEntry` method to inject `small functions` created for your `own needs`.
 
 The philosophy of this tool is that it adapts to your own needs and not that you adapt to it.
 
-To do this the `IsValidEntry function` input value key pair also accepts `array of small functions` that must perform a specific task with the parameter to be validated.
+To do this the `isValidEntry function` input value key pair also accepts `array of small functions` that must perform a specific task with the parameter to be validated.
 
 #### Observation
 
@@ -325,28 +325,28 @@ The validation functions should return `NULL` if the parameter for validate `is 
 
 ```ts
 // Validator functions created to meet your own needs
-function ValidateEmail(email: string): string {
+function validateEmail(email: string): string {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     return null;
   }
-  return resources.GetWithParams(resourceKeys.NOT_VALID_EMAIL, { email });
+  return resources.getWithParams(resourceKeys.NOT_VALID_EMAIL, { email });
 }
 
-function GreaterThan(numberName: string, base: number, evaluate: number): string {
+function greaterThan(numberName: string, base: number, evaluate: number): string {
   if (evaluate && evaluate > base) {
     return null;
   }
-  return resources.GetWithParams(resourceKeys.NUMBER_GREATER_THAN, {
+  return resources.getWithParams(resourceKeys.NUMBER_GREATER_THAN, {
     name: numberName,
     baseNumber: base.toString(),
   });
 }
 
-function EvenNumber(numberName: string, evaluate: number): string {
+function evenNumber(numberName: string, evaluate: number): string {
   if (evaluate && evaluate % 2 === 0) {
     return null;
   }
-  return resources.GetWithParams(resourceKeys.MUST_BE_EVEN_NUMBER, {
+  return resources.getWithParams(resourceKeys.MUST_BE_EVEN_NUMBER, {
     numberName,
   });
 }
@@ -357,15 +357,15 @@ const person = new Person("Carl", "Sagan", 86);
 /*...*/
 const result = new Result();
 const validEmail = "carlsagan@orion.com";
-person.SetEmail(validEmail);
-if (!validator.IsValidEntry(result, {
+person.setEmail(validEmail);
+if (!validator.isValidEntry(result, {
 	Name: person.name,
 	Last_Name: person.lastName,
 	Age: [
-		() => GreaterThan("Age", 25, person.age),
-		() => EvenNumber("Age", person.age),
+		() => greaterThan("Age", 25, person.age),
+		() => evenNumber("Age", person.age),
 	],
-	Email: [() => ValidateEmail(person.email)],
+	Email: [() => validateEmail(person.email)],
 })) {
 	return result;
 };
@@ -393,9 +393,9 @@ import { UseCaseGetLowestFeelingSentence } from "../../../../application/modules
 import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
 import { textFeelingService } from "../../../providers/container/index";
 
-const getFeelingTextUseCase = new UseCaseGetFeeling(textFeelingService);
-const getHighestFeelingSentenceUseCase = new UseCaseGetHighestFeelingSentence(textFeelingService);
-const getLowestFeelingSentenceUseCase = new UseCaseGetLowestFeelingSentence(textFeelingService);
+const getFeelingTextUseCase = new GetFeelingUsecase(textFeelingService);
+const getHighestFeelingSentenceUseCase = new GetHighestFeelingSentenceUseCase(textFeelingService);
+const getLowestFeelingSentenceUseCase = new GetLowestFeelingSentenceUseCase(textFeelingService);
 
 export { getFeelingTextUseCase, getHighestFeelingSentenceUseCase, getLowestFeelingSentenceUseCase };
 
@@ -430,13 +430,13 @@ import {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.InitializeRoutes();
+		this.initializeRoutes();
 	}
 	/*...*/
-	GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const textDto: TextDto = req.body;
-			this.HandleResult(res, await getFeelingTextUseCase.Execute(textDto));
+			this.handleResult(res, await getFeelingTextUseCase.execute(textDto));
 		} catch (error) {
 			next(error);
 		}
@@ -498,7 +498,7 @@ import {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.InitializeRoutes();
+		this.initializeRoutes();
 	}
 	/*...*/
 }
@@ -536,12 +536,12 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 ```ts
 /*...*/
 private InitializeRoutes() {
-	this.router.post("/v1/car", authorization(), this.Create);
-	this.router.get("/v1/car/:idMask", authorization(), this.Get);
-	this.router.post("/v1/car/:idMask", authorization(), this.Buy);
-	this.router.post("/v1/car/:idMask/item", authorization(), this.Add);
-	this.router.put("/v1/car/:idMask/item", authorization(), this.Remove);
-	this.router.delete("/v1/car/:idMask", authorization(), this.Empty);
+	this.router.post("/v1/car", authorization(), this.create);
+	this.router.get("/v1/car/:idMask", authorization(), this.get);
+	this.router.post("/v1/car/:idMask", authorization(), this.buy);
+	this.router.post("/v1/car/:idMask/item", authorization(), this.add);
+	this.router.put("/v1/car/:idMask/item", authorization(), this.remove);
+	this.router.delete("/v1/car/:idMask", authorization(), this.empty);
 	/*...*/
 }
 /*...*/
@@ -601,7 +601,7 @@ import {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.InitializeRoutes();
+		this.initializeRoutes();
 	}
 	/*...*/
 }
@@ -639,12 +639,12 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 ```ts
 /*...*/
 private InitializeRoutes() {
-	this.router.post("/v1/car", authorization(), this.Create);
-	this.router.get("/v1/car/:idMask", authorization(), this.Get);
-	this.router.post("/v1/car/:idMask", authorization(), this.Buy);
-	this.router.post("/v1/car/:idMask/item", authorization(), this.Add);
-	this.router.put("/v1/car/:idMask/item", authorization(), this.Remove);
-	this.router.delete("/v1/car/:idMask", authorization(), this.Empty);
+	this.router.post("/v1/car", authorization(), this.create);
+	this.router.get("/v1/car/:idMask", authorization(), this.get);
+	this.router.post("/v1/car/:idMask", authorization(), this.buy);
+	this.router.post("/v1/car/:idMask/item", authorization(), this.add);
+	this.router.put("/v1/car/:idMask/item", authorization(), this.remove);
+	this.router.delete("/v1/car/:idMask", authorization(), this.empty);
 	/*...*/
 }
 /*...*/

@@ -11,12 +11,12 @@
 //     const result = new Result();
 //     if (err?.name === "ApplicationError") {
 //       console.log("Controlled application error", err.message);
-//       result.SetError(err.message, err.errorCode);
+//       result.setError(err.message, err.errorCode);
 //     } else {
 //       console.log("No controlled application error", err);
-//       result.SetError(
-//         resources.Get(config.params.defaultError.message),
-//         config.params.defaultError.code,
+//       result.setError(
+//         resources.get(config.params.defaultApplicationError.message),
+//         config.params.defaultApplicationError.code,
 //       );
 //     }
 //     context.status = HttpStatusResolver.getCode(result.statusCode.toString());
@@ -28,27 +28,28 @@
 import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Request, Response, NextFunction } from "../../server/CoreModules";
+import resources from "../../../application/shared/locals";
 import { Result } from "result-tsk";
 import config from "../../config";
 
-export default function () {
-  return async function (
-    err: ApplicationError,
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+export class HandlerErrorMiddleware {
+  handler(err: ApplicationError, req: Request, res: Response, next: NextFunction): void {
     const result = new Result();
     if (err?.name === "ApplicationError") {
       console.log("Controlled application error", err.message);
-      result.SetError(err.message, err.errorCode);
+      result.setError(err.message, err.errorCode);
     } else {
       console.log("No controlled application error", err);
-      result.SetError(
-        config.params.defaultApplicationError.message,
+      result.setError(
+        resources.get(config.params.defaultApplicationError.message),
         config.params.defaultApplicationError.code,
       );
     }
+    if (res.headersSent) {
+      return next(result);
+    }
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
-  };
+  }
 }
+
+export default new HandlerErrorMiddleware();

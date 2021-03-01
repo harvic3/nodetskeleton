@@ -6,20 +6,20 @@ import { ITextFeelingService } from "./ITextFeelingService";
 
 export default class TextFeelingService implements ITextFeelingService {
   public constructor(private textFeelingQueryService: IFeelingQueryService) {}
-  async GetFeelingText(text: string): Promise<TextFeeling> {
-    const textFeeling = await this.textFeelingQueryService.AnalyzeText(text);
+  async getFeelingText(text: string): Promise<TextFeeling> {
+    const textFeeling = await this.textFeelingQueryService.analyzeText(text);
     return textFeeling;
   }
   async GetSentimentText(text: string): Promise<Sentiment> {
-    const textFeeling = await this.textFeelingQueryService.AnalyzeText(text);
+    const textFeeling = await this.textFeelingQueryService.analyzeText(text);
     return textFeeling?.GetFeelingText() || null;
   }
-  async GetHighestFeelingSentence(text: string): Promise<Sentence> {
-    const textFeeling = await this.textFeelingQueryService.AnalyzeText(text);
+  async getHighestFeelingSentence(text: string): Promise<Sentence> {
+    const textFeeling = await this.textFeelingQueryService.analyzeText(text);
     return textFeeling?.GetHighestFeelingSentence() || null;
   }
-  async GetLowestFeelingSentence(text: string): Promise<Sentence> {
-    const textFeeling = await this.textFeelingQueryService.AnalyzeText(text);
+  async getLowestFeelingSentence(text: string): Promise<Sentence> {
+    const textFeeling = await this.textFeelingQueryService.analyzeText(text);
     return textFeeling?.GetLowestFeelingSentence() || null;
   }
 }

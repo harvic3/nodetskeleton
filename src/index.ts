@@ -11,4 +11,4 @@ const controllers: BaseController[] = [healthController, textFeelingController];
 
 const app = new App(controllers);
 
-app.Start();
+app.start();

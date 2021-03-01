@@ -6,10 +6,10 @@ export class PongUseCase extends BaseUseCase {
     super();
   }
 
-  async Execute(): Promise<IResultT<string>> {
+  async execute(): Promise<IResultT<string>> {
     const result = new ResultT<string>();
-    const message = await this.healthProvider.Get();
-    result.SetData(message, this.applicationStatusCode.SUCCESS);
+    const message = await this.healthProvider.get();
+    result.setData(message, this.applicationStatusCode.SUCCESS);
     return result;
   }
 }

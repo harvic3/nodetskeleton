@@ -10,26 +10,28 @@
 // class TextFeelingController extends BaseController {
 //   public constructor() {
 //     super();
-//     this.InitializeRoutes();
+//     this.initializeRoutes();
 //   }
 
-//   private InitializeRoutes() {
-//     this.router.post("/feeling", this.GetFeelingText);
-//     this.router.post("/feeling/highest", this.GetHighestFeelingSentence);
-//     this.router.post("/feeling/lowest", this.GetHighestFeelingSentence);
+//   private initializeRoutes() {
+//     this.router.post("/v1/feeling", this.getFeelingText);
+//     this.router.post("/v1/feeling/highest", this.getHighestFeelingSentence);
+//     this.router.post("/v1/feeling/lowest", this.getHighestFeelingSentence);
 //   }
 
-//   GetFeelingText = async (context: Context): Promise<void> => {
+//   getFeelingText = async (context: Context): Promise<void> => {
 //     const textDto: TextDto = context.request.body;
-//     this.HandleResult(context, await getFeelingTextUseCase.Execute(textDto));
+//     this.HandleResult(context, await getFeelingTextUseCase.execute(textDto));
 //   };
-//   GetHighestFeelingSentence = async (context: Context): Promise<void> => {
+
+//   getHighestFeelingSentence = async (context: Context): Promise<void> => {
 //     const textDto: TextDto = context.request.body;
-//     this.HandleResult(context, await getHighestFeelingSentenceUseCase.Execute(textDto));
+//     this.HandleResult(context, await getHighestFeelingSentenceUseCase.execute(textDto));
 //   };
-//   GetLowestFeelingSentence = async (context: Context): Promise<void> => {
+
+//   getLowestFeelingSentence = async (context: Context): Promise<void> => {
 //     const textDto: TextDto = context.request.body;
-//     this.HandleResult(context, await getLowestFeelingSentenceUseCase.Execute(textDto));
+//     this.HandleResult(context, await getLowestFeelingSentenceUseCase.execute(textDto));
 //   };
 // }
 
@@ -50,43 +52,45 @@ import {
 class TextFeelingController extends BaseController {
   public constructor() {
     super();
-    this.InitializeRoutes();
+    this.initializeRoutes();
   }
 
-  private InitializeRoutes() {
-    this.router.post("/feeling", this.GetFeelingText);
-    this.router.post("/feeling/highest", this.GetHighestFeelingSentence);
-    this.router.post("/feeling/lowest", this.GetHighestFeelingSentence);
+  private initializeRoutes() {
+    this.router.post("/v1/feeling", this.getFeelingText);
+    this.router.post("/v1/feeling/highest", this.getHighestFeelingSentence);
+    this.router.post("/v1/feeling/lowest", this.getHighestFeelingSentence);
   }
 
-  GetFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const textDto: TextDto = req.body;
-      this.HandleResult(res, await getFeelingTextUseCase.Execute(textDto));
+      this.handleResult(res, await getFeelingTextUseCase.execute(textDto));
     } catch (error) {
       next(error);
     }
   };
-  GetHighestFeelingSentence = async (
+
+  getHighestFeelingSentence = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
       const textDto: TextDto = req.body;
-      this.HandleResult(res, await getHighestFeelingSentenceUseCase.Execute(textDto));
+      this.handleResult(res, await getHighestFeelingSentenceUseCase.execute(textDto));
     } catch (error) {
       next(error);
     }
   };
-  GetLowestFeelingSentence = async (
+
+  getLowestFeelingSentence = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
       const textDto: TextDto = req.body;
-      this.HandleResult(res, await getLowestFeelingSentenceUseCase.Execute(textDto));
+      this.handleResult(res, await getLowestFeelingSentenceUseCase.execute(textDto));
     } catch (error) {
       next(error);
     }

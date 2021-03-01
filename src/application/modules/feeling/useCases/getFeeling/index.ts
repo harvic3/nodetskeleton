@@ -9,24 +9,24 @@ export class UseCaseGetFeeling extends BaseUseCase {
     super();
   }
 
-  async Execute(textDto: TextDto): Promise<IResultT<TextFeelingDto>> {
+  async execute(textDto: TextDto): Promise<IResultT<TextFeelingDto>> {
     const result = new ResultT<TextFeelingDto>();
-    if (!this.validator.IsValidEntry(result, { textDto: textDto, text: textDto?.text })) {
+    if (!this.validator.isValidEntry(result, { textDto: textDto, text: textDto?.text })) {
       return result;
     }
-    const textFeeling = await this.textFeelingService.GetFeelingText(textDto.text);
+    const textFeeling = await this.textFeelingService.getFeelingText(textDto.text);
     if (!textFeeling) {
-      result.SetError(
-        this.resources.Get(this.resourceKeys.TEXT_FEELING_SERVICE_ERROR),
+      result.setError(
+        this.resources.get(this.resourceKeys.TEXT_FEELING_SERVICE_ERROR),
         this.applicationStatusCode.INTERNAL_SERVER_ERROR,
       );
       return result;
     }
-    const textFeelingDto = this.mapper.MapObject<TextFeeling, TextFeelingDto>(
+    const textFeelingDto = this.mapper.mapObject<TextFeeling, TextFeelingDto>(
       textFeeling,
       new TextFeelingDto(),
     );
-    result.SetData(textFeelingDto, this.applicationStatusCode.SUCCESS);
+    result.setData(textFeelingDto, this.applicationStatusCode.SUCCESS);
     return result;
   }
 }

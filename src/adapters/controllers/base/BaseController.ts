@@ -12,9 +12,9 @@
 //   HandleResult(ctx: Context, result: IResult): void {
 //     ctx.status = HttpStatusResolver.getCode(result.statusCode.toString());
 //     if (result.success) {
-//       ctx.body = result.message ? result.ToResultDto() : result.ToResultDto().data;
+//       ctx.body = result.message ? result.toResultDto() : result.toResultDto().data;
 //     } else {
-//       ctx.body = result.ToResultDto();
+//       ctx.body = result.toResultDto();
 //     }
 //   }
 // }
@@ -26,19 +26,21 @@ import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { IResult } from "result-tsk";
 
 export default class BaseController {
+  router: RouterType;
+
   constructor() {
     this.router = Router();
   }
-  router: RouterType;
-  HandleResult(res: Response, result: IResult): void {
+
+  handleResult(res: Response, result: IResult): void {
     if (result.success) {
       res
         .status(HttpStatusResolver.getCode(result.statusCode.toString()))
-        .json(result.message ? result.ToResultDto() : result.ToResultDto().data);
+        .json(result.message ? result.toResultDto() : result.toResultDto().data);
     } else {
       res
         .status(HttpStatusResolver.getCode(result.statusCode.toString()))
-        .json(result.ToResultDto());
+        .json(result.toResultDto());
     }
   }
 }

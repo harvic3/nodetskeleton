@@ -4,17 +4,18 @@ export default class TResponse<T> {
   statusCode: number;
   message: string;
   error: Error;
-  SetResponse(data: string | T | Buffer | ArrayBuffer | PromiseLike<T>): void {
+
+  setResponse(data: string | T | Buffer | ArrayBuffer | PromiseLike<T>): void {
     this.response = data;
   }
-  SetStatusCode(code: number): void {
+  setStatusCode(code: number): void {
     this.statusCode = code;
   }
-  SetErrorMessage(message: string): void {
+  setErrorMessage(message: string): void {
     this.message = message;
     this.success = false;
   }
-  SetError(error: Error): void {
+  setError(error: Error): void {
     this.error = error;
     this.success = false;
   }

@@ -30,7 +30,7 @@ describe("when try to consume feeling service", () => {
   });
   it("should return a textFeeling object if service work", async () => {
     fetchMock.mockResponseOnce(JSON.stringify(textFeelingServiceResponse));
-    const textFeeling = await textFeelingRepository.AnalyzeText(text);
+    const textFeeling = await textFeelingRepository.analyzeText(text);
     expect(textFeeling.content).not.toBeNull();
     expect(textFeeling.content).not.toBeNull;
     expect(textFeeling.sentences.length).toBeGreaterThan(0);

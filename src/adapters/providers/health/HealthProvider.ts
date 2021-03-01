@@ -2,7 +2,7 @@ import { IHealthProvider } from "../../../application/modules/health/providerCon
 import { DateTime } from "luxon";
 
 export class HealthProvider implements IHealthProvider {
-  async Get(): Promise<string> {
+  async get(): Promise<string> {
     return Promise.resolve(
       `<div><h2>NodeTskeleton online at ${DateTime.local().toISO()}</h2></div>`,
     );

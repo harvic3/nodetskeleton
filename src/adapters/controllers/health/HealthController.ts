@@ -11,7 +11,7 @@
 //     this.router.get("/ping", this.Pong);
 //   }
 //   Pong = async (context: Context): Promise<void> => {
-//     this.HandleResult(context, await pongUseCase.Execute());
+//     this.HandleResult(context, await pongUseCase.execute());
 //   };
 // }
 
@@ -26,14 +26,16 @@ import { pongUseCase } from "./container/index";
 class HealthController extends BaseController {
   constructor() {
     super();
-    this.InitializeRoutes();
+    this.initializeRoutes();
   }
-  private InitializeRoutes(): void {
-    this.router.get("/ping", this.Pong);
+
+  private initializeRoutes(): void {
+    this.router.get("/ping", this.pong);
   }
-  Pong = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+  pong = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      this.HandleResult(res, await pongUseCase.Execute());
+      this.handleResult(res, await pongUseCase.execute());
     } catch (error) {
       next(error);
     }

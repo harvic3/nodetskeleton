@@ -23,7 +23,7 @@ class HttpClient {
     HEAD: "HEAD",
   };
   SerializationMethod = serialization;
-  async Send<T>(
+  async send<T>(
     url: string,
     method = this.Methods.GET,
     {
@@ -38,26 +38,26 @@ class HttpClient {
       serializationMethod?: string;
     },
   ): Promise<TResponse<T>> {
-    const request = BuildRequest(url, method, body, headers, options);
+    const request = buildRequest(url, method, body, headers, options);
     const result = new TResponse<T>();
     try {
       const response = await fetch(url, request);
       if (response.ok) {
-        result.SetResponse(await ProcessResponseData<T>(response, serializationMethod));
+        result.setResponse(await ProcessResponseData<T>(response, serializationMethod));
       } else {
-        result.SetErrorMessage(response.statusText);
+        result.setErrorMessage(response.statusText);
       }
-      result.SetStatusCode(response.status);
+      result.setStatusCode(response.status);
     } catch (error) {
-      result.SetErrorMessage(error.message);
-      result.SetStatusCode(error.code || null);
-      result.SetError(error);
+      result.setErrorMessage(error.message);
+      result.setStatusCode(error.code || null);
+      result.setError(error);
     }
     return result;
   }
 }
 
-function BuildRequest(
+function buildRequest(
   url: string,
   method: string,
   body?: BodyType,
@@ -101,7 +101,7 @@ async function ProcessResponseData<T>(
     }
   } catch (error) {
     throw new ApplicationError(
-      resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+      resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
       error?.code || applicationStatusCodes.INTERNAL_SERVER_ERROR,
       JSON.stringify(error),
     );
