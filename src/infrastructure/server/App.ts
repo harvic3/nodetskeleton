@@ -102,7 +102,7 @@ export default class App {
   public listen(): void {
     this.app.listen(config.server.Port, () => {
       console.log(
-        `Server running on ${config.server.Root}${config.server.Host}:${config.server.Port}`,
+        `Server running on ${config.server.Host}:${config.server.Port}${config.server.Root}`,
       );
     });
   }
