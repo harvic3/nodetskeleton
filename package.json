@@ -1,12 +1,13 @@
 {
   "name": "nodetskeleton",
   "version": "1.0.0",
-  "description": "A skeleton for use typescript with NodeJs",
+  "description": "A skeleton based to clean architecture for use typescript with NodeJs",
   "main": "./dist/index.js",
   "scripts": {
     "full-test": "rm -rf coverage/* && npm run build && jest --coverage --collectCoverageFrom=src/**",
     "test": "npm run build && jest --coverage --collectCoverageFrom=src/**",
     "build": "rm -rf dist/* && tsc --sourceMap false",
+    "up": "npm run build && docker-compose up -d",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
@@ -23,9 +24,10 @@
     "skeleton",
     "nodejs",
     "typescript",
-    "template"
+    "template",
+    "clean architecture"
   ],
-  "author": "vickodev",
+  "author": "Vickodev<Victor A. Higuita>",
   "license": "MIT",
   "homepage": "https://github.com/harvic3/nodetskeleton/blob/master/README.md",
   "devDependencies": {
@@ -48,6 +50,10 @@
     "pretty-quick": "^2.0.2",
     "ts-jest": "^26.5.2",
     "typescript": "^4.2.2"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6.12"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
