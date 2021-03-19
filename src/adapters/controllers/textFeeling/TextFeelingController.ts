@@ -1,11 +1,12 @@
-import BaseController from "../base/BaseController";
-import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
+import { Request, Response, NextFunction } from "../../../infrastructure/server/core/Modules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import BaseController from "../base/BaseController";
 import {
   getFeelingTextUseCase,
   getHighestFeelingSentenceUseCase,
   getLowestFeelingSentenceUseCase,
 } from "./container/index";
+import { ISession } from "../../../domain/session/ISession";
 
 class TextFeelingController extends BaseController {
   public constructor() {
@@ -21,7 +22,9 @@ class TextFeelingController extends BaseController {
 
   getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const session: ISession = req.session;
       const textDto: TextDto = req.body;
+
       this.handleResult(res, await getFeelingTextUseCase.execute(textDto));
     } catch (error) {
       next(error);
@@ -34,7 +37,9 @@ class TextFeelingController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
+      const session: ISession = req.session;
       const textDto: TextDto = req.body;
+
       this.handleResult(res, await getHighestFeelingSentenceUseCase.execute(textDto));
     } catch (error) {
       next(error);
@@ -47,7 +52,9 @@ class TextFeelingController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
+      const session: ISession = req.session;
       const textDto: TextDto = req.body;
+
       this.handleResult(res, await getLowestFeelingSentenceUseCase.execute(textDto));
     } catch (error) {
       next(error);

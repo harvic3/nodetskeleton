@@ -3,7 +3,6 @@ import * as Server from "express";
 const Router = Server.Router;
 
 export {
-  Request,
   Response,
   NextFunction,
   Application,

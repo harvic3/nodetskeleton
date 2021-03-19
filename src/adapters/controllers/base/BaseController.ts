@@ -1,5 +1,5 @@
-export { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
-import { Router, Response, RouterType } from "../../../infrastructure/server/CoreModules";
+export { Request, Response, NextFunction } from "../../../infrastructure/server/core/Modules";
+import { Router, Response, RouterType } from "../../../infrastructure/server/core/Modules";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { IResult } from "result-tsk";
 

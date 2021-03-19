@@ -1,6 +1,7 @@
-import { Server, Application, BodyParser } from "../server/CoreModules";
 import BaseController from "../../adapters/controllers/base/BaseController";
-import LocalizationMiddleware from "../middleware/localization";
+import authorizationMiddleware from "../middleware/authorization/jwt";
+import { Server, Application, BodyParser } from "./core/Modules";
+import localizationMiddleware from "../middleware/localization";
 import handlerErrorMiddleware from "../middleware/handleError";
 import resources from "../../application/shared/locals/index";
 import * as helmet from "helmet";
@@ -21,7 +22,8 @@ export default class App {
   public loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(BodyParser());
-    this.app.use(LocalizationMiddleware.handler);
+    this.app.use(localizationMiddleware.handler);
+    this.app.use(authorizationMiddleware.handler);
   }
 
   private loadControllers(controllers: BaseController[]): void {
