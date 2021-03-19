@@ -1,6 +1,7 @@
 {
   "SOMETHING_WENT_WRONG": "Oh, lo sentimos, algo no salió bien con esta acción!",
   "SOME_PARAMETERS_ARE_MISSING": "Faltan algunos parámetros: {{missingParams}}.",
+  "UNKNOWN_RESPONSE_STATUS": "Estado de respuesta del servidor desconocido.",
   "PROCESSING_DATA_CLIENT_ERROR": "Error procesando la data en el cliente http.",
   "TEXT_FEELING_SERVICE_ERROR": "Error inesperado con el servicio de sentimiento.",
   "AUTHORIZATION_REQUIRED": "La autorización es requerida."

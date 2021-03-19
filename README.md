@@ -461,21 +461,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs
 
-The easy way is go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
-
-> Delete `dependencies` and `devDependencies` for `ExpressJs` from `package.json` file.
-
-> Remove the `express` code from the following files:
-
-- On file `src/infrastructure/server/CoreModules.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
-
-- On file `src/infrastructure/server/App.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
-
-- On file `src/adapters/controllers/textFeeling/TextFeeling.controller.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
-
-- On file `src/adapters/controllers/BaseController.ts` remove `ExpressJs` code and remove `//` for lines corresponding to `KoaJs`
-
-- On directories `src/infrastructure/middleware` remove `ExpressJs` code for each middleware and remove `//` for lines corresponding to `KoaJs`
+Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
@@ -536,12 +522,12 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 ```ts
 /*...*/
 private InitializeRoutes() {
-	this.router.post("/v1/car", authorization(), this.create);
-	this.router.get("/v1/car/:idMask", authorization(), this.get);
-	this.router.post("/v1/car/:idMask", authorization(), this.buy);
-	this.router.post("/v1/car/:idMask/item", authorization(), this.add);
-	this.router.put("/v1/car/:idMask/item", authorization(), this.remove);
-	this.router.delete("/v1/car/:idMask", authorization(), this.empty);
+	this.router.post("/v1/cars", authorization(), this.create);
+	this.router.get("/v1/cars/:idMask", authorization(), this.get);
+	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
+	this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
+	this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
+	this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
 	/*...*/
 }
 /*...*/
@@ -569,18 +555,7 @@ private LoadControllers(controllers: BaseController[]) {
 
 ## Using with ExpressJs
 
-The easy way is go to `repo for ExpressJs` in this <a href="https://github.com/harvic3/nodetskeleton-express" target="_blank" >Link</a>, but if you want the more elaborate one follow these steps:
-
-Delete `dependencies` and `devDependencies` for `KoaJs` from `package.json` file.
-
-> Delete all commented code (corresponding to `KoaJs`) in the files into following directories:
-
-`src/infrastructure/server/...`, 
-`src/adapters/controllers/...`, 
-`application/result/BaseController.ts`,
-`src/infrastructure/middleware`
-
-And then, continue with the `installation` step described in this manual.
+Clone this repo or use it as template, and then, continue with the `installation` step described in this guide.
 
 ### Controllers
 
@@ -639,12 +614,12 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 ```ts
 /*...*/
 private InitializeRoutes() {
-	this.router.post("/v1/car", authorization(), this.create);
-	this.router.get("/v1/car/:idMask", authorization(), this.get);
-	this.router.post("/v1/car/:idMask", authorization(), this.buy);
-	this.router.post("/v1/car/:idMask/item", authorization(), this.add);
-	this.router.put("/v1/car/:idMask/item", authorization(), this.remove);
-	this.router.delete("/v1/car/:idMask", authorization(), this.empty);
+	this.router.post("/v1/cars", authorization(), this.create);
+	this.router.get("/v1/cars/:idMask", authorization(), this.get);
+	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
+	this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
+	this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
+	this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
 	/*...*/
 }
 /*...*/

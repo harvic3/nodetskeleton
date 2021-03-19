@@ -23,9 +23,9 @@ export default {
       Production: "production",
     },
     defaultApplicationError: {
-      code: "500",
-      message: "SOMETHING_WENT_WRONG",
+      Code: "500",
+      Message: "SOMETHING_WENT_WRONG",
     },
-    defaultLang: "en",
+    DefaultLang: "en",
   },
 };

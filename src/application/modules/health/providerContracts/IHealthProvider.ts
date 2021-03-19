@@ -1,3 +1,3 @@
 export interface IHealthProvider {
-  get(): Promise<string>;
+  get(date: string): Promise<string>;
 }
