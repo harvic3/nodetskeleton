@@ -7,12 +7,13 @@
     "full-test": "rm -rf coverage/* && npm run build && jest --coverage --collectCoverageFrom=src/**",
     "test": "npm run build && jest --coverage --collectCoverageFrom=src/**",
     "build": "rm -rf dist/* && tsc --sourceMap false",
-    "up": "npm run build && docker-compose up -d",
+    "up": "docker-compose up -d",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
     "pre-commit": "npm run lint && npm run pretty-quick --staged && npm run test",
-    "start": "node dist/index"
+    "start": "tsc && node dist/index",
+    "watch": "nodemon --inspect src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -46,9 +47,11 @@
     "jest": "^26.6.3",
     "jest-fetch-mock": "^3.0.3",
     "jest-mock-extended": "^1.0.13",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "pretty-quick": "^2.0.2",
     "ts-jest": "^26.5.2",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.2"
   },
   "engines": {

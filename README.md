@@ -521,7 +521,7 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 
 ```ts
 /*...*/
-private InitializeRoutes() {
+private initializeRoutes() {
 	this.router.post("/v1/cars", authorization(), this.create);
 	this.router.get("/v1/cars/:idMask", authorization(), this.get);
 	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -539,7 +539,7 @@ If you need to manage a `root path` in your `application` then this part is conf
 
 ```ts
 /*...*/
-private LoadControllers(controllers: BaseController[]) {
+private loadControllers(controllers: BaseController[]) {
 	controllers.forEach((controller) => {
 		// This is the line and the parameter comes from `config`.
 		controller.router.prefix(config.server.root);
@@ -584,6 +584,7 @@ class TextFeelingController extends BaseController {
 const instance = new TextFeelingController();
 // You can see the default export
 export default instance;
+// Or just use export default new TextFeelingController();
 ```
 Example of the handling of the `controllers` in the `index` file of our application:
 
@@ -613,7 +614,7 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 
 ```ts
 /*...*/
-private InitializeRoutes() {
+private initializeRoutes() {
 	this.router.post("/v1/cars", authorization(), this.create);
 	this.router.get("/v1/cars/:idMask", authorization(), this.get);
 	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -631,7 +632,7 @@ If you need to manage a `root path` in your `application` then this part is conf
 
 ```ts
 /*...*/
-private LoadControllers(controllers: BaseController[]): void {
+private loadControllers(controllers: BaseController[]): void {
 	controllers.forEach((controller) => {
 		// This is the line and the parameter comes from `config`.
 		this.app.use(config.server.root, controller.router);
@@ -755,6 +756,14 @@ npm run test
 
 > Remember to put some `stop point` in the code, for example in some method of the `TextFeelingController`.
 
+> For watch and debug mode, you can run the next command:
+```console
+npm run watch
+```
+
+And later go to `Execution and debugging` option in VSCode and play to `Node: Nodemon` task and after select the correct process for attach to debug mode. 
+Select some pid nodemon process like `[.../bin/nodemon.js --inspect src/...]`
+
 **[⬆ back to the past](#table-of-contents)**
 
 
@@ -795,6 +804,16 @@ tsc
       "preLaunchTask": "tsc: build-tsconfig",
       "sourceMaps": true,
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+		// For attach to watch mode before run command: npm run watch
+		{
+      "type": "node",
+      "request": "attach",
+      "name": "Node: Nodemon",
+      "processId": "${command:PickProcess}",
+      "restart": true,
+      "sourceMaps": true,
+      "protocol": "inspector"
     }
   ]
 }
@@ -819,9 +838,9 @@ tsc
 			"options": {
 				"shell": {
 					"executable": "cmd.exe", // For windows
-					"args": ["/d", "/c"], // For windows
+					"args": ["/d", "/c"],
 					// "executable": "bash", // For linux (I think some like this)
-					// "args": ["-l", "-i"] // For linux 
+					// "args": ["-l", "-i"]
 				}
 			}
 		}
