@@ -13,10 +13,6 @@ export class UserRepository extends BaseRepository implements IUSerRepository {
   }
 
   async register(user: User): Promise<IUser> {
-    const encryptedPassword = Encryptor.encrypt(`${user.email.toLowerCase()}-${user.password}`);
-    user.password = encryptedPassword;
-    user.createdAt = DateTime.local().toISO();
-
     const created = await userModel.create(user);
     return Promise.resolve(created);
   }
