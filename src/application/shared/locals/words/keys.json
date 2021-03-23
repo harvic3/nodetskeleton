@@ -1,4 +1,6 @@
 {
   "EMAIL": "EMAIL",
-  "PASSWORD": "PASSWORD"
+  "PASSWORD": "PASSWORD",
+  "NAME": "NAME",
+  "GENDER": "GENDER"
 }

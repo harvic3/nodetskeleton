@@ -5,6 +5,8 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "/src/infrastructure/",
     "/src/adapters/controllers/base/",
+    "/src/adapters/providers/base",
+    "/src/adapters/repositories/base",
     "/src/application/mocks/",
     "/src/application/shared/",
     "/dtos/",
@@ -12,6 +14,8 @@ module.exports = {
   modulePathIgnorePatterns: [
     "/src/infrastructure/",
     "/src/adapters/controllers/base/",
+    "/src/adapters/providers/base",
+    "/src/adapters/repositories/base",
     "/src/application/mocks/",
     "/src/application/shared/",
     "/src/index.ts",

@@ -1,4 +1,6 @@
 {
   "EMAIL": "Correo electrónico",
-  "PASSWORD": "Contraseña"
+  "PASSWORD": "Contraseña",
+  "NAME": "Nombre",
+  "GENDER": "Género"
 }

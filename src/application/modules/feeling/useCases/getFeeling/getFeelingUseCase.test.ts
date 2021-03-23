@@ -1,7 +1,7 @@
 import { IFeelingQueryService } from "../../serviceContracts/queryServices/IFeelingQueryService";
-import TextFeelingService from "../../serviceContracts/textFeeling/TextFeelingService";
-import resources, { resourceKeys } from "../../../../shared/locals/index";
 import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
+import TextFeelingService from "../../serviceContracts/textFeeling/TextFeelingService";
+import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import { textFeelingResponse } from "../../../../mocks/textFeeling.mock";
 import { TextFeelingDto } from "../../dtos/TextFeeling.dto";
 import { textDto } from "../../../../mocks/textDto.mock";

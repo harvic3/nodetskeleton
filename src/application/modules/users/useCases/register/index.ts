@@ -33,10 +33,10 @@ export class RegisterUserUseCase extends BaseUseCase {
 
   private isValidRequest(result: Result, user: User): boolean {
     const validations = {};
-    validations["Email"] = user.email;
-    validations["Name"] = user.name;
-    validations["Password"] = user?.password as string;
-    validations["Gender"] = user.gender;
+    validations[this.words.get(this.wordKeys.EMAIL)] = user.email;
+    validations[this.words.get(this.wordKeys.NAME)] = user.name;
+    validations[this.words.get(this.wordKeys.PASSWORD)] = user?.password as string;
+    validations[this.words.get(this.wordKeys.GENDER)] = user.gender;
 
     return this.validator.isValidEntry(result, validations);
   }
