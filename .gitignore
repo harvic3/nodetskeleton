@@ -12,6 +12,7 @@ pids
 logs
 results
 tmp
+.vscode
 
 # Build
 public/css/main.css

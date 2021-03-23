@@ -1,5 +1,5 @@
 import * as applicationStatusCode from "../../../application/shared/status/applicationStatusCodes.json";
-import resources, { resourceKeys, Resources } from "../../../application/shared/locals";
+import resources, { resourceKeys, Resources } from "../../../application/shared/locals/messages";
 export { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";

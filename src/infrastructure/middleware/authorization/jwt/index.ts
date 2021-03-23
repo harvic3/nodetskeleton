@@ -1,13 +1,18 @@
 import * as applicationStatus from "../../../../application/shared/status/applicationStatusCodes.json";
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
-import resources, { resourceKeys } from "../../../../application/shared/locals";
+import resources, { resourceKeys } from "../../../../application/shared/locals/messages";
 import { NextFunction, Request, Response } from "../../../server/core/Modules";
+import { authProvider } from "../../../../adapters/providers/container";
 import { ISession } from "../../../../domain/session/ISession";
 import config from "../../../config";
 
 const TOKEN_PARTS: number = 2;
 const TOKEN_VALUE_POSITION: number = 1;
-const WHITE_LIST = [`${config.server.Root}/ping`];
+const WHITE_LIST = [
+  `${config.server.Root}/ping`,
+  `${config.server.Root}/v1/users/login`,
+  `${config.server.Root}/v1/users/sign-up`,
+];
 
 class AuthorizationMiddleware {
   async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -34,9 +39,7 @@ class AuthorizationMiddleware {
 
     try {
       const token = parts[TOKEN_VALUE_POSITION];
-      // verify your token here with your lib and add necessary logic to set it at the next line
-      const session: ISession = { name: "The user name" } as ISession;
-      console.log("You maybe need to see the authorization middleware: ", session);
+      const session: ISession = await authProvider.verifyJwt(token);
       if (!session) {
         throw new ApplicationError(
           resources.get(resourceKeys.AUTHORIZATION_REQUIRED),

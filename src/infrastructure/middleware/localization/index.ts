@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "../../server/core/Modules";
-import resources from "../../../application/shared/locals/index";
+import resources from "../../../application/shared/locals/messages";
 import config from "../../config";
 
 export class LocalizationMiddleware {

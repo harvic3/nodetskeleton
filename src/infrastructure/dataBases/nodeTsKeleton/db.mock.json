@@ -1,0 +1,14 @@
+{
+  "users": [
+    { 
+      "uid": "9b2cbd49a3f8425b993a234dccf5493a",
+      "maskedUid": "9847163202704ab1ae9d5532049e7cee",
+      "name": "Vick Higuita",
+      "email": "harvic3@protonmail.com",
+      "gender": "Male",
+      "password": "ftJJROptwOrGhIZ1BDiZO6OfpZzDKi3Ym/oKiAF/CztQ+NPGzhzbOo2gIYljYrm7E9F2p/pPXa9ps6qYkRh6HQ==",
+      "createdAt": "1856-06-10T18:30:51.876-05:00",
+      "verified": true
+    }
+  ]
+}

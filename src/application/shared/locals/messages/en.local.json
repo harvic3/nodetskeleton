@@ -4,5 +4,8 @@
   "UNKNOWN_RESPONSE_STATUS": "Response status from server unknown.",
   "PROCESSING_DATA_CLIENT_ERROR": "Error processing http client data.",
   "TEXT_FEELING_SERVICE_ERROR": "unexpected error with the sentiment service.",
-  "AUTHORIZATION_REQUIRED": "Authorization is required."
+  "AUTHORIZATION_REQUIRED": "Authorization is required.",
+  "INVALID_USER_OR_PASSWORD": "Invalid user or password.",
+  "ERROR_CREATING_USER": "Create user error.",
+  "USER_WAS_CREATED": "User was created."
 }

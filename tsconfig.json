@@ -15,8 +15,9 @@
     "allowSyntheticDefaultImports": false,
     "alwaysStrict": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
+  "compileOnSave": true,
   "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
   "include": ["./src/**/*"]
 }

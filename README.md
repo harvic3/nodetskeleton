@@ -672,6 +672,8 @@ SERVER_ROOT=/api
 SERVER_HOST=localhost
 SERVER_PORT=3003
 ORIGINS=http://localhost:3003
+ENCRYPTION_KEY=JUS9192ZliRlDBWm0BmmJoZO1PbNkZt3kiXNlaGLkIT49uEdgGe79TPCbr0D
+JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
 ```
 
 ### Local
@@ -695,6 +697,21 @@ This project is configured with `VS Code` so if you use `WindowsNT` go to the ne
 > Finally, in any internet explorer go to:
 
 `localhost:3003/api/ping`
+
+> And you can use PostMan too:
+
+Try import this request. So, click to Import > Select Raw text, and paste the next code:
+
+```console
+curl --location --request POST 'localhost:3003/api/v1/users/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "harvic3@protonmail.com",
+    "password": "Tm9kZVRza2VsZXRvbg=="
+}'
+```
+
+The password is equivalent for "NodeTskeleton" in Base64 format.
 
 ### Docker Compose
 
@@ -721,6 +738,21 @@ docker-compose up -d --build
 > Finally, in any internet explorer go to:
 
 `localhost:3040/api/ping`
+
+> And you can use PostMan too:
+
+Try import this request. So, click to Import > Select Raw text, and paste the next code:
+
+```console
+curl --location --request POST 'localhost:3040/api/v1/users/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "harvic3@protonmail.com",
+    "password": "Tm9kZVRza2VsZXRvbg=="
+}'
+```
+
+The password is equivalent for "NodeTskeleton" in Base64 format.
 
 ### Observation 👀
 
@@ -752,6 +784,8 @@ npm run test
 
 ## Application debugger
 
+Before this maybe you should make some settings, for it you can go to **[Setting files](#setting-files)**
+
 > In the side menu of `VS Code` go to the `Execute` ▶ option and then at the top select the `Launch via NPM` option in menu and click on the green Play icon ▶️.
 
 > Remember to put some `stop point` in the code, for example in some method of the `TextFeelingController`.
@@ -760,6 +794,9 @@ npm run test
 ```console
 npm run watch
 ```
+
+> Nodemon
+This option required previous file settings **[Setting files](#setting-files)**
 
 And later go to `Execution and debugging` option in VSCode and play to `Node: Nodemon` task and after select the correct process for attach to debug mode. 
 Select some pid nodemon process like `[.../bin/nodemon.js --inspect src/...]`
@@ -786,7 +823,17 @@ tsc
 ```
 > With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
 
-## Setting files (.vscode)🛠️
+## Setting files
+(.vscode)🛠️
+
+This step is optional and it working for windows, but in another OS (Linux or Mac OS) you can do the next instructions:
+
+1. Goto to left menu `Depuration and Execution` and create a `launch.json` file settings for `NodeJs`, do not play it yet...
+2. Press combination key command `Ctrl + Shift + B` and select `tsc: watch` or `tsc: build`, so...
+3. Now, you can play the configuration of previous one step called `Launch Program`.
+4. So, you can ready for the action
+
+So, for Windows, you need this files or you could also perform the above steps. They should also work for Windows.
 
 > Files for `.vscode` folder
 
@@ -837,9 +884,9 @@ tsc
 			"label": "tsc: build-tsconfig",
 			"options": {
 				"shell": {
-					"executable": "cmd.exe", // For windows
+					"executable": "cmd.exe", // With cmd...
 					"args": ["/d", "/c"],
-					// "executable": "bash", // For linux (I think some like this)
+					// "executable": "C:/Program Files/Git/git-bash.exe", // or with git bash too
 					// "args": ["-l", "-i"]
 				}
 			}

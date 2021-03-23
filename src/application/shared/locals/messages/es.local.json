@@ -4,5 +4,8 @@
   "UNKNOWN_RESPONSE_STATUS": "Estado de respuesta del servidor desconocido.",
   "PROCESSING_DATA_CLIENT_ERROR": "Error procesando la data en el cliente http.",
   "TEXT_FEELING_SERVICE_ERROR": "Error inesperado con el servicio de sentimiento.",
-  "AUTHORIZATION_REQUIRED": "La autorización es requerida."
+  "AUTHORIZATION_REQUIRED": "La autorización es requerida.",
+  "INVALID_USER_OR_PASSWORD": "Usuario o contraseña incorrecto.",
+  "ERROR_CREATING_USER": "Algo no salió bien registrado el usuario.",
+  "USER_WAS_CREATED": "El usuario fue registrado"
 }

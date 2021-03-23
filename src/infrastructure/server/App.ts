@@ -1,9 +1,12 @@
+import Encryptor from "../../application/shared/security/encryption/Encryptor";
 import BaseController from "../../adapters/controllers/base/BaseController";
+import AppSettings from "../../application/shared/settings/AppSettings";
 import authorizationMiddleware from "../middleware/authorization/jwt";
 import { Server, Application, BodyParser } from "./core/Modules";
+import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import handlerErrorMiddleware from "../middleware/handleError";
-import resources from "../../application/shared/locals/index";
+import words from "../../application/shared/locals/words";
 import * as helmet from "helmet";
 import config from "../config";
 
@@ -11,12 +14,12 @@ export default class App {
   public app: Application;
 
   constructor(controllers: BaseController[]) {
+    this.setup();
     this.app = Server();
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     this.loadControllers(controllers);
     this.loadHandleError();
-    this.setup();
   }
 
   public loadMiddleware(): void {
@@ -28,7 +31,7 @@ export default class App {
 
   private loadControllers(controllers: BaseController[]): void {
     controllers.forEach((controller) => {
-      this.app.use(config.server.Root, controller.router);
+      this.app.use(AppSettings.ServerRoot, controller.router);
     });
   }
 
@@ -37,13 +40,16 @@ export default class App {
   }
 
   private setup(): void {
-    resources.setDefaultLanguage(config.params.DefaultLang);
+    AppSettings.init(config);
+    resources.setDefaultLanguage(AppSettings.DefaultLang);
+    words.setDefaultLanguage(AppSettings.DefaultLang);
+    Encryptor.init(AppSettings.EncryptionKey);
   }
 
   public listen(): void {
     this.app.listen(config.server.Port, () => {
       console.log(
-        `Server running on ${config.server.Host}:${config.server.Port}${config.server.Root}`,
+        `Server running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
       );
     });
   }

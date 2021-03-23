@@ -26,6 +26,13 @@ export default {
       Code: "500",
       Message: "SOMETHING_WENT_WRONG",
     },
+    security: {
+      jwt: {
+        SecretKey: process.env.JWT_SECRET_KEY,
+        ExpireInSeconds: 3600,
+      },
+      EncryptionKey: process.env.ENCRYPTION_KEY,
+    },
     DefaultLang: "en",
   },
 };
