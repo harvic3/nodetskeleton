@@ -5,10 +5,9 @@ import BaseController from "./adapters/controllers/base/BaseController";
 // Region controllers
 import healthController from "./adapters/controllers/health/HealthController";
 import authController from "./adapters/controllers/auth/AuthController";
-import textFeelingController from "./adapters/controllers/textFeeling/TextFeelingController";
 // End controllers
 
-const controllers: BaseController[] = [healthController, authController, textFeelingController];
+const controllers: BaseController[] = [healthController, authController];
 
 const app = new App(controllers);
 
