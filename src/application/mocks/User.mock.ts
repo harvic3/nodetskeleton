@@ -1,6 +1,6 @@
+import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { User } from "../../domain/user/User";
-import { Gender } from "../../domain/user/genre/Gender.enum";
 
 export class UserMock implements IMockBuilder<User> {
   private user: User;
@@ -29,6 +29,10 @@ export class UserMock implements IMockBuilder<User> {
   }
   withGender(gender = Gender.MALE): UserMock {
     this.user.gender = gender;
+    return this;
+  }
+  withPassword(password = "Tm9kZVRza2VsZXRvbg=="): UserMock {
+    this.user.password = password;
     return this;
   }
 }

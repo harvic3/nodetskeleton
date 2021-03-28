@@ -1,12 +1,12 @@
-import { mock } from "jest-mock-extended";
+import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import { IAuthProvider } from "../../providerContracts/IAuthProvider";
-import { LoginUseCase } from "./index";
-import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
-import words from "../../../../shared/locals/words";
+import words, { wordKeys } from "../../../../shared/locals/words";
+import AppSettings from "../../../../shared/settings/AppSettings";
 import { UserMock } from "../../../../mocks/User.mock";
 import { TokenDto } from "../../dtos/TokenDto";
-import AppSettings from "../../../../shared/settings/AppSettings";
+import { mock } from "jest-mock-extended";
+import { LoginUseCase } from "./index";
 
 const defaultLanguage = "en";
 const tokenExpirationTime = 3600;
@@ -27,6 +27,7 @@ describe("when try to login", () => {
   beforeEach(() => {
     authProviderMock.login.mockReset();
   });
+
   it("should return a 400 error if email and password are null", async () => {
     // Act
     const result = await loginUseCase.execute(null, null);
@@ -35,7 +36,7 @@ describe("when try to login", () => {
     expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: "Email, Password",
+        missingParams: `${words.get(wordKeys.EMAIL)}, ${words.get(wordKeys.PASSWORD)}`,
       }),
     );
     expect(result.success).toBeFalsy();
@@ -48,7 +49,7 @@ describe("when try to login", () => {
     expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: "Password",
+        missingParams: words.get(wordKeys.PASSWORD),
       }),
     );
     expect(result.success).toBeFalsy();

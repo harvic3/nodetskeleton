@@ -16,8 +16,20 @@ export class RegisterUserUseCase extends BaseUseCase {
       return result;
     }
 
+    user.email = user.email.toLowerCase();
+    const userExists = await this.userRepository.getByEmail(user.email);
+    if (userExists) {
+      result.setError(
+        this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
+          email: user.email,
+        }),
+        this.applicationStatusCode.BAD_REQUEST,
+      );
+      return result;
+    }
+
     user.maskedUid = v4().replace(/-/g, "");
-    const encryptedPassword = Encryptor.encrypt(`${user.email.toLowerCase()}-${user.password}`);
+    const encryptedPassword = Encryptor.encrypt(`${user.email}-${user.password}`);
     user.password = encryptedPassword;
     user.createdAt = DateTime.local().toISO();
     const registered = await this.userRepository.register(user);

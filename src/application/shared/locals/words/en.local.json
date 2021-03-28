@@ -2,5 +2,6 @@
   "EMAIL": "Email",
   "PASSWORD": "Password",
   "NAME": "Name",
-  "GENDER": "Gender"
+  "GENDER": "Gender",
+  "ENCRYPTOR": "Encrypt"
 }

@@ -2,5 +2,6 @@
   "EMAIL": "Correo electrónico",
   "PASSWORD": "Contraseña",
   "NAME": "Nombre",
-  "GENDER": "Género"
+  "GENDER": "Género",
+  "ENCRYPTOR": "Encriptador"
 }
