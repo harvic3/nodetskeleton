@@ -12,7 +12,7 @@ export class User implements IUser {
   verified: boolean;
   createdAt: string;
 
-  constructor(properties?: {
+  constructor(props?: {
     name: string;
     email: string;
     gender: Gender;
@@ -21,13 +21,13 @@ export class User implements IUser {
     createdAt: string;
     verified: boolean;
   }) {
-    this.name = properties?.name;
-    this.email = properties?.email;
-    this.gender = properties?.gender;
-    this.uid = properties?.uid;
-    this.maskedUid = properties?.maskedUid;
-    this.createdAt = properties?.createdAt;
-    this.verified = properties?.verified;
+    this.name = props?.name;
+    this.email = props?.email;
+    this.gender = props?.gender;
+    this.uid = props?.uid;
+    this.maskedUid = props?.maskedUid;
+    this.createdAt = props?.createdAt;
+    this.verified = props?.verified;
   }
 
   createSession(): ISession {
