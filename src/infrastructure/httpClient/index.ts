@@ -1,7 +1,7 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
-import * as httpStatus from "../../adapters/controllers/base/httpResponse/httpStatusCodes.json";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import resources, { resourceKeys } from "../../application/shared/locals/messages";
+import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 export { BodyInit as BodyType, Headers } from "node-fetch";
 import { Options } from "./Options";
 import TResponse from "./TResponse";
@@ -66,7 +66,7 @@ export class HttpClient {
     return result;
   }
 
-  buildRequest(
+  private buildRequest(
     url: string,
     method: string,
     body?: BodyType,
@@ -93,7 +93,7 @@ export class HttpClient {
     return request;
   }
 
-  async processErrorResponse<E>(response: Response): Promise<[E | string, boolean]> {
+  private async processErrorResponse<E>(response: Response): Promise<[E | string, boolean]> {
     let result = null;
     try {
       result = await response.text();
@@ -103,7 +103,7 @@ export class HttpClient {
     }
   }
 
-  async processResponseData<R>(
+  private async processResponseData<R>(
     response: Response,
     serializationMethod: string,
   ): Promise<R | string | Buffer | ArrayBuffer> {

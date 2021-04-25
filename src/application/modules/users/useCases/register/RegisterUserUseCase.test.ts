@@ -1,5 +1,5 @@
-import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
+import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../repositoryContracts/IUserRepository";
 import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -32,7 +32,7 @@ describe("when try to register user", () => {
     const result = await registerUserUseCase.execute(user);
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: `${words.get(wordKeys.EMAIL)}, ${words.get(wordKeys.NAME)}, ${words.get(
@@ -48,7 +48,7 @@ describe("when try to register user", () => {
     const result = await registerUserUseCase.execute(user);
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: words.get(wordKeys.PASSWORD),
@@ -69,7 +69,7 @@ describe("when try to register user", () => {
     const result = await registerUserUseCase.execute(user);
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
         email: user.email,
@@ -100,7 +100,7 @@ describe("when try to register user", () => {
     const result = await registerUserUseCase.execute(user);
     // Assert
     expect(result.success).toBeTruthy();
-    expect(result.statusCode).toBe(applicationStatusCodes.SUCCESS);
+    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
     expect(result.message).toBe(resources.get(resourceKeys.USER_WAS_CREATED));
   });
 });

@@ -1,5 +1,5 @@
-import * as applicationStatusCodes from "../../../../shared/status/applicationStatusCodes.json";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
+import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IAuthProvider } from "../../providerContracts/IAuthProvider";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -33,7 +33,7 @@ describe("when try to login", () => {
     const result = await loginUseCase.execute(null, null);
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: `${words.get(wordKeys.EMAIL)}, ${words.get(wordKeys.PASSWORD)}`,
@@ -46,7 +46,7 @@ describe("when try to login", () => {
     const result = await loginUseCase.execute(email, null);
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: words.get(wordKeys.PASSWORD),
@@ -62,7 +62,7 @@ describe("when try to login", () => {
     const result = await loginUseCase.execute(email, password);
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(resources.get(resourceKeys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
@@ -74,7 +74,7 @@ describe("when try to login", () => {
     const result = await loginUseCase.execute(email, password);
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatusCodes.BAD_REQUEST);
+    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(resources.get(resourceKeys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
@@ -89,7 +89,7 @@ describe("when try to login", () => {
 
     // Assert
     const data = result.data as TokenDto;
-    expect(result.statusCode).toBe(applicationStatusCodes.SUCCESS);
+    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
     expect(result.success).toBeTruthy();
     expect(data.expireIn).toBe(tokenExpirationTime);
   });

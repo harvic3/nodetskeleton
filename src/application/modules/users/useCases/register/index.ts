@@ -23,7 +23,7 @@ export class RegisterUserUseCase extends BaseUseCase {
         this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
           email: user.email,
         }),
-        this.applicationStatusCode.BAD_REQUEST,
+        this.applicationStatus.INVALID_INPUT,
       );
       return result;
     }
@@ -37,14 +37,14 @@ export class RegisterUserUseCase extends BaseUseCase {
     if (!registered) {
       result.setError(
         this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
-        this.applicationStatusCode.INTERNAL_SERVER_ERROR,
+        this.applicationStatus.INTERNAL_ERROR,
       );
       return result;
     }
 
     result.setMessage(
       this.resources.get(this.resourceKeys.USER_WAS_CREATED),
-      this.applicationStatusCode.SUCCESS,
+      this.applicationStatus.SUCCESS,
     );
 
     return result;

@@ -19,7 +19,7 @@ export class LoginUseCase extends BaseUseCase {
     const authenticatedUser: User = await this.authProvider.login(email, passwordB64).catch(() => {
       result.setError(
         this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
-        this.applicationStatusCode.BAD_REQUEST,
+        this.applicationStatus.INVALID_INPUT,
       );
       return null;
     });
@@ -30,7 +30,7 @@ export class LoginUseCase extends BaseUseCase {
 
     const tokenDto: TokenDto = await this.createSession(authenticatedUser);
 
-    result.setData(tokenDto, this.applicationStatusCode.SUCCESS);
+    result.setData(tokenDto, this.applicationStatus.SUCCESS);
 
     return result;
   }

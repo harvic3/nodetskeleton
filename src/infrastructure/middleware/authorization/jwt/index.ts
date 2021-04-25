@@ -1,6 +1,6 @@
-import * as applicationStatus from "../../../../application/shared/status/applicationStatusCodes.json";
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
 import resources, { resourceKeys } from "../../../../application/shared/locals/messages";
+import applicationStatus from "../../../../application/shared/status/applicationStatus";
 import { NextFunction, Request, Response } from "../../../server/core/Modules";
 import { authProvider } from "../../../../adapters/providers/container";
 import { ISession } from "../../../../domain/session/ISession";

@@ -1,6 +1,6 @@
-import * as applicationStatusCode from "../../../application/shared/status/applicationStatusCodes.json";
 import resources, { resourceKeys, Resources } from "../../../application/shared/locals/messages";
 export { ApplicationError } from "../../../application/shared/errors/ApplicationError";
+import applicationStatus from "../../../application/shared/status/applicationStatus";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 
@@ -11,7 +11,7 @@ export class BaseRepository {
     this.validator = new Validator(
       resources,
       resourceKeys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatusCode.BAD_REQUEST,
+      applicationStatus.INVALID_INPUT,
     );
   }
 
@@ -19,5 +19,5 @@ export class BaseRepository {
   validator: Validator;
   resources: Resources;
   resourceKeys = resourceKeys;
-  applicationStatusCode = applicationStatusCode;
+  applicationStatusCode = applicationStatus;
 }

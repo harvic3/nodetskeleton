@@ -1,8 +1,8 @@
 import { Resources } from "resources-tsk";
-import * as esLocal from "./es.local.json";
-import * as enLocal from "./en.local.json";
+import esLocal from "./es.local";
+import enLocal from "./en.local";
 
-import * as localKeys from "./keys.json";
+import localKeys from "./keys";
 
 const locals = {
   es: esLocal,

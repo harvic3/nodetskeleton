@@ -1,8 +1,8 @@
-import { pbkdf2Sync } from "crypto";
 import { ApplicationError } from "../../errors/ApplicationError";
 import resources, { resourceKeys } from "../../locals/messages";
+import applicationStatus from "../../status/applicationStatus";
 import words, { wordKeys } from "../../locals/words";
-import * as applicationStatusCode from "../../status/applicationStatusCodes.json";
+import { pbkdf2Sync } from "crypto";
 
 const ALGORITHM = "sha512";
 const FORMAT = "base64";
@@ -20,7 +20,7 @@ export default class Encryptor {
         resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
           toolName: words.get(wordKeys.ENCRYPTOR),
         }),
-        applicationStatusCode.INTERNAL_SERVER_ERROR,
+        applicationStatus.INTERNAL_ERROR,
       );
     }
     const salt = encryptionKey || this.defaultEncryptionKey;

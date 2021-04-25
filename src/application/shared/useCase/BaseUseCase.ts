@@ -1,7 +1,6 @@
-import * as applicationStatusCode from "../status/applicationStatusCodes.json";
 import resources, { resourceKeys, Resources } from "../locals/messages/index";
-
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
+import applicationStatus from "../status/applicationStatus";
 import words, { wordKeys } from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
@@ -14,7 +13,7 @@ export class BaseUseCase {
     this.validator = new Validator(
       resources,
       resourceKeys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatusCode.BAD_REQUEST,
+      applicationStatus.INVALID_INPUT,
     );
   }
 
@@ -24,5 +23,5 @@ export class BaseUseCase {
   words: Resources;
   resourceKeys = resourceKeys;
   wordKeys = wordKeys;
-  applicationStatusCode = applicationStatusCode;
+  applicationStatus = applicationStatus;
 }
