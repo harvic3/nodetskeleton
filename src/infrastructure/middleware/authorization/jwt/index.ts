@@ -15,7 +15,7 @@ const WHITE_LIST = [
 ];
 
 class AuthorizationMiddleware {
-  async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
     const existsUnauthorizedPath: boolean = WHITE_LIST.some((path) => path === req.path);
     if (existsUnauthorizedPath) {
       return next();

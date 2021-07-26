@@ -11,7 +11,7 @@ export class AuthController extends BaseController {
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const email = req.body?.email as string;
-      const passwordB64 = req.body.password as string;
+      const passwordB64 = req.body?.password as string;
 
       this.handleResult(res, await loginUseCase.execute(email, passwordB64));
     } catch (error) {

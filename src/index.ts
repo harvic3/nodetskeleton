@@ -1,5 +1,6 @@
 import "express-async-errors";
 import AppWrapper from "./infrastructure/server/AppWrapper";
+import handlerErrorMiddleware from "./infrastructure/middleware/error";
 import BaseController from "./adapters/controllers/base/BaseController";
 
 // Region controllers
@@ -14,3 +15,11 @@ const appWrapper = new AppWrapper(controllers);
 
 const server = new HttpServer(appWrapper);
 server.listen();
+
+process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+  handlerErrorMiddleware.manageNodeException(error);
+});
+
+process.on("unhandledRejection", (reason: NodeJS.UncaughtExceptionListener) => {
+  handlerErrorMiddleware.manageNodeException(reason);
+});
