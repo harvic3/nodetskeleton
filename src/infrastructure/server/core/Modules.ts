@@ -1,10 +1,10 @@
 export { IRequest as Request } from "./IRequest";
 export {
-  Server,
+  ServerApp,
   BodyParser,
   Router,
   RouterType,
   Response,
   NextFunction,
   Application,
-} from "./Server";
+} from "./ServerModules";
