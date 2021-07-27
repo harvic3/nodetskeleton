@@ -8,11 +8,22 @@ import { UserMock } from "../../../../mocks/User.mock";
 import { User } from "../../../../../domain/user/User";
 import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
+import { IDateProvider } from "../../../../shared/ports/IDateProvider";
+import { IUUIDProvider } from "../../../../shared/ports/IUUIDProvider";
 
 const defaultLanguage = "en";
 
 const userRepositoryMock = mock<IUSerRepository>();
-const registerUserUseCase = new RegisterUserUseCase(userRepositoryMock);
+const dateProviderMock = mock<IDateProvider>();
+const uuidProviderMock = mock<IUUIDProvider>();
+const registerUserUseCase = new RegisterUserUseCase(
+  userRepositoryMock,
+  dateProviderMock,
+  uuidProviderMock,
+);
+
+const dateNow: string = "2021-07-26T11:25:13.747-03:00";
+const uuid: string = "441bb58e7fcc486182a3330c31f13453";
 
 describe("when try to register user", () => {
   beforeAll(() => {
@@ -23,6 +34,8 @@ describe("when try to register user", () => {
   beforeEach(() => {
     userRepositoryMock.register.mockReset();
     userRepositoryMock.getByEmail.mockReset();
+    dateProviderMock.getDateNow.mockReset();
+    uuidProviderMock.generateUUID.mockReset();
   });
 
   it("should return a 400 error if user properties was null or undefined", async () => {
@@ -81,10 +94,12 @@ describe("when try to register user", () => {
     const user = new UserMock().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+    dateProviderMock.getDateNow.mockReturnValue(dateNow);
+    uuidProviderMock.generateUUID.mockReturnValue(uuid);
     // Act
     const result = registerUserUseCase.execute(user);
     // Assert
-    expect(result).rejects.toThrowError(
+    await expect(result).rejects.toThrowError(
       resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
         toolName: words.get(wordKeys.ENCRYPTOR),
       }),
@@ -96,6 +111,8 @@ describe("when try to register user", () => {
     const user = new UserMock().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+    dateProviderMock.getDateNow.mockReturnValue(dateNow);
+    uuidProviderMock.generateUUID.mockReturnValue(uuid);
     // Act
     const result = await registerUserUseCase.execute(user);
     // Assert

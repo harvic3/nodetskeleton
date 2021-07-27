@@ -4,10 +4,22 @@ import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import { User } from "../../../../../domain/user/User";
 import { DateTime } from "luxon";
 import { v4 } from "uuid";
+import { IDateProvider } from "../../../../shared/ports/IDateProvider";
+import { IUUIDProvider } from "../../../../shared/ports/IUUIDProvider";
 
 export class RegisterUserUseCase extends BaseUseCase {
-  constructor(private readonly userRepository: IUSerRepository) {
+  private readonly userRepository: IUSerRepository;
+  private readonly dateProvider: IDateProvider;
+  private readonly uuidProvider: IUUIDProvider;
+  constructor(
+    userRepository: IUSerRepository,
+    dateProvider: IDateProvider,
+    uuidProvider: IUUIDProvider,
+  ) {
     super();
+    this.userRepository = userRepository;
+    this.dateProvider = dateProvider;
+    this.uuidProvider = uuidProvider;
   }
 
   async execute(user: User): Promise<IResult> {
@@ -28,10 +40,10 @@ export class RegisterUserUseCase extends BaseUseCase {
       return result;
     }
 
-    user.maskedUid = v4().replace(/-/g, "");
+    user.maskedUid = this.uuidProvider.generateUUID().replace(/-/g, "");
     const encryptedPassword = Encryptor.encrypt(`${user.email}-${user.password}`);
     user.password = encryptedPassword;
-    user.createdAt = DateTime.local().toISO();
+    user.createdAt = this.dateProvider.getDateNow();
     const registered = await this.userRepository.register(user);
 
     if (!registered) {
