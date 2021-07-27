@@ -1,17 +1,17 @@
-import AppSettings from "../../application/shared/settings/AppSettings";
-import AppWrapper from "./AppWrapper";
-import * as http from "http";
+import AppSettings from "../../../application/shared/settings/AppSettings";
+import { Server, createServer } from "http";
+import AppWrapper from "../AppWrapper";
 
 export class HttpServer {
   #appWrapper: AppWrapper;
-  server: http.Server;
+  server: Server;
 
   constructor(appWrapper: AppWrapper) {
     this.#appWrapper = appWrapper;
-    this.server = http.createServer(this.#appWrapper.app);
+    this.server = createServer(this.#appWrapper.app);
   }
 
-  listen(): void {
+  start(): void {
     this.#appWrapper
       .initializeServices()
       .then(() => {

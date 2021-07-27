@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "../../server/core/Modules";
+import { Request, Response, NextFunction } from "../../app/core/Modules";
 import resources from "../../../application/shared/locals/messages";
 import words from "../../../application/shared/locals/words";
 import config from "../../config";

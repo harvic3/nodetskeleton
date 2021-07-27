@@ -5,13 +5,13 @@ import authorizationMiddleware from "../middleware/authorization/jwt";
 import { ServerApp, Application, BodyParser } from "./core/Modules";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
-import handlerErrorMiddleware from "../middleware/error";
 import words from "../../application/shared/locals/words";
+import errorHandlerMiddleware from "../middleware/error";
 import * as helmet from "helmet";
 import config from "../config";
 
 export default class AppWrapper {
-  public app: Application;
+  app: Application;
 
   constructor(controllers: BaseController[]) {
     this.setup();
@@ -19,10 +19,10 @@ export default class AppWrapper {
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     this.loadControllers(controllers);
-    this.loadHandleError();
+    this.loadErrorHandler();
   }
 
-  public loadMiddleware(): void {
+  private loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(BodyParser());
     this.app.use(localizationMiddleware.handle);
@@ -35,8 +35,8 @@ export default class AppWrapper {
     });
   }
 
-  private loadHandleError(): void {
-    this.app.use(handlerErrorMiddleware.handle);
+  private loadErrorHandler(): void {
+    this.app.use(errorHandlerMiddleware.handle);
   }
 
   private setup(): void {
@@ -46,9 +46,10 @@ export default class AppWrapper {
     Encryptor.init(AppSettings.EncryptionKey);
   }
 
-  public initializeServices(): Promise<void> {
+  initializeServices(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Initialize db and other services here and once started run listen
+      // Initialize db and other services here and once started run server start
+      // reject if any error with db or other services
       resolve();
     });
   }
