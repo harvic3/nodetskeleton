@@ -1,9 +1,9 @@
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { IUSerRepository } from "../../repositoryContracts/IUserRepository";
 import Encryptor from "../../../../shared/security/encryption/Encryptor";
+import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
-import { DateTime } from "luxon";
-import { v4 } from "uuid";
 
 export class RegisterUserUseCase extends BaseUseCase {
   constructor(private readonly userRepository: IUSerRepository) {
@@ -28,10 +28,10 @@ export class RegisterUserUseCase extends BaseUseCase {
       return result;
     }
 
-    user.maskedUid = v4().replace(/-/g, "");
+    user.maskedUid = GuidUtils.getV4WithoutDashes();
     const encryptedPassword = Encryptor.encrypt(`${user.email}-${user.password}`);
     user.password = encryptedPassword;
-    user.createdAt = DateTime.local().toISO();
+    user.createdAt = DateTimeUtils.getISONow();
     const registered = await this.userRepository.register(user);
 
     if (!registered) {
