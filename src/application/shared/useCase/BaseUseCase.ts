@@ -1,9 +1,11 @@
 import resources, { resourceKeys, Resources } from "../locals/messages/index";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
+import { ApplicationError } from "../errors/ApplicationError";
 import applicationStatus from "../status/applicationStatus";
 import words, { wordKeys } from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
+import { IResult } from "result-tsk";
 
 export class BaseUseCase {
   constructor() {
@@ -24,4 +26,10 @@ export class BaseUseCase {
   resourceKeys = resourceKeys;
   wordKeys = wordKeys;
   applicationStatus = applicationStatus;
+
+  handleResultError(result: IResult): void {
+    if (result?.error) {
+      throw new ApplicationError(result.error, result.statusCode);
+    }
+  }
 }
