@@ -77,6 +77,18 @@ throw new ApplicationError(
 );
 ```
 
+Or if the pointer of your program is in the scope of your UseCase you can use the error control function of the BaseUseCase class:
+
+```ts
+if (!someCondition) { // Or any validation result
+	result.setError(
+		this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+		this.applicationStatus.INTERNAL_SERVER_ERROR,
+	)
+	this.handleResultError(result);
+}
+```
+
 The function of this `class` will be reflected in your `error handler` as it will let you know when an exception was thrown by your `system` or by an `uncontrolled error`, as shown below:
 
 ```ts
@@ -133,6 +145,15 @@ const yourEnrichedMessage = resources.getWithParams(resourceKeys.YOUR_OWN_NEED, 
 //
 ```
 
+For use it in any UseCase you can do something like: 
+
+```ts
+result.setError(
+	this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
+	this.applicationStatus.INTERNAL_SERVER_ERROR,
+);
+```
+
 And you can add all the parameters you need with as many messages in your application as required.
 
 This tool is now available as an `NPM package`.
@@ -174,12 +195,12 @@ This tool is now available as an `NPM package`.
 `result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
 
 ```ts
-export class GetProductUseCase extends BaseUseCase {
+export class GetProductUseCase extends BaseUseCase implements IUseCase<string> { // Or IUseCase<{ idMask: string}>
 	constructor(private productQueryService: IProductQueryService) {
 		super();
 	}
 
-	async execute(idMask: string): Promise<IResult<ProductDto>> {
+	async execute(idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
 		// We create the instance of our type of result at the beginning of the use case.
 		const result = new Result<ProductDto>();
 		// With the resulting object we can control validations within other functions.
@@ -217,7 +238,7 @@ The `result` object can help you in unit tests as shown below:
 ```ts
 it("should return a 400 error if quantity is null or zero", async () => {
 	itemDto.quantity = null;
-	const result = await addUseCase.execute(userUid, itemDto);
+	const result = await addUseCase.execute({ userUid, itemDto });
 	expect(result.success).toBeFalsy();
 	expect(result.error).toBe(
 		resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
@@ -268,6 +289,46 @@ export class BaseUseCase {
 }
 ```
 
+`IUseCase` is a contract for the optimal control of the input parameters of your use case.
+
+```ts
+export interface IUseCase<T> {
+  execute(params?: T): Promise<IResult>;
+}
+```
+
+So, you can use it like the next examples: 
+
+```ts
+// UseCase with input params
+export class LoginUseCase
+  extends BaseUseCase
+  implements IUseCase<{ email: string; passwordB64: string }>
+{
+  constructor(private readonly authProvider: IAuthProvider) {
+    super();
+  }
+
+  async execute(params: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
+		// Your UseCase implementation
+	}
+}
+
+// UseCase without input params
+export class ListUsersUseCase
+  extends BaseUseCase
+  implements IUseCase<undefined>
+{
+  constructor(private readonly userProvider: IUserProvider) {
+    super();
+  }
+
+  async execute(): Promise<IResultT<User[]>> {
+		// Your UseCase implementation
+	}
+}
+```
+
 **[⬆ back to the past](#table-of-contents)**
 
 ### Validator
@@ -276,15 +337,15 @@ The `validator` is a `very simple` but `dynamic tool` and with it you will be ab
 
 ```ts
 /*...*/
-async execute(userUid: string, itemDto: CarItemDto): Promise<IResult<CarItemDto>> {
+async execute(params: { userUid: string, itemDto: CarItemDto }): Promise<IResult<CarItemDto>> {
 	const result = new Result<CarItemDto>();
 	if (
 		!this.validator.isValidEntry(result, {
-			User_Identifier: userUid,
-			Car_Item: itemDto,
-			Order_Id: itemDto?.orderId,
-			Product_Detail_Id: itemDto?.productDetailId,
-			Quantity: itemDto?.quantity,
+			User_Identifier: params.userUid,
+			Car_Item: params.itemDto,
+			Order_Id: params.itemDto?.orderId,
+			Product_Detail_Id: params.itemDto?.productDetailId,
+			Quantity: params.itemDto?.quantity,
 		})
 	) {
 		/* 
@@ -564,7 +625,7 @@ The location of the `controllers` must be in the `adapters` directory, there you
 The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
 
 ```ts
-// Controller example with export default
+// Controller example with default export
 import BaseController, { Request, Response, NextFunction } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import {

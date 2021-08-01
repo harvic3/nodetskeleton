@@ -1,28 +1,39 @@
-import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { IAuthProvider } from "../../providerContracts/IAuthProvider";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
+import {
+  BaseUseCase,
+  IResult,
+  IResultT,
+  IUseCase,
+  ResultT,
+} from "../../../../shared/useCase/BaseUseCase";
 
-export class LoginUseCase extends BaseUseCase {
+export class LoginUseCase
+  extends BaseUseCase
+  implements IUseCase<{ email: string; passwordB64: string }>
+{
   constructor(private readonly authProvider: IAuthProvider) {
     super();
   }
 
-  async execute(email: string, passwordB64: string): Promise<IResultT<TokenDto>> {
+  async execute(params: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
-    if (!this.isValidRequest(result, email, passwordB64)) {
+    if (!this.isValidRequest(result, params.email, params.passwordB64)) {
       return result;
     }
 
-    const authenticatedUser: User = await this.authProvider.login(email, passwordB64).catch(() => {
-      result.setError(
-        this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
-        this.applicationStatus.INVALID_INPUT,
-      );
-      return null;
-    });
+    const authenticatedUser: User = await this.authProvider
+      .login(params.email, params.passwordB64)
+      .catch(() => {
+        result.setError(
+          this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
+          this.applicationStatus.INVALID_INPUT,
+        );
+        return null;
+      });
 
     if (!authenticatedUser) {
       return result;

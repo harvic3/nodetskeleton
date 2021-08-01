@@ -13,7 +13,7 @@ export class AuthController extends BaseController {
       const email = req.body?.email as string;
       const passwordB64 = req.body?.password as string;
 
-      this.handleResult(res, await loginUseCase.execute(email, passwordB64));
+      this.handleResult(res, await loginUseCase.execute({ email, passwordB64 }));
     } catch (error) {
       next(error);
     }

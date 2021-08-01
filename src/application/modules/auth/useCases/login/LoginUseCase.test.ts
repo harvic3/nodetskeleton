@@ -15,7 +15,7 @@ const authProviderMock = mock<IAuthProvider>();
 const loginUseCase = new LoginUseCase(authProviderMock);
 
 const email = "nikolatesla@elion.com";
-const password =
+const passwordB64 =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
 
 describe("when try to login", () => {
@@ -30,7 +30,7 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase.execute(null, null);
+    const result = await loginUseCase.execute({ email: null, passwordB64: null });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -43,7 +43,7 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase.execute(email, null);
+    const result = await loginUseCase.execute({ email, passwordB64: null });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -59,7 +59,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase.execute(email, password);
+    const result = await loginUseCase.execute({ email, passwordB64 });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -71,7 +71,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase.execute(email, password);
+    const result = await loginUseCase.execute({ email, passwordB64 });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -82,10 +82,10 @@ describe("when try to login", () => {
     // Arrange
     const user = new UserMock().withEmail().withName().withGender().build();
     authProviderMock.login.mockResolvedValueOnce(user);
-    authProviderMock.getJwt.mockResolvedValueOnce(password);
+    authProviderMock.getJwt.mockResolvedValueOnce(passwordB64);
 
     // Act
-    const result = await loginUseCase.execute(email, password);
+    const result = await loginUseCase.execute({ email, passwordB64 });
 
     // Assert
     const data = result.data as TokenDto;

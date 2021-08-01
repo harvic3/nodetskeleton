@@ -33,3 +33,7 @@ export class BaseUseCase {
     }
   }
 }
+
+export interface IUseCase<T> {
+  execute(params: T): Promise<IResult>;
+}
