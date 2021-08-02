@@ -12,7 +12,7 @@ import { mock } from "jest-mock-extended";
 const defaultLanguage = "en";
 
 const userRepositoryMock = mock<IUSerRepository>();
-const registerUserUseCase = new RegisterUserUseCase(userRepositoryMock);
+const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock);
 
 describe("when try to register user", () => {
   beforeAll(() => {
@@ -29,7 +29,7 @@ describe("when try to register user", () => {
     // Arrange
     const user = new User();
     // Act
-    const result = await registerUserUseCase.execute(user);
+    const result = await registerUserUseCase().execute(user);
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -45,7 +45,7 @@ describe("when try to register user", () => {
     // Arrange
     const user = new UserMock().withName().withEmail().withGender().build();
     // Act
-    const result = await registerUserUseCase.execute(user);
+    const result = await registerUserUseCase().execute(user);
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -66,7 +66,7 @@ describe("when try to register user", () => {
       .build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(userWithSameEmail);
     // Act
-    const result = await registerUserUseCase.execute(user);
+    const result = await registerUserUseCase().execute(user);
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -82,7 +82,7 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
     // Act
-    const result = registerUserUseCase.execute(user);
+    const result = registerUserUseCase().execute(user);
     // Assert
     expect(result).rejects.toThrowError(
       resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
@@ -97,7 +97,7 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
     // Act
-    const result = await registerUserUseCase.execute(user);
+    const result = await registerUserUseCase().execute(user);
     // Assert
     expect(result.success).toBeTruthy();
     expect(result.statusCode).toBe(applicationStatus.SUCCESS);

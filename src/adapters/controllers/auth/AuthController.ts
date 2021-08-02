@@ -1,6 +1,9 @@
-import { User } from "../../../domain/user/User";
+import { RegisterUserUseCase } from "../../../application/modules/users/useCases/register";
 import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
-import { loginUseCase, registerUseCase } from "./container";
+import { LoginUseCase } from "../../../application/modules/auth/useCases/login";
+import { Container } from "../../shared/Container";
+import { User } from "../../../domain/user/User";
+import container from "./container";
 
 export class AuthController extends BaseController {
   constructor() {
@@ -13,7 +16,13 @@ export class AuthController extends BaseController {
       const email = req.body?.email as string;
       const passwordB64 = req.body?.password as string;
 
-      this.handleResult(res, await loginUseCase.execute({ email, passwordB64 }));
+      this.handleResult(
+        res,
+        await Container.get<LoginUseCase>(LoginUseCase.name, container).execute({
+          email,
+          passwordB64,
+        }),
+      );
     } catch (error) {
       next(error);
     }
@@ -23,7 +32,10 @@ export class AuthController extends BaseController {
     try {
       const user: User = req.body;
 
-      this.handleResult(res, await registerUseCase.execute(user));
+      this.handleResult(
+        res,
+        await Container.get<RegisterUserUseCase>(RegisterUserUseCase.name, container).execute(user),
+      );
     } catch (error) {
       next(error);
     }

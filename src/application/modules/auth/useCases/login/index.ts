@@ -1,20 +1,11 @@
+import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { IAuthProvider } from "../../providerContracts/IAuthProvider";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
-import {
-  BaseUseCase,
-  IResult,
-  IResultT,
-  IUseCase,
-  ResultT,
-} from "../../../../shared/useCase/BaseUseCase";
 
-export class LoginUseCase
-  extends BaseUseCase
-  implements IUseCase<{ email: string; passwordB64: string }>
-{
+export class LoginUseCase extends BaseUseCase<{ email: string; passwordB64: string }> {
   constructor(private readonly authProvider: IAuthProvider) {
     super();
   }

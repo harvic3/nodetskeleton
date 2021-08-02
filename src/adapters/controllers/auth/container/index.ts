@@ -2,8 +2,10 @@ import { RegisterUserUseCase } from "../../../../application/modules/users/useCa
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
 import { userRepository } from "../../../repositories/container";
 import { authProvider } from "../../../providers/container";
+import { IContainer } from "../../../shared/IContainer";
 
-const loginUseCase = new LoginUseCase(authProvider);
-const registerUseCase = new RegisterUserUseCase(userRepository);
+const container: IContainer = {};
+container[LoginUseCase.name] = () => new LoginUseCase(authProvider);
+container[RegisterUserUseCase.name] = () => new RegisterUserUseCase(userRepository);
 
-export { loginUseCase, registerUseCase };
+export default container;

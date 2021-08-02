@@ -1,6 +1,8 @@
 import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
 import { healthProvider } from "../../../providers/container/index";
+import { IContainer } from "../../../shared/IContainer";
 
-const pongUseCase = new PongUseCase(healthProvider);
+const container: IContainer = {};
+container[PongUseCase.name] = () => new PongUseCase(healthProvider);
 
-export { pongUseCase };
+export default container;
