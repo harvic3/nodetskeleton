@@ -1,7 +1,22 @@
-import { IContainer } from "./IContainer";
+import { ApplicationError } from "../../application/shared/errors/ApplicationError";
+import resources, { resourceKeys } from "../../application/shared/locals/messages";
+import applicationStatus from "../../application/shared/status/applicationStatus";
 
 export class Container {
-  static get<T>(useCaseClassName: string, container: IContainer): T {
-    return container[useCaseClassName]() as T;
+  constructor(private readonly container: IContainerDictionary) {}
+
+  get<T>(className: string): T {
+    if (!this.container[className]) {
+      throw new ApplicationError(
+        resources.getWithParams(resourceKeys.DEPENDENCY_NOT_FOUNT, { className }),
+        applicationStatus.INTERNAL_ERROR,
+      );
+    }
+
+    return this.container[className]() as T;
   }
+}
+
+export interface IContainerDictionary {
+  [className: string]: NewableFunction;
 }

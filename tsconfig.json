@@ -4,7 +4,7 @@
     "lib": ["ES2020"],
     "outDir": "dist",
     "sourceMap": true,
-    "target": "es6",
+    "target": "ES2017",
     "module": "commonjs",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,

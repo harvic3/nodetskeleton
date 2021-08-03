@@ -1,7 +1,6 @@
 import { RegisterUserUseCase } from "../../../application/modules/users/useCases/register";
 import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
 import { LoginUseCase } from "../../../application/modules/auth/useCases/login";
-import { Container } from "../../shared/Container";
 import { User } from "../../../domain/user/User";
 import container from "./container";
 
@@ -18,7 +17,7 @@ export class AuthController extends BaseController {
 
       this.handleResult(
         res,
-        await Container.get<LoginUseCase>(LoginUseCase.name, container).execute({
+        await container.get<LoginUseCase>(LoginUseCase.name).execute({
           email,
           passwordB64,
         }),
@@ -34,7 +33,7 @@ export class AuthController extends BaseController {
 
       this.handleResult(
         res,
-        await Container.get<RegisterUserUseCase>(RegisterUserUseCase.name, container).execute(user),
+        await container.get<RegisterUserUseCase>(RegisterUserUseCase.name).execute(user),
       );
     } catch (error) {
       next(error);

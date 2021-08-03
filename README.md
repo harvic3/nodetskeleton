@@ -120,19 +120,19 @@ const enrichedMessage = resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE
 // The contents of the local files are as follows:
 /* 
 // en: 
-{
+export default {
 	...
-	"SOME_PARAMETERS_ARE_MISSING": "Some parameters are missing: {{missingParams}}.",
-	"ITEM_PRODUCT_DOES_NOT_EXIST": "The item product does not exist.",
-	"YOUR_OWN_NEED": "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
+	SOME_PARAMETERS_ARE_MISSING: "Some parameters are missing: {{missingParams}}.",
+	ITEM_PRODUCT_DOES_NOT_EXIST: "The item product does not exist.",
+	YOUR_OWN_NEED: "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
 	...
 }
 // es: 
-{
+export default {
 	...
-	"SOME_PARAMETERS_ARE_MISSING": "Faltan algunos parámetros: {{missingParams}}.",
-	"ITEM_PRODUCT_DOES_NOT_EXIST": "El item del producto no existe.",
-	"YOUR_OWN_NEED": "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
+	SOME_PARAMETERS_ARE_MISSING: "Faltan algunos parámetros: {{missingParams}}.",
+	ITEM_PRODUCT_DOES_NOT_EXIST: "El item del producto no existe.",
+	YOUR_OWN_NEED: "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
 	...
 }
 ...
@@ -195,7 +195,7 @@ This tool is now available as an `NPM package`.
 `result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
 
 ```ts
-export class GetProductUseCase extends BaseUseCase implements IUseCase<string> { // Or IUseCase<{ idMask: string}>
+export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
 	constructor(private productQueryService: IProductQueryService) {
 		super();
 	}
@@ -263,7 +263,6 @@ Its main function is to avoid you having to write the same code in every use cas
 
 The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
 
-
 ```ts
 import resources, { resourceKeys, Resources } from "../locals/index";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
@@ -271,7 +270,7 @@ import * as applicationStatusCodes from "../status/applicationStatusCodes.json";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 
-export class BaseUseCase {
+export class BaseUseCase<T> {
   constructor() {
     this.mapper = mapper;
     this.resources = resources;
@@ -286,24 +285,19 @@ export class BaseUseCase {
   resources: Resources;
   resourceKeys = resourceKeys;
   applicationStatusCodes = applicationStatusCodes;
+
+	abstract execute(params?: T): Promise<IResult>;
 }
 ```
 
-`IUseCase` is a contract for the optimal control of the input parameters of your use case.
-
-```ts
-export interface IUseCase<T> {
-  execute(params?: T): Promise<IResult>;
-}
-```
+Type `T` in `BaseUseCase<T>` is a way for the optimal control of the input parameters of your UseCase unit code.
 
 So, you can use it like the next examples: 
 
 ```ts
 // UseCase with input params
 export class LoginUseCase
-  extends BaseUseCase
-  implements IUseCase<{ email: string; passwordB64: string }>
+  extends BaseUseCase<{ email: string; passwordB64: string }>
 {
   constructor(private readonly authProvider: IAuthProvider) {
     super();
@@ -315,9 +309,7 @@ export class LoginUseCase
 }
 
 // UseCase without input params
-export class ListUsersUseCase
-  extends BaseUseCase
-  implements IUseCase<undefined>
+export class ListUsersUseCase extends BaseUseCase<undefined>
 {
   constructor(private readonly userProvider: IUserProvider) {
     super();
@@ -443,23 +435,33 @@ This tool is now available as an `NPM package`.
 
 ## Dependency injection strategy
 
-For `dependency injection`, no external libraries are used. Instead, a `container strategy` is used in which instances and their dependencies are created and then imported into the objects where they are to be used.
+For `dependency injection`, no external libraries are used. Instead, a `container dictionary strategy` is used in which instances and their dependencies are created and then resolved from container class.
 
-This strategy is only needed in the `adapter layer` for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
+This strategy is only needed in the `adapter layer` dependencies for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
 
 ```ts
 // In the path src/adapters/controllers/textFeeling there is a folder called container... the index file has the following:
-import { UseCaseGetHighestFeelingSentence } from "../../../../application/modules/feeling/useCases/getHighest";
-import { UseCaseGetLowestFeelingSentence } from "../../../../application/modules/feeling/useCases/getLowest";
-import { UseCaseGetFeeling } from "../../../../application/modules/feeling/useCases/getFeeling";
+import { GetHighestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getHighest";
+import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
+import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
+import { Container, IContainerDictionary } from "../../../shared/Container";
 import { textFeelingService } from "../../../providers/container/index";
 
-const getFeelingTextUseCase = new GetFeelingUsecase(textFeelingService);
-const getHighestFeelingSentenceUseCase = new GetHighestFeelingSentenceUseCase(textFeelingService);
-const getLowestFeelingSentenceUseCase = new GetLowestFeelingSentenceUseCase(textFeelingService);
+const dictionary: IContainerDictionary = {};
+dictionary[GetHighestFeelingSentenceUseCase.name] = () => new GetHighestFeelingSentenceUseCase(textFeelingService);
+dictionary[GetLowestFeelingSentenceUseCase.name] = () => new GetLowestFeelingSentenceUseCase(textFeelingService);
+dictionary[GetFeelingTextUseCase.name] = () => new GetFeelingTextUseCase(textFeelingService);
 
-export { getFeelingTextUseCase, getHighestFeelingSentenceUseCase, getLowestFeelingSentenceUseCase };
+// This class instance contains the UseCases needed for your controller
+export default new Container(dictionary); // *Way One*
+// You can also export separate instances if required, like this:
+const anotherUseCaseOrService = new AnotherUseCaseOrService();
+export { anotherUseCaseOrService }; // *Way Two*
+// You can combine the two strategies (Way One and Way Two) according to your needs
+```
 
+Another way to export dependencies is to simply create instances of the respective classes (only recommended with provider and repository services).
+```ts
 // The same way in src/adapters/providers there is the container folder
 import TextFeelingService from "../../../application/modules/feeling/serviceContracts/textFeeling/TextFeelingService";
 import TextFeelingProvider from "../../providers/feeling/TextFeelingProvider";
@@ -471,21 +473,19 @@ const textFeelingService = new TextFeelingService(textFeelingProvider);
 const healthProvider = new HealthProvider();
 
 export { healthProvider, textFeelingService };
-
 // And your repositories (folder src/adapters/repositories) must have the same strategy
 ```
 
-In this `container` the `instances` of the `use cases` for the specific `controller` are created and here the necessary dependencies for the operation of those use cases are injected, then they are `exported` and in the `controller` they are `imported` and `used` as following:
+In our `container` strategy the `instances` of the `UseCases` for the specific `controller` are managed and here the necessary dependencies for the operation of those UseCases are injected, then they are `exported` and in the `controller` they are `imported` and `used` as following:
 
 ```ts
 // For ExpressJs
+import { GetFeelingTextUseCase } from "../../../application/modules/feeling/useCases/getFeeling";
 import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import BaseController from "../BaseController";
-import {
-  getFeelingTextUseCase,
-  getHighestFeelingSentenceUseCase,
-  getLowestFeelingSentenceUseCase,
+import container, {
+  anotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
@@ -494,6 +494,17 @@ class TextFeelingController extends BaseController {
 		this.initializeRoutes();
 	}
 	/*...*/
+	// *Way One*
+	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const textDto: TextDto = req.body;
+			this.handleResult(res, await container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name).execute(textDto));
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	// *Way Two*
 	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const textDto: TextDto = req.body;
@@ -505,6 +516,9 @@ class TextFeelingController extends BaseController {
 	/*...*/
 }
 ```
+
+The *Way One* delivers a different instance for each UseCase call.
+The *Way Two* delivers the same instance (only one instance) for each useCase call, which can lead to the most common problem, mutations.
 
 As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.
 
@@ -536,10 +550,8 @@ The controllers should be `exported as default` modules to make the handling of 
 // Controller example with export default
 import BaseController, { Context } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
-import {
-  getFeelingTextUseCase,
-  getHighestFeelingSentenceUseCase,
-  getLowestFeelingSentenceUseCase,
+import container, {
+  anotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
@@ -628,10 +640,8 @@ The controllers should be `exported as default` modules to make the handling of 
 // Controller example with default export
 import BaseController, { Request, Response, NextFunction } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
-import {
-	getFeelingTextUseCase,
-	getHighestFeelingSentenceUseCase,
-	getLowestFeelingSentenceUseCase,
+import container, {
+  anotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {

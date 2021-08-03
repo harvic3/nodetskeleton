@@ -1,8 +1,8 @@
 import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
+import { Container, IContainerDictionary } from "../../../shared/Container";
 import { healthProvider } from "../../../providers/container/index";
-import { IContainer } from "../../../shared/IContainer";
 
-const container: IContainer = {};
-container[PongUseCase.name] = () => new PongUseCase(healthProvider);
+const dictionary: IContainerDictionary = {};
+dictionary[PongUseCase.name] = () => new PongUseCase(healthProvider);
 
-export default container;
+export default new Container(dictionary);

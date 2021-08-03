@@ -1,6 +1,5 @@
 import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
 import { PongUseCase } from "../../../application/modules/health/useCases/pong";
-import { Container } from "../../shared/Container";
 import container from "./container/index";
 
 class HealthController extends BaseController {
@@ -11,10 +10,7 @@ class HealthController extends BaseController {
 
   pong = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      this.handleResult(
-        res,
-        await Container.get<PongUseCase>(PongUseCase.name, container).execute(),
-      );
+      this.handleResult(res, await container.get<PongUseCase>(PongUseCase.name).execute());
     } catch (error) {
       next(error);
     }

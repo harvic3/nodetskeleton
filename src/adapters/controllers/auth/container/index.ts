@@ -1,11 +1,11 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
+import { Container, IContainerDictionary } from "../../../shared/Container";
 import { userRepository } from "../../../repositories/container";
 import { authProvider } from "../../../providers/container";
-import { IContainer } from "../../../shared/IContainer";
 
-const container: IContainer = {};
-container[LoginUseCase.name] = () => new LoginUseCase(authProvider);
-container[RegisterUserUseCase.name] = () => new RegisterUserUseCase(userRepository);
+const dictionary: IContainerDictionary = {};
+dictionary[LoginUseCase.name] = () => new LoginUseCase(authProvider);
+dictionary[RegisterUserUseCase.name] = () => new RegisterUserUseCase(userRepository);
 
-export default container;
+export default new Container(dictionary);
