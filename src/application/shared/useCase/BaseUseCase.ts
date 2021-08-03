@@ -7,7 +7,7 @@ import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 import { IResult } from "result-tsk";
 
-export class BaseUseCase {
+export abstract class BaseUseCase<T> {
   constructor() {
     this.mapper = mapper;
     this.resources = resources;
@@ -32,8 +32,6 @@ export class BaseUseCase {
       throw new ApplicationError(result.error, result.statusCode);
     }
   }
-}
 
-export interface IUseCase<T> {
-  execute(params: T): Promise<IResult>;
+  abstract execute(params?: T): Promise<IResult>;
 }

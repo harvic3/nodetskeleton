@@ -4,7 +4,7 @@ export default {
   UNKNOWN_RESPONSE_STATUS: "Estado de respuesta del servidor desconocido.",
   TOOL_HAS_NOT_BEEN_INITIALIZED: "La herramienta {{toolName}} no ha sido configurada.",
   PROCESSING_DATA_CLIENT_ERROR: "Error procesando la data en el cliente http.",
-  TEXT_FEELING_SERVICE_ERROR: "Error inesperado con el servicio de sentimiento.",
+  DEPENDENCY_NOT_FOUNT: "No se encontró {{className}} en el contenedor de dependencias.",
   AUTHORIZATION_REQUIRED: "La autorización es requerida.",
   INVALID_USER_OR_PASSWORD: "Usuario o contraseña incorrecto.",
   ERROR_CREATING_USER: "Algo no salió bien registrado el usuario.",

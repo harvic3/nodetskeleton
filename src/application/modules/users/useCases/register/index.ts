@@ -1,11 +1,11 @@
-import { BaseUseCase, IResult, IUseCase, Result } from "../../../../shared/useCase/BaseUseCase";
+import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { IUSerRepository } from "../../repositoryContracts/IUserRepository";
 import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 
-export class RegisterUserUseCase extends BaseUseCase implements IUseCase<User> {
+export class RegisterUserUseCase extends BaseUseCase<User> {
   constructor(private readonly userRepository: IUSerRepository) {
     super();
   }

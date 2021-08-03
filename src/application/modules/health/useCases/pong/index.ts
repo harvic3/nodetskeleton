@@ -1,8 +1,8 @@
-import { BaseUseCase, IResultT, IUseCase, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { IHealthProvider } from "../../providerContracts/IHealthProvider";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 
-export class PongUseCase extends BaseUseCase implements IUseCase<undefined> {
+export class PongUseCase extends BaseUseCase<undefined> {
   constructor(private readonly healthProvider: IHealthProvider) {
     super();
   }
