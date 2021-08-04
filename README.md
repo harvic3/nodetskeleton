@@ -437,10 +437,10 @@ This tool is now available as an `NPM package`.
 
 For `dependency injection`, no external libraries are used. Instead, a `container dictionary strategy` is used in which instances and their dependencies are created and then resolved from container class.
 
-This strategy is only needed in the `adapter layer` dependencies for `controllers`, `services` and `providers`, and also for the objects used in the `use case tests`, for example:
+This strategy is only needed in the `adapter layer` dependencies for `controllers` like `services` and `providers`, and also for the objects used in the `use case tests`, for example:
 
 ```ts
-// In the path src/adapters/controllers/textFeeling there is a folder called container... the index file has the following:
+// In the path src/adapters/controllers/textFeeling there is a folder called container and the index file have the following code lines:
 import { GetHighestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getHighest";
 import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
 import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
@@ -476,7 +476,7 @@ export { healthProvider, textFeelingService };
 // And your repositories (folder src/adapters/repositories) must have the same strategy
 ```
 
-In our `container` strategy the `instances` of the `UseCases` for the specific `controller` are managed and here the necessary dependencies for the operation of those UseCases are injected, then they are `exported` and in the `controller` they are `imported` and `used` as following:
+For `ioc` our `container` strategy manage the `instances` of the `UseCases` for the specific `controller` and here the necessary dependencies for the operation of those `UseCases` are injected, then they are `exported` and into the `controller` they are `imported` and `used` from our `container` as following:
 
 ```ts
 // For ExpressJs
@@ -518,6 +518,7 @@ class TextFeelingController extends BaseController {
 ```
 
 The *Way One* delivers a different instance for each UseCase call.
+
 The *Way Two* delivers the same instance (only one instance) for each useCase call, which can lead to the most common problem, mutations.
 
 As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.

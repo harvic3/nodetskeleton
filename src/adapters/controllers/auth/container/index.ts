@@ -1,6 +1,6 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
+import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
-import { Container, IContainerDictionary } from "../../../shared/Container";
 import { userRepository } from "../../../repositories/container";
 import { authProvider } from "../../../providers/container";
 
