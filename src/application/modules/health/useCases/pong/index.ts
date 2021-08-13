@@ -9,8 +9,10 @@ export class PongUseCase extends BaseUseCase<undefined> {
 
   async execute(): Promise<IResultT<string>> {
     const result = new ResultT<string>();
+
     const message = await this.healthProvider.get(DateTimeUtils.getISONow());
     result.setData(message, this.applicationStatus.SUCCESS);
+
     return result;
   }
 }

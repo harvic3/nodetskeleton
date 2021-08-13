@@ -1,8 +1,6 @@
-import { RegisterUserUseCase } from "../../../application/modules/users/useCases/register";
 import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
-import { LoginUseCase } from "../../../application/modules/auth/useCases/login";
 import { User } from "../../../domain/user/User";
-import container from "./container";
+import container, { LoginUseCase, RegisterUserUseCase } from "./container";
 
 export class AuthController extends BaseController {
   constructor() {

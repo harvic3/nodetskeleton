@@ -1,6 +1,5 @@
 import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
-import { PongUseCase } from "../../../application/modules/health/useCases/pong";
-import container from "./container/index";
+import container, { PongUseCase } from "./container/index";
 
 class HealthController extends BaseController {
   constructor() {

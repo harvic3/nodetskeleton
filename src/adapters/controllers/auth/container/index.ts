@@ -8,4 +8,5 @@ const dictionary: IContainerDictionary = {};
 dictionary[LoginUseCase.name] = () => new LoginUseCase(authProvider);
 dictionary[RegisterUserUseCase.name] = () => new RegisterUserUseCase(userRepository);
 
+export { LoginUseCase, RegisterUserUseCase };
 export default new Container(dictionary);
