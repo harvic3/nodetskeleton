@@ -3,7 +3,7 @@ import { Router, Response, RouterType } from "../../../infrastructure/app/core/M
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { IResult } from "result-tsk";
 
-export default class BaseController {
+export default abstract class BaseController {
   router: RouterType;
 
   constructor() {

@@ -1,5 +1,5 @@
-import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
 import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
 import { healthProvider } from "../../../providers/container/index";
 
 const dictionary: IContainerDictionary = {};

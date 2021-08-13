@@ -4,7 +4,7 @@ import applicationStatus from "../../../application/shared/status/applicationSta
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 
-export class BaseProvider {
+export abstract class BaseProvider {
   constructor() {
     this.mapper = mapper;
     this.resources = resources;
