@@ -38,7 +38,7 @@ export class AuthController extends BaseController {
     }
   };
 
-  private initializeRoutes(): void {
+  protected initializeRoutes(): void {
     this.router.post("/v1/users/login", this.login);
     this.router.post("/v1/users/sign-up", this.singUp);
   }

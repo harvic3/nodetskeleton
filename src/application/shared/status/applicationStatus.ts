@@ -3,7 +3,7 @@ export default {
   CREATED: "201",
   NOT_CONTENT: "204",
   INVALID_INPUT: "400",
+  UNAUTHORIZED: "401",
   NOT_FOUND: "404",
   INTERNAL_ERROR: "500",
-  UNAUTHORIZED: "401",
 };

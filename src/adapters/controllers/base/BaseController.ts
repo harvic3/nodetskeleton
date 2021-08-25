@@ -11,14 +11,18 @@ export default abstract class BaseController {
   }
 
   handleResult(res: Response, result: IResult): void {
-    if (result.success) {
-      res
-        .status(HttpStatusResolver.getCode(result.statusCode.toString()))
-        .json(result.message ? result.toResultDto() : result.toResultDto().data);
-    } else {
-      res
-        .status(HttpStatusResolver.getCode(result.statusCode.toString()))
-        .json(result.toResultDto());
-    }
+    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
   }
+
+  handleResultDto(res: Response, result: IResult): void {
+    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result.toResultDto());
+  }
+
+  handleResultData(res: Response, result: IResult): void {
+    res
+      .status(HttpStatusResolver.getCode(result.statusCode.toString()))
+      .json(result.message ? result.toResultDto() : result.toResultDto().data);
+  }
+
+  protected abstract initializeRoutes(): void;
 }

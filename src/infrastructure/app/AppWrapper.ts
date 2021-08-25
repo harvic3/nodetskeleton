@@ -49,7 +49,7 @@ export default class AppWrapper {
   initializeServices(): Promise<void> {
     return new Promise((resolve, reject) => {
       // Initialize db and other services here and once started run server start
-      // reject if any error with db or other services
+      // reject if any error with db or other service
       resolve();
     });
   }
