@@ -31,6 +31,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
+  1. [Clustering the App 🎚](#clustering-the-app)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -895,6 +896,7 @@ tsc
 ```
 > With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
 
+
 ## Setting files
 (.vscode)🛠️
 
@@ -994,6 +996,64 @@ For the purpose of giving clarity to the following statement we will define `cou
 Coupling is not bad if it is well managed, but in a software solution `there should not be coupling` of the `domain and application layers with any other`, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice versa.
 
 **[⬆ back to the past](#table-of-contents)**
+
+
+## Clustering the App (Node Cluster)
+
+Explanation coming soon. 
+
+For the moment, if you want Cluster de App, replace src/index.ts code for the next line codes.
+
+```ts
+import { cpus } from "os";
+import "express-async-errors";
+import * as cluster from "cluster";
+import AppWrapper from "./infrastructure/app/AppWrapper";
+import { HttpServer } from "./infrastructure/app/server/HttpServer";
+import errorHandlerMiddleware from "./infrastructure/middleware/error";
+import BaseController from "./adapters/controllers/base/BaseController";
+
+// Controllers region
+import healthController from "./adapters/controllers/health/HealthController";
+import authController from "./adapters/controllers/auth/AuthController";
+import config from "./infrastructure/config";
+// End controllers
+
+if (cluster.isMaster) {
+  const totalCPUs = cpus().length;
+  console.log(`Total CPUs are ${totalCPUs}`);
+  console.log(`Master process ${process.pid} is running`);
+
+  for (let i = 0; i < totalCPUs; i++) {
+    cluster.fork(config.Environment);
+  }
+
+  cluster.on("exit", (worker: cluster.Worker, code: number, signal: string) => {
+    console.log(`Worker ${worker.process.pid} stopped with code ${code} nd signal ${signal}`);
+    cluster.fork();
+  });
+} else {
+  startApp();
+}
+
+function startApp() {
+  const controllers: BaseController[] = [healthController, authController];
+
+  const appWrapper = new AppWrapper(controllers);
+
+  const server = new HttpServer(appWrapper);
+  server.start();
+  console.log(`Worker ${process.pid} started`);
+
+  process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+    errorHandlerMiddleware.manageNodeException(error);
+  });
+
+  process.on("unhandledRejection", (reason: NodeJS.UncaughtExceptionListener) => {
+    errorHandlerMiddleware.manageNodeException(reason);
+  });
+}
+```
 
 
 ## Conclusions
