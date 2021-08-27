@@ -2,7 +2,7 @@ import BaseController, { Request, Response, NextFunction } from "../base/Base.co
 import { User } from "../../../domain/user/User";
 import container, { LoginUseCase, RegisterUserUseCase } from "./container";
 
-export class AuthController extends BaseController {
+class AuthController extends BaseController {
   constructor() {
     super();
     this.initializeRoutes();

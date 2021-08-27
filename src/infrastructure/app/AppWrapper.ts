@@ -39,7 +39,7 @@ export default class AppWrapper {
     }).forEach(async (filePath: string) => {
       const controllerPath = resolve(filePath);
       const { default: controller } = await import(controllerPath);
-      console.log(`${controller.constructor.name} was loaded`);
+      console.log(`${controller?.constructor?.name} was loaded`);
       this.app.use(AppSettings.ServerRoot, (controller as BaseController).router);
     });
   }

@@ -9,9 +9,9 @@ const server = new HttpServer(appWrapper);
 server.start();
 
 process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
-  errorHandlerMiddleware.manageNodeException(error);
+  errorHandlerMiddleware.manageNodeException("UncaughtException", error);
 });
 
-process.on("unhandledRejection", (reason: NodeJS.UncaughtExceptionListener) => {
-  errorHandlerMiddleware.manageNodeException(reason);
+process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
 });

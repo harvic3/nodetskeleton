@@ -25,8 +25,11 @@ export class ErrorHandlerMiddleware {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
   }
 
-  manageNodeException(exc: NodeJS.UncaughtExceptionListener): void {
-    console.log("Node exception:", exc);
+  manageNodeException(
+    exceptionType: string,
+    exc: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
+  ): void {
+    console.log(`Node ${exceptionType} type:`, exc);
   }
 }
 
