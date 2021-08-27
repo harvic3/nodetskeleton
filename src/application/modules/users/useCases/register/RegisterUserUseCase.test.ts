@@ -1,6 +1,6 @@
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
-import { IUSerRepository } from "../../repositoryContracts/IUserRepository";
+import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import words, { wordKeys } from "../../../../shared/locals/words";

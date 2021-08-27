@@ -1,5 +1,5 @@
-import { HealthProvider } from "../health/HealthProvider";
-import { AuthProvider } from "../auth/AuthProvider";
+import { HealthProvider } from "../health/Health.provider";
+import { AuthProvider } from "../auth/Auth.provider";
 
 const authProvider = new AuthProvider();
 

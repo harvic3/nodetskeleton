@@ -1,33 +1,37 @@
 import * as dotenv from "dotenv";
-
-if (!process?.env?.NODE_ENV) {
-  dotenv.config();
-}
+import * as normalize from "normalize-path";
+import { join } from "path";
 
 const dev = "development";
 
+if (!process?.env?.NODE_ENV) {
+  console.log("Running dev mode");
+  dotenv.config();
+}
+
 export default {
   Environment: process.env.NODE_ENV || dev,
-  server: {
+  ControllersPath: normalize(join(__dirname, "../../adapters/controllers/**/*.controller.??")),
+  Server: {
     Root: process.env.SERVER_ROOT || "/api",
     Host: process.env.SERVER_HOST || "localhost",
     Port: process.env.SERVER_PORT || 3003,
     Origins:
       process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
   },
-  params: {
-    envs: {
+  Params: {
+    Envs: {
       Dev: dev,
       Test: "testing",
       Release: "release",
       Production: "production",
     },
-    defaultApplicationError: {
+    DefaultApplicationError: {
       Code: "500",
       Message: "SOMETHING_WENT_WRONG",
     },
-    security: {
-      jwt: {
+    Security: {
+      JWT: {
         SecretKey: process.env.JWT_SECRET_KEY,
         ExpireInSeconds: 3600,
       },

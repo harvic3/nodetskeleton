@@ -9,9 +9,9 @@ import config from "../../../config";
 const TOKEN_PARTS: number = 2;
 const TOKEN_VALUE_POSITION: number = 1;
 const WHITE_LIST = [
-  `${config.server.Root}/ping`,
-  `${config.server.Root}/v1/users/login`,
-  `${config.server.Root}/v1/users/sign-up`,
+  `${config.Server.Root}/ping`,
+  `${config.Server.Root}/v1/users/login`,
+  `${config.Server.Root}/v1/users/sign-up`,
 ];
 
 class AuthorizationMiddleware {

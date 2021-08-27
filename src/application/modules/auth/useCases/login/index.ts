@@ -1,5 +1,5 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
-import { IAuthProvider } from "../../providerContracts/IAuthProvider";
+import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import { User } from "../../../../../domain/user/User";

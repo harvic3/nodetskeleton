@@ -1,4 +1,4 @@
-import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
+import BaseController, { Request, Response, NextFunction } from "../base/Base.controller";
 import { User } from "../../../domain/user/User";
 import container, { LoginUseCase, RegisterUserUseCase } from "./container";
 

@@ -1,5 +1,5 @@
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
-import { IUSerRepository } from "../../repositoryContracts/IUserRepository";
+import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import GuidUtils from "../../../../shared/utils/GuidUtils";

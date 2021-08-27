@@ -1,37 +1,46 @@
 import Encryptor from "../../application/shared/security/encryption/Encryptor";
-import BaseController from "../../adapters/controllers/base/BaseController";
+import BaseController from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import authorizationMiddleware from "../middleware/authorization/jwt";
-import { ServerApp, Application, BodyParser } from "./core/Modules";
+import { ServerApp, Application, bodyParser, urlencoded } from "./core/Modules";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
+import { sync } from "fast-glob";
 import * as helmet from "helmet";
+import { resolve } from "path";
 import config from "../config";
 
 export default class AppWrapper {
   app: Application;
 
-  constructor(controllers: BaseController[]) {
+  constructor() {
     this.setup();
     this.app = ServerApp();
     this.app.set("trust proxy", true);
     this.loadMiddleware();
-    this.loadControllers(controllers);
+    this.loadControllers();
     this.loadErrorHandler();
   }
 
   private loadMiddleware(): void {
     this.app.use(helmet());
-    this.app.use(BodyParser());
+    this.app.use(bodyParser());
+    this.app.use(urlencoded({ extended: true }));
     this.app.use(localizationMiddleware.handle);
     this.app.use(authorizationMiddleware.handle);
   }
 
-  private loadControllers(controllers: BaseController[]): void {
-    controllers.forEach((controller) => {
-      this.app.use(AppSettings.ServerRoot, controller.router);
+  private loadControllers(): void {
+    sync(config.ControllersPath, {
+      onlyFiles: true,
+      ignore: ["**/base"],
+    }).forEach(async (filePath: string) => {
+      const controllerPath = resolve(filePath);
+      const { default: controller } = await import(controllerPath);
+      console.log(`${controller.constructor.name} was loaded`);
+      this.app.use(AppSettings.ServerRoot, (controller as BaseController).router);
     });
   }
 

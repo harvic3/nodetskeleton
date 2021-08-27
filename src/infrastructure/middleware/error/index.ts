@@ -15,8 +15,8 @@ export class ErrorHandlerMiddleware {
       // Send to your log this error
       console.log("No controlled application error:", err);
       result.setError(
-        resources.get(config.params.defaultApplicationError.Message),
-        config.params.defaultApplicationError.Code,
+        resources.get(config.Params.DefaultApplicationError.Message),
+        config.Params.DefaultApplicationError.Code,
       );
     }
     if (res.headersSent) {

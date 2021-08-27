@@ -1,4 +1,4 @@
-import BaseController, { Request, Response, NextFunction } from "../base/BaseController";
+import BaseController, { Request, Response, NextFunction } from "../base/Base.controller";
 import container, { PongUseCase } from "./container/index";
 
 class HealthController extends BaseController {
