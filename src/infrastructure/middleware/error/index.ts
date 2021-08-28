@@ -15,8 +15,8 @@ export class ErrorHandlerMiddleware {
       // Send to your log this error
       console.log("No controlled application error:", err);
       result.setError(
-        resources.get(config.params.defaultApplicationError.Message),
-        config.params.defaultApplicationError.Code,
+        resources.get(config.Params.DefaultApplicationError.Message),
+        config.Params.DefaultApplicationError.Code,
       );
     }
     if (res.headersSent) {
@@ -25,8 +25,11 @@ export class ErrorHandlerMiddleware {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
   }
 
-  manageNodeException(exc: NodeJS.UncaughtExceptionListener): void {
-    console.log("Node exception:", exc);
+  manageNodeException(
+    exceptionType: string,
+    exc: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
+  ): void {
+    console.log(`Node ${exceptionType} type:`, exc);
   }
 }
 

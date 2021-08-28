@@ -7,6 +7,7 @@ export {
   NextFunction,
   Application,
   Router as RouterType,
-  json as BodyParser,
+  json as bodyParser,
+  urlencoded,
 } from "express";
 export { ServerApp, Router };

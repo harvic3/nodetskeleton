@@ -31,7 +31,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
-  1. [Clustering the App 🎚](#clustering-the-app)
+  1. [Clustering the App 🎚](#clustering-the-app-(node-cluster))
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -1011,13 +1011,6 @@ import * as cluster from "cluster";
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
-import BaseController from "./adapters/controllers/base/BaseController";
-
-// Controllers region
-import healthController from "./adapters/controllers/health/HealthController";
-import authController from "./adapters/controllers/auth/AuthController";
-import config from "./infrastructure/config";
-// End controllers
 
 if (cluster.isMaster) {
   const totalCPUs = cpus().length;
@@ -1037,21 +1030,18 @@ if (cluster.isMaster) {
 }
 
 function startApp() {
-  const controllers: BaseController[] = [healthController, authController];
+	const appWrapper = new AppWrapper();
 
-  const appWrapper = new AppWrapper(controllers);
+	const server = new HttpServer(appWrapper);
+	server.start();
 
-  const server = new HttpServer(appWrapper);
-  server.start();
-  console.log(`Worker ${process.pid} started`);
+	process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+		errorHandlerMiddleware.manageNodeException("UncaughtException", error);
+	});
 
-  process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
-    errorHandlerMiddleware.manageNodeException(error);
-  });
-
-  process.on("unhandledRejection", (reason: NodeJS.UncaughtExceptionListener) => {
-    errorHandlerMiddleware.manageNodeException(reason);
-  });
+	process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+		errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+	});
 }
 ```
 

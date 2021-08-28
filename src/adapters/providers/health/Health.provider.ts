@@ -1,4 +1,4 @@
-import { IHealthProvider } from "../../../application/modules/health/providerContracts/IHealthProvider";
+import { IHealthProvider } from "../../../application/modules/health/providerContracts/IHealth.provider";
 
 export class HealthProvider implements IHealthProvider {
   async get(date: string): Promise<string> {

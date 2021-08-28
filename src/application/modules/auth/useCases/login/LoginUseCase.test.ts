@@ -1,6 +1,6 @@
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
-import { IAuthProvider } from "../../providerContracts/IAuthProvider";
+import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import { UserMock } from "../../../../mocks/User.mock";

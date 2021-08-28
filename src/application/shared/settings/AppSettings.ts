@@ -10,13 +10,13 @@ export default class AppSettings {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static init(config: { [key: string]: any }): void {
-    this.DefaultLang = config.params.DefaultLang;
-    this.EncryptionKey = config.params.security.EncryptionKey;
-    this.ServerRoot = config.server.Root;
-    this.ServerHost = config.server.Host;
-    this.ServerPort = config.server.Port;
-    this.ServerOrigins = config.server.Origins;
-    this.JWTEncryptionKey = config.params.security.jwt.SecretKey;
-    this.JWTExpirationTime = config.params.security.jwt.ExpireInSeconds;
+    this.DefaultLang = config.Params.DefaultLang;
+    this.EncryptionKey = config.Params.Security.EncryptionKey;
+    this.ServerRoot = config.Server.Root;
+    this.ServerHost = config.Server.Host;
+    this.ServerPort = config.Server.Port;
+    this.ServerOrigins = config.Server.Origins;
+    this.JWTEncryptionKey = config.Params.Security.JWT.SecretKey;
+    this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
   }
 }

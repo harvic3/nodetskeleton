@@ -1,5 +1,5 @@
 import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
-import { IHealthProvider } from "../../providerContracts/IHealthProvider";
+import { IHealthProvider } from "../../providerContracts/IHealth.provider";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 
 export class PongUseCase extends BaseUseCase<undefined> {

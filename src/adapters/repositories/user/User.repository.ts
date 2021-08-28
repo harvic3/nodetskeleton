@@ -1,4 +1,4 @@
-import { IUSerRepository } from "../../../application/modules/users/repositoryContracts/IUserRepository";
+import { IUSerRepository } from "../../../application/modules/users/providerContracts/IUser.repository";
 import userModel from "../../../infrastructure/dataBases/nodeTsKeleton/User.model";
 import { BaseRepository } from "../base/BaseRepository";
 import { IUser } from "../../../domain/user/IUser";
