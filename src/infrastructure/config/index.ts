@@ -1,6 +1,5 @@
+import { Normalize } from "./Normalize";
 import * as dotenv from "dotenv";
-import * as normalize from "normalize-path";
-import { join } from "path";
 
 const dev = "development";
 
@@ -11,7 +10,12 @@ if (!process?.env?.NODE_ENV) {
 
 export default {
   Environment: process.env.NODE_ENV || dev,
-  ControllersPath: normalize(join(__dirname, "../../adapters/controllers/**/*.controller.??")),
+  Controllers: {
+    Path: Normalize.pathToSO(
+      Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
+    ),
+    Ignore: [Normalize.pathToSO("**/base")],
+  },
   Server: {
     Root: process.env.SERVER_ROOT || "/api",
     Host: process.env.SERVER_HOST || "localhost",

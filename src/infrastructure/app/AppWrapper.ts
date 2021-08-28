@@ -1,8 +1,8 @@
+import { ServerApp, Application, bodyParser, urlencoded } from "./core/Modules";
 import Encryptor from "../../application/shared/security/encryption/Encryptor";
 import BaseController from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import authorizationMiddleware from "../middleware/authorization/jwt";
-import { ServerApp, Application, bodyParser, urlencoded } from "./core/Modules";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import words from "../../application/shared/locals/words";
@@ -33,14 +33,14 @@ export default class AppWrapper {
   }
 
   private loadControllers(): void {
-    sync(config.ControllersPath, {
+    sync(config.Controllers.Path, {
       onlyFiles: true,
-      ignore: ["**/base"],
+      ignore: config.Controllers.Ignore,
     }).forEach(async (filePath: string) => {
       const controllerPath = resolve(filePath);
       const { default: controller } = await import(controllerPath);
       console.log(`${controller?.constructor?.name} was loaded`);
-      this.app.use(AppSettings.ServerRoot, (controller as BaseController).router);
+      this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
     });
   }
 
