@@ -18,7 +18,7 @@ export class HttpServer {
         this.server.listen(AppSettings.ServerPort);
       })
       .catch((error) => {
-        console.log("Server error", error);
+        console.log("Server starting error:", error);
       });
 
     this.server.on("listening", () => {

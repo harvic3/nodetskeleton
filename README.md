@@ -31,7 +31,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Build for production ⚙️](#Build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
-  1. [Clustering the App 🎚](#clustering-the-app-(node-cluster))
+  1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-(node-cluster))
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -1002,15 +1002,42 @@ Coupling is not bad if it is well managed, but in a software solution `there sho
 
 Explanation coming soon. 
 
-For the moment, if you want Cluster de App, replace src/index.ts code for the next line codes.
+For the moment, if you want Cluster de App, replace src/index.ts code for the next code example.
+
+### Observation 👀
+For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the `AppWrapper` class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the `AppWrapper` internal class method.
 
 ```ts
+// Node App in Cluster mode
 import { cpus } from "os";
 import "express-async-errors";
 import * as cluster from "cluster";
+import config from "./infrastructure/config";
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
+
+// Controllers
+import BaseController from "./adapters/controllers/base/Base.controller";
+import healthController from "./adapters/controllers/health/Health.controller";
+import authController from "./adapters/controllers/auth/Auth.controller";
+// End Controllers
+
+const controllers: BaseController[] = [healthController, authController];
+
+function startApp(): void {
+  const appWrapper = new AppWrapper(controllers);
+  const server = new HttpServer(appWrapper);
+  server.start();
+
+  process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+    errorHandlerMiddleware.manageNodeException("UncaughtException", error);
+  });
+
+  process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+    errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+  });
+}
 
 if (cluster.isMaster) {
   const totalCPUs = cpus().length;
@@ -1022,27 +1049,30 @@ if (cluster.isMaster) {
   }
 
   cluster.on("exit", (worker: cluster.Worker, code: number, signal: string) => {
-    console.log(`Worker ${worker.process.pid} stopped with code ${code} nd signal ${signal}`);
+    console.log(`Worker ${worker.process.pid} stopped with code ${code} and signal ${signal}`);
     cluster.fork();
   });
 } else {
   startApp();
 }
 
-function startApp() {
-	const appWrapper = new AppWrapper();
+// Node App without Cluster mode
+import "express-async-errors";
+import AppWrapper from "./infrastructure/app/AppWrapper";
+import { HttpServer } from "./infrastructure/app/server/HttpServer";
+import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
-	const server = new HttpServer(appWrapper);
-	server.start();
+const appWrapper = new AppWrapper();
+const server = new HttpServer(appWrapper);
+server.start();
 
-	process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
-		errorHandlerMiddleware.manageNodeException("UncaughtException", error);
-	});
+process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+  errorHandlerMiddleware.manageNodeException("UncaughtException", error);
+});
 
-	process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
-		errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
-	});
-}
+process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+});
 ```
 
 

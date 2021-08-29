@@ -13,15 +13,43 @@ import { resolve } from "path";
 import config from "../config";
 
 export default class AppWrapper {
+  private readonly constructorControllersLoaded: boolean = false;
   app: Application;
 
-  constructor() {
+  constructor(controllers?: BaseController[]) {
     this.setup();
     this.app = ServerApp();
     this.app.set("trust proxy", true);
     this.loadMiddleware();
-    this.loadControllers();
+    if (controllers?.length) {
+      this.loadControllersByConstructor(controllers);
+      this.constructorControllersLoaded = true;
+    }
+  }
+
+  private loadControllersByConstructor(controllers: BaseController[]): void {
+    controllers.forEach((controller) => {
+      this.app.use(AppSettings.ServerRoot, controller.router);
+    });
     this.loadErrorHandler();
+  }
+
+  private async loadControllersDynamically(): Promise<void> {
+    if (this.constructorControllersLoaded) return Promise.resolve();
+
+    const controllerPaths = sync(config.Controllers.Path, {
+      onlyFiles: true,
+      ignore: config.Controllers.Ignore,
+    });
+    for (const filePath of controllerPaths) {
+      const controllerPath = resolve(filePath);
+      const { default: controller } = await import(controllerPath);
+      console.log(`${controller?.constructor?.name} was loaded`);
+      this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
+    }
+    this.loadErrorHandler();
+
+    return Promise.resolve();
   }
 
   private loadMiddleware(): void {
@@ -30,18 +58,6 @@ export default class AppWrapper {
     this.app.use(urlencoded({ extended: true }));
     this.app.use(localizationMiddleware.handle);
     this.app.use(authorizationMiddleware.handle);
-  }
-
-  private loadControllers(): void {
-    sync(config.Controllers.Path, {
-      onlyFiles: true,
-      ignore: config.Controllers.Ignore,
-    }).forEach(async (filePath: string) => {
-      const controllerPath = resolve(filePath);
-      const { default: controller } = await import(controllerPath);
-      console.log(`${controller?.constructor?.name} was loaded`);
-      this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
-    });
   }
 
   private loadErrorHandler(): void {
@@ -57,9 +73,15 @@ export default class AppWrapper {
 
   initializeServices(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Initialize db and other services here and once started run server start
-      // reject if any error with db or other service
-      resolve();
+      try {
+        this.loadControllersDynamically().then(() => {
+          // Initialize database service and other services here
+          // reject if any error with database or other service
+          resolve();
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 }
