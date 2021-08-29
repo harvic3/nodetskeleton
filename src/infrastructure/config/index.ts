@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 const dev = "development";
 
 if (!process?.env?.NODE_ENV) {
-  console.log("Running dev mode");
+  console.log("Running in dev mode");
   dotenv.config();
 }
 

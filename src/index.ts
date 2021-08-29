@@ -4,7 +4,6 @@ import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
 const appWrapper = new AppWrapper();
-
 const server = new HttpServer(appWrapper);
 server.start();
 
