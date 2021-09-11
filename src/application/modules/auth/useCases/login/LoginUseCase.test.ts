@@ -1,5 +1,7 @@
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
+import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
 import applicationStatus from "../../../../shared/status/applicationStatus";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -8,21 +10,25 @@ import { TokenDto } from "../../dtos/TokenDto";
 import { mock } from "jest-mock-extended";
 import { LoginUseCase } from "./index";
 
-const defaultLanguage = "en";
-const tokenExpirationTime = 3600;
-
+// Mocks
 const authProviderMock = mock<IAuthProvider>();
-const loginUseCase = () => new LoginUseCase(authProviderMock);
 
+// Constants
+const loginUseCase = () => new LoginUseCase(authProviderMock);
 const email = "nikolatesla@elion.com";
-const passwordB64 =
+const passwordB64 = StringUtils.encodeBase64("HelloWorld8+");
+const jwt =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
+const tokenExpirationTime = 3600;
 
 describe("when try to login", () => {
   beforeAll(() => {
-    resources.setDefaultLanguage(defaultLanguage);
-    words.setDefaultLanguage(defaultLanguage);
+    resources.setDefaultLanguage(LocaleTypeEnum.EN);
+    words.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.JWTExpirationTime = tokenExpirationTime;
+    AppSettings.EncryptionKey = "hello-alien";
+    AppSettings.EncryptionIteartions = 1e3;
+    AppSettings.EncryptionKeySize = 56;
   });
   beforeEach(() => {
     authProviderMock.login.mockReset();
@@ -82,7 +88,7 @@ describe("when try to login", () => {
     // Arrange
     const user = new UserMock().withEmail().withName().withGender().build();
     authProviderMock.login.mockResolvedValueOnce(user);
-    authProviderMock.getJwt.mockResolvedValueOnce(passwordB64);
+    authProviderMock.getJwt.mockResolvedValueOnce(jwt);
 
     // Act
     const result = await loginUseCase().execute({ email, passwordB64 });

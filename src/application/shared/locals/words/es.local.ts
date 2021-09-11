@@ -3,5 +3,5 @@ export default {
   PASSWORD: "Contraseña",
   NAME: "Nombre",
   GENDER: "Género",
-  ENCRYPTOR: "Encriptador",
+  ENCRYPTION: "Encriptador",
 };

@@ -1,3 +1,4 @@
+import { StringUtils } from "../../domain/shared/utils/StringUtils";
 import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { User } from "../../domain/user/User";
@@ -31,8 +32,8 @@ export class UserMock implements IMockBuilder<User> {
     this.user.gender = gender;
     return this;
   }
-  withPassword(password = "Tm9kZVRza2VsZXRvbg=="): UserMock {
-    this.user.password = password;
+  withPassword(password = "Hello*Alien8"): UserMock {
+    this.user.password = StringUtils.encodeBase64(password);
     return this;
   }
 }

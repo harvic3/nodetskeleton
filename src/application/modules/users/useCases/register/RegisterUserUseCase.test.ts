@@ -1,24 +1,31 @@
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
-import Encryptor from "../../../../shared/security/encryption/Encryptor";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import words, { wordKeys } from "../../../../shared/locals/words";
+import Encryption from "../../../../shared/security/encryption";
 import { UserMock } from "../../../../mocks/User.mock";
 import { User } from "../../../../../domain/user/User";
 import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
 
-const defaultLanguage = "en";
-
+// Mocks
 const userRepositoryMock = mock<IUSerRepository>();
+
+// Builders
+const userBuilder = () => new UserMock();
+
+// Constants
 const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock);
 
 describe("when try to register user", () => {
   beforeAll(() => {
-    resources.setDefaultLanguage(defaultLanguage);
-    words.setDefaultLanguage(defaultLanguage);
+    resources.setDefaultLanguage(LocaleTypeEnum.EN);
+    words.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.EncryptionKey = "hello-alien";
+    AppSettings.EncryptionIteartions = 1e3;
+    AppSettings.EncryptionKeySize = 56;
   });
   beforeEach(() => {
     userRepositoryMock.register.mockReset();
@@ -28,8 +35,10 @@ describe("when try to register user", () => {
   it("should return a 400 error if user properties was null or undefined", async () => {
     // Arrange
     const user = new User();
+
     // Act
     const result = await registerUserUseCase().execute(user);
+
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -43,9 +52,11 @@ describe("when try to register user", () => {
   });
   it("should return a 400 error if user don't have password", async () => {
     // Arrange
-    const user = new UserMock().withName().withEmail().withGender().build();
+    const user = userBuilder().withName().withEmail().withGender().build();
+
     // Act
     const result = await registerUserUseCase().execute(user);
+
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -57,16 +68,18 @@ describe("when try to register user", () => {
   });
   it("should return a 400 error if user with the same email already exists", async () => {
     // Arrange
-    const user = new UserMock().withName().withEmail().withGender().withPassword().build();
-    const userWithSameEmail = new UserMock()
+    const user = userBuilder().withName().withEmail().withGender().withPassword().build();
+    const userWithSameEmail = userBuilder()
       .withName()
       .withEmail()
       .withGender()
       .withPassword()
       .build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(userWithSameEmail);
+
     // Act
     const result = await registerUserUseCase().execute(user);
+
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -81,23 +94,31 @@ describe("when try to register user", () => {
     const user = new UserMock().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+
     // Act
     const result = registerUserUseCase().execute(user);
+
     // Assert
     expect(result).rejects.toThrowError(
       resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
-        toolName: words.get(wordKeys.ENCRYPTOR),
+        toolName: words.get(wordKeys.ENCRYPTION),
       }),
     );
   });
   it("should return a success if user was registered", async () => {
     // Arrange
-    Encryptor.init(AppSettings.EncryptionKey);
-    const user = new UserMock().withName().withEmail().withGender().withPassword().build();
+    Encryption.init(
+      AppSettings.EncryptionKey,
+      AppSettings.EncryptionIteartions,
+      AppSettings.EncryptionKeySize,
+    );
+    const user = userBuilder().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+
     // Act
     const result = await registerUserUseCase().execute(user);
+
     // Assert
     expect(result.success).toBeTruthy();
     expect(result.statusCode).toBe(applicationStatus.SUCCESS);

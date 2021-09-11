@@ -746,6 +746,8 @@ SERVER_HOST=localhost
 SERVER_PORT=3003
 ORIGINS=http://localhost:3003
 ENCRYPTION_KEY=JUS9192ZliRlDBWm0BmmJoZO1PbNkZt3kiXNlaGLkIT49uEdgGe79TPCbr0D
+ENCRYPTION_ITERATIONS=4e4
+ENCRYPTION_KEY_SIZE=128
 JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
 ```
 
@@ -780,11 +782,11 @@ curl --location --request POST 'localhost:3003/api/v1/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
-    "password": "Tm9kZVRza2VsZXRvbg=="
+    "password": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
-The password is equivalent for "NodeTskeleton" in Base64 format.
+The password is equivalent for "NodeTskeleton*8" in Base64 format.
 
 ### Docker Compose
 

@@ -3,5 +3,5 @@ export default {
   PASSWORD: "Password",
   NAME: "Name",
   GENDER: "Gender",
-  ENCRYPTOR: "Encrypt",
+  ENCRYPTION: "Encryption",
 };

@@ -1,9 +1,10 @@
+import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
 import { Normalize } from "./Normalize";
 import * as dotenv from "dotenv";
 
 const dev = "development";
 
-if (!process?.env?.NODE_ENV) {
+if (!process.env?.NODE_ENV || process.env.NODE_ENV === dev) {
   console.log("Running in dev mode");
   dotenv.config();
 }
@@ -39,8 +40,12 @@ export default {
         SecretKey: process.env.JWT_SECRET_KEY,
         ExpireInSeconds: 3600,
       },
-      EncryptionKey: process.env.ENCRYPTION_KEY,
+      CRYPTO: {
+        EncryptionKey: process.env.ENCRYPTION_KEY,
+        EncryptionIterations: Number(process.env.ENCRYPTION_ITERATIONS) || 4e4,
+        EncryptionKeySize: Number(process.env.ENCRYPTION_KEY_SIZE) || 128,
+      },
     },
-    DefaultLang: "en",
+    DefaultLang: LocaleTypeEnum.EN,
   },
 };

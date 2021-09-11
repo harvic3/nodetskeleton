@@ -1,7 +1,7 @@
 import { ServerApp, Application, bodyParser, urlencoded } from "./core/Modules";
-import Encryptor from "../../application/shared/security/encryption/Encryptor";
 import BaseController from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
+import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
@@ -68,7 +68,11 @@ export default class AppWrapper {
     AppSettings.init(config);
     resources.setDefaultLanguage(AppSettings.DefaultLang);
     words.setDefaultLanguage(AppSettings.DefaultLang);
-    Encryptor.init(AppSettings.EncryptionKey);
+    Encryption.init(
+      AppSettings.EncryptionKey,
+      AppSettings.EncryptionIteartions,
+      AppSettings.EncryptionKeySize,
+    );
   }
 
   initializeServices(): Promise<void> {

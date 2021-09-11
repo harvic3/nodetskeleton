@@ -1,7 +1,8 @@
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
+import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
-import Encryptor from "../../../../shared/security/encryption/Encryptor";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import Encryption from "../../../../shared/security/encryption";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 
@@ -29,7 +30,7 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     }
 
     user.maskedUid = GuidUtils.getV4WithoutDashes();
-    const encryptedPassword = Encryptor.encrypt(`${user.email}-${user.password}`);
+    const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
     user.password = encryptedPassword;
     user.createdAt = DateTimeUtils.getISONow();
     const registered = await this.userRepository.register(user);
@@ -52,9 +53,11 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
 
   private isValidRequest(result: Result, user: User): boolean {
     const validations = {};
-    validations[this.words.get(this.wordKeys.EMAIL)] = user.email;
-    validations[this.words.get(this.wordKeys.NAME)] = user.name;
-    validations[this.words.get(this.wordKeys.PASSWORD)] = user?.password as string;
+    validations[this.words.get(this.wordKeys.EMAIL)] = user?.email;
+    validations[this.words.get(this.wordKeys.NAME)] = user?.name;
+    validations[this.words.get(this.wordKeys.PASSWORD)] = StringUtils.isValidAsPassword(
+      StringUtils.decodeBase64(user?.password as string),
+    );
     validations[this.words.get(this.wordKeys.GENDER)] = user.gender;
 
     return this.validator.isValidEntry(result, validations);
