@@ -1,3 +1,4 @@
+import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
@@ -15,6 +16,7 @@ const userRepositoryMock = mock<IUSerRepository>();
 
 // Builders
 const userBuilder = () => new UserMock();
+const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
 const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock);
@@ -88,6 +90,26 @@ describe("when try to register user", () => {
         email: user.email,
       }),
     );
+  });
+  it("should return a 404 error if user password does not comply with conditions", async () => {
+    // Arrange
+    const notComplyPassword = "abcD1234";
+    const user = userBuilder()
+      .withName()
+      .withEmail()
+      .withGender()
+      .withPassword(notComplyPassword)
+      .build();
+    applicationErrorBuilder.initialize(
+      resources.get(resourceKeys.INVALID_PASSWORD),
+      applicationStatus.INVALID_INPUT,
+    );
+
+    // Act
+    const resultPromise = registerUserUseCase().execute(user);
+
+    // Assert
+    await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
   });
   it("should return a 500 error if Encryptor tool has not been initialized", async () => {
     // Arrange

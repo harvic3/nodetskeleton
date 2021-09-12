@@ -17,6 +17,8 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
       return result;
     }
 
+    this.validatePassword(result, user.password as string);
+
     user.email = user.email.toLowerCase();
     const userExists = await this.userRepository.getByEmail(user.email);
     if (userExists) {
@@ -55,11 +57,22 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     const validations = {};
     validations[this.words.get(this.wordKeys.EMAIL)] = user?.email;
     validations[this.words.get(this.wordKeys.NAME)] = user?.name;
-    validations[this.words.get(this.wordKeys.PASSWORD)] = StringUtils.isValidAsPassword(
-      StringUtils.decodeBase64(user?.password as string),
-    );
+    validations[this.words.get(this.wordKeys.PASSWORD)] = user?.password as string;
     validations[this.words.get(this.wordKeys.GENDER)] = user.gender;
 
     return this.validator.isValidEntry(result, validations);
+  }
+
+  private validatePassword(result: IResult, passwordBase64: string): void {
+    const validPassword: boolean = StringUtils.isValidAsPassword(
+      StringUtils.decodeBase64(passwordBase64),
+    );
+    if (!validPassword) {
+      result.setError(
+        this.resources.get(this.resourceKeys.INVALID_PASSWORD),
+        this.applicationStatus.INVALID_INPUT,
+      );
+      this.handleResultError(result);
+    }
   }
 }

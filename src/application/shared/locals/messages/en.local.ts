@@ -10,4 +10,5 @@ export default {
   ERROR_CREATING_USER: "Create user error.",
   USER_WAS_CREATED: "User was created.",
   USER_WITH_EMAIL_ALREADY_EXISTS: "A user has already registered with the email address: {{email}}",
+  INVALID_PASSWORD: "Invalid password.",
 };
