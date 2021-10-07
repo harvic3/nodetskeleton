@@ -10,7 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "allowJs": false,
+    "allowJs": true,
     "allowSyntheticDefaultImports": false,
     "alwaysStrict": true,
     "skipLibCheck": true,

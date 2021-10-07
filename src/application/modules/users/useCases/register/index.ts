@@ -1,13 +1,20 @@
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
+import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import Encryption from "../../../../shared/security/encryption";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
+import { JSONfn } from "../../../../../domain/shared/utils/JSONfn";
+import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
+import { TaskTypeEnum } from "../../../../shared/worker/models/TaskType.enum";
 
 export class RegisterUserUseCase extends BaseUseCase<User> {
-  constructor(private readonly userRepository: IUSerRepository) {
+  constructor(
+    private readonly userRepository: IUSerRepository,
+    private readonly workerProvider: IWorkerProvider,
+  ) {
     super();
   }
 
@@ -31,9 +38,27 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
       return result;
     }
 
+    result.setError(
+      this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
+      this.applicationStatus.INTERNAL_ERROR,
+    );
+
     user.maskedUid = GuidUtils.getV4WithoutDashes();
-    const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
-    user.password = encryptedPassword;
+    // const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
+
+    const encrypt = Encryption.encrypt;
+    const params = [`${user.email}-${user.password}`] as const;
+    console.log("Encryption", encrypt(...params));
+    // console.log("Encrypt", JSONfn.stringify(Encryption));
+
+    const task: WorkerTask = new WorkerTask(TaskTypeEnum.DB_TASK);
+    task.setScriptAbsolutePath("");
+    task.setArgs(user);
+    const encryptedPassword = this.workerProvider.executeTask<string>(task);
+    console.log(JSONfn.stringify(encrypt.bind(Encryption)));
+    user.password = Promise.resolve(encryptedPassword);
+    if (result.error) return result;
+
     user.createdAt = DateTimeUtils.getISONow();
     const registered = await this.userRepository.register(user);
 
@@ -51,6 +76,11 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     );
 
     return result;
+  }
+
+  private testFunction(message: string): string {
+    console.log(message);
+    return message;
   }
 
   private isValidRequest(result: Result, user: User): boolean {
