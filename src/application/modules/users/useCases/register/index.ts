@@ -2,13 +2,13 @@ import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUse
 import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
 import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
-import { JSONfn } from "../../../../../domain/shared/utils/JSONfn";
-import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
-import { TaskTypeEnum } from "../../../../shared/worker/models/TaskType.enum";
+import { join } from "path";
 
 export class RegisterUserUseCase extends BaseUseCase<User> {
   constructor(
@@ -44,19 +44,20 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     );
 
     user.maskedUid = GuidUtils.getV4WithoutDashes();
-    // const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
+    //const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
 
-    const encrypt = Encryption.encrypt;
-    const params = [`${user.email}-${user.password}`] as const;
-    console.log("Encryption", encrypt(...params));
-    // console.log("Encrypt", JSONfn.stringify(Encryption));
-
-    const task: WorkerTask = new WorkerTask(TaskTypeEnum.DB_TASK);
-    task.setScriptAbsolutePath("");
-    task.setArgs(user);
-    const encryptedPassword = this.workerProvider.executeTask<string>(task);
-    console.log(JSONfn.stringify(encrypt.bind(Encryption)));
-    user.password = Promise.resolve(encryptedPassword);
+    const task: WorkerTask = new WorkerTask(
+      join(__dirname, "../../../../../adapters/providers/worker/scripts/encryptPassword.js"),
+    );
+    const workerArgs = {
+      text: `${user.email}-${user.password}`,
+      encryptionKey: AppSettings.EncryptionKey,
+      // iterations: AppSettings.EncryptionIterations,
+    };
+    task.setArgs(workerArgs);
+    const encryptedPassword = await this.workerProvider.executeTask<string>(result, task);
+    console.log("Data", encryptedPassword);
+    user.password = encryptedPassword;
     if (result.error) return result;
 
     user.createdAt = DateTimeUtils.getISONow();
@@ -76,11 +77,6 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     );
 
     return result;
-  }
-
-  private testFunction(message: string): string {
-    console.log(message);
-    return message;
   }
 
   private isValidRequest(result: Result, user: User): boolean {

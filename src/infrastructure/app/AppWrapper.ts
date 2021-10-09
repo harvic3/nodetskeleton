@@ -70,7 +70,7 @@ export default class AppWrapper {
     words.setDefaultLanguage(AppSettings.DefaultLang);
     Encryption.init(
       AppSettings.EncryptionKey,
-      AppSettings.EncryptionIteartions,
+      AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
   }
