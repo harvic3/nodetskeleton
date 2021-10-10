@@ -8,6 +8,14 @@ import mapper, { IMap } from "mapper-tsk";
 import { IResult } from "result-tsk";
 
 export abstract class BaseUseCase<T> {
+  mapper: IMap;
+  validator: Validator;
+  resources: Resources;
+  words: Resources;
+  resourceKeys = resourceKeys;
+  wordKeys = wordKeys;
+  applicationStatus = applicationStatus;
+
   constructor() {
     this.mapper = mapper;
     this.resources = resources;
@@ -18,14 +26,6 @@ export abstract class BaseUseCase<T> {
       applicationStatus.INVALID_INPUT,
     );
   }
-
-  mapper: IMap;
-  validator: Validator;
-  resources: Resources;
-  words: Resources;
-  resourceKeys = resourceKeys;
-  wordKeys = wordKeys;
-  applicationStatus = applicationStatus;
 
   handleResultError(result: IResult): void {
     if (result?.error) {

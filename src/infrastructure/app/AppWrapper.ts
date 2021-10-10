@@ -7,9 +7,9 @@ import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
+import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import * as helmet from "helmet";
-import { resolve } from "path";
 import config from "../config";
 
 export default class AppWrapper {
@@ -42,7 +42,7 @@ export default class AppWrapper {
       ignore: config.Controllers.Ignore,
     });
     for (const filePath of controllerPaths) {
-      const controllerPath = resolve(filePath);
+      const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
       console.log(`${controller?.constructor?.name} was loaded`);
       this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
@@ -70,7 +70,7 @@ export default class AppWrapper {
     words.setDefaultLanguage(AppSettings.DefaultLang);
     Encryption.init(
       AppSettings.EncryptionKey,
-      AppSettings.EncryptionIteartions,
+      AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
   }

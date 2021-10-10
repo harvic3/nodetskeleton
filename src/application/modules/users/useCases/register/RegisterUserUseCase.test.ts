@@ -1,5 +1,6 @@
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
+import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
@@ -13,25 +14,27 @@ import { mock } from "jest-mock-extended";
 
 // Mocks
 const userRepositoryMock = mock<IUSerRepository>();
+const workerProviderMock = mock<IWorkerProvider>();
 
 // Builders
 const userBuilder = () => new UserMock();
 const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
-const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock);
+const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock, workerProviderMock);
 
 describe("when try to register user", () => {
   beforeAll(() => {
     resources.setDefaultLanguage(LocaleTypeEnum.EN);
     words.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.EncryptionKey = "hello-alien";
-    AppSettings.EncryptionIteartions = 1e3;
-    AppSettings.EncryptionKeySize = 56;
+    AppSettings.EncryptionIterations = 1e3;
+    AppSettings.EncryptionKeySize = 64;
   });
   beforeEach(() => {
     userRepositoryMock.register.mockReset();
     userRepositoryMock.getByEmail.mockReset();
+    workerProviderMock.executeTask.mockReset();
   });
 
   it("should return a 400 error if user properties was null or undefined", async () => {
@@ -111,32 +114,37 @@ describe("when try to register user", () => {
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
   });
-  it("should return a 500 error if Encryptor tool has not been initialized", async () => {
+  it("should return a 500 error if Encryptor worker return an error", async () => {
     // Arrange
     const user = new UserMock().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
 
+    applicationErrorBuilder.initialize(
+      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+        missingParams: "text, encryptionKey, iterations",
+      }),
+      applicationStatus.INTERNAL_ERROR,
+    );
+    workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
+
     // Act
     const result = registerUserUseCase().execute(user);
 
     // Assert
-    expect(result).rejects.toThrowError(
-      resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
-        toolName: words.get(wordKeys.ENCRYPTION),
-      }),
-    );
+    await expect(result).rejects.toThrowError(applicationErrorBuilder.build());
   });
   it("should return a success if user was registered", async () => {
     // Arrange
     Encryption.init(
       AppSettings.EncryptionKey,
-      AppSettings.EncryptionIteartions,
+      AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
     const user = userBuilder().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+    workerProviderMock.executeTask.mockResolvedValueOnce("encrypted-password");
 
     // Act
     const result = await registerUserUseCase().execute(user);

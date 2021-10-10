@@ -3,6 +3,7 @@ export { ApplicationError } from "../../../application/shared/errors/Application
 import applicationStatus from "../../../application/shared/status/applicationStatus";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
+export { Result } from "result-tsk";
 
 export abstract class BaseProvider {
   constructor() {

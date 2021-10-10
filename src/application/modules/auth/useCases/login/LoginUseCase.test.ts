@@ -27,8 +27,8 @@ describe("when try to login", () => {
     words.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.JWTExpirationTime = tokenExpirationTime;
     AppSettings.EncryptionKey = "hello-alien";
-    AppSettings.EncryptionIteartions = 1e3;
-    AppSettings.EncryptionKeySize = 56;
+    AppSettings.EncryptionIterations = 1e3;
+    AppSettings.EncryptionKeySize = 64;
   });
   beforeEach(() => {
     authProviderMock.login.mockReset();

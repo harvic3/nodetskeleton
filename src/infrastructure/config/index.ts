@@ -42,7 +42,7 @@ export default {
       },
       CRYPTO: {
         EncryptionKey: process.env.ENCRYPTION_KEY,
-        EncryptionIterations: Number(process.env.ENCRYPTION_ITERATIONS) || 4e4,
+        EncryptionIterations: Number(process.env.ENCRYPTION_ITERATIONS) || 5e4,
         EncryptionKeySize: Number(process.env.ENCRYPTION_KEY_SIZE) || 128,
       },
     },
