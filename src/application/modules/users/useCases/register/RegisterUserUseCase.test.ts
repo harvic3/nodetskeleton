@@ -1,6 +1,6 @@
+import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
-import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
