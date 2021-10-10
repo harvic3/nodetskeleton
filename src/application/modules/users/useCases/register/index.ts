@@ -44,20 +44,9 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     );
 
     user.maskedUid = GuidUtils.getV4WithoutDashes();
+    user.password = await this.encryptPassword(user, result);
     //const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
-
-    const task: WorkerTask = new WorkerTask(
-      join(__dirname, "../../../../../adapters/providers/worker/scripts/encryptPassword.js"),
-    );
-    const workerArgs = {
-      text: `${user.email}-${user.password}`,
-      encryptionKey: AppSettings.EncryptionKey,
-      // iterations: AppSettings.EncryptionIterations,
-    };
-    task.setArgs(workerArgs);
-    const encryptedPassword = await this.workerProvider.executeTask<string>(result, task);
-    console.log("Data", encryptedPassword);
-    user.password = encryptedPassword;
+    console.log("Data", user.password);
     if (result.error) return result;
 
     user.createdAt = DateTimeUtils.getISONow();
@@ -77,6 +66,21 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     );
 
     return result;
+  }
+
+  private async encryptPassword(user: User, result: Result): Promise<string> {
+    const task: WorkerTask = new WorkerTask(
+      join(__dirname, "../../../../../adapters/providers/worker/scripts/encryptPassword.js"),
+    );
+    const workerArgs = {
+      text: `${user.email}-${user.password}`,
+      encryptionKey: AppSettings.EncryptionKey,
+      iterations: AppSettings.EncryptionIterations,
+    };
+    task.setArgs(workerArgs);
+    const workerResult = this.workerProvider.executeTask<string>(result, task);
+    if (result.error) this.handleResultError(result);
+    return workerResult;
   }
 
   private isValidRequest(result: Result, user: User): boolean {
