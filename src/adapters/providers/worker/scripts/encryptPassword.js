@@ -6,12 +6,11 @@ import { pbkdf2Sync } from "crypto";
 parentPort.postMessage(runTask(workerData.task));
 
 function encrypt(text, encryptionKey, iterations, keyLength = 128) {
-  console.log("Executing function");
-  if (!encryptionKey || !iterations) {
+  if (!text || !encryptionKey || !iterations) {
     return {
       message: BaseWorker.resources.getWithParams(
         BaseWorker.resourceKeys.SOME_PARAMETERS_ARE_MISSING,
-        { missingParams: "encryptionKey, iterations" },
+        { missingParams: "text, encryptionKey, iterations" },
       ),
       statusCode: BaseWorker.applicationStatus.INTERNAL_ERROR,
     };
@@ -23,7 +22,6 @@ function encrypt(text, encryptionKey, iterations, keyLength = 128) {
 }
 
 function runTask(task) {
-  console.log("Task execution");
   const { text, encryptionKey, iterations } = task.args;
   return encrypt(text, encryptionKey, iterations);
 }

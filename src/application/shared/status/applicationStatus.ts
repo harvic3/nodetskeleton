@@ -6,4 +6,5 @@ export default {
   UNAUTHORIZED: "41",
   NOT_FOUND: "44",
   INTERNAL_ERROR: "50",
+  WORKER_ERROR: "51",
 };

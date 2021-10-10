@@ -10,5 +10,6 @@ statusMapping[applicationStatus.INVALID_INPUT] = httpStatus.BAD_REQUEST;
 statusMapping[applicationStatus.UNAUTHORIZED] = httpStatus.SUCCESS;
 statusMapping[applicationStatus.NOT_FOUND] = httpStatus.NOT_FOUND;
 statusMapping[applicationStatus.INTERNAL_ERROR] = httpStatus.INTERNAL_SERVER_ERROR;
+statusMapping[applicationStatus.WORKER_ERROR] = httpStatus.INTERNAL_SERVER_ERROR;
 
 export default statusMapping;

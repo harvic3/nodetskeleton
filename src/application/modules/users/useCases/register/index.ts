@@ -1,3 +1,4 @@
+import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
 import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
@@ -5,10 +6,8 @@ import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
-import Encryption from "../../../../shared/security/encryption";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
-import { join } from "path";
 
 export class RegisterUserUseCase extends BaseUseCase<User> {
   constructor(
@@ -26,8 +25,7 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
 
     this.validatePassword(result, user.password as string);
 
-    user.email = user.email.toLowerCase();
-    const userExists = await this.userRepository.getByEmail(user.email);
+    const userExists = await this.userRepository.getByEmail(user.email.toLowerCase());
     if (userExists) {
       result.setError(
         this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
@@ -38,18 +36,8 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
       return result;
     }
 
-    result.setError(
-      this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
-      this.applicationStatus.INTERNAL_ERROR,
-    );
+    await this.buildUser(user);
 
-    user.maskedUid = GuidUtils.getV4WithoutDashes();
-    user.password = await this.encryptPassword(user, result);
-    //const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
-    console.log("Data", user.password);
-    if (result.error) return result;
-
-    user.createdAt = DateTimeUtils.getISONow();
     const registered = await this.userRepository.register(user);
 
     if (!registered) {
@@ -68,19 +56,26 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     return result;
   }
 
-  private async encryptPassword(user: User, result: Result): Promise<string> {
-    const task: WorkerTask = new WorkerTask(
-      join(__dirname, "../../../../../adapters/providers/worker/scripts/encryptPassword.js"),
-    );
+  private async buildUser(user: User): Promise<void> {
+    user.email = user.email.toLowerCase();
+    user.maskedUid = GuidUtils.getV4WithoutDashes();
+    user.password = await this.encryptPassword(user);
+    // This line was replaced by worker task
+    //const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
+    user.createdAt = DateTimeUtils.getISONow();
+  }
+
+  private async encryptPassword(user: User): Promise<string> {
+    const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
       text: `${user.email}-${user.password}`,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
     task.setArgs(workerArgs);
-    const workerResult = this.workerProvider.executeTask<string>(result, task);
-    if (result.error) this.handleResultError(result);
-    return workerResult;
+    const workerResult = await this.workerProvider.executeTask<string>(task);
+
+    return Promise.resolve(workerResult);
   }
 
   private isValidRequest(result: Result, user: User): boolean {

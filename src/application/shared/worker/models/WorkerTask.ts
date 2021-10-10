@@ -1,9 +1,11 @@
+import { TaskDictionaryEnum } from "./TaskDictionary.enum";
+
 export class WorkerTask {
-  absolutePath: string;
+  taskEnum: TaskDictionaryEnum;
   args: { [key: string]: unknown };
 
-  constructor(absoluteScriptPath: string) {
-    this.absolutePath = absoluteScriptPath;
+  constructor(taskEnum: TaskDictionaryEnum) {
+    this.taskEnum = taskEnum;
   }
 
   setArgs(args: { [key: string]: unknown }): void {
