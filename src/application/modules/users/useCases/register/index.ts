@@ -1,7 +1,7 @@
+import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
-import { IWorkerProvider } from "../../../../shared/worker/IWorkerProvider";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";

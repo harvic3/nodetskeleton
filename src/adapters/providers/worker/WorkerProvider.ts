@@ -1,8 +1,8 @@
+import { IWorkerProvider } from "../../../application/shared/worker/providerContracts/IWorkerProvider";
 import { IWorkerError } from "../../../application/shared/worker/models/IWorkerError";
-import { IWorkerProvider } from "../../../application/shared/worker/IWorkerProvider";
 import { WorkerTask } from "../../../application/shared/worker/models/WorkerTask";
 import { ApplicationError, BaseProvider, Result } from "../base/BaseProvider";
-import { TaskDictionary } from "./tasks/TaskDictionary";
+import { TaskDictionary } from "./models/TaskDictionary";
 import { Worker } from "worker_threads";
 
 export class WorkerProvider extends BaseProvider implements IWorkerProvider {

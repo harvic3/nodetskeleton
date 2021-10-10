@@ -24,6 +24,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 		1. [Using with KoaJs 🦋](#using-with-koajs)
 		1. [Using with ExpressJs 🐛](#using-with-expressjs)
 		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
+  1. [Workers 🔄](#workers)
   1. [Infrastructure 🏗️](#infrastructure)
   1. [Installation 🔥](#installation)
   1. [Run Test 🧪](#run-test)
@@ -724,6 +725,53 @@ private loadControllers(controllers: BaseController[]): void {
 And then, continue with the step `installation`.
 
 **[⬆ back to the past](#table-of-contents)**
+
+## Workers
+
+For cpu intensive tasks you have the possibility to use the `WorkerProvider` which enables you to run any script in an abstracted way, for example:
+
+```ts
+private async encryptPassword(user: User): Promise<string> {
+    const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
+    const workerArgs = {
+      text: `${user.email}-${user.password}`,
+      encryptionKey: AppSettings.EncryptionKey,
+      iterations: AppSettings.EncryptionIterations,
+    };
+    task.setArgs(workerArgs);
+    const workerResult = await this.workerProvider.executeTask<string>(task);
+
+    return Promise.resolve(workerResult);
+}
+```
+
+At the application layer level the `WorkerTask` class allows you to create a work task in which you pass the type through an enum in which you can add your tasks and assign some parameters to it.
+
+```ts
+export enum TaskDictionaryEnum {
+  ENCRYPT_PASSWORD = "ENCRYPT_PASSWORD",
+}
+```
+
+And at the adapter layer level we have the dictionary that will allow us to manage the respective script to be executed.
+
+```ts
+import { join } from "path";
+
+export class TaskDictionary {
+  static ENCRYPT_PASSWORD = join(__dirname, "../scripts/encryptPassword.js");
+}
+```
+
+And inside the WorkerProvider is where the magic happens, especially in the next point.
+
+```ts
+const worker = new Worker(TaskDictionary[task.taskEnum], {
+	workerData: { task: task },
+});
+```
+
+This way we can create scripts for heavy computational tasks according to our own needs avoiding blocking the main execution thread of our application.
 
 
 ## Infrastructure
