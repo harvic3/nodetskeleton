@@ -14,8 +14,7 @@
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
     "pre-commit": "npm run lint && npm run pretty-quick --staged && npm run test",
-    "start": "node dist/index",
-    "watch": "nodemon --inspect src/index.ts"
+    "start": "node dist/index"
   },
   "repository": {
     "type": "git",
