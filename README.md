@@ -923,13 +923,11 @@ If you are using VS Code the easiest way to debug the solution is to follow thes
 
 First go to `package.json` file.
 
-Second, into file locate the debug command just above the `scripts` section and click on it.
+Second, into package.json file locate the `debug` command just above the `scripts` section and click on it.
 
-Third, choose the dev script when the execution options appear.
+Third, choose the `dev script` when the execution options appear.
 
 So, wait a moment and then you will see something like this on the console.
-
-This method will allow you to develop and have the solution be attentive to your changes (hot reloading) without the need to restart the service, VS Code does it for you automatically.
 
 ```console
 $ npm run dev
@@ -948,6 +946,10 @@ AuthController was loaded
 HealthController was loaded
 Server running on localhost:3003/api
 ```
+
+To stop the debug just press `Ctrl C` and close the console that was opened to run the debug script.
+
+This method will allow you to develop and have the solution be attentive to your changes (hot reloading) without the need to restart the service, VS Code does it for you automatically.
 
 **[⬆ back to the past](#table-of-contents)**
 
