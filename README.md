@@ -25,6 +25,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 		1. [Using with ExpressJs 🐛](#using-with-expressjs)
 		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
   1. [Workers 🔄](#workers)
+  1. [GraphQL ✡](#graphql)
   1. [Infrastructure 🏗️](#infrastructure)
   1. [Installation 🔥](#installation)
   1. [Run Test 🧪](#run-test)
@@ -32,7 +33,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Build for production ⚙️](#build-for-production)
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
-  1. [Clustering the App 🎚](clustering-the-app-node-cluster)
+  1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-node-cluster)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -773,6 +774,15 @@ const worker = new Worker(TaskDictionary[task.taskEnum], {
 
 This way we can create scripts for heavy computational tasks according to our own needs avoiding blocking the main execution thread of our application.
 
+**[⬆ back to the past](#table-of-contents)**
+
+
+## GraphQL
+
+Coming soon ;)
+
+**[⬆ back to the past](#table-of-contents)**
+
 
 ## Infrastructure
 
@@ -835,6 +845,8 @@ curl --location --request POST 'localhost:3003/api/v1/users/login' \
 ```
 
 The password is equivalent for "NodeTskeleton*8" in Base64 format.
+
+**[⬆ back to the past](#table-of-contents)**
 
 ### Docker Compose
 
@@ -907,22 +919,35 @@ npm run test
 
 ## Application debugger
 
-Before this maybe you should make some settings, for it you can go to **[Setting files](#setting-files)**
+If you are using VS Code the easiest way to debug the solution is to follow these instructions:
 
-> In the side menu of `VS Code` go to the `Execute` ▶ option and then at the top select the `Launch via NPM` option in menu and click on the green Play icon ▶️.
+First go to `package.json` file.
 
-> Remember to put some `stop point` in the code, for example in some method of the `TextFeelingController`.
+Second, into file locate the debug command just above the `scripts` section and click on it.
 
-> For watch and debug mode, you can run the next command:
+Third, choose the dev script when the execution options appear.
+
+So, wait a moment and then you will see something like this on the console.
+
+This method will allow you to develop and have the solution be attentive to your changes (hot reloading) without the need to restart the service, VS Code does it for you automatically.
+
 ```console
-npm run watch
+$ npm run dev
+Debugger attached.
+Waiting for the debugger to disconnect...
+Debugger attached.
+
+> nodetskeleton@1.0.0 dev
+> ts-node-dev --respawn -- src/index.ts
+
+Debugger attached.
+[INFO] 22:52:29 ts-node-dev ver. 1.1.8 (using ts-node ver. 9.1.1, typescript ver. 4.4.3)
+Debugger attached.
+Running in dev mode
+AuthController was loaded
+HealthController was loaded
+Server running on localhost:3003/api
 ```
-
-> Nodemon
-This option required previous file settings **[Setting files](#setting-files)**
-
-And later go to `Execution and debugging` option in VSCode and play to `Node: Nodemon` task and after select the correct process for attach to debug mode. 
-Select some pid nodemon process like `[.../bin/nodemon.js --inspect src/...]`
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -945,81 +970,6 @@ npm run build
 tsc
 ```
 > With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
-
-
-## Setting files
-(.vscode)🛠️
-
-This step is optional and it working for windows, but in another OS (Linux or Mac OS) you can do the next instructions:
-
-1. Goto to left menu `Depuration and Execution` and create a `launch.json` file settings for `NodeJs`, do not play it yet...
-2. Press combination key command `Ctrl + Shift + B` and select `tsc: watch` or `tsc: build`, so...
-3. Now, you can play the configuration of previous one step called `Launch Program`.
-4. So, you can ready for the action
-
-So, for Windows, you need this files or you could also perform the above steps. They should also work for Windows.
-
-> Files for `.vscode` folder
-
-// launch.json
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch via NPM",
-      "program": "${workspaceFolder}/src/index.ts",
-      "console": "integratedTerminal",
-      "preLaunchTask": "tsc: build-tsconfig",
-      "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
-    },
-		// For attach to watch mode before run command: npm run watch
-		{
-      "type": "node",
-      "request": "attach",
-      "name": "Node: Nodemon",
-      "processId": "${command:PickProcess}",
-      "restart": true,
-      "sourceMaps": true,
-      "protocol": "inspector"
-    }
-  ]
-}
-```
-
-// tasks.json
-```json
-{
-	"version": "2.0.0",
-	"tasks": [		
-		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
-			"problemMatcher": [
-				"$tsc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"label": "tsc: build-tsconfig",
-			"options": {
-				"shell": {
-					"executable": "cmd.exe", // With cmd...
-					"args": ["/d", "/c"],
-					// "executable": "C:/Program Files/Git/git-bash.exe", // or with git bash too
-					// "args": ["-l", "-i"]
-				}
-			}
-		}
-	]
-}
-```
-
-**[⬆ back to the past](#table-of-contents)**
 
 
 ## Test your Clean Architecture
@@ -1048,11 +998,11 @@ Coupling is not bad if it is well managed, but in a software solution `there sho
 **[⬆ back to the past](#table-of-contents)**
 
 
-## Clustering the App Node Cluster
+## Clustering the App (Node Cluster)
 
-Explanation coming soon. 
+NodeJs solutions run on a single thread, so it is important not to run CPU-intensive tasks, however NodeJs in Cluster Mode can run on several cores, so if you want to get the most out of your solution running on a multi-core machine, this is probably a good option, but if your machine has no more than one core, this will not help.
 
-For the moment, if you want Cluster de App, replace src/index.ts code for the next code example.
+So, for Cluster de App, replace `src/index.ts` code for the next code example.
 
 ### Observation 👀
 For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the `AppWrapper` class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the `AppWrapper` internal class method.
