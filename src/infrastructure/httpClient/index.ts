@@ -3,7 +3,6 @@ import { ApplicationError } from "../../application/shared/errors/ApplicationErr
 import resources, { resourceKeys } from "../../application/shared/locals/messages";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 export { BodyInit as BodyType, Headers } from "node-fetch";
-import { Options } from "./Options";
 import TResponse from "./TResponse";
 
 const SERIALIZED = true;
@@ -26,16 +25,17 @@ export class HttpClient {
   SerializationMethod = serialization;
   async send<R, E>(
     url: string,
-    method = this.Methods.GET,
     {
+      method = this.Methods.GET,
       body,
       headers,
       options,
       serializationMethod = this.SerializationMethod.json,
     }: {
+      method?: string,
       body?: BodyType;
       headers?: Headers;
-      options?: Options;
+      options?: RequestInit;
       serializationMethod?: string;
     },
   ): Promise<TResponse<R, E>> {
@@ -73,23 +73,19 @@ export class HttpClient {
     headers?: Headers,
     options?: RequestInit,
   ): Request {
-    if (!options) {
-      options = new Options();
-    }
-    options.method = method;
-    if (body) {
-      options.body = body;
-    }
-    if (headers) {
-      options.headers = headers;
-    }
+    if (!options) options = {};
+    options["method"] = method;
+    if (body) options["body"] = body;
+    if (headers) options["headers"] = headers;
+
     const request = new Request(url, options);
-    const optionsKey = Object.keys(options);
-    optionsKey.forEach((key) => {
+    const optionKeys = Object.keys(options);
+    optionKeys.forEach((key) => {
       if (key !== "method" && key !== "body" && key !== "headers") {
         request[key] = options[key];
       }
     });
+
     return request;
   }
 
@@ -106,7 +102,7 @@ export class HttpClient {
   private async processResponseData<R>(
     response: Response,
     serializationMethod: string,
-  ): Promise<R | string | Buffer | ArrayBuffer> {
+  ): Promise<R | string | Buffer | ArrayBuffer | unknown> {
     try {
       switch (serializationMethod) {
         case serialization.buffer:
@@ -128,7 +124,4 @@ export class HttpClient {
   }
 }
 
-const instance = new HttpClient();
-
-export { Options };
-export default instance;
+export default new HttpClient();

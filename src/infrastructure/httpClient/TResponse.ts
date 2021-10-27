@@ -1,14 +1,14 @@
 import { Headers } from "node-fetch";
 
 export default class TResponse<R, E> {
-  response: R | E | string | Buffer | ArrayBuffer | PromiseLike<R> | PromiseLike<E>;
+  response: R | E | string | Buffer | ArrayBuffer | PromiseLike<R> | PromiseLike<E> | unknown;
   success = true;
   statusCode: number;
   message: string;
   error: Error;
   headers: Headers;
 
-  setResponse(data: string | R | Buffer | ArrayBuffer | PromiseLike<R>): void {
+  setResponse(data: string | R | Buffer | ArrayBuffer | PromiseLike<R> | unknown): void {
     this.response = data;
   }
 
