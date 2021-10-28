@@ -823,15 +823,24 @@ npm install
 npm update
 ```
 
-> Third:
+> Third, run project in hot reload mode (Without debug, for it go to [Debug instructions](#application-debugger))
 
-This project is configured with `VS Code` so if you use `WindowsNT` go to the next point, otherwise go to the `.vscode` folder and check the `launch.json` file according to your `SO` and in the `tasks.json` file use the lines with `//` for `Bash` and remove the lines corresponding to `cmd` for `WindowsNT`.
+```console
+npm run dev
+```
 
-> Finally, in any internet explorer go to:
+or 
+
+```console
+npm run build
+node dist/index
+```
+
+> Finally, in any web browser go to:
 
 `localhost:3003/api/ping`
 
-> And you can use PostMan too:
+> And you can use `PostMan` as follow:
 
 Try import this request. So, click to Import > Select Raw text, and paste the next code:
 
@@ -949,7 +958,7 @@ Server running on localhost:3003/api
 
 To stop the debug just press `Ctrl C` and close the console that was opened to run the debug script.
 
-This method will allow you to develop and have the solution be attentive to your changes (hot reloading) without the need to restart the service, VS Code does it for you automatically.
+This method will allow you to develop and have the solution be attentive to your changes (hot reload) without the need to restart the service, VS Code does it for you automatically.
 
 **[⬆ back to the past](#table-of-contents)**
 
