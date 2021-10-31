@@ -10,14 +10,14 @@ export class LoginUseCase extends BaseUseCase<{ email: string; passwordB64: stri
     super();
   }
 
-  async execute(params: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
+  async execute(args: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
-    if (!this.isValidRequest(result, params.email, params.passwordB64)) {
+    if (!this.isValidRequest(result, args.email, args.passwordB64)) {
       return result;
     }
 
     const authenticatedUser: User = await this.authProvider
-      .login(params.email, params.passwordB64)
+      .login(args.email, args.passwordB64)
       .catch(() => {
         result.setError(
           this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),

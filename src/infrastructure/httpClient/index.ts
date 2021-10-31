@@ -32,7 +32,7 @@ export class HttpClient {
       options,
       serializationMethod = this.SerializationMethod.json,
     }: {
-      method?: string,
+      method?: string;
       body?: BodyType;
       headers?: Headers;
       options?: RequestInit;

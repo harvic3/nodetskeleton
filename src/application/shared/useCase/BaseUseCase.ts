@@ -33,5 +33,5 @@ export abstract class BaseUseCase<T> {
     }
   }
 
-  abstract execute(params?: T): Promise<IResult>;
+  abstract execute(args?: T): Promise<IResult>;
 }

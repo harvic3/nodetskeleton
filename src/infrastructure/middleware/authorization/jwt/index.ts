@@ -6,8 +6,8 @@ import { authProvider } from "../../../../adapters/providers/container";
 import { ISession } from "../../../../domain/session/ISession";
 import config from "../../../config";
 
-const TOKEN_PARTS: number = 2;
-const TOKEN_VALUE_POSITION: number = 1;
+const TOKEN_PARTS = 2;
+const TOKEN_VALUE_POSITION = 1;
 const WHITE_LIST = [
   `${config.Server.Root}/ping`,
   `${config.Server.Root}/v1/users/login`,

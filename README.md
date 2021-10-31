@@ -1,4 +1,4 @@
-# NodeTSkeleton <img height="50" src="https://i.ibb.co/BZkYR9H/esqueletots.png" alt="esqueletots" border="0">
+# NodeTSkeleton <img height="50" src="https://i.ibb.co/BZkYR9H/esqueletots.png" alt="skeleton" border="0">
 
 ## Introduction🤖
 
@@ -277,7 +277,7 @@ import * as applicationStatusCodes from "../status/applicationStatusCodes.json";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 
-export class BaseUseCase<T> {
+export abstract class BaseUseCase<T> {
   constructor() {
     this.mapper = mapper;
     this.resources = resources;
@@ -293,7 +293,7 @@ export class BaseUseCase<T> {
   resourceKeys = resourceKeys;
   applicationStatusCodes = applicationStatusCodes;
 
-	abstract execute(params?: T): Promise<IResult>;
+	abstract execute(args?: T): Promise<IResult>;
 }
 ```
 
@@ -530,7 +530,7 @@ The *Way Two* delivers the same instance (only one instance) for each useCase ca
 
 As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.
 
-But if you prefer or definitely your project need a library, you can use something like `awilix` or `inversifyJs`.
+But if you prefer or definitely your project need a library, you can use something like `awilix`, `inversifyJs` or `typedi`.
 
 **[⬆ back to the past](#table-of-contents)**
 
