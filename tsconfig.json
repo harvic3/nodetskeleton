@@ -1,5 +1,5 @@
 {
-  "version": "4.4.3",
+  "version": "4.5.2",
   "compilerOptions": {
     "lib": ["ES2021"],
     "outDir": "dist",
