@@ -1,6 +1,6 @@
 import BaseController, { Request, Response, NextFunction } from "../base/Base.controller";
-import { User } from "../../../domain/user/User";
 import container, { LoginUseCase, RegisterUserUseCase } from "./container";
+import { User } from "../../../domain/user/User";
 
 class AuthController extends BaseController {
   constructor() {
@@ -9,33 +9,24 @@ class AuthController extends BaseController {
   }
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const email = req.body?.email as string;
-      const passwordB64 = req.body?.password as string;
+    const email = req.body?.email as string;
+    const passwordB64 = req.body?.password as string;
 
-      this.handleResult(
-        res,
-        await container.get<LoginUseCase>(LoginUseCase.name).execute({
-          email,
-          passwordB64,
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
+    return this.handleResult(res, next, container.get<LoginUseCase>(LoginUseCase.name), {
+      email,
+      passwordB64,
+    });
   };
 
   singUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const user: User = req.body;
+    const user: User = req.body;
 
-      this.handleResult(
-        res,
-        await container.get<RegisterUserUseCase>(RegisterUserUseCase.name).execute(user),
-      );
-    } catch (error) {
-      next(error);
-    }
+    return this.handleResult(
+      res,
+      next,
+      container.get<RegisterUserUseCase>(RegisterUserUseCase.name),
+      user,
+    );
   };
 
   protected initializeRoutes(): void {

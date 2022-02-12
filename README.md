@@ -852,7 +852,7 @@ Try import this request. So, click to Import > Select Raw text, and paste the ne
 curl --location --request POST 'localhost:3003/api/v1/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "email": "harvic3@protonmail.com",
+    "email": "nodetskeleton@email.com",
     "password": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```

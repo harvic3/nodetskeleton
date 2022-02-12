@@ -8,11 +8,7 @@ class HealthController extends BaseController {
   }
 
   pong = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      this.handleResultData(res, await container.get<PongUseCase>(PongUseCase.name).execute());
-    } catch (error) {
-      next(error);
-    }
+    return this.handleResultData(res, next, container.get<PongUseCase>(PongUseCase.name));
   };
 
   protected initializeRoutes(): void {

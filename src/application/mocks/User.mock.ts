@@ -1,30 +1,31 @@
 import { StringUtils } from "../../domain/shared/utils/StringUtils";
 import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
+import { MockConstants } from "./MockConstants";
 import { User } from "../../domain/user/User";
 
 export class UserMock implements IMockBuilder<User> {
   private user: User;
   constructor() {
     this.user = new User();
-    this.user.uid = "a1b2c3d4e5f6";
-    this.user.maskedUid = "f6e5d4c3b2a1";
+    this.user.uid = MockConstants.USER_ID;
+    this.user.maskedUid = MockConstants.USER_MASKED_ID;
   }
 
   reset(): User {
     this.user = new User();
-    this.user.uid = "a1b2c3d4e5f6";
-    this.user.maskedUid = "f6e5d4c3b2a1";
+    this.user.uid = MockConstants.USER_ID;
+    this.user.maskedUid = MockConstants.USER_MASKED_ID;
     return this.user;
   }
   build(): User {
     return this.user;
   }
-  withName(name = "Nikola Tesla"): UserMock {
+  withName(name = MockConstants.USER_NAME): UserMock {
     this.user.name = name;
     return this;
   }
-  withEmail(email = "nikolatesla@elion.com"): UserMock {
+  withEmail(email = MockConstants.USER_EMAIL): UserMock {
     this.user.email = email;
     return this;
   }
@@ -32,7 +33,7 @@ export class UserMock implements IMockBuilder<User> {
     this.user.gender = gender;
     return this;
   }
-  withPassword(password = "Hello*Alien8"): UserMock {
+  withPassword(password = MockConstants.EXAMPLE_PASSWORD): UserMock {
     this.user.password = StringUtils.encodeBase64(password);
     return this;
   }

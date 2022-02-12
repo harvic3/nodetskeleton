@@ -97,6 +97,6 @@ describe("when try to login", () => {
     const data = result.data as TokenDto;
     expect(result.statusCode).toBe(applicationStatus.SUCCESS);
     expect(result.success).toBeTruthy();
-    expect(data.expireIn).toBe(tokenExpirationTime);
+    expect(data.expiresIn).toBe(tokenExpirationTime);
   });
 });

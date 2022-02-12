@@ -1,3 +1,3 @@
 export class TokenDto {
-  constructor(public token: string, public expireIn: number) {}
+  constructor(public token: string, public expiresIn: number) {}
 }
