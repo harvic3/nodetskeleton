@@ -1,12 +1,11 @@
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
 import { Normalize } from "./Normalize";
-import * as dotenv from "dotenv";
+import "dotenv/config";
 
 const dev = "development";
 
 if (!process.env?.NODE_ENV || process.env.NODE_ENV === dev) {
   console.log("Running in dev mode");
-  dotenv.config();
 }
 
 export default {
@@ -23,6 +22,7 @@ export default {
     Port: process.env.SERVER_PORT || 3003,
     Origins:
       process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
+    ServiceName: process.env.SERVICE_NAME || "NodeTskeleton",
   },
   Params: {
     Envs: {

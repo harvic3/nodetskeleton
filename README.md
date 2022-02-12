@@ -1,6 +1,6 @@
 # NodeTSkeleton <img height="50" src="https://i.ibb.co/BZkYR9H/esqueletots.png" alt="skeleton" border="0">
 
-## Introduction🤖
+## Introduction 🤖
 
 `NodeTskeleton` is a `Clean Architecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
 
@@ -957,7 +957,7 @@ Debugger attached.
 Running in dev mode
 AuthController was loaded
 HealthController was loaded
-Server running on localhost:3003/api
+Server NodeTskeleton running on localhost:3003/api
 ```
 
 To stop the debug just press `Ctrl C` and close the console that was opened to run the debug script.
@@ -1133,6 +1133,10 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 - 📫 <a href="mailto:harvic3@protonmail.com" target="_blank" >Write to him</a>
 
 **[⬆ back to the past](#table-of-contents)**
+
+## Future tasks
+- Add execution context to ApplicationError
+- Create strategy to build many micro services in the same project management through pipelines.
 
 ## Acknowledgments
 

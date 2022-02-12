@@ -9,8 +9,8 @@ import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
-import * as helmet from "helmet";
 import config from "../config";
+import helmet from "helmet";
 
 export default class AppWrapper {
   private readonly constructorControllersLoaded: boolean = false;
@@ -77,15 +77,15 @@ export default class AppWrapper {
 
   initializeServices(): Promise<void> {
     return new Promise((resolve, reject) => {
-      try {
-        this.loadControllersDynamically().then(() => {
-          // Initialize database service and other services here
-          // reject if any error with database or other service
+      this.loadControllersDynamically()
+        .then(() => {
+          // Initialize database service and other services here. For do it you should add a try catch block.
+          // reject if any error with database or other service.
           resolve();
+        })
+        .catch((error) => {
+          reject(error);
         });
-      } catch (error) {
-        reject(error);
-      }
     });
   }
 }

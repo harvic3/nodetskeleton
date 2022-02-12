@@ -23,7 +23,7 @@ export class HttpServer {
 
     this.server.on("listening", () => {
       console.log(
-        `Server running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
+        `Server ${AppSettings.ServiceName} running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
       );
     });
   }

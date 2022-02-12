@@ -1,4 +1,5 @@
 export default class AppSettings {
+  static ServiceName: string;
   static DefaultLang: string;
   static EncryptionKey: string;
   static EncryptionIterations: number;
@@ -10,8 +11,8 @@ export default class AppSettings {
   static JWTEncryptionKey: string;
   static JWTExpirationTime: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static init(config: { [key: string]: any }): void {
+  static init(config: Record<string, any>): void {
+    this.ServiceName = config.Server.ServiceName;
     this.DefaultLang = config.Params.DefaultLang;
     this.EncryptionKey = config.Params.Security.CRYPTO.EncryptionKey;
     this.EncryptionIterations = config.Params.Security.CRYPTO.EncryptionIterations;
