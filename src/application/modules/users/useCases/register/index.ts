@@ -14,7 +14,7 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     private readonly userRepository: IUSerRepository,
     private readonly workerProvider: IWorkerProvider,
   ) {
-    super();
+    super(RegisterUserUseCase.name);
   }
 
   async execute(user: User): Promise<IResult> {
@@ -25,11 +25,11 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
 
     this.validatePassword(result, user.password as string);
 
-    const userExists = await this.userRepository.getByEmail(user.email.toLowerCase());
+    const userExists = await this.userRepository.getByEmail(user.email?.toLowerCase());
     if (userExists) {
       result.setError(
         this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-          email: user.email,
+          email: user?.email as string,
         }),
         this.applicationStatus.INVALID_INPUT,
       );
@@ -57,7 +57,7 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
   }
 
   private async buildUser(user: User): Promise<void> {
-    user.email = user.email.toLowerCase();
+    user.email = user.email?.toLowerCase();
     user.maskedUid = GuidUtils.getV4WithoutDashes();
     user.password = await this.encryptPassword(user);
     // This line was replaced by worker task
@@ -79,7 +79,7 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
   }
 
   private isValidRequest(result: Result, user: User): boolean {
-    const validations = {};
+    const validations: Record<string, unknown> = {};
     validations[this.words.get(this.wordKeys.EMAIL)] = user?.email;
     validations[this.words.get(this.wordKeys.NAME)] = user?.name;
     validations[this.words.get(this.wordKeys.PASSWORD)] = user?.password as string;

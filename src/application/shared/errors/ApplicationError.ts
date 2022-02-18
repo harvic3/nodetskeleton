@@ -1,7 +1,7 @@
 export class ApplicationError extends Error {
-  public constructor(message: string, errorCode: number | string, stack?: string) {
+  public constructor(context: string, message: string, errorCode: number | string, stack?: string) {
     super(message);
-    this.name = "ApplicationError";
+    this.name = `${context}ApplicationError`;
     this.errorCode = errorCode;
     this.stack = stack;
   }

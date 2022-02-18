@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "../../../app/core/Modules";
 import { authProvider } from "../../../../adapters/providers/container";
 import { ISession } from "../../../../domain/session/ISession";
 import config from "../../../config";
+import { Middleware } from "../..";
 
 const TOKEN_PARTS = 2;
 const TOKEN_VALUE_POSITION = 1;
@@ -15,7 +16,7 @@ const WHITE_LIST = [
 ];
 
 class AuthorizationMiddleware {
-  async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
+  handle: Middleware = (req: Request, res: Response, next: NextFunction): void => {
     const existsUnauthorizedPath: boolean = WHITE_LIST.some((path) => path === req.path);
     if (existsUnauthorizedPath) {
       return next();
@@ -24,6 +25,7 @@ class AuthorizationMiddleware {
     const auth = req.headers.authorization;
     if (!auth) {
       throw new ApplicationError(
+        AuthorizationMiddleware.name,
         resources.get(resourceKeys.AUTHORIZATION_REQUIRED),
         applicationStatus.UNAUTHORIZED,
       );
@@ -32,6 +34,7 @@ class AuthorizationMiddleware {
     const parts = auth.split(/\s+/);
     if (parts?.length !== TOKEN_PARTS) {
       throw new ApplicationError(
+        AuthorizationMiddleware.name,
         resources.get(resourceKeys.AUTHORIZATION_REQUIRED),
         applicationStatus.UNAUTHORIZED,
       );
@@ -39,9 +42,10 @@ class AuthorizationMiddleware {
 
     try {
       const token = parts[TOKEN_VALUE_POSITION];
-      const session: ISession = await authProvider.verifyJwt(token);
+      const session: ISession = authProvider.verifyJwt(token);
       if (!session) {
         throw new ApplicationError(
+          AuthorizationMiddleware.name,
           resources.get(resourceKeys.AUTHORIZATION_REQUIRED),
           applicationStatus.UNAUTHORIZED,
         );
@@ -49,13 +53,14 @@ class AuthorizationMiddleware {
       req.session = session;
     } catch (error) {
       throw new ApplicationError(
+        AuthorizationMiddleware.name,
         resources.get(resourceKeys.AUTHORIZATION_REQUIRED),
         applicationStatus.UNAUTHORIZED,
       );
     }
 
     return next();
-  }
+  };
 }
 
 export default new AuthorizationMiddleware();

@@ -3,9 +3,9 @@ import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
 
 export class UserModel {
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: string | undefined): Promise<User | null> {
     return new Promise((resolve, reject) => {
-      const founded = dbData.users.find((user) => user.email === email);
+      const founded = dbData.users.find((element) => element.email === email);
       if (!founded) {
         resolve(null);
       }
@@ -14,7 +14,7 @@ export class UserModel {
     });
   }
 
-  async getByAuthentication(encryptedPassword: string): Promise<User> {
+  async getByAuthentication(encryptedPassword: string | null): Promise<User> {
     return new Promise((resolve, reject) => {
       const founded = dbData.users.find((user) => user.password === encryptedPassword);
       if (!founded) {

@@ -1,4 +1,3 @@
-import { ServerApp, Application, bodyParser, urlencoded } from "./core/Modules";
 import BaseController from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
@@ -11,6 +10,14 @@ import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
 import helmet from "helmet";
+import {
+  ServerApp,
+  Application,
+  bodyParser,
+  urlencoded,
+  RequestHandler,
+  ErrorRequestHandler,
+} from "./core/Modules";
 
 export default class AppWrapper {
   private readonly constructorControllersLoaded: boolean = false;
@@ -56,12 +63,12 @@ export default class AppWrapper {
     this.app.use(helmet());
     this.app.use(bodyParser());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(localizationMiddleware.handle);
-    this.app.use(authorizationMiddleware.handle);
+    this.app.use(localizationMiddleware.handle as RequestHandler);
+    this.app.use(authorizationMiddleware.handle as RequestHandler);
   }
 
   private loadErrorHandler(): void {
-    this.app.use(errorHandlerMiddleware.handle);
+    this.app.use(errorHandlerMiddleware.handle as ErrorRequestHandler);
   }
 
   private setup(): void {

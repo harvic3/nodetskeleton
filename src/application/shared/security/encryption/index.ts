@@ -23,6 +23,7 @@ export default class Encryption {
   static encrypt(text: string, encryptionKey?: string): string {
     if (!encryptionKey && !this.defaultEncryptionKey) {
       throw new ApplicationError(
+        Encryption.name,
         resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
           toolName: words.get(wordKeys.ENCRYPTION),
         }),

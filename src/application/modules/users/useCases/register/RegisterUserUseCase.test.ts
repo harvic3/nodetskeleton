@@ -90,7 +90,7 @@ describe("when try to register user", () => {
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-        email: user.email,
+        email: user?.email as string,
       }),
     );
   });

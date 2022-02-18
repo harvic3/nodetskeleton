@@ -4,7 +4,7 @@ import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 
 export class PongUseCase extends BaseUseCase<undefined> {
   constructor(private readonly healthProvider: IHealthProvider) {
-    super();
+    super(PongUseCase.name);
   }
 
   async execute(): Promise<IResultT<string>> {

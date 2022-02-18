@@ -17,9 +17,9 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
     return Promise.resolve(token);
   }
 
-  async verifyJwt(jwt: string): Promise<ISession> {
+  verifyJwt(jwt: string): ISession {
     const session: ISession = verify(jwt, AppSettings.JWTEncryptionKey) as ISession;
-    return Promise.resolve(session);
+    return session;
   }
 
   async login(email: string, passwordB64: string): Promise<User> {

@@ -1,11 +1,11 @@
 import { Gender } from "./genre/Gender.enum";
 
 export interface IUser {
-  uid: string;
-  maskedUid: string;
-  name: string;
-  email: string;
-  gender: Gender;
-  verified: boolean;
-  createdAt: string;
+  uid: string | undefined;
+  maskedUid: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  gender: Gender | undefined;
+  verified: boolean | undefined;
+  createdAt: string | undefined;
 }

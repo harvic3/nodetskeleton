@@ -36,7 +36,7 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase().execute({ email: null, passwordB64: null });
+    const result = await loginUseCase().execute({ email: undefined, passwordB64: undefined });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -49,7 +49,7 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64: null });
+    const result = await loginUseCase().execute({ email, passwordB64: undefined });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);

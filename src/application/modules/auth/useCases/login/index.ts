@@ -5,19 +5,25 @@ import AppSettings from "../../../../shared/settings/AppSettings";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
-export class LoginUseCase extends BaseUseCase<{ email: string; passwordB64: string }> {
+export class LoginUseCase extends BaseUseCase<{
+  email: string | undefined;
+  passwordB64: string | undefined;
+}> {
   constructor(private readonly authProvider: IAuthProvider) {
-    super();
+    super(LoginUseCase.name);
   }
 
-  async execute(args: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
+  async execute(args: {
+    email: string | undefined;
+    passwordB64: string | undefined;
+  }): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
-    if (!this.isValidRequest(result, args.email, args.passwordB64)) {
+    if (!this.isValidRequest(result, args?.email, args?.passwordB64)) {
       return result;
     }
 
-    const authenticatedUser: User = await this.authProvider
-      .login(args.email, args.passwordB64)
+    const authenticatedUser: User | null = await this.authProvider
+      .login(args.email as string, args.passwordB64 as string)
       .catch(() => {
         result.setError(
           this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
@@ -45,8 +51,12 @@ export class LoginUseCase extends BaseUseCase<{ email: string; passwordB64: stri
     return Promise.resolve(tokenDto);
   }
 
-  private isValidRequest(result: IResult, email: string, passwordB64: string): boolean {
-    const validations = {};
+  private isValidRequest(
+    result: IResult,
+    email: string | undefined,
+    passwordB64: string | undefined,
+  ): boolean {
+    const validations: Record<string, unknown> = {};
     validations[this.words.get(this.wordKeys.EMAIL)] = email;
     validations[this.words.get(this.wordKeys.PASSWORD)] = passwordB64;
 

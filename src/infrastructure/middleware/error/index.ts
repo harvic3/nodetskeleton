@@ -4,15 +4,21 @@ import { Request, Response, NextFunction } from "../../app/core/Modules";
 import resources from "../../../application/shared/locals/messages";
 import { Result } from "result-tsk";
 import config from "../../config";
+import { ErrorHandler } from "..";
 
 export class ErrorHandlerMiddleware {
-  handle(err: ApplicationError, req: Request, res: Response, next: NextFunction): void {
+  handle: ErrorHandler = (
+    err: ApplicationError,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const result = new Result();
-    if (err?.name === "ApplicationError") {
-      console.log("Controlled application error:", err.message);
+    if (err?.name.includes("ApplicationError")) {
+      console.log("Controlled application error:", err.name, err.message);
       result.setError(err.message, err.errorCode);
     } else {
-      // Send to your log this error
+      // Send to your logger system or repository this error
       console.log("No controlled application error:", err);
       result.setError(
         resources.get(config.Params.DefaultApplicationError.Message),
@@ -22,8 +28,9 @@ export class ErrorHandlerMiddleware {
     if (res.headersSent) {
       return next(result);
     }
-    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
-  }
+
+    return res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
+  };
 
   manageNodeException(
     exceptionType: string,
