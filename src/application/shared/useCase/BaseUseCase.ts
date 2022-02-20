@@ -16,7 +16,7 @@ export abstract class BaseUseCase<T> {
   wordKeys = wordKeys;
   applicationStatus = applicationStatus;
 
-  constructor(readonly CONTEXT: string) {
+  constructor(public readonly CONTEXT: string) {
     this.mapper = mapper;
     this.resources = resources;
     this.words = words;

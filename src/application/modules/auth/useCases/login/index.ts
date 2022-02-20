@@ -1,13 +1,14 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
 export class LoginUseCase extends BaseUseCase<{
-  email: string | undefined;
-  passwordB64: string | undefined;
+  email: string | Nulldifined;
+  passwordB64: string | Nulldifined;
 }> {
   constructor(private readonly authProvider: IAuthProvider) {
     super(LoginUseCase.name);
@@ -15,7 +16,7 @@ export class LoginUseCase extends BaseUseCase<{
 
   async execute(args: {
     email: string | undefined;
-    passwordB64: string | undefined;
+    passwordB64: string | Nulldifined;
   }): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
     if (!this.isValidRequest(result, args?.email, args?.passwordB64)) {
@@ -53,8 +54,8 @@ export class LoginUseCase extends BaseUseCase<{
 
   private isValidRequest(
     result: IResult,
-    email: string | undefined,
-    passwordB64: string | undefined,
+    email: string | Nulldifined,
+    passwordB64: string | Nulldifined,
   ): boolean {
     const validations: Record<string, unknown> = {};
     validations[this.words.get(this.wordKeys.EMAIL)] = email;

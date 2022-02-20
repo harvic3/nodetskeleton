@@ -97,6 +97,7 @@ describe("when try to register user", () => {
   it("should return a 404 error if user password does not comply with conditions", async () => {
     // Arrange
     const notComplyPassword = "abcD1234";
+    const useCase = registerUserUseCase();
     const user = userBuilder()
       .withName()
       .withEmail()
@@ -104,12 +105,13 @@ describe("when try to register user", () => {
       .withPassword(notComplyPassword)
       .build();
     applicationErrorBuilder.initialize(
+      useCase.CONTEXT,
       resources.get(resourceKeys.INVALID_PASSWORD),
       applicationStatus.INVALID_INPUT,
     );
 
     // Act
-    const resultPromise = registerUserUseCase().execute(user);
+    const resultPromise = useCase.execute(user);
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -119,8 +121,10 @@ describe("when try to register user", () => {
     const user = new UserMock().withName().withEmail().withGender().withPassword().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(user);
+    const useCase = registerUserUseCase();
 
     applicationErrorBuilder.initialize(
+      useCase.CONTEXT,
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text, encryptionKey, iterations",
       }),
@@ -129,7 +133,7 @@ describe("when try to register user", () => {
     workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
 
     // Act
-    const result = registerUserUseCase().execute(user);
+    const result = useCase.execute(user);
 
     // Assert
     await expect(result).rejects.toThrowError(applicationErrorBuilder.build());
