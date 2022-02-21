@@ -34,7 +34,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
   1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-node-cluster)
-	1. [Strict mode 💀](#strict-mode)
+  1. [Strict mode 💀](#strict-mode)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
