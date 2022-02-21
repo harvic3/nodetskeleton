@@ -34,6 +34,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
   1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-node-cluster)
+	1. [Strict mode 💀](#strict-mode)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -1019,6 +1020,7 @@ NodeJs solutions run on a single thread, so it is important not to run CPU-inten
 
 So, for Cluster de App, replace `src/index.ts` code for the next code example.
 
+
 ### Observation 👀
 For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the `AppWrapper` class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the `AppWrapper` internal class method.
 
@@ -1092,6 +1094,17 @@ process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => 
 **[⬆ back to the past](#table-of-contents)**
 
 
+## Strict mode
+
+TypeScript's strict mode is quite useful because it helps you maintain the type safety of your application making the development stage of your solution more controlled and thus avoiding the possible errors that not having this option enabled can bring.
+
+This option is enabled by default in NodeTskeleton and is managed in the `tsconfig.json` file of your solution, but if you are testing and don't want to have headaches you can disable it.
+
+```json
+  "strict": true,
+```
+
+
 ## Conclusions
 
 - The clean architecture allows us to develop the `use cases` and the `domain` (business logic) of an application without worrying about the type of database, web server framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
@@ -1105,6 +1118,7 @@ process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => 
 - Clean architecture is basically based on the famous and well-known five `SOLID principles` that we had not mentioned until this moment and that we very little internalized.
 
 - If you liked it and you learned something, give me my star in the project that is the way you can thank me, don't be a damn selfish person who doesn't recognize the effort of others.
+
 
 ### Observation 👀
 
@@ -1134,11 +1148,11 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 **[⬆ back to the past](#table-of-contents)**
 
+
 ## Future tasks
-- Add execution context to ApplicationError
 - Create strategy to build many micro services in the same project management through pipelines.
+
 
 ## Acknowledgments
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/vickodev)
-
