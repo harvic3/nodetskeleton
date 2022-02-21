@@ -3,14 +3,14 @@ import { Gender } from "./genre/Gender.enum";
 import { IUser } from "./IUser";
 
 export class User implements IUser {
-  [optional: string]: unknown;
-  uid: string;
-  maskedUid: string;
-  name: string;
-  email: string;
-  gender: Gender;
-  verified: boolean;
-  createdAt: string;
+  [optional: string]: unknown | undefined;
+  uid: string | undefined;
+  maskedUid: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  gender: Gender | undefined;
+  verified: boolean | undefined;
+  createdAt: string | undefined;
 
   constructor(props?: {
     name: string;

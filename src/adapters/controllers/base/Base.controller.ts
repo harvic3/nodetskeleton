@@ -1,13 +1,22 @@
-export { Request, Response, NextFunction } from "../../../infrastructure/app/core/Modules";
 import { BaseUseCase } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import {
   Router,
+  Request,
   Response,
   RouterType,
+  RequestBase,
   NextFunction,
+  RequestHandler,
 } from "../../../infrastructure/app/core/Modules";
 import { IResult } from "result-tsk";
+
+type EntryPointHandler = (
+  req: Request | RequestBase,
+  res: Response,
+  next: NextFunction,
+) => Promise<void>;
+export { EntryPointHandler, Request, RequestBase, Response, NextFunction, RequestHandler };
 
 export default abstract class BaseController {
   router: RouterType;
@@ -39,7 +48,7 @@ export default abstract class BaseController {
     try {
       return this.getResult(res, await useCase.execute(args));
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -52,7 +61,7 @@ export default abstract class BaseController {
     try {
       return this.getResultDto(res, await useCase.execute(args));
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -65,7 +74,7 @@ export default abstract class BaseController {
     try {
       return this.getResultData(res, await useCase.execute(args));
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 

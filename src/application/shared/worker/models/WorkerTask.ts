@@ -2,13 +2,13 @@ import { TaskDictionaryEnum } from "./TaskDictionary.enum";
 
 export class WorkerTask {
   taskEnum: TaskDictionaryEnum;
-  args: { [key: string]: unknown };
+  args: Record<string, unknown> | undefined;
 
   constructor(taskEnum: TaskDictionaryEnum) {
     this.taskEnum = taskEnum;
   }
 
-  setArgs(args: { [key: string]: unknown }): void {
+  setArgs(args: Record<string, unknown>): void {
     this.args = args;
   }
 }

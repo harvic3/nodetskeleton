@@ -8,6 +8,7 @@ export class Container {
   get<T>(className: string): T {
     if (!this.container[className]) {
       throw new ApplicationError(
+        Container.name,
         resources.getWithParams(resourceKeys.DEPENDENCY_NOT_FOUNT, { className }),
         applicationStatus.INTERNAL_ERROR,
       );
@@ -18,5 +19,5 @@ export class Container {
 }
 
 export interface IContainerDictionary {
-  [className: string]: NewableFunction;
+  [className: string]: Function;
 }

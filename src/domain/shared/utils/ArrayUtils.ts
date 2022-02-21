@@ -1,12 +1,12 @@
 export default class ArrayUtils {
-  static first<T>(list: T[]): T {
+  static first<T>(list: T[]): T | null {
     if (!list?.length) {
       return null;
     }
     return list[0];
   }
 
-  static last<T>(list: T[]): T {
+  static last<T>(list: T[]): T | null {
     if (!list?.length) {
       return null;
     }

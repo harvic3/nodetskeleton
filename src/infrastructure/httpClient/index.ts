@@ -5,11 +5,12 @@ import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus"
 export { BodyInit as BodyType, Headers } from "node-fetch";
 import TResponse from "./TResponse";
 
+type HttpResponseType<T> = T | string | ArrayBuffer | unknown;
+
 const SERIALIZED = true;
 const serialization = {
   json: "json",
   string: "string",
-  buffer: "buffer",
   arrayBuffer: "arrayBuffer",
 };
 
@@ -59,9 +60,9 @@ export class HttpClient {
       }
       result.setStatusCode(response.status);
     } catch (error) {
-      result.setErrorMessage(error.message);
-      result.setStatusCode(error.code || null);
-      result.setError(error);
+      result.setErrorMessage((error as Error).message);
+      result.setStatusCode(httpStatus.INTERNAL_SERVER_ERROR);
+      result.setError(error as Error);
     }
     return result;
   }
@@ -78,15 +79,7 @@ export class HttpClient {
     if (body) options["body"] = body;
     if (headers) options["headers"] = headers;
 
-    const request = new Request(url, options);
-    const optionKeys = Object.keys(options);
-    optionKeys.forEach((key) => {
-      if (key !== "method" && key !== "body" && key !== "headers") {
-        request[key] = options[key];
-      }
-    });
-
-    return request;
+    return new Request(url, options);
   }
 
   private async processErrorResponse<E>(response: Response): Promise<[E | string, boolean]> {
@@ -95,18 +88,16 @@ export class HttpClient {
       result = await response.text();
       return [JSON.parse(result), SERIALIZED];
     } catch (error) {
-      return [result, !SERIALIZED];
+      return [result as E | string, !SERIALIZED];
     }
   }
 
   private async processResponseData<R>(
     response: Response,
     serializationMethod: string,
-  ): Promise<R | string | Buffer | ArrayBuffer | unknown> {
+  ): Promise<HttpResponseType<R>> {
     try {
       switch (serializationMethod) {
-        case serialization.buffer:
-          return await response.buffer();
         case serialization.arrayBuffer:
           return await response.arrayBuffer();
         case serialization.string:
@@ -116,8 +107,9 @@ export class HttpClient {
       }
     } catch (error) {
       throw new ApplicationError(
+        HttpClient.name,
         resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-        error?.code || httpStatus.INTERNAL_SERVER_ERROR,
+        httpStatus.INTERNAL_SERVER_ERROR,
         JSON.stringify(error),
       );
     }

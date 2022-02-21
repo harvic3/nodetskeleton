@@ -1,6 +1,13 @@
-import BaseController, { Request, Response, NextFunction } from "../base/Base.controller";
 import container, { LoginUseCase, RegisterUserUseCase } from "./container";
 import { User } from "../../../domain/user/User";
+import BaseController, {
+  Request,
+  Response,
+  NextFunction,
+  RequestBase,
+  RequestHandler,
+  EntryPointHandler,
+} from "../base/Base.controller";
 
 class AuthController extends BaseController {
   constructor() {
@@ -8,7 +15,11 @@ class AuthController extends BaseController {
     this.initializeRoutes();
   }
 
-  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  login: EntryPointHandler = async (
+    req: Request | RequestBase,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const email = req.body?.email as string;
     const passwordB64 = req.body?.password as string;
 
@@ -18,7 +29,11 @@ class AuthController extends BaseController {
     });
   };
 
-  singUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  singUp: EntryPointHandler = async (
+    req: Request | RequestBase,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const user: User = req.body;
 
     return this.handleResult(
@@ -30,8 +45,8 @@ class AuthController extends BaseController {
   };
 
   protected initializeRoutes(): void {
-    this.router.post("/v1/users/login", this.login);
-    this.router.post("/v1/users/sign-up", this.singUp);
+    this.router.post("/v1/users/login", this.login as RequestHandler);
+    this.router.post("/v1/users/sign-up", this.singUp as RequestHandler);
   }
 }
 

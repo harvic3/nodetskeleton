@@ -5,7 +5,7 @@ import { IUser } from "../../../domain/user/IUser";
 import { User } from "../../../domain/user/User";
 
 export class UserRepository extends BaseRepository implements IUSerRepository {
-  async getByEmail(email: string): Promise<IUser> {
+  async getByEmail(email: string | undefined): Promise<IUser | null> {
     const founded = await userModel.getByEmail(email);
     return Promise.resolve(founded);
   }

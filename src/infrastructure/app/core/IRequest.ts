@@ -1,6 +1,6 @@
 import { ISession } from "../../../domain/session/ISession";
-import { Request as ServerRequest } from "express";
+import { RequestBase } from "./ServerModules";
 
-export interface IRequest extends ServerRequest {
+export interface IRequest extends RequestBase {
   session: ISession;
 }

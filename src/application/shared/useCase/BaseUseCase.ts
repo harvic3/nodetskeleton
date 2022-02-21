@@ -16,7 +16,7 @@ export abstract class BaseUseCase<T> {
   wordKeys = wordKeys;
   applicationStatus = applicationStatus;
 
-  constructor() {
+  constructor(public readonly CONTEXT: string) {
     this.mapper = mapper;
     this.resources = resources;
     this.words = words;
@@ -29,7 +29,7 @@ export abstract class BaseUseCase<T> {
 
   handleResultError(result: IResult): void {
     if (result?.error) {
-      throw new ApplicationError(result.error, result.statusCode);
+      throw new ApplicationError(this.CONTEXT, result.error, result.statusCode);
     }
   }
 
