@@ -34,7 +34,8 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Test your Clean Architecture 🥁](#test-your-clean-architecture)
   1. [Coupling 🧲](#coupling)
   1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-node-cluster)
-  1. [Strict mode 💀](#strict-mode)
+  1. [Strict mode 🔒](#strict-mode)
+  1. [Multi service monorepo 🔒](#multi-service-monorepo)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -945,17 +946,13 @@ So, wait a moment and then you will see something like this on the console.
 
 ```console
 $ npm run dev
-Debugger attached.
-Waiting for the debugger to disconnect...
-Debugger attached.
 
 > nodetskeleton@1.0.0 dev
 > ts-node-dev --respawn -- src/index.ts
 
-Debugger attached.
-[INFO] 22:52:29 ts-node-dev ver. 1.1.8 (using ts-node ver. 9.1.1, typescript ver. 4.4.3)
-Debugger attached.
+[INFO] XX:XX:XX ts-node-dev ver. 1.1.8 (using ts-node ver. 9.1.1, typescript ver. 4.6.2)
 Running in dev mode
+Initializing controllers for NodeTskeleton ServiceContext
 AuthController was loaded
 HealthController was loaded
 Server NodeTskeleton running on localhost:3003/api
@@ -1073,13 +1070,39 @@ if (cluster.isMaster) {
   startApp();
 }
 
-// Node App without Cluster mode
+// Node App without Cluster mode and controllers dynamic load.
 import "express-async-errors";
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
 const appWrapper = new AppWrapper();
+const server = new HttpServer(appWrapper);
+server.start();
+
+process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+  errorHandlerMiddleware.manageNodeException("UncaughtException", error);
+});
+
+process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+});
+
+// Node App without Cluster mode with controllers load by constructor.
+import "express-async-errors";
+import AppWrapper from "./infrastructure/app/AppWrapper";
+import { HttpServer } from "./infrastructure/app/server/HttpServer";
+import errorHandlerMiddleware from "./infrastructure/middleware/error";
+
+// Controllers
+import BaseController from "./adapters/controllers/base/Base.controller";
+import healthController from "./adapters/controllers/health/Health.controller";
+import authController from "./adapters/controllers/auth/Auth.controller";
+// End Controllers
+
+const controllers: BaseController[] = [healthController, authController];
+
+const appWrapper = new AppWrapper(controllers);
 const server = new HttpServer(appWrapper);
 server.start();
 
@@ -1104,6 +1127,40 @@ This option is enabled by default in NodeTskeleton and is managed in the `tsconf
   "strict": true,
 ```
 
+## Multi service monorepo
+
+With this simple option you can develop a single code base and by means of the configuration file through the ENVs (environment variables) decide which service context to put online, so with the execution of different PipeLines.
+
+Note that you must set the ServiceContext variable of the Server parameter of the config file as follows:
+
+´´´ts
+Server: {
+	...
+  ServiceContext: process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON,
+}
+´´´
+
+Note that by default all solution Controllers are set to the ´NodeTskeleton context´ which is the default value, but you are free to create as many contexts as your solution needs and initialize each ´Controller´ to the appropriate context.
+
+´´´ts
+// For example, you can create a SECURITY context and change the Authentication Controller context as well:
+class AuthController extends BaseController {
+  constructor() {
+    super(ServiceContext.SECURITY);
+    this.initializeRoutes();
+  }
+	...
+}
+´´´
+
+The ´ServiceContext´ file is located in the infrastructure server directory: 
+
+´´´ts
+// NodeTskeleton is the only context created, but you can create more o change this.
+export enum ServiceContext {
+  NODE_TS_SKELETON = "NodeTskeleton",
+}
+´´´
 
 ## Conclusions
 
@@ -1150,7 +1207,7 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 
 ## Future tasks
-- Create strategy to build many micro services in the same project management through pipelines.
+- Update documentation about many issues
 
 
 ## Acknowledgments

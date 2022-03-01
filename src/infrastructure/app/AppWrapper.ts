@@ -1,5 +1,6 @@
 import BaseController from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
+import { BooleanUtils } from "../../domain/shared/utils/BooleanUtils";
 import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
 import resources from "../../application/shared/locals/messages";
@@ -20,39 +21,45 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  private readonly constructorControllersLoaded: boolean = false;
+  private readonly controllersLoadedByConstructor = BooleanUtils.FALSE;
   app: Application;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
     this.app = ServerApp();
-    this.app.set("trust proxy", true);
+    this.app.set("trust proxy", BooleanUtils.TRUE);
     this.loadMiddleware();
+    console.log(`Initializing controllers for ${AppSettings.ServiceContext} ServiceContext`);
     if (controllers?.length) {
       this.loadControllersByConstructor(controllers);
-      this.constructorControllersLoaded = true;
+      this.controllersLoadedByConstructor = BooleanUtils.TRUE;
     }
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
-    controllers.forEach((controller) => {
-      this.app.use(AppSettings.ServerRoot, controller.router);
-    });
+    controllers
+      .filter((controller) => controller.serviceContext === AppSettings.ServiceContext)
+      .forEach((controller) => {
+        console.log(`${controller?.constructor?.name} was initialized`);
+        this.app.use(AppSettings.ServerRoot, controller.router);
+      });
     this.loadErrorHandler();
   }
 
   private async loadControllersDynamically(): Promise<void> {
-    if (this.constructorControllersLoaded) return Promise.resolve();
+    if (this.controllersLoadedByConstructor) return Promise.resolve();
 
     const controllerPaths = sync(config.Controllers.Path, {
-      onlyFiles: true,
+      onlyFiles: BooleanUtils.TRUE,
       ignore: config.Controllers.Ignore,
     });
     for (const filePath of controllerPaths) {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
-      console.log(`${controller?.constructor?.name} was loaded`);
-      this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
+      if (controller.serviceContext === AppSettings.ServiceContext) {
+        console.log(`${controller?.constructor?.name} was loaded`);
+        this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
+      }
     }
     this.loadErrorHandler();
 
@@ -62,7 +69,7 @@ export default class AppWrapper {
   private loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(bodyParser());
-    this.app.use(urlencoded({ extended: true }));
+    this.app.use(urlencoded({ extended: BooleanUtils.TRUE }));
     this.app.use(localizationMiddleware.handle as RequestHandler);
     this.app.use(authorizationMiddleware.handle as RequestHandler);
   }

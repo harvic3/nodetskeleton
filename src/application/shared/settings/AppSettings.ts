@@ -1,4 +1,5 @@
 export default class AppSettings {
+  static ServiceContext: string;
   static ServiceName: string;
   static DefaultLang: string;
   static EncryptionKey: string;
@@ -12,6 +13,7 @@ export default class AppSettings {
   static JWTExpirationTime: number;
 
   static init(config: Record<string, any>): void {
+    this.ServiceContext = config.Server.ServiceContext;
     this.ServiceName = config.Server.ServiceName;
     this.DefaultLang = config.Params.DefaultLang;
     this.EncryptionKey = config.Params.Security.CRYPTO.EncryptionKey;

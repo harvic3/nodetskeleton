@@ -1,4 +1,5 @@
-import { BaseUseCase } from "../../../application/shared/useCase/BaseUseCase";
+import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
+import { ServiceContext } from "../../../infrastructure/app/server/ServiceContext";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import {
   Router,
@@ -9,19 +10,26 @@ import {
   NextFunction,
   RequestHandler,
 } from "../../../infrastructure/app/core/Modules";
-import { IResult } from "result-tsk";
 
 type EntryPointHandler = (
   req: Request | RequestBase,
   res: Response,
   next: NextFunction,
 ) => Promise<void>;
-export { EntryPointHandler, Request, RequestBase, Response, NextFunction, RequestHandler };
+export {
+  EntryPointHandler,
+  Request,
+  RequestBase,
+  Response,
+  NextFunction,
+  RequestHandler,
+  ServiceContext,
+};
 
 export default abstract class BaseController {
   router: RouterType;
 
-  constructor() {
+  constructor(readonly serviceContext: ServiceContext) {
     this.router = Router();
   }
 

@@ -6,13 +6,14 @@ import BaseController, {
   NextFunction,
   RequestBase,
   RequestHandler,
+  ServiceContext,
   EntryPointHandler,
 } from "../base/Base.controller";
 import { Email } from "../../../domain/user/Email";
 
 class AuthController extends BaseController {
   constructor() {
-    super();
+    super(ServiceContext.NODE_TS_SKELETON);
     this.initializeRoutes();
   }
 

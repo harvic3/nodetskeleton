@@ -3,14 +3,15 @@ import BaseController, {
   Response,
   RequestBase,
   NextFunction,
-  EntryPointHandler,
   RequestHandler,
+  ServiceContext,
+  EntryPointHandler,
 } from "../base/Base.controller";
 import container, { PongUseCase } from "./container/index";
 
 class HealthController extends BaseController {
   constructor() {
-    super();
+    super(ServiceContext.NODE_TS_SKELETON);
     this.initializeRoutes();
   }
 

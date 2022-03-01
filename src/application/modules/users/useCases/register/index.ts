@@ -8,9 +8,9 @@ import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { IUser } from "../../../../../domain/user/IUser";
+import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
 import { User } from "../../../../../domain/user/User";
-import { Email } from "../../../../../domain/user/Email";
 
 export class RegisterUserUseCase extends BaseUseCase<IUser> {
   constructor(

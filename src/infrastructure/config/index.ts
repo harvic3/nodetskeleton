@@ -1,4 +1,5 @@
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
+import { ServiceContext } from "../app/server/ServiceContext";
 import { Normalize } from "./Normalize";
 import "dotenv/config";
 
@@ -23,6 +24,7 @@ export default {
     Origins:
       process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
     ServiceName: process.env.SERVICE_NAME || "NodeTskeleton",
+    ServiceContext: process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON,
   },
   Params: {
     Envs: {

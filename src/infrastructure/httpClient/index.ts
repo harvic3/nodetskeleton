@@ -2,12 +2,13 @@ import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } 
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import resources, { resourceKeys } from "../../application/shared/locals/messages";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
+import { BooleanUtils } from "../../domain/shared/utils/BooleanUtils";
 export { BodyInit as BodyType, Headers } from "node-fetch";
 import TResponse from "./TResponse";
 
 type HttpResponseType<T> = T | string | ArrayBuffer | unknown;
 
-const SERIALIZED = true;
+const SERIALIZED = BooleanUtils.TRUE;
 const serialization = {
   json: "json",
   string: "string",
