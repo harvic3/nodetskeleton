@@ -35,7 +35,7 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
   1. [Coupling 🧲](#coupling)
   1. [Clustering the App (Node Cluster) 🎚](#clustering-the-app-node-cluster)
   1. [Strict mode 🔒](#strict-mode)
-  1. [Multi service monorepo 🔒](#multi-service-monorepo)
+  1. [Multi service monorepo 🧮](#multi-service-monorepo)
   1. [Conclusions (Personal) 💩](#conclusions)
   1. [Code of Conduct 👌](#code-of-conduct)
   1. [Warning 💀](#warning)
@@ -1131,18 +1131,19 @@ This option is enabled by default in NodeTskeleton and is managed in the `tsconf
 
 With this simple option you can develop a single code base and by means of the configuration file through the ENVs (environment variables) decide which service context to put online, so with the execution of different PipeLines.
 
-Note that you must set the ServiceContext variable of the Server parameter of the config file as follows:
+Note that you must set the ServiceContext variable of the Server parameter of the `config file` as follows:
 
-´´´ts
+```ts
+// infrastructure/config/index
 Server: {
 	...
   ServiceContext: process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON,
 }
-´´´
+```
 
-Note that by default all solution Controllers are set to the ´NodeTskeleton context´ which is the default value, but you are free to create as many contexts as your solution needs and initialize each ´Controller´ to the appropriate context.
+Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value, but you are free to create as many contexts as your solution needs and initialize each `Controller` to the appropriate context.
 
-´´´ts
+```ts
 // For example, you can create a SECURITY context and change the Authentication Controller context as well:
 class AuthController extends BaseController {
   constructor() {
@@ -1151,16 +1152,17 @@ class AuthController extends BaseController {
   }
 	...
 }
-´´´
+```
 
-The ´ServiceContext´ file is located in the infrastructure server directory: 
+The `ServiceContext` file is located in the infrastructure server directory: 
 
-´´´ts
+```ts
 // NodeTskeleton is the only context created, but you can create more o change this.
 export enum ServiceContext {
   NODE_TS_SKELETON = "NodeTskeleton",
 }
-´´´
+```
+
 
 ## Conclusions
 
