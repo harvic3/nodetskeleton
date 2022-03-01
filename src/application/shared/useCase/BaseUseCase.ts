@@ -1,10 +1,10 @@
 import resources, { resourceKeys, Resources } from "../locals/messages/index";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
-import { ApplicationError } from "../errors/ApplicationError";
 import applicationStatus from "../status/applicationStatus";
 import words, { wordKeys } from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
+import { Throw } from "../errors/Throw";
 import { IResult } from "result-tsk";
 
 export abstract class BaseUseCase<T> {
@@ -28,9 +28,7 @@ export abstract class BaseUseCase<T> {
   }
 
   handleResultError(result: IResult): void {
-    if (result?.error) {
-      throw new ApplicationError(this.CONTEXT, result.error, result.statusCode);
-    }
+    Throw.when(this.CONTEXT, !!result?.error, result.error, result.statusCode);
   }
 
   abstract execute(args?: T): Promise<IResult>;

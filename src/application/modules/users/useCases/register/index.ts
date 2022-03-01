@@ -7,9 +7,11 @@ import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import GuidUtils from "../../../../shared/utils/GuidUtils";
+import { IUser } from "../../../../../domain/user/IUser";
+import { Throw } from "../../../../shared/errors/Throw";
 import { User } from "../../../../../domain/user/User";
 
-export class RegisterUserUseCase extends BaseUseCase<User> {
+export class RegisterUserUseCase extends BaseUseCase<IUser> {
   constructor(
     private readonly userRepository: IUSerRepository,
     private readonly workerProvider: IWorkerProvider,
@@ -17,30 +19,30 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     super(RegisterUserUseCase.name);
   }
 
-  async execute(user: User): Promise<IResult> {
+  async execute(userData: IUser): Promise<IResult> {
     const result = new Result();
-    if (!this.isValidRequest(result, user)) {
+    if (!this.isValidRequest(result, userData)) {
       return result;
     }
 
-    this.validatePassword(result, user.password as string);
+    this.validatePassword(result, (userData as User)?.password as string);
 
-    const userExists = await this.userRepository.getByEmail(user.email?.toLowerCase());
+    const userExists = await this.userRepository.getByEmail(userData.email?.value);
     if (userExists) {
       result.setError(
         this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-          email: user?.email as string,
+          email: userData?.email?.value as string,
         }),
         this.applicationStatus.INVALID_INPUT,
       );
       return result;
     }
 
-    await this.buildUser(user);
+    const user = await this.buildUser(userData);
 
-    const registered = await this.userRepository.register(user);
+    const registeredUser = await this.userRepository.register(user);
 
-    if (!registered) {
+    if (!registeredUser) {
       result.setError(
         this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
@@ -56,19 +58,18 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     return result;
   }
 
-  private async buildUser(user: User): Promise<void> {
-    user.email = user.email?.toLowerCase();
+  private async buildUser(user: IUser): Promise<User> {
     user.maskedUid = GuidUtils.getV4WithoutDashes();
-    user.password = await this.encryptPassword(user);
-    // This line was replaced by worker task
-    //const encryptedPassword = Encryption.encrypt(`${user.email}-${user.password}`);
     user.createdAt = DateTimeUtils.getISONow();
+    const buildedUser = User.fromIUser(user);
+    buildedUser.password = await this.encryptPassword(user);
+    return buildedUser;
   }
 
-  private async encryptPassword(user: User): Promise<string> {
+  private async encryptPassword(user: IUser): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: `${user.email}-${user.password}`,
+      text: `${user.email}-${(user as User).password}`,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
@@ -78,26 +79,23 @@ export class RegisterUserUseCase extends BaseUseCase<User> {
     return Promise.resolve(workerResult);
   }
 
-  private isValidRequest(result: Result, user: User): boolean {
+  private isValidRequest(result: Result, user: IUser): boolean {
     const validations: Record<string, unknown> = {};
-    validations[this.words.get(this.wordKeys.EMAIL)] = user?.email;
+    validations[this.words.get(this.wordKeys.EMAIL)] = user.email?.isValid();
     validations[this.words.get(this.wordKeys.NAME)] = user?.name;
-    validations[this.words.get(this.wordKeys.PASSWORD)] = user?.password as string;
+    validations[this.words.get(this.wordKeys.PASSWORD)] = (user as User)?.password as string;
     validations[this.words.get(this.wordKeys.GENDER)] = user.gender;
 
     return this.validator.isValidEntry(result, validations);
   }
 
   private validatePassword(result: IResult, passwordBase64: string): void {
-    const validPassword: boolean = StringUtils.isValidAsPassword(
-      StringUtils.decodeBase64(passwordBase64),
+    const validPassword = StringUtils.isValidAsPassword(StringUtils.decodeBase64(passwordBase64));
+    Throw.when(
+      this.CONTEXT,
+      !validPassword,
+      this.resources.get(this.resourceKeys.INVALID_PASSWORD),
+      this.applicationStatus.INVALID_INPUT,
     );
-    if (!validPassword) {
-      result.setError(
-        this.resources.get(this.resourceKeys.INVALID_PASSWORD),
-        this.applicationStatus.INVALID_INPUT,
-      );
-      this.handleResultError(result);
-    }
   }
 }

@@ -2,6 +2,7 @@ import { StringUtils } from "../../domain/shared/utils/StringUtils";
 import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { MockConstants } from "./MockConstants";
+import { Email } from "../../domain/user/Email";
 import { User } from "../../domain/user/User";
 
 export class UserMock implements IMockBuilder<User> {
@@ -26,7 +27,7 @@ export class UserMock implements IMockBuilder<User> {
     return this;
   }
   withEmail(email = MockConstants.USER_EMAIL): UserMock {
-    this.user.email = email;
+    this.user.email = new Email(email);
     return this;
   }
   withGender(gender = Gender.MALE): UserMock {

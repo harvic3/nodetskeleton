@@ -8,6 +8,7 @@ import BaseController, {
   RequestHandler,
   EntryPointHandler,
 } from "../base/Base.controller";
+import { Email } from "../../../domain/user/Email";
 
 class AuthController extends BaseController {
   constructor() {
@@ -34,7 +35,9 @@ class AuthController extends BaseController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
+    const email = req.body?.email as string;
     const user: User = req.body;
+    user.email = new Email(email?.toLowerCase());
 
     return this.handleResult(
       res,

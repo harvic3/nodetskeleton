@@ -1,9 +1,10 @@
+import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { User } from "../../../domain/user/User";
 import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
 
 export class UserModel {
-  async getByEmail(email: string | undefined): Promise<User | null> {
+  async getByEmail(email: string | Nulldifined): Promise<User | null> {
     return new Promise((resolve, reject) => {
       const founded = dbData.users.find((element) => element.email === email);
       if (!founded) {
