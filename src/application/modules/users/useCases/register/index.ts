@@ -10,6 +10,7 @@ import GuidUtils from "../../../../shared/utils/GuidUtils";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Throw } from "../../../../shared/errors/Throw";
 import { User } from "../../../../../domain/user/User";
+import { Email } from "../../../../../domain/user/Email";
 
 export class RegisterUserUseCase extends BaseUseCase<IUser> {
   constructor(
@@ -25,7 +26,8 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
       return result;
     }
 
-    this.validatePassword(result, (userData as User)?.password as string);
+    this.validateEmail(userData.email);
+    this.validatePassword((userData as User)?.password as string);
 
     const userExists = await this.userRepository.getByEmail(userData.email?.value);
     if (userExists) {
@@ -81,19 +83,29 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
 
   private isValidRequest(result: Result, user: IUser): boolean {
     const validations: Record<string, unknown> = {};
-    validations[this.words.get(this.wordKeys.EMAIL)] = user.email?.isValid();
+    validations[this.words.get(this.wordKeys.EMAIL)] = user?.email?.value;
     validations[this.words.get(this.wordKeys.NAME)] = user?.name;
     validations[this.words.get(this.wordKeys.PASSWORD)] = (user as User)?.password as string;
-    validations[this.words.get(this.wordKeys.GENDER)] = user.gender;
+    validations[this.words.get(this.wordKeys.GENDER)] = user?.gender;
 
     return this.validator.isValidEntry(result, validations);
   }
 
-  private validatePassword(result: IResult, passwordBase64: string): void {
-    const validPassword = StringUtils.isValidAsPassword(StringUtils.decodeBase64(passwordBase64));
+  private validateEmail(email: Email | undefined): void {
+    const isValidEmail = email?.isValid();
     Throw.when(
       this.CONTEXT,
-      !validPassword,
+      !isValidEmail,
+      this.resources.get(this.resourceKeys.INVALID_EMAIL),
+      this.applicationStatus.INVALID_INPUT,
+    );
+  }
+
+  private validatePassword(passwordBase64: string): void {
+    const isValidPassword = StringUtils.isValidAsPassword(StringUtils.decodeBase64(passwordBase64));
+    Throw.when(
+      this.CONTEXT,
+      !isValidPassword,
       this.resources.get(this.resourceKeys.INVALID_PASSWORD),
       this.applicationStatus.INVALID_INPUT,
     );

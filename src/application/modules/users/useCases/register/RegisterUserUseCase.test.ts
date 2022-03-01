@@ -32,6 +32,7 @@ describe("when try to register user", () => {
     AppSettings.EncryptionKeySize = 64;
   });
   beforeEach(() => {
+    applicationErrorBuilder.reset();
     userRepositoryMock.register.mockReset();
     userRepositoryMock.getByEmail.mockReset();
     workerProviderMock.executeTask.mockReset();
@@ -93,6 +94,28 @@ describe("when try to register user", () => {
         email: user?.email?.value as string,
       }),
     );
+  });
+  it("should return a 404 error if user email does not comply with conditions", async () => {
+    // Arrange
+    const notComplyEmail = "email@email";
+    const useCase = registerUserUseCase();
+    const user = userBuilder()
+      .withName()
+      .withEmail(notComplyEmail)
+      .withGender()
+      .withPassword()
+      .build();
+    applicationErrorBuilder.initialize(
+      useCase.CONTEXT,
+      resources.get(resourceKeys.INVALID_EMAIL),
+      applicationStatus.INVALID_INPUT,
+    );
+
+    // Act
+    const resultPromise = useCase.execute(user);
+
+    // Assert
+    await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
   });
   it("should return a 404 error if user password does not comply with conditions", async () => {
     // Arrange
