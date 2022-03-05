@@ -22,14 +22,11 @@ class AuthorizationMiddleware {
     const parts = auth?.split(/\s+/) as string[];
     if (parts?.length !== TOKEN_PARTS) this.throwUnauthorized();
 
-    try {
-      const token = parts[TOKEN_VALUE_POSITION];
-      const session = TryWrapper.exec(authProvider.verifyJwt, [token]);
-      if (!session) this.throwUnauthorized();
-      req.session = TypeParser.parse<ISession>(session);
-    } catch (error) {
-      return next(error);
-    }
+    const token = parts[TOKEN_VALUE_POSITION];
+    const session = TryWrapper.exec(authProvider.verifyJwt, [token]);
+    if (!session) this.throwUnauthorized();
+
+    req.session = TypeParser.parse<ISession>(session);
 
     return next();
   };
