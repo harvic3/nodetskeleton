@@ -36,6 +36,7 @@ export class ErrorHandlerMiddleware {
     exceptionType: string,
     exc: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
   ): void {
+    // Send to your logger system or repository this error
     console.log(`Node ${exceptionType} type:`, exc);
   }
 }

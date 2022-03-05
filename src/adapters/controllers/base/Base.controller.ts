@@ -29,7 +29,7 @@ export {
 export default abstract class BaseController {
   router: RouterType;
 
-  constructor(readonly serviceContext: ServiceContext) {
+  constructor(readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON) {
     this.router = Router();
   }
 

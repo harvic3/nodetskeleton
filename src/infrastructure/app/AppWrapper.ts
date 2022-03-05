@@ -1,4 +1,5 @@
 import BaseController from "../../adapters/controllers/base/Base.controller";
+import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import { BooleanUtils } from "../../domain/shared/utils/BooleanUtils";
 import Encryption from "../../application/shared/security/encryption";
@@ -71,7 +72,8 @@ export default class AppWrapper {
     this.app.use(bodyParser());
     this.app.use(urlencoded({ extended: BooleanUtils.TRUE }));
     this.app.use(localizationMiddleware.handle as RequestHandler);
-    this.app.use(authorizationMiddleware.handle as RequestHandler);
+    this.app.use(routeWhiteListMiddleware.handle as RequestHandler);
+    this.app.use(authorizationMiddleware.handle.bind(this) as RequestHandler);
   }
 
   private loadErrorHandler(): void {
