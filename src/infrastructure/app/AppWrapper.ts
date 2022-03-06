@@ -1,9 +1,9 @@
 import BaseController from "../../adapters/controllers/base/Base.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
-import { BooleanUtils } from "../../domain/shared/utils/BooleanUtils";
 import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
+import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import words from "../../application/shared/locals/words";
@@ -22,18 +22,18 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  private readonly controllersLoadedByConstructor = BooleanUtils.FALSE;
+  private readonly controllersLoadedByConstructor = BooleanUtil.FALSE;
   app: Application;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
     this.app = ServerApp();
-    this.app.set("trust proxy", BooleanUtils.TRUE);
+    this.app.set("trust proxy", BooleanUtil.TRUE);
     this.loadMiddleware();
     console.log(`Initializing controllers for ${AppSettings.ServiceContext} ServiceContext`);
     if (controllers?.length) {
       this.loadControllersByConstructor(controllers);
-      this.controllersLoadedByConstructor = BooleanUtils.TRUE;
+      this.controllersLoadedByConstructor = BooleanUtil.TRUE;
     }
   }
 
@@ -51,7 +51,7 @@ export default class AppWrapper {
     if (this.controllersLoadedByConstructor) return Promise.resolve();
 
     const controllerPaths = sync(config.Controllers.Path, {
-      onlyFiles: BooleanUtils.TRUE,
+      onlyFiles: BooleanUtil.TRUE,
       ignore: config.Controllers.Ignore,
     });
     for (const filePath of controllerPaths) {
@@ -70,7 +70,7 @@ export default class AppWrapper {
   private loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(bodyParser());
-    this.app.use(urlencoded({ extended: BooleanUtils.TRUE }));
+    this.app.use(urlencoded({ extended: BooleanUtil.TRUE }));
     this.app.use(localizationMiddleware.handle as RequestHandler);
     this.app.use(routeWhiteListMiddleware.handle as RequestHandler);
     this.app.use(authorizationMiddleware.handle.bind(this) as RequestHandler);

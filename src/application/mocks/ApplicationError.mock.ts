@@ -1,19 +1,19 @@
 import { ApplicationError } from "../shared/errors/ApplicationError";
-import { StringUtils } from "../../domain/shared/utils/StringUtils";
+import { StringUtil } from "../../domain/shared/utils/StringUtil";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 
 export class ApplicationErrorMock implements IMockBuilder<ApplicationError> {
   private applicationError = new ApplicationError(
     ApplicationErrorMock.name,
-    StringUtils.EMPTY,
-    StringUtils.EMPTY,
+    StringUtil.EMPTY,
+    StringUtil.EMPTY,
   );
 
   reset(): ApplicationError {
     this.applicationError = new ApplicationError(
       ApplicationErrorMock.name,
-      StringUtils.EMPTY,
-      StringUtils.EMPTY,
+      StringUtil.EMPTY,
+      StringUtil.EMPTY,
     );
     return this.applicationError;
   }

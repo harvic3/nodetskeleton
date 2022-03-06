@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
-import { BooleanUtils } from "../../../../domain/shared/utils/BooleanUtils";
+import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import config from "../../../config";
 import { Middleware } from "../..";
 
@@ -11,11 +11,11 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (req: Request, res: Response, next: NextFunction): void => {
+    req.isWhiteList = BooleanUtil.FALSE;
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === req.path);
-    req.isWhiteList = BooleanUtils.FALSE;
 
     if (existsUnauthorizedPath) {
-      req.isWhiteList = BooleanUtils.TRUE;
+      req.isWhiteList = BooleanUtil.TRUE;
     }
 
     return next();

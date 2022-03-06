@@ -1,11 +1,11 @@
-import { BooleanUtils } from "../../domain/shared/utils/BooleanUtils";
+import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { Headers } from "node-fetch";
 
 type Response<T> = T | string | Buffer | ArrayBuffer | PromiseLike<T> | unknown;
 
 export default class TResponse<R, E> {
   response: Response<R | E> | undefined;
-  success = BooleanUtils.TRUE;
+  success = BooleanUtil.TRUE;
   statusCode: number | undefined;
   message: string | undefined;
   error: Error | undefined;
@@ -25,12 +25,12 @@ export default class TResponse<R, E> {
 
   setErrorMessage(message: string): void {
     this.message = message;
-    this.success = BooleanUtils.FALSE;
+    this.success = BooleanUtil.FALSE;
   }
 
   setError(error: Error): void {
     this.error = error;
-    this.success = BooleanUtils.FALSE;
+    this.success = BooleanUtil.FALSE;
   }
 
   setResponseHeaders(headers: Headers): void {

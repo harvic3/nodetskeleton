@@ -1,4 +1,4 @@
-export class BooleanUtils {
+export class BooleanUtil {
   static TRUE = true;
   static FALSE = false;
 

@@ -1,12 +1,12 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
-import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
+import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
-import GuidUtils from "../../../../shared/utils/GuidUtils";
+import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
@@ -61,7 +61,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
   }
 
   private async buildUser(user: IUser): Promise<User> {
-    user.maskedUid = GuidUtils.getV4WithoutDashes();
+    user.maskedUid = GuidUtil.getV4WithoutDashes();
     user.createdAt = DateTimeUtils.getISONow();
     const buildedUser = User.fromIUser(user);
     buildedUser.password = await this.encryptPassword(user);
@@ -102,7 +102,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
   }
 
   private validatePassword(passwordBase64: string): void {
-    const isValidPassword = StringUtils.isValidAsPassword(StringUtils.decodeBase64(passwordBase64));
+    const isValidPassword = StringUtil.isValidAsPassword(StringUtil.decodeBase64(passwordBase64));
     Throw.when(
       this.CONTEXT,
       !isValidPassword,

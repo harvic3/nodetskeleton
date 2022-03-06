@@ -1,4 +1,4 @@
-import { StringUtils } from "../../domain/shared/utils/StringUtils";
+import { StringUtil } from "../../domain/shared/utils/StringUtil";
 import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { MockConstants } from "./MockConstants";
@@ -35,7 +35,7 @@ export class UserMock implements IMockBuilder<User> {
     return this;
   }
   withPassword(password = MockConstants.EXAMPLE_PASSWORD): UserMock {
-    this.user.password = StringUtils.encodeBase64(password);
+    this.user.password = StringUtil.encodeBase64(password);
     return this;
   }
 }

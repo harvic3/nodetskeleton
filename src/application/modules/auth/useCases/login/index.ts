@@ -1,4 +1,5 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
 import { ISession } from "../../../../../domain/session/ISession";
@@ -23,21 +24,19 @@ export class LoginUseCase extends BaseUseCase<{
       return result;
     }
 
-    const authenticatedUser: User | null = await this.authProvider
-      .login(args.email as string, args.passwordB64 as string)
-      .catch(() => {
-        result.setError(
-          this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
-          this.applicationStatus.INVALID_INPUT,
-        );
-        return null;
-      });
+    const authenticatedResult = await TryWrapper.syncExec(
+      this.authProvider.login(args.email as string, args.passwordB64 as string),
+    );
 
-    if (!authenticatedUser) {
+    if (!authenticatedResult.success) {
+      result.setError(
+        this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
+        this.applicationStatus.INVALID_INPUT,
+      );
       return result;
     }
 
-    const tokenDto: TokenDto = await this.createSession(authenticatedUser);
+    const tokenDto: TokenDto = await this.createSession(authenticatedResult.value as User);
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
 

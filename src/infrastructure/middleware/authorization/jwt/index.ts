@@ -5,11 +5,12 @@ import { NextFunction, Request, Response } from "../../../app/core/Modules";
 import { authProvider } from "../../../../adapters/providers/container";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
+import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
 import { ISession } from "../../../../domain/session/ISession";
 import { Middleware } from "../..";
 
 const TOKEN_PARTS = 2;
-const TOKEN_VALUE_POSITION = 1;
+const TOKEN_POSITION_VALUE = 1;
 
 class AuthorizationMiddleware {
   handle: Middleware = (req: Request, res: Response, next: NextFunction): void => {
@@ -19,14 +20,14 @@ class AuthorizationMiddleware {
 
     if (!auth) this.throwUnauthorized();
 
-    const parts = auth?.split(/\s+/) as string[];
-    if (parts?.length !== TOKEN_PARTS) this.throwUnauthorized();
+    const jwtParts = ArrayUtil.allOrDefault((auth as string).split(/\s+/));
+    if (jwtParts.length !== TOKEN_PARTS) this.throwUnauthorized();
 
-    const token = parts[TOKEN_VALUE_POSITION];
-    const session = TryWrapper.exec(authProvider.verifyJwt, [token]);
-    if (!session) this.throwUnauthorized();
+    const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
+    const sessionResult = TryWrapper.exec(authProvider.verifyJwt, [token]);
+    if (!sessionResult.success) this.throwUnauthorized();
 
-    req.session = TypeParser.parse<ISession>(session);
+    req.session = TypeParser.parse<ISession>(sessionResult.value);
 
     return next();
   };

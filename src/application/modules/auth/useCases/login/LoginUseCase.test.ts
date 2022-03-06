@@ -1,7 +1,7 @@
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
-import { StringUtils } from "../../../../../domain/shared/utils/StringUtils";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -16,7 +16,7 @@ const authProviderMock = mock<IAuthProvider>();
 // Constants
 const loginUseCase = () => new LoginUseCase(authProviderMock);
 const email = "nikolatesla@elion.com";
-const passwordB64 = StringUtils.encodeBase64("HelloWorld8+");
+const passwordB64 = StringUtil.encodeBase64("HelloWorld8+");
 const jwt =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
 const tokenExpirationTime = 3600;
