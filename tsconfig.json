@@ -1,10 +1,10 @@
 {
-  "version": "4.5.5",
+  "version": "4.6.2",
   "compilerOptions": {
-    "lib": ["ES2021"],
+    "lib": ["ES7"],
     "outDir": "dist",
     "sourceMap": true,
-    "target": "ES2017",
+    "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
