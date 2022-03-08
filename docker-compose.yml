@@ -1,16 +1,17 @@
-version: "3.3"
+version: "3.9"
 
 services:
   nodetskeleton-app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nodejs:14.8.0-stretch
+    image: node:16-slim
     container_name: nodetskeleton-app
     restart: unless-stopped
     env_file: .env
     environment:
       - NODE_ENV=$NODE_ENV
+      - SERVICE_CONTEXT=$SERVICE_CONTEXT
       - SERVER_ROOT=$SERVER_ROOT
       - SERVER_HOST=$SERVER_HOST
       - SERVER_PORT=$SERVER_PORT
@@ -18,7 +19,7 @@ services:
       - ENCRYPTION_KEY=$ENCRYPTION_KEY
       - JWT_SECRET_KEY=$JWT_SECRET_KEY
     ports:
-      - "3040:3003"
+      - "3003:3003"
     volumes:
       - .:/usr/node/app
       - /usr/node/app/dist

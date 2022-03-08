@@ -1,6 +1,7 @@
 import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import AppSettings from "../../../../shared/settings/AppSettings";
 
 export class PongUseCase extends BaseUseCase<undefined> {
   constructor(private readonly healthProvider: IHealthProvider) {
@@ -10,7 +11,10 @@ export class PongUseCase extends BaseUseCase<undefined> {
   async execute(): Promise<IResultT<string>> {
     const result = new ResultT<string>();
 
-    const message = await this.healthProvider.get(DateTimeUtils.getISONow());
+    const message = await this.healthProvider.get(
+      AppSettings.ServiceContext,
+      DateTimeUtils.getISONow(),
+    );
     result.setData(message, this.applicationStatus.SUCCESS);
 
     return result;

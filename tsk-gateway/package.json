@@ -1,0 +1,32 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "NodeJs api gateway",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn -- src/index",
+    "build": "rm -rf dist/* && tsc --sourceMap true",
+    "start": "node dist/index"
+  },
+  "keywords": [
+    "api",
+    "gateway",
+    "micro services",
+    "services"
+  ],
+  "author": "Vickodev<Victor A. Higuita C.>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "fast-gateway": "^3.2.1"
+  }
+}

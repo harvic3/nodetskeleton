@@ -3,6 +3,6 @@ export class BooleanUtil {
   static FALSE = false;
 
   static isBoolean(value: any): boolean {
-    return typeof value === "boolean";
+    return Boolean(value);
   }
 }
