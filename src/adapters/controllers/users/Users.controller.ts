@@ -13,7 +13,7 @@ import { Email } from "../../../domain/user/Email";
 
 class UsersController extends BaseController {
   constructor() {
-    super(ServiceContext.USERS);
+    super();
     this.initializeRoutes();
   }
 
