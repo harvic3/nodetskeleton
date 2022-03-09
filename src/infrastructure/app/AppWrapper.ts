@@ -1,4 +1,4 @@
-import BaseController from "../../adapters/controllers/base/Base.controller";
+import BaseController, { ServiceContext } from "../../adapters/controllers/base/Base.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
@@ -20,6 +20,7 @@ import {
   RequestHandler,
   ErrorRequestHandler,
 } from "./core/Modules";
+import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.FALSE;
@@ -31,15 +32,19 @@ export default class AppWrapper {
     this.app.set("trust proxy", BooleanUtil.TRUE);
     this.loadMiddleware();
     console.log(`Initializing controllers for ${AppSettings.ServiceContext} ServiceContext`);
-    if (controllers?.length) {
-      this.loadControllersByConstructor(controllers);
+    if (ArrayUtil.any(controllers)) {
+      this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.TRUE;
     }
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
     controllers
-      .filter((controller) => controller.serviceContext === AppSettings.ServiceContext)
+      .filter(
+        (controller: BaseController) =>
+          controller.serviceContext === AppSettings.ServiceContext ||
+          controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+      )
       .forEach((controller) => {
         console.log(`${controller?.constructor?.name} was initialized`);
         this.app.use(AppSettings.ServerRoot, controller.router);
@@ -57,7 +62,10 @@ export default class AppWrapper {
     for (const filePath of controllerPaths) {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
-      if (controller.serviceContext === AppSettings.ServiceContext) {
+      if (
+        controller.serviceContext === AppSettings.ServiceContext ||
+        controller.serviceContext === ServiceContext.NODE_TS_SKELETON
+      ) {
         console.log(`${controller?.constructor?.name} was loaded`);
         this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
       }

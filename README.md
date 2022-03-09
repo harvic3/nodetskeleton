@@ -887,14 +887,14 @@ docker-compose up -d --build
 
 > Finally, in any internet explorer go to:
 
-`localhost:3040/api/ping`
+`localhost:3003/api/ping`
 
 > And you can use PostMan too:
 
 Try import this request. So, click to Import > Select Raw text, and paste the next code:
 
 ```console
-curl --location --request POST 'localhost:3040/api/v1/users/login' \
+curl --location --request POST 'localhost:3003/api/v1/users/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
