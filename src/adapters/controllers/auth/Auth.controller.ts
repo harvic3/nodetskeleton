@@ -1,5 +1,4 @@
-import container, { LoginUseCase, RegisterUserUseCase } from "./container";
-import { User } from "../../../domain/user/User";
+import container, { LoginUseCase } from "./container";
 import BaseController, {
   Request,
   Response,
@@ -9,7 +8,6 @@ import BaseController, {
   ServiceContext,
   EntryPointHandler,
 } from "../base/Base.controller";
-import { Email } from "../../../domain/user/Email";
 
 class AuthController extends BaseController {
   constructor() {
@@ -29,23 +27,6 @@ class AuthController extends BaseController {
       email,
       passwordB64,
     });
-  };
-
-  singUp: EntryPointHandler = async (
-    req: Request | RequestBase,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    const email = req.body?.email as string;
-    const user: User = req.body;
-    user.email = new Email(email?.toLowerCase());
-
-    return this.handleResult(
-      res,
-      next,
-      container.get<RegisterUserUseCase>(RegisterUserUseCase.name),
-      user,
-    );
   };
 
   protected initializeRoutes(): void {

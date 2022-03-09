@@ -3,7 +3,7 @@ import { IHealthProvider } from "../../../application/modules/health/providerCon
 export class HealthProvider implements IHealthProvider {
   async get(context: string, date: string): Promise<string> {
     return Promise.resolve(
-      `<div><h2>NodeTSkeleton ${context} service context online at ${date}</h2></div>`,
+      `<div><h2>TSkeleton ${context} service context online at ${date}</h2></div>`,
     );
   }
 }

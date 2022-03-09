@@ -1,12 +1,12 @@
 version: "3.9"
 
 services:
-  nodetskeleton-app:
+  tskeleton-app:
     build:
       context: .
       dockerfile: Dockerfile
     image: node:16-slim
-    container_name: nodetskeleton-app
+    container_name: tskeleton-app
     restart: unless-stopped
     env_file: .env
     environment:
@@ -25,10 +25,10 @@ services:
       - /usr/node/app/dist
       - /usr/node/app/node_modules
     networks:
-      - nodetskeleton-network
+      - nodetskeleton-net
     command: >
       npm run start
 
 networks:
-  nodetskeleton-network:
+  nodetskeleton-net:
     driver: bridge

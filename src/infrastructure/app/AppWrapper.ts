@@ -6,6 +6,7 @@ import authorizationMiddleware from "../middleware/authorization/jwt";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
 import { resolve as resolvePath } from "path";
@@ -31,8 +32,8 @@ export default class AppWrapper {
     this.app.set("trust proxy", BooleanUtil.TRUE);
     this.loadMiddleware();
     console.log(`Initializing controllers for ${AppSettings.ServiceContext} ServiceContext`);
-    if (controllers?.length) {
-      this.loadControllersByConstructor(controllers);
+    if (ArrayUtil.any(controllers)) {
+      this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.TRUE;
     }
   }
