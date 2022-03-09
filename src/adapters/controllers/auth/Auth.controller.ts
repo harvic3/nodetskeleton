@@ -1,5 +1,4 @@
-import container, { LoginUseCase, RegisterUserUseCase } from "./container";
-import { User } from "../../../domain/user/User";
+import container, { LoginUseCase } from "./container";
 import BaseController, {
   Request,
   Response,
@@ -9,11 +8,10 @@ import BaseController, {
   ServiceContext,
   EntryPointHandler,
 } from "../base/Base.controller";
-import { Email } from "../../../domain/user/Email";
 
 class AuthController extends BaseController {
   constructor() {
-    super(ServiceContext.NODE_TS_SKELETON);
+    super();
     this.initializeRoutes();
   }
 
@@ -31,26 +29,8 @@ class AuthController extends BaseController {
     });
   };
 
-  singUp: EntryPointHandler = async (
-    req: Request | RequestBase,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    const email = req.body?.email as string;
-    const user: User = req.body;
-    user.email = new Email(email?.toLowerCase());
-
-    return this.handleResult(
-      res,
-      next,
-      container.get<RegisterUserUseCase>(RegisterUserUseCase.name),
-      user,
-    );
-  };
-
   protected initializeRoutes(): void {
-    this.router.post("/v1/users/login", this.login as RequestHandler);
-    this.router.post("/v1/users/sign-up", this.singUp as RequestHandler);
+    this.router.post("/v1/auth/login", this.login as RequestHandler);
   }
 }
 

@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+  security-service:
+    image: tskeleton-image
+    container_name: tskeleton-security
+    restart: always
+    env_file: ./envs/.env_security_context
+    ports:
+      - 3003:3003
+    volumes:
+      - .:/usr/node/app
+      - /usr/node/app/dist
+      - /usr/node/app/envs
+      - /usr/node/app/node_modules
+    networks:
+      - tskeleton-net
+    # depends_on:
+    #   - redis-db
+    command: >
+      npm run start
+
+  users-service:
+    image: tskeleton-image
+    container_name: tskeleton-users
+    restart: always
+    env_file: ./envs/.env_users_context
+    ports:
+      - 3004:3004
+    volumes:
+      - .:/usr/node/app
+      - /usr/node/app/dist
+      - /usr/node/app/envs
+      - /usr/node/app/node_modules
+    networks:
+      - tskeleton-net
+    # depends_on:
+    #   - redis-db
+    command: >
+      npm run start
+
+  tsk-gateway:
+    image: gateway-image
+    container_name: tskeleton-gateway
+    env_file: .env
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/usr/node/gateway
+      - /usr/node/gateway/dist
+      - /usr/node/gateway/node_modules
+    networks:
+      - tskeleton-net
+    depends_on:
+      - security-service
+      - users-service
+    command: >
+      npm run start
+
+  # redis-db:
+  #   image: redis
+  #   container_name: tskeleton-cache
+  #   ports:
+  #     - 6379:6379
+
+networks:
+  tskeleton-net:
+    driver: bridge

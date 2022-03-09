@@ -11,6 +11,7 @@ services:
     env_file: .env
     environment:
       - NODE_ENV=$NODE_ENV
+      - SERVICE_CONTEXT=$SERVICE_CONTEXT
       - SERVER_ROOT=$SERVER_ROOT
       - SERVER_HOST=$SERVER_HOST
       - SERVER_PORT=$SERVER_PORT

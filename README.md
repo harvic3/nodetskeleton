@@ -799,12 +799,13 @@ The infrastructure includes a customizable `HttpClient` with its `response model
 
 ## Installation
 
-Depending on your need you have two options, `local` and with `docker compose`, but first of all we need to set up the .env file:
+Depending on your need you have two options, `local` and with `docker compose`, but first of all we need to set up the `.env file`:
 
-Go to project root directory, create a .env file and inside it copy and paste this content:
+Go to project root directory, create a `.env file` and inside it copy and paste this content:
 
 ```txt
 NODE_ENV=development
+SERVICE_CONTEXT=
 SERVER_ROOT=/api
 SERVER_HOST=localhost
 SERVER_PORT=3003
@@ -814,6 +815,8 @@ ENCRYPTION_ITERATIONS=4e4
 ENCRYPTION_KEY_SIZE=128
 JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
 ```
+
+`SERVICE_CONTEXT` env can be empty or delete it if you don't pretend use multi service feature.
 
 ### Local
 
@@ -851,7 +854,7 @@ node dist/index
 Try import this request. So, click to Import > Select Raw text, and paste the next code:
 
 ```console
-curl --location --request POST 'localhost:3003/api/v1/users/login' \
+curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nodetskeleton@email.com",
@@ -860,6 +863,20 @@ curl --location --request POST 'localhost:3003/api/v1/users/login' \
 ```
 
 The password is equivalent for "NodeTskeleton*8" in Base64 format.
+
+>> Register a new user
+```console
+curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
+--header 'Accept-Language: es' \
+--header 'Authorization: Bearer jwt' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Jhon Doe",
+    "gender": "Male",
+    "password": "Tm9kZVRza2VsZXRvbio4",
+    "email": "nodetskeleton@tesla.com"
+}'
+```
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -893,8 +910,9 @@ docker-compose up -d --build
 
 Try import this request. So, click to Import > Select Raw text, and paste the next code:
 
+>> User login
 ```console
-curl --location --request POST 'localhost:3003/api/v1/users/login' \
+curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
@@ -903,6 +921,20 @@ curl --location --request POST 'localhost:3003/api/v1/users/login' \
 ```
 
 The password is equivalent for "NodeTskeleton" in Base64 format.
+
+>> Register a new user
+```console
+curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
+--header 'Accept-Language: es' \
+--header 'Authorization: Bearer jwt' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Jhon Doe",
+    "gender": "Male",
+    "password": "Tm9kZVRza2VsZXRvbio4",
+    "email": "nodetskeleton@tesla.com"
+}'
+```
 
 ### Observation 👀
 
@@ -1129,9 +1161,9 @@ This option is enabled by default in NodeTskeleton and is managed in the `tsconf
 
 ## Multi service monorepo
 
-With this simple option you can develop a single code base and by means of the configuration file through the ENVs (environment variables) decide which service context to put online, so with the execution of different PipeLines.
+With this simple option you can develop a single code base and by means of the configuration file through the `ENVs` (environment variables) decide which service context to put online, so with the execution of different PipeLines.
 
-Note that you must set the ServiceContext variable of the Server parameter of the `config file` as follows:
+Note that you must set the `ServiceContext` variable of the Server parameter of the `config file` from value of your `.env file` as follows:
 
 ```ts
 // infrastructure/config/index
@@ -1141,10 +1173,11 @@ Server: {
 }
 ```
 
-Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value, but you are free to create as many contexts as your solution needs and initialize each `Controller` to the appropriate context.
+Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value, but you are free to create as many contexts as your solution needs and initialize each `Controller` to the appropriate context. 
+The `HealthController` must always keep the original context `NodeTskeleton context`, it cannot change because you need a health check point for each exposed service.
 
 ```ts
-// For example, you can create a SECURITY context and change the Authentication Controller context as well:
+// For example, the application have the SECURITY context and change the Authentication Controller context as well:
 class AuthController extends BaseController {
   constructor() {
     super(ServiceContext.SECURITY);
@@ -1160,8 +1193,99 @@ The `ServiceContext` file is located in the infrastructure server directory:
 // NodeTskeleton is the only context created, but you can create more o change this.
 export enum ServiceContext {
   NODE_TS_SKELETON = "NodeTskeleton",
+  SECURITY = "security",
+  USERS = "users",
 }
 ```
+
+### How it working?
+
+So, how can you put the multi-service mode to work?
+
+For this feature the project has a basic `api-gateway` to route an entry point to the different ports exposed by each service.
+
+You should note that you need, `Docker` installed on your machine and once you have this ready, then you should do the following:
+
+Open `Auth.controller.ts` and do this into it:
+
+```ts
+class AuthController extends BaseController {
+  constructor() {
+    super(ServiceContext.SECURITY); // Set Security context
+    this.initializeRoutes();
+  }
+}
+```
+
+The same with `Users.controller.ts` as follows:
+
+```ts
+class UsersController extends BaseController {
+  constructor() {
+    super(ServiceContext.USERS); // Set Users context
+    this.initializeRoutes();
+  }
+}
+```
+
+> First, open your console a go to the root directory of NodeTskeleton project.
+
+> Second, execute the next sequence of commands:
+
+>> Build the `tskeleton image`
+```console
+docker build . -t tskeleton-image
+```
+
+>> Build the `gateway image`
+```console
+cd tsk-gateway
+docker build . -t gateway-image
+```
+
+>> Run docker-compose for launch our solution
+```console
+docker-compose up --build
+```
+
+And latter you can use `Postman` or web browser for use the exposed endpoints of two services based in NodeTskeleton project
+
+> Security service
+>> Health
+```console
+curl --location --request GET 'localhost:8080/security/api/ping'
+```
+>> Login
+```console
+curl --location --request POST 'localhost:8080/security/api/v1/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "nodetskeleton@email.com",
+    "password": "Tm9kZVRza2VsZXRvbio4"
+}'
+```
+
+> Users service
+>> Health
+```console
+curl --location --request GET 'localhost:8080/management/api/ping'
+```
+>> Register a new user
+```console
+curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' \
+--header 'Accept-Language: es' \
+--header 'Authorization: Bearer jwt' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Jhon Doe",
+    "gender": "Male",
+    "password": "Tm9kZVRza2VsZXRvbio4",
+    "email": "nodetskeleton@tesla.com"
+}'
+```
+
+### Observation
+If you are not going to use this functionality you can delete the `tsk-gateway` directory.
 
 
 ## Conclusions

@@ -6,6 +6,7 @@ import authorizationMiddleware from "../middleware/authorization/jwt";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
 import { resolve as resolvePath } from "path";
@@ -20,7 +21,6 @@ import {
   RequestHandler,
   ErrorRequestHandler,
 } from "./core/Modules";
-import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.FALSE;
