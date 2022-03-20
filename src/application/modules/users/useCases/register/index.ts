@@ -1,6 +1,7 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
@@ -14,10 +15,11 @@ import { User } from "../../../../../domain/user/User";
 
 export class RegisterUserUseCase extends BaseUseCase<IUser> {
   constructor(
+    readonly logProvider: ILogProvider,
     private readonly userRepository: IUSerRepository,
     private readonly workerProvider: IWorkerProvider,
   ) {
-    super(RegisterUserUseCase.name);
+    super(RegisterUserUseCase.name, logProvider);
   }
 
   async execute(userData: IUser): Promise<IResult> {

@@ -1,3 +1,4 @@
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
@@ -11,10 +12,11 @@ import { mock } from "jest-mock-extended";
 import { LoginUseCase } from "./index";
 
 // Mocks
+const logProviderMock = mock<ILogProvider>();
 const authProviderMock = mock<IAuthProvider>();
 
 // Constants
-const loginUseCase = () => new LoginUseCase(authProviderMock);
+const loginUseCase = () => new LoginUseCase(logProviderMock, authProviderMock);
 const email = "nikolatesla@elion.com";
 const passwordB64 = StringUtil.encodeBase64("HelloWorld8+");
 const jwt =

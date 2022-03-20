@@ -1,4 +1,5 @@
 import resources, { resourceKeys, Resources } from "../locals/messages/index";
+import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
 import applicationStatus from "../status/applicationStatus";
 import words, { wordKeys } from "../locals/words/index";
@@ -16,7 +17,7 @@ export abstract class BaseUseCase<T> {
   wordKeys = wordKeys;
   applicationStatus = applicationStatus;
 
-  constructor(public readonly CONTEXT: string) {
+  constructor(public readonly CONTEXT: string, public readonly logProvider: ILogProvider) {
     this.mapper = mapper;
     this.resources = resources;
     this.words = words;

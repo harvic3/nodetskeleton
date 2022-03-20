@@ -1,4 +1,5 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
@@ -13,6 +14,7 @@ import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
 
 // Mocks
+const logProviderMock = mock<ILogProvider>();
 const userRepositoryMock = mock<IUSerRepository>();
 const workerProviderMock = mock<IWorkerProvider>();
 
@@ -21,7 +23,8 @@ const userBuilder = () => new UserMock();
 const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
-const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock, workerProviderMock);
+const registerUserUseCase = () =>
+  new RegisterUserUseCase(logProviderMock, userRepositoryMock, workerProviderMock);
 
 describe("when try to register user", () => {
   beforeAll(() => {

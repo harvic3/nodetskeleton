@@ -1,11 +1,15 @@
 import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
 
 export class PongUseCase extends BaseUseCase<undefined> {
-  constructor(private readonly healthProvider: IHealthProvider) {
-    super(PongUseCase.name);
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly healthProvider: IHealthProvider,
+  ) {
+    super(PongUseCase.name, logProvider);
   }
 
   async execute(): Promise<IResultT<string>> {
