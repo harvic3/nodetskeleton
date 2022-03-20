@@ -1,9 +1,11 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import { TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
+import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
@@ -11,8 +13,8 @@ export class LoginUseCase extends BaseUseCase<{
   email: string | Nulldifined;
   passwordB64: string | Nulldifined;
 }> {
-  constructor(private readonly authProvider: IAuthProvider) {
-    super(LoginUseCase.name);
+  constructor(readonly logProvider: ILogProvider, private readonly authProvider: IAuthProvider) {
+    super(LoginUseCase.name, logProvider);
   }
 
   async execute(args: {
@@ -44,7 +46,7 @@ export class LoginUseCase extends BaseUseCase<{
   }
 
   private async createSession(authenticatedUser: User): Promise<TokenDto> {
-    const session: ISession = authenticatedUser.createSession();
+    const session: ISession = authenticatedUser.createSession(GuidUtil.getV4());
     const token = await this.authProvider.getJwt(session);
 
     const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);

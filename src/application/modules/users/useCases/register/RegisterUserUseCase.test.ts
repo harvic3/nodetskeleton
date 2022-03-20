@@ -4,6 +4,7 @@ import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import Encryption from "../../../../shared/security/encryption";
@@ -13,6 +14,7 @@ import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
 
 // Mocks
+const logProviderMock = mock<ILogProvider>();
 const userRepositoryMock = mock<IUSerRepository>();
 const workerProviderMock = mock<IWorkerProvider>();
 
@@ -21,7 +23,8 @@ const userBuilder = () => new UserMock();
 const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
-const registerUserUseCase = () => new RegisterUserUseCase(userRepositoryMock, workerProviderMock);
+const registerUserUseCase = () =>
+  new RegisterUserUseCase(logProviderMock, userRepositoryMock, workerProviderMock);
 
 describe("when try to register user", () => {
   beforeAll(() => {

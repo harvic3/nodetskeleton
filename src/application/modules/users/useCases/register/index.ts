@@ -3,6 +3,7 @@ import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDiction
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -14,10 +15,11 @@ import { User } from "../../../../../domain/user/User";
 
 export class RegisterUserUseCase extends BaseUseCase<IUser> {
   constructor(
+    readonly logProvider: ILogProvider,
     private readonly userRepository: IUSerRepository,
     private readonly workerProvider: IWorkerProvider,
   ) {
-    super(RegisterUserUseCase.name);
+    super(RegisterUserUseCase.name, logProvider);
   }
 
   async execute(userData: IUser): Promise<IResult> {

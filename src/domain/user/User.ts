@@ -31,8 +31,9 @@ export class User implements IUser {
     this.verified = props?.verified;
   }
 
-  createSession(): ISession {
+  createSession(sessionId: string): ISession {
     return {
+      sessionId,
       email: this.email?.value,
       emailVerified: this.verified,
       name: this.name,
