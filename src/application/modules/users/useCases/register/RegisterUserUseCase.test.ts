@@ -1,10 +1,10 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
-import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import Encryption from "../../../../shared/security/encryption";

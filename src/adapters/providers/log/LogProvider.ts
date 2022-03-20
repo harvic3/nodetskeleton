@@ -1,4 +1,4 @@
-import { ILogProvider } from "../../../application/modules/log/providerContracts/ILogProvider";
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { EventLog } from "../../../application/shared/log/EventLog";
 import { Logger } from "../../../infrastructure/logger/Logger";

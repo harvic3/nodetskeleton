@@ -1,5 +1,5 @@
-import { ErrorLog } from "../../../shared/log/ErrorLog";
-import { EventLog } from "../../../shared/log/EventLog";
+import { ErrorLog } from "../ErrorLog";
+import { EventLog } from "../EventLog";
 
 export interface ILogProvider {
   logEvent(event: EventLog): Promise<void>;

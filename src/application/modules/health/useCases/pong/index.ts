@@ -1,6 +1,6 @@
 import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
-import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
 

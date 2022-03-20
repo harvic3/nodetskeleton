@@ -1,8 +1,8 @@
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
-import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";

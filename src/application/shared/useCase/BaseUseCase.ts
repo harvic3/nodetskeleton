@@ -1,5 +1,5 @@
-import { ILogProvider } from "../../modules/log/providerContracts/ILogProvider";
 import resources, { resourceKeys, Resources } from "../locals/messages/index";
+import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
 import applicationStatus from "../status/applicationStatus";
 import words, { wordKeys } from "../locals/words/index";

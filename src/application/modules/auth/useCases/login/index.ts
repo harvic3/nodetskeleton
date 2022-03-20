@@ -1,5 +1,5 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
-import { ILogProvider } from "../../../log/providerContracts/ILogProvider";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
