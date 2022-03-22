@@ -1,6 +1,6 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
-import { TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
+import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
 import { ISession } from "../../../../../domain/session/ISession";
@@ -22,35 +22,20 @@ export class LoginUseCase extends BaseUseCase<{
     passwordB64: string | Nulldifined;
   }): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
-    if (!this.isValidRequest(result, args?.email, args?.passwordB64)) {
-      return result;
-    }
+    if (!this.isValidRequest(result, args?.email, args?.passwordB64)) return result;
 
-    const authenticatedResult = await TryWrapper.syncExec(
-      this.authProvider.login(args.email as string, args.passwordB64 as string),
+    const authenticatedResult = await this.userLogin(
+      result,
+      args?.email as string,
+      args?.passwordB64 as string,
     );
-
-    if (!authenticatedResult.success) {
-      result.setError(
-        this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
-        this.applicationStatus.INVALID_INPUT,
-      );
-      return result;
-    }
+    if (!authenticatedResult.success) return result;
 
     const tokenDto: TokenDto = await this.createSession(authenticatedResult.value as User);
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
 
     return result;
-  }
-
-  private async createSession(authenticatedUser: User): Promise<TokenDto> {
-    const session: ISession = authenticatedUser.createSession(GuidUtil.getV4());
-    const token = await this.authProvider.getJwt(session);
-
-    const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);
-    return Promise.resolve(tokenDto);
   }
 
   private isValidRequest(
@@ -63,5 +48,32 @@ export class LoginUseCase extends BaseUseCase<{
     validations[this.words.get(this.wordKeys.PASSWORD)] = passwordB64;
 
     return this.validator.isValidEntry(result, validations);
+  }
+
+  private async userLogin(
+    result: IResult,
+    email: string,
+    passwordB64: string,
+  ): Promise<TryResult<User>> {
+    const authenticatedResult = await TryWrapper.syncExec(
+      this.authProvider.login(email, passwordB64),
+    );
+
+    if (!authenticatedResult.success) {
+      result.setError(
+        this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
+        this.applicationStatus.INVALID_INPUT,
+      );
+    }
+
+    return authenticatedResult;
+  }
+
+  private async createSession(authenticatedUser: User): Promise<TokenDto> {
+    const session: ISession = authenticatedUser.createSession(GuidUtil.getV4());
+    const token = await this.authProvider.getJwt(session);
+
+    const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);
+    return Promise.resolve(tokenDto);
   }
 }

@@ -2,6 +2,7 @@ import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWo
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
@@ -24,35 +25,19 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
 
   async execute(userData: IUser): Promise<IResult> {
     const result = new Result();
-    if (!this.isValidRequest(result, userData)) {
-      return result;
-    }
+    if (!this.isValidRequest(result, userData)) return result;
 
     this.validateEmail(userData.email);
+
     this.validatePassword((userData as User)?.password as string);
 
-    const userExists = await this.userRepository.getByEmail(userData.email?.value);
-    if (userExists) {
-      result.setError(
-        this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-          email: userData?.email?.value as string,
-        }),
-        this.applicationStatus.INVALID_INPUT,
-      );
-      return result;
-    }
+    const userExists = await this.userExists(result, userData);
+    if (userExists) return result;
 
     const user = await this.buildUser(userData);
 
-    const registeredUser = await this.userRepository.register(user);
-
-    if (!registeredUser) {
-      result.setError(
-        this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
-        this.applicationStatus.INTERNAL_ERROR,
-      );
-      return result;
-    }
+    const userRegistered = await this.registerUser(result, user);
+    if (!userRegistered) return result;
 
     result.setMessage(
       this.resources.get(this.resourceKeys.USER_WAS_CREATED),
@@ -60,27 +45,6 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
     );
 
     return result;
-  }
-
-  private async buildUser(user: IUser): Promise<User> {
-    user.maskedUid = GuidUtil.getV4WithoutDashes();
-    user.createdAt = DateTimeUtils.getISONow();
-    const buildedUser = User.fromIUser(user);
-    buildedUser.password = await this.encryptPassword(user);
-    return buildedUser;
-  }
-
-  private async encryptPassword(user: IUser): Promise<string> {
-    const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
-    const workerArgs = {
-      text: `${user.email}-${(user as User).password}`,
-      encryptionKey: AppSettings.EncryptionKey,
-      iterations: AppSettings.EncryptionIterations,
-    };
-    task.setArgs(workerArgs);
-    const workerResult = await this.workerProvider.executeTask<string>(task);
-
-    return Promise.resolve(workerResult);
   }
 
   private isValidRequest(result: Result, user: IUser): boolean {
@@ -111,5 +75,56 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
       this.resources.get(this.resourceKeys.INVALID_PASSWORD),
       this.applicationStatus.INVALID_INPUT,
     );
+  }
+
+  private async userExists(result: IResult, userData: IUser): Promise<boolean> {
+    const userExists = await this.userRepository.getByEmail(userData.email?.value);
+    if (userExists) {
+      result.setError(
+        this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
+          email: userData?.email?.value as string,
+        }),
+        this.applicationStatus.INVALID_INPUT,
+      );
+      return BooleanUtil.TRUE;
+    }
+
+    return BooleanUtil.FALSE;
+  }
+
+  private async buildUser(user: IUser): Promise<User> {
+    user.maskedUid = GuidUtil.getV4WithoutDashes();
+    user.createdAt = DateTimeUtils.getISONow();
+    const buildedUser = User.fromIUser(user);
+    buildedUser.password = await this.encryptPassword(user);
+
+    return buildedUser;
+  }
+
+  private async encryptPassword(user: IUser): Promise<string> {
+    const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
+    const workerArgs = {
+      text: `${user.email}-${(user as User).password}`,
+      encryptionKey: AppSettings.EncryptionKey,
+      iterations: AppSettings.EncryptionIterations,
+    };
+    task.setArgs(workerArgs);
+    const workerResult = await this.workerProvider.executeTask<string>(task);
+
+    return Promise.resolve(workerResult);
+  }
+
+  private async registerUser(result: IResult, user: IUser): Promise<boolean> {
+    const registeredUser = await this.userRepository.register(user);
+
+    if (!registeredUser) {
+      result.setError(
+        this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
+        this.applicationStatus.INTERNAL_ERROR,
+      );
+      return BooleanUtil.FALSE;
+    }
+
+    return BooleanUtil.TRUE;
   }
 }

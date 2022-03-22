@@ -1,7 +1,7 @@
 import { BooleanUtil } from "./BooleanUtil";
 import { TypeParser } from "./TypeParser";
 
-type TryResult<T> = { success: boolean; value?: T; error?: Error };
+export type TryResult<T> = { success: boolean; value?: T; error?: Error };
 
 export class TryWrapper {
   static exec<T>(action: Function, params: any[]): TryResult<T> {
