@@ -18,24 +18,27 @@ class AuthorizationMiddleware {
 
     const auth = req.headers.authorization;
 
-    if (!auth) this.throwUnauthorized();
+    if (!auth)
+      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
 
     const jwtParts = ArrayUtil.allOrDefault((auth as string).split(/\s+/));
-    if (jwtParts.length !== TOKEN_PARTS) this.throwUnauthorized();
+    if (jwtParts.length !== TOKEN_PARTS)
+      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
 
     const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(authProvider.verifyJwt, [token]);
-    if (!sessionResult.success) this.throwUnauthorized();
+    if (!sessionResult.success)
+      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
 
     req.session = TypeParser.parse<ISession>(sessionResult.value);
 
     return next();
   };
 
-  private throwUnauthorized(): void {
-    throw new ApplicationError(
+  private getUnauthorized(message: string): ApplicationError {
+    return new ApplicationError(
       AuthorizationMiddleware.name,
-      resources.get(resourceKeys.AUTHORIZATION_REQUIRED),
+      message,
       applicationStatus.UNAUTHORIZED,
     );
   }
