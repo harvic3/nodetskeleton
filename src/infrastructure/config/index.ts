@@ -9,13 +9,28 @@ if (!process.env?.NODE_ENV || process.env.NODE_ENV === dev) {
   console.log("Running in dev mode");
 }
 
+const serviceContext = process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON;
+
 export default {
   Environment: process.env.NODE_ENV || dev,
   Controllers: {
-    Path: Normalize.pathToSO(
-      Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
-    ),
-    Ignore: [Normalize.pathToSO("**/base")],
+    ContextPaths: [
+      Normalize.pathFromOS(
+        Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"),
+      ),
+      Normalize.pathFromOS(
+        Normalize.absolutePath(
+          __dirname,
+          `../../adapters/controllers/${serviceContext}/*.controller.??`,
+        ),
+      ),
+    ],
+    DefaultPath: [
+      Normalize.pathFromOS(
+        Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
+      ),
+    ],
+    Ignore: [Normalize.pathFromOS("**/base")],
   },
   Server: {
     Root: process.env.SERVER_ROOT || "/api",
@@ -24,7 +39,10 @@ export default {
     Origins:
       process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
     ServiceName: process.env.SERVICE_NAME || "NodeTskeleton",
-    ServiceContext: process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON,
+    ServiceContext: {
+      LoadWithContext: !!process.env.SERVICE_CONTEXT,
+      Context: serviceContext,
+    },
   },
   Params: {
     Envs: {

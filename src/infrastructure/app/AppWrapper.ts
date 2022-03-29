@@ -31,7 +31,9 @@ export default class AppWrapper {
     this.app = ServerApp();
     this.app.set("trust proxy", BooleanUtil.TRUE);
     this.loadMiddleware();
-    console.log(`Initializing controllers for ${AppSettings.ServiceContext} ServiceContext`);
+    console.log(
+      `Initializing controllers for ${AppSettings.ServiceContext.toUpperCase()} ServiceContext`,
+    );
     if (ArrayUtil.any(controllers)) {
       this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.TRUE;
@@ -55,20 +57,22 @@ export default class AppWrapper {
   private async loadControllersDynamically(): Promise<void> {
     if (this.controllersLoadedByConstructor) return Promise.resolve();
 
-    const controllerPaths = sync(config.Controllers.Path, {
-      onlyFiles: BooleanUtil.TRUE,
-      ignore: config.Controllers.Ignore,
-    });
+    const controllerPaths = config.Server.ServiceContext.LoadWithContext
+      ? config.Controllers.ContextPaths.map((serviceContext) => {
+          return sync(serviceContext, {
+            onlyFiles: BooleanUtil.TRUE,
+            ignore: config.Controllers.Ignore,
+          });
+        }).flat()
+      : sync(config.Controllers.DefaultPath, {
+          onlyFiles: BooleanUtil.TRUE,
+          ignore: config.Controllers.Ignore,
+        });
     for (const filePath of controllerPaths) {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
-      if (
-        controller.serviceContext === AppSettings.ServiceContext ||
-        controller.serviceContext === ServiceContext.NODE_TS_SKELETON
-      ) {
-        console.log(`${controller?.constructor?.name} was loaded`);
-        this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
-      }
+      console.log(`${controller?.constructor?.name} was loaded`);
+      this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
     }
     this.loadErrorHandler();
 

@@ -1163,21 +1163,93 @@ This option is enabled by default in NodeTskeleton and is managed in the `tsconf
 
 With this simple option you can develop a single code base and by means of the configuration file through the `ENVs` (environment variables) decide which service context to put online, so with the execution of different PipeLines.
 
-Note that you must set the `ServiceContext` variable of the Server parameter of the `config file` from value of your `.env file` as follows:
+Note that the system take the `ServiceContext` Server parameter in the `config file` from value of your `.env file` as follows:
 
 ```ts
 // infrastructure/config/index
+const serviceContext = process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON;
+...
+Controllers: {
+	ContextPaths: [
+		// Health Controller should always be included, and others by default according to your needs.
+		Normalize.pathFromOS(
+			Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"), 
+		),
+		Normalize.pathFromOS(
+			Normalize.absolutePath(
+				__dirname,
+				`../../adapters/controllers/${serviceContext}/*.controller.??`,
+			),
+		),
+	],
+	// If the SERVICE_CONTEXT parameter is not set in the environment variables file, then the application will load by default all controllers that exist in the home directory.
+	DefaultPath: [
+		Normalize.pathFromOS(
+			Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
+		),
+	],
+	Ignore: [Normalize.pathFromOS("**/base")],
+},
 Server: {
 	...
-  ServiceContext: process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON,
+  ServiceContext: {
+		// This is the flag that tells the application whether or not to load the drivers per service context.
+		LoadWithContext: !!process.env.SERVICE_CONTEXT,
+		Context: serviceContext,
+	},
 }
 ```
 
-Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value, but you are free to create as many contexts as your solution needs and initialize each `Controller` to the appropriate context. 
-The `HealthController` must always keep the original context `NodeTskeleton context`, it cannot change because you need a health check point for each exposed service.
+Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value `DefaultPath`, but you are free to create as many contexts as your solution needs and load your `Controllers` on the context that you set in `SERVICE_CONTEXT` env.
+The `HealthController` must always words for any context `ContextPaths` or for `NodeTskeleton context`, it cannot change because you need a health check point for each exposed service.
+
+For example, the application have the SECURITY context and you can get it as follow:
 
 ```ts
-// For example, the application have the SECURITY context and change the Authentication Controller context as well:
+// In your ENV file set context as users, like this:
+NODE_ENV=development
+SERVICE_CONTEXT=users
+SERVER_ROOT=/api
+```
+
+So the path into ContextPaths settings that contains ${serviceContext} constant will have the following value:
+`../../adapters/controllers/users/*.controller.??`
+Then in the `AppWrapper` class, the system will load the controllers that must be exposed according to the service context.
+
+The `ServiceContext` file is located in the infrastructure server directory: 
+
+```ts
+// NodeTskeleton is the only context created, but you can create more o change this.
+export enum ServiceContext {
+  NODE_TS_SKELETON = "NodeTskeleton",
+  SECURITY = "auth",
+  USERS = "users",
+}
+```
+
+### How it working?
+
+So, how can you put the multi-service mode to work?
+
+It is important to note (understand) that the service contexts must be the names of the directories you will have inside the controllers directory, and you can add as many controllers as you need to each context, for example, in this application we have two contexts, users (USERS) and auth (SECURITY).
+
+```ts
+adapters
+	controllers 
+		auth // Context for SECURITY (auth)
+			Auth.controller.ts
+		users // Context for USERS (users)
+			Users.controller.ts
+		otherContext // And other service contexts according to your needs
+			...
+application
+...
+```
+
+All the above works for `dynamic loading of controllers`, therefore, if you are going to work the solution in `CLUSTER` mode you must inject the controllers by constructor as indicated in the `cluster mode explanation` and you must assign the context to each controller as shown in the following example: 
+
+```ts
+// For example, the application have the SECURITY context and the Authentication Controller responds to this context as well:
 class AuthController extends BaseController {
   constructor() {
     super(ServiceContext.SECURITY);
@@ -1187,46 +1259,9 @@ class AuthController extends BaseController {
 }
 ```
 
-The `ServiceContext` file is located in the infrastructure server directory: 
-
-```ts
-// NodeTskeleton is the only context created, but you can create more o change this.
-export enum ServiceContext {
-  NODE_TS_SKELETON = "NodeTskeleton",
-  SECURITY = "security",
-  USERS = "users",
-}
-```
-
-### How it working?
-
-So, how can you put the multi-service mode to work?
-
-For this feature the project has a basic `api-gateway` to route an entry point to the different ports exposed by each service.
+So, for this feature the project has a basic `api-gateway` to route an entry point to the different ports exposed by each service (context).
 
 You should note that you need, `Docker` installed on your machine and once you have this ready, then you should do the following:
-
-Open `Auth.controller.ts` and do this into it:
-
-```ts
-class AuthController extends BaseController {
-  constructor() {
-    super(ServiceContext.SECURITY); // Set Security context
-    this.initializeRoutes();
-  }
-}
-```
-
-The same with `Users.controller.ts` as follows:
-
-```ts
-class UsersController extends BaseController {
-  constructor() {
-    super(ServiceContext.USERS); // Set Users context
-    this.initializeRoutes();
-  }
-}
-```
 
 > First, open your console a go to the root directory of NodeTskeleton project.
 

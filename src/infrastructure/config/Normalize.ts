@@ -2,7 +2,7 @@ import { join } from "path";
 import { type } from "os";
 
 export class Normalize {
-  static pathToSO(path: string): string {
+  static pathFromOS(path: string): string {
     return type() === "Windows_NT" ? path.replace(/\\/g, "/") : path;
   }
 

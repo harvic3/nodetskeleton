@@ -13,7 +13,7 @@ export default class AppSettings {
   static JWTExpirationTime: number;
 
   static init(config: Record<string, any>): void {
-    this.ServiceContext = config.Server.ServiceContext;
+    this.ServiceContext = config.Server.ServiceContext.Context;
     this.ServiceName = config.Server.ServiceName;
     this.DefaultLang = config.Params.DefaultLang;
     this.EncryptionKey = config.Params.Security.CRYPTO.EncryptionKey;

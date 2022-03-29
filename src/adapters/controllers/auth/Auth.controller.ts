@@ -11,7 +11,7 @@ import BaseController, {
 
 class AuthController extends BaseController {
   constructor() {
-    super();
+    super(ServiceContext.SECURITY);
     this.initializeRoutes();
   }
 
