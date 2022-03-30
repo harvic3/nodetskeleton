@@ -1,28 +1,29 @@
-import resources, { resourceKeys, Resources } from "../locals/messages/index";
+import messageResources, { resourceKeys, Resources } from "../locals/messages/index";
 import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
 import applicationStatus from "../status/applicationStatus";
-import words, { wordKeys } from "../locals/words/index";
+import wordResources, { wordKeys } from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
 import { Throw } from "../errors/Throw";
 import { IResult } from "result-tsk";
+export { Validator };
+
+export type Resource = { keys: Record<string, string>; values: Resources };
 
 export abstract class BaseUseCase<T> {
   mapper: IMap;
   validator: Validator;
-  resources: Resources;
-  words: Resources;
-  resourceKeys = resourceKeys;
-  wordKeys = wordKeys;
+  appMessages: Resource;
+  appWords: Resource;
   applicationStatus = applicationStatus;
 
   constructor(public readonly CONTEXT: string, public readonly logProvider: ILogProvider) {
     this.mapper = mapper;
-    this.resources = resources;
-    this.words = words;
+    this.appMessages = { keys: resourceKeys, values: messageResources };
+    this.appWords = { keys: wordKeys, values: wordResources };
     this.validator = new Validator(
-      resources,
+      messageResources,
       resourceKeys.SOME_PARAMETERS_ARE_MISSING,
       applicationStatus.INVALID_INPUT,
     );

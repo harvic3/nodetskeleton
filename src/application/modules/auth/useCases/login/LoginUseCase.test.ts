@@ -10,6 +10,7 @@ import { UserMock } from "../../../../mocks/User.mock";
 import { TokenDto } from "../../dtos/TokenDto";
 import { mock } from "jest-mock-extended";
 import { LoginUseCase } from "./index";
+import Encryption from "../../../../shared/security/encryption";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();
@@ -31,6 +32,11 @@ describe("when try to login", () => {
     AppSettings.EncryptionKey = "hello-alien";
     AppSettings.EncryptionIterations = 1e3;
     AppSettings.EncryptionKeySize = 64;
+    Encryption.init(
+      AppSettings.EncryptionKey,
+      AppSettings.EncryptionIterations,
+      AppSettings.EncryptionKeySize,
+    );
   });
   beforeEach(() => {
     authProviderMock.login.mockReset();
@@ -67,7 +73,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64 });
+    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -79,7 +85,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64 });
+    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -88,12 +94,12 @@ describe("when try to login", () => {
   });
   it("should return a session response if user and password are valid", async () => {
     // Arrange
-    const user = new UserMock().withEmail().withName().withGender().build();
+    const user = new UserMock().withEmail().withFirstName().withGender().build();
     authProviderMock.login.mockResolvedValueOnce(user);
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64 });
+    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
 
     // Assert
     const data = result.data as TokenDto;

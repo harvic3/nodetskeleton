@@ -11,7 +11,7 @@ export class TryWrapper {
       return {
         value: undefined,
         success: BooleanUtil.FALSE,
-        error: TypeParser.parse<Error>(error),
+        error: TypeParser.cast<Error>(error),
       };
     }
   }
@@ -23,7 +23,7 @@ export class TryWrapper {
       return {
         value: undefined,
         success: BooleanUtil.FALSE,
-        error: TypeParser.parse<Error>(error),
+        error: TypeParser.cast<Error>(error),
       };
     }
   }

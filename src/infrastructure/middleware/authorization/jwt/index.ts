@@ -30,7 +30,7 @@ class AuthorizationMiddleware {
     if (!sessionResult.success)
       return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
 
-    req.session = TypeParser.parse<ISession>(sessionResult.value);
+    req.session = TypeParser.cast<ISession>(sessionResult.value);
 
     return next();
   };

@@ -4,8 +4,9 @@ import { Email } from "./Email";
 export interface IUser {
   uid: string | undefined;
   maskedUid: string | undefined;
-  name: string | undefined;
-  email: Email | undefined;
+  lastName: string | undefined;
+  firstName: string | undefined;
+  email: Email | string | undefined;
   gender: Gender | undefined;
   verified: boolean | undefined;
   createdAt: string | undefined;

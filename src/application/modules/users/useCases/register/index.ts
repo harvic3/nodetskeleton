@@ -13,8 +13,9 @@ import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
 import { User } from "../../../../../domain/user/User";
+import { IUserDto, UserDto } from "../../dtos/User.dto";
 
-export class RegisterUserUseCase extends BaseUseCase<IUser> {
+export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   constructor(
     readonly logProvider: ILogProvider,
     private readonly userRepository: IUSerRepository,
@@ -23,38 +24,30 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
     super(RegisterUserUseCase.name, logProvider);
   }
 
-  async execute(userData: IUser): Promise<IResult> {
+  async execute(args: IUserDto): Promise<IResult> {
     const result = new Result();
-    if (!this.isValidRequest(result, userData)) return result;
 
-    this.validateEmail(userData.email);
+    const userDto = UserDto.fromJSON(args);
+    if (!userDto.isValid(result, this.appWords, this.validator)) return result;
 
-    this.validatePassword((userData as User)?.password as string);
+    const user = await this.buildUser(userDto);
 
-    const userExists = await this.userExists(result, userData);
+    this.validateEmail(user.email);
+
+    const userExists = await this.userExists(result, user.email?.value as string);
     if (userExists) return result;
 
-    const user = await this.buildUser(userData);
+    this.validatePassword(userDto.password as string);
 
     const userRegistered = await this.registerUser(result, user);
     if (!userRegistered) return result;
 
     result.setMessage(
-      this.resources.get(this.resourceKeys.USER_WAS_CREATED),
+      this.appMessages.values.get(this.appMessages.keys.USER_WAS_CREATED),
       this.applicationStatus.SUCCESS,
     );
 
     return result;
-  }
-
-  private isValidRequest(result: Result, user: IUser): boolean {
-    const validations: Record<string, unknown> = {};
-    validations[this.words.get(this.wordKeys.EMAIL)] = user?.email?.value;
-    validations[this.words.get(this.wordKeys.NAME)] = user?.name;
-    validations[this.words.get(this.wordKeys.PASSWORD)] = (user as User)?.password as string;
-    validations[this.words.get(this.wordKeys.GENDER)] = user?.gender;
-
-    return this.validator.isValidEntry(result, validations);
   }
 
   private validateEmail(email: Email | undefined): void {
@@ -62,7 +55,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
     Throw.when(
       this.CONTEXT,
       !isValidEmail,
-      this.resources.get(this.resourceKeys.INVALID_EMAIL),
+      this.appMessages.values.get(this.appMessages.keys.INVALID_EMAIL),
       this.applicationStatus.INVALID_INPUT,
     );
   }
@@ -72,18 +65,21 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
     Throw.when(
       this.CONTEXT,
       !isValidPassword,
-      this.resources.get(this.resourceKeys.INVALID_PASSWORD),
+      this.appMessages.values.get(this.appMessages.keys.INVALID_PASSWORD),
       this.applicationStatus.INVALID_INPUT,
     );
   }
 
-  private async userExists(result: IResult, userData: IUser): Promise<boolean> {
-    const userExists = await this.userRepository.getByEmail(userData.email?.value);
+  private async userExists(result: IResult, email: string): Promise<boolean> {
+    const userExists = await this.userRepository.getByEmail(email);
     if (userExists) {
       result.setError(
-        this.resources.getWithParams(this.resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-          email: userData?.email?.value as string,
-        }),
+        this.appMessages.values.getWithParams(
+          this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS,
+          {
+            email,
+          },
+        ),
         this.applicationStatus.INVALID_INPUT,
       );
       return BooleanUtil.TRUE;
@@ -92,11 +88,11 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
     return BooleanUtil.FALSE;
   }
 
-  private async buildUser(user: IUser): Promise<User> {
-    user.maskedUid = GuidUtil.getV4WithoutDashes();
-    user.createdAt = DateTimeUtils.getISONow();
-    const buildedUser = User.fromIUser(user);
-    buildedUser.password = await this.encryptPassword(user);
+  private async buildUser(userDto: UserDto): Promise<User> {
+    const maskedUid = GuidUtil.getV4WithoutDashes();
+    const createdAt = DateTimeUtils.getISONow();
+    const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.FALSE);
+    buildedUser.password = await this.encryptPassword(buildedUser);
 
     return buildedUser;
   }
@@ -104,7 +100,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
   private async encryptPassword(user: IUser): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: `${user.email}-${(user as User).password}`,
+      text: `${(user.email as Email).value}-${(user as User).password}`,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
@@ -119,7 +115,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUser> {
 
     if (!registeredUser) {
       result.setError(
-        this.resources.get(this.resourceKeys.ERROR_CREATING_USER),
+        this.appMessages.values.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
       return BooleanUtil.FALSE;

@@ -1,33 +1,30 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
-import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
+import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
-import { Nulldifined } from "../../../../../domain/shared/Nulldifined";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
+import Encryption from "../../../../shared/security/encryption";
 import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
-export class LoginUseCase extends BaseUseCase<{
-  email: string | Nulldifined;
-  passwordB64: string | Nulldifined;
-}> {
+export class LoginUseCase extends BaseUseCase<ICredentials> {
   constructor(readonly logProvider: ILogProvider, private readonly authProvider: IAuthProvider) {
     super(LoginUseCase.name, logProvider);
   }
 
-  async execute(args: {
-    email: string | undefined;
-    passwordB64: string | Nulldifined;
-  }): Promise<IResultT<TokenDto>> {
+  async execute(args: ICredentials): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
-    if (!this.isValidRequest(result, args?.email, args?.passwordB64)) return result;
+
+    const credentialsDto = CredentialsDto.fromJSON(args);
+    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return result;
 
     const authenticatedResult = await this.userLogin(
       result,
-      args?.email as string,
-      args?.passwordB64 as string,
+      credentialsDto.email?.value as string,
+      credentialsDto?.passwordB64 as string,
     );
     if (!authenticatedResult.success) return result;
 
@@ -38,30 +35,19 @@ export class LoginUseCase extends BaseUseCase<{
     return result;
   }
 
-  private isValidRequest(
-    result: IResult,
-    email: string | Nulldifined,
-    passwordB64: string | Nulldifined,
-  ): boolean {
-    const validations: Record<string, unknown> = {};
-    validations[this.words.get(this.wordKeys.EMAIL)] = email;
-    validations[this.words.get(this.wordKeys.PASSWORD)] = passwordB64;
-
-    return this.validator.isValidEntry(result, validations);
-  }
-
   private async userLogin(
     result: IResult,
     email: string,
     passwordB64: string,
   ): Promise<TryResult<User>> {
+    const encryptedPassword = Encryption.encrypt(`${email.toLowerCase()}-${passwordB64}`);
     const authenticatedResult = await TryWrapper.syncExec(
-      this.authProvider.login(email, passwordB64),
+      this.authProvider.login(email, encryptedPassword),
     );
 
     if (!authenticatedResult.success) {
       result.setError(
-        this.resources.get(this.resourceKeys.INVALID_USER_OR_PASSWORD),
+        this.appMessages.values.get(this.appMessages.keys.INVALID_USER_OR_PASSWORD),
         this.applicationStatus.INVALID_INPUT,
       );
     }

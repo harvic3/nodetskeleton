@@ -8,8 +8,9 @@ import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import words, { wordKeys } from "../../../../shared/locals/words";
 import Encryption from "../../../../shared/security/encryption";
+import { UserDtoMock } from "../../../../mocks/UserDto.mock";
 import { UserMock } from "../../../../mocks/User.mock";
-import { User } from "../../../../../domain/user/User";
+import { IUserDto } from "../../dtos/User.dto";
 import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
 
@@ -20,6 +21,7 @@ const workerProviderMock = mock<IWorkerProvider>();
 
 // Builders
 const userBuilder = () => new UserMock();
+const userDtoBuilder = () => new UserDtoMock();
 const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
@@ -43,28 +45,37 @@ describe("when try to register user", () => {
 
   it("should return a 400 error if user properties was null or undefined", async () => {
     // Arrange
-    const user = new User();
+    const userDto = {} as IUserDto;
 
     // Act
-    const result = await registerUserUseCase().execute(user);
+    const result = await registerUserUseCase().execute(userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: `${words.get(wordKeys.EMAIL)}, ${words.get(wordKeys.NAME)}, ${words.get(
-          wordKeys.PASSWORD,
-        )}, ${words.get(wordKeys.GENDER)}`,
+        missingParams: [
+          words.get(wordKeys.FIRST_NAME),
+          words.get(wordKeys.LAST_NAME),
+          words.get(wordKeys.EMAIL),
+          words.get(wordKeys.PASSWORD),
+          words.get(wordKeys.GENDER),
+        ].join(", "),
       }),
     );
   });
   it("should return a 400 error if user don't have password", async () => {
     // Arrange
-    const user = userBuilder().withName().withEmail().withGender().build();
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
+      .withEmail()
+      .withGender()
+      .build();
 
     // Act
-    const result = await registerUserUseCase().execute(user);
+    const result = await registerUserUseCase().execute(userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -77,24 +88,25 @@ describe("when try to register user", () => {
   });
   it("should return a 400 error if user with the same email already exists", async () => {
     // Arrange
-    const user = userBuilder().withName().withEmail().withGender().withPassword().build();
-    const userWithSameEmail = userBuilder()
-      .withName()
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
       .withEmail()
       .withGender()
       .withPassword()
       .build();
+    const userWithSameEmail = userBuilder().withFirstName().withEmail().withGender().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(userWithSameEmail);
 
     // Act
-    const result = await registerUserUseCase().execute(user);
+    const result = await registerUserUseCase().execute(userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       resources.getWithParams(resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-        email: user?.email?.value as string,
+        email: userDto?.email as string,
       }),
     );
   });
@@ -102,11 +114,12 @@ describe("when try to register user", () => {
     // Arrange
     const notComplyEmail = "email@email";
     const useCase = registerUserUseCase();
-    const user = userBuilder()
-      .withName()
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
       .withEmail(notComplyEmail)
-      .withGender()
       .withPassword()
+      .withGender()
       .build();
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
@@ -115,7 +128,7 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(user);
+    const resultPromise = useCase.execute(userDto);
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -124,8 +137,9 @@ describe("when try to register user", () => {
     // Arrange
     const notComplyPassword = "abcD1234";
     const useCase = registerUserUseCase();
-    const user = userBuilder()
-      .withName()
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
       .withEmail()
       .withGender()
       .withPassword(notComplyPassword)
@@ -137,16 +151,23 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(user);
+    const resultPromise = useCase.execute(userDto);
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
   });
   it("should return a 500 error if Encryptor worker return an error", async () => {
     // Arrange
-    const user = new UserMock().withName().withEmail().withGender().withPassword().build();
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
+      .withEmail()
+      .withGender()
+      .withPassword()
+      .build();
+    const createdUser = userBuilder().withFirstName().withEmail().withGender().build();
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
-    userRepositoryMock.register.mockResolvedValueOnce(user);
+    userRepositoryMock.register.mockResolvedValueOnce(createdUser);
     const useCase = registerUserUseCase();
 
     applicationErrorBuilder.initialize(
@@ -159,7 +180,7 @@ describe("when try to register user", () => {
     workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
 
     // Act
-    const result = useCase.execute(user);
+    const result = useCase.execute(userDto);
 
     // Assert
     await expect(result).rejects.toThrowError(applicationErrorBuilder.build());
@@ -171,13 +192,26 @@ describe("when try to register user", () => {
       AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
-    const user = userBuilder().withName().withEmail().withGender().withPassword().build();
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
+      .withEmail()
+      .withGender()
+      .withPassword()
+      .build();
+    const createdUser = userBuilder()
+      .withFirstName()
+      .withLastName()
+      .withEmail()
+      .withGender()
+      .build();
+
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
-    userRepositoryMock.register.mockResolvedValueOnce(user);
+    userRepositoryMock.register.mockResolvedValueOnce(createdUser);
     workerProviderMock.executeTask.mockResolvedValueOnce("encrypted-password");
 
     // Act
-    const result = await registerUserUseCase().execute(user);
+    const result = await registerUserUseCase().execute(userDto);
 
     // Assert
     expect(result.success).toBeTruthy();

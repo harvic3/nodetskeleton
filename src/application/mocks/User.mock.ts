@@ -7,6 +7,7 @@ import { User } from "../../domain/user/User";
 
 export class UserMock implements IMockBuilder<User> {
   private user: User;
+
   constructor() {
     this.user = new User();
     this.user.uid = MockConstants.USER_ID;
@@ -22,8 +23,12 @@ export class UserMock implements IMockBuilder<User> {
   build(): User {
     return this.user;
   }
-  withName(name = MockConstants.USER_NAME): UserMock {
-    this.user.name = name;
+  withFirstName(firstName = MockConstants.USER_FIRST_NAME): UserMock {
+    this.user.firstName = firstName;
+    return this;
+  }
+  withLastName(lastName = MockConstants.USER_LAST_NAME): UserMock {
+    this.user.firstName = lastName;
     return this;
   }
   withEmail(email = MockConstants.USER_EMAIL): UserMock {
@@ -32,10 +37,6 @@ export class UserMock implements IMockBuilder<User> {
   }
   withGender(gender = Gender.MALE): UserMock {
     this.user.gender = gender;
-    return this;
-  }
-  withPassword(password = MockConstants.EXAMPLE_PASSWORD): UserMock {
-    this.user.password = StringUtil.encodeBase64(password);
     return this;
   }
 }

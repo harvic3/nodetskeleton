@@ -1,5 +1,5 @@
+import { IUserDto } from "../../../application/modules/users/dtos/User.dto";
 import container, { RegisterUserUseCase } from "./container";
-import { User } from "../../../domain/user/User";
 import BaseController, {
   Request,
   Response,
@@ -9,7 +9,6 @@ import BaseController, {
   ServiceContext,
   EntryPointHandler,
 } from "../base/Base.controller";
-import { Email } from "../../../domain/user/Email";
 
 class UsersController extends BaseController {
   constructor() {
@@ -22,15 +21,13 @@ class UsersController extends BaseController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const email = req.body?.email as string;
-    const user: User = req.body;
-    user.email = new Email(email?.toLowerCase());
+    const userDto = req.body as IUserDto;
 
     return this.handleResult(
       res,
       next,
       container.get<RegisterUserUseCase>(RegisterUserUseCase.name),
-      user,
+      userDto,
     );
   };
 
