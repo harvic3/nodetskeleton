@@ -871,10 +871,11 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
 --header 'Authorization: Bearer jwt' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "name": "Jhon Doe",
+    "firstName": "Nikola",
+    "lastName": "Tesla",
     "gender": "Male",
     "password": "Tm9kZVRza2VsZXRvbio4",
-    "email": "nodetskeleton@tesla.com"
+    "email": "nodetskeleton@conemail.com"
 }'
 ```
 
@@ -929,10 +930,11 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
 --header 'Authorization: Bearer jwt' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "name": "Jhon Doe",
+    "firstName": "Nikola",
+    "lastName": "Tesla",
     "gender": "Male",
     "password": "Tm9kZVRza2VsZXRvbio4",
-    "email": "nodetskeleton@tesla.com"
+    "email": "nodetskeleton@conemail.com"
 }'
 ```
 
@@ -1312,10 +1314,11 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
 --header 'Authorization: Bearer jwt' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "name": "Jhon Doe",
+    "firstName": "Nikola",
+    "lastName": "Tesla",
     "gender": "Male",
     "password": "Tm9kZVRza2VsZXRvbio4",
-    "email": "nodetskeleton@tesla.com"
+    "email": "nodetskeleton@conemail.com"
 }'
 ```
 
