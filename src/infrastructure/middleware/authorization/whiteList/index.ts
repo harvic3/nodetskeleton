@@ -11,12 +11,12 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (req: Request, res: Response, next: NextFunction): void => {
-    req.isWhiteList = BooleanUtil.FALSE;
+    req.isWhiteList = BooleanUtil.NOT;
 
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === req.path);
 
     if (existsUnauthorizedPath) {
-      req.isWhiteList = BooleanUtil.TRUE;
+      req.isWhiteList = BooleanUtil.YES;
     }
 
     return next();

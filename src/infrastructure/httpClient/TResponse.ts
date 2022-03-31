@@ -5,7 +5,7 @@ type Response<T> = T | string | Buffer | ArrayBuffer | PromiseLike<T> | unknown;
 
 export default class TResponse<R, E> {
   response: Response<R | E> | undefined;
-  success = BooleanUtil.TRUE;
+  success = BooleanUtil.SUCCESS;
   statusCode: number | undefined;
   message: string | undefined;
   error: Error | undefined;
@@ -25,12 +25,12 @@ export default class TResponse<R, E> {
 
   setErrorMessage(message: string): void {
     this.message = message;
-    this.success = BooleanUtil.FALSE;
+    this.success = BooleanUtil.FAILED;
   }
 
   setError(error: Error): void {
     this.error = error;
-    this.success = BooleanUtil.FALSE;
+    this.success = BooleanUtil.FAILED;
   }
 
   setResponseHeaders(headers: Headers): void {

@@ -79,16 +79,16 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         }),
         this.applicationStatus.INVALID_INPUT,
       );
-      return BooleanUtil.TRUE;
+      return BooleanUtil.YES;
     }
 
-    return BooleanUtil.FALSE;
+    return BooleanUtil.NOT;
   }
 
   private async buildUser(userDto: UserDto): Promise<User> {
     const maskedUid = GuidUtil.getV4WithoutDashes();
     const createdAt = DateTimeUtils.getISONow();
-    const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.FALSE);
+    const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.NOT_VERIFIED);
     buildedUser.password = await this.encryptPassword(buildedUser);
 
     return buildedUser;
@@ -115,9 +115,9 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
-      return BooleanUtil.FALSE;
+      return BooleanUtil.FAILED;
     }
 
-    return BooleanUtil.TRUE;
+    return BooleanUtil.SUCCESS;
   }
 }

@@ -8,7 +8,7 @@ import TResponse from "./TResponse";
 
 type HttpResponseType<T> = T | string | ArrayBuffer | unknown;
 
-const SERIALIZED = BooleanUtil.TRUE;
+const SERIALIZED = BooleanUtil.YES;
 const serialization = {
   json: "json",
   string: "string",

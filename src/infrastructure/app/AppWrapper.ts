@@ -23,20 +23,20 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  private readonly controllersLoadedByConstructor = BooleanUtil.FALSE;
+  private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
   app: Application;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
     this.app = ServerApp();
-    this.app.set("trust proxy", BooleanUtil.TRUE);
+    this.app.set("trust proxy", BooleanUtil.YES);
     this.loadMiddleware();
     console.log(
       `Initializing controllers for ${AppSettings.ServiceContext.toUpperCase()} ServiceContext`,
     );
     if (ArrayUtil.any(controllers)) {
       this.loadControllersByConstructor(controllers as BaseController[]);
-      this.controllersLoadedByConstructor = BooleanUtil.TRUE;
+      this.controllersLoadedByConstructor = BooleanUtil.YES;
     }
   }
 
@@ -60,12 +60,12 @@ export default class AppWrapper {
     const controllerPaths = config.Server.ServiceContext.LoadWithContext
       ? config.Controllers.ContextPaths.map((serviceContext) => {
           return sync(serviceContext, {
-            onlyFiles: BooleanUtil.TRUE,
+            onlyFiles: BooleanUtil.YES,
             ignore: config.Controllers.Ignore,
           });
         }).flat()
       : sync(config.Controllers.DefaultPath, {
-          onlyFiles: BooleanUtil.TRUE,
+          onlyFiles: BooleanUtil.YES,
           ignore: config.Controllers.Ignore,
         });
     for (const filePath of controllerPaths) {
@@ -82,7 +82,7 @@ export default class AppWrapper {
   private loadMiddleware(): void {
     this.app.use(helmet());
     this.app.use(bodyParser());
-    this.app.use(urlencoded({ extended: BooleanUtil.TRUE }));
+    this.app.use(urlencoded({ extended: BooleanUtil.YES }));
     this.app.use(localizationMiddleware.handle as RequestHandler);
     this.app.use(routeWhiteListMiddleware.handle as RequestHandler);
     this.app.use(authorizationMiddleware.handle.bind(this) as RequestHandler);
