@@ -2,9 +2,15 @@ import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWo
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
+import { ChannelNameEnum } from "../../../../shared/messaging/ChannelName.enum";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
+import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
+import { TopicNameEnum } from "../../../../shared/messaging/TopicName.enum";
+import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -16,12 +22,17 @@ import { User } from "../../../../../domain/user/User";
 import { IUserDto, UserDto } from "../../dtos/User.dto";
 
 export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
+  private readonly queueBus: IQueueBus;
+
   constructor(
     readonly logProvider: ILogProvider,
     private readonly userRepository: IUSerRepository,
     private readonly workerProvider: IWorkerProvider,
+    private readonly eventPublisher: IEventPublisher,
+    private readonly eventQueue: IEventQueue,
   ) {
     super(RegisterUserUseCase.name, logProvider);
+    this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
   }
 
   async execute(args: IUserDto): Promise<IResult> {
@@ -41,6 +52,8 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
 
     const userRegistered = await this.registerUser(result, user);
     if (!userRegistered) return result;
+
+    await this.publishUserCreatedEvent(user);
 
     result.setMessage(
       this.appMessages.get(this.appMessages.keys.USER_WAS_CREATED),
@@ -89,7 +102,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const maskedUid = GuidUtil.getV4WithoutDashes();
     const createdAt = DateTimeUtils.getISONow();
     const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.NOT_VERIFIED);
-    buildedUser.password = await this.encryptPassword(buildedUser);
+    // buildedUser.password = await this.encryptPassword(buildedUser);
 
     return buildedUser;
   }
@@ -115,9 +128,14 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
-      return BooleanUtil.FAILED;
+      return BooleanUtil.NOT;
     }
 
-    return BooleanUtil.SUCCESS;
+    return BooleanUtil.YES;
+  }
+
+  private async publishUserCreatedEvent(user: User): Promise<void> {
+    user.password = await this.encryptPassword(user);
+    this.queueBus.glueAndPublish(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
   }
 }

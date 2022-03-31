@@ -3,6 +3,8 @@ import { Nulldifined } from "../Nulldifined";
 export default class ArrayUtil {
   static NOT_FOUND_INDEX = -1;
   static FIRST_ELEMENT_INDEX = 0;
+  static ZERO_ELEMENTS = 0;
+  static EMPTY_ARRAY = [];
 
   static first<T>(list: T[]): T | null {
     if (!list?.length) {

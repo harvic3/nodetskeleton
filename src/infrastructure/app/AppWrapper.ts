@@ -4,15 +4,6 @@ import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
-import resources from "../../application/shared/locals/messages";
-import localizationMiddleware from "../middleware/localization";
-import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
-import words from "../../application/shared/locals/words";
-import errorHandlerMiddleware from "../middleware/error";
-import { resolve as resolvePath } from "path";
-import { sync } from "fast-glob";
-import config from "../config";
-import helmet from "helmet";
 import {
   ServerApp,
   Application,
@@ -21,10 +12,21 @@ import {
   RequestHandler,
   ErrorRequestHandler,
 } from "./core/Modules";
+import resources from "../../application/shared/locals/messages";
+import localizationMiddleware from "../middleware/localization";
+import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
+import { MessagingClient } from "./client/MessagingClient";
+import words from "../../application/shared/locals/words";
+import errorHandlerMiddleware from "../middleware/error";
+import { resolve as resolvePath } from "path";
+import { sync } from "fast-glob";
+import config from "../config";
+import helmet from "helmet";
 
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
   app: Application;
+  messagingClient?: MessagingClient;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
@@ -38,6 +40,7 @@ export default class AppWrapper {
       this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.YES;
     }
+    this.initializeMessagingClient();
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
@@ -103,15 +106,19 @@ export default class AppWrapper {
     );
   }
 
+  private initializeMessagingClient(): void {
+    this.messagingClient = new MessagingClient();
+  }
+
   initializeServices(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.loadControllersDynamically()
         .then(() => {
-          // Initialize database service and other services here. For do it you should add a try catch block.
-          // reject if any error with database or other service.
+          this.messagingClient?.initialize();
           resolve();
         })
         .catch((error) => {
+          this.messagingClient?.close();
           reject(error);
         });
     });

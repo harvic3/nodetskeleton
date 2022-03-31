@@ -1,6 +1,7 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
@@ -11,7 +12,11 @@ import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
 export class LoginUseCase extends BaseUseCase<ICredentials> {
-  constructor(readonly logProvider: ILogProvider, private readonly authProvider: IAuthProvider) {
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly authProvider: IAuthProvider,
+    private readonly eventPublisher: IEventPublisher,
+  ) {
     super(LoginUseCase.name, logProvider);
   }
 

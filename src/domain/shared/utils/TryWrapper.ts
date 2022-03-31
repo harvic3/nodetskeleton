@@ -6,11 +6,11 @@ export type TryResult<T> = { success: boolean; value?: T; error?: Error };
 export class TryWrapper {
   static exec<T>(action: Function, params: any[]): TryResult<T> {
     try {
-      return { value: action(...params) as T, success: BooleanUtil.YES, error: undefined };
+      return { value: action(...params) as T, success: BooleanUtil.SUCCESS, error: undefined };
     } catch (error) {
       return {
         value: undefined,
-        success: BooleanUtil.NOT,
+        success: BooleanUtil.FAILED,
         error: TypeParser.cast<Error>(error),
       };
     }
@@ -22,7 +22,7 @@ export class TryWrapper {
     } catch (error) {
       return {
         value: undefined,
-        success: BooleanUtil.NOT,
+        success: BooleanUtil.FAILED,
         error: TypeParser.cast<Error>(error),
       };
     }
