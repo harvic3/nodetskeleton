@@ -1,7 +1,7 @@
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
-import resources, { resourceKeys } from "../../../../application/shared/locals/messages";
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
+import appMessages from "../../../../application/shared/locals/messages";
 import { authProvider } from "../../../../adapters/providers/container";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
@@ -19,16 +19,16 @@ class AuthorizationMiddleware {
     const auth = req.headers.authorization;
 
     if (!auth)
-      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
+      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
     const jwtParts = ArrayUtil.allOrDefault((auth as string).split(/\s+/));
     if (jwtParts.length !== TOKEN_PARTS)
-      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
+      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
     const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(authProvider.verifyJwt, [token]);
     if (!sessionResult.success)
-      return next(this.getUnauthorized(resources.get(resourceKeys.AUTHORIZATION_REQUIRED)));
+      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
     req.session = TypeParser.cast<ISession>(sessionResult.value);
 

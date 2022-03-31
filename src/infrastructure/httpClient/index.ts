@@ -1,8 +1,8 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
-import resources, { resourceKeys } from "../../application/shared/locals/messages";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
+import appMessages from "../../application/shared/locals/messages";
 export { BodyInit as BodyType, Headers } from "node-fetch";
 import TResponse from "./TResponse";
 
@@ -51,7 +51,7 @@ export class HttpClient {
         const errorResponse = await this.processErrorResponse<E>(response);
         if (errorResponse[1] === SERIALIZED) {
           result.setErrorMessage(
-            response?.statusText || resources.get(resourceKeys.UNKNOWN_RESPONSE_STATUS),
+            response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
           );
           result.setErrorResponse(errorResponse[0] as E);
         } else {
@@ -109,7 +109,7 @@ export class HttpClient {
     } catch (error) {
       throw new ApplicationError(
         HttpClient.name,
-        resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+        appMessages.get(appMessages.keys.PROCESSING_DATA_CLIENT_ERROR),
         httpStatus.INTERNAL_SERVER_ERROR,
         JSON.stringify(error),
       );

@@ -11,10 +11,5 @@ const locals = {
   [LocaleTypeEnum.EN_US]: enLocal,
 };
 
-const wordKeys = localKeys;
-
-const words = new Resources(locals, localKeys, LocaleTypeEnum.EN);
-
-export { wordKeys, Resources };
-
-export default words;
+export { Resources };
+export default new Resources(locals, localKeys, LocaleTypeEnum.EN);

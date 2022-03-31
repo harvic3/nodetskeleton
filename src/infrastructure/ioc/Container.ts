@@ -1,6 +1,6 @@
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
-import resources, { resourceKeys } from "../../application/shared/locals/messages";
 import applicationStatus from "../../application/shared/status/applicationStatus";
+import appMessages from "../../application/shared/locals/messages";
 
 export class Container {
   constructor(private readonly container: IContainerDictionary) {}
@@ -9,7 +9,7 @@ export class Container {
     if (!this.container[className]) {
       throw new ApplicationError(
         Container.name,
-        resources.getWithParams(resourceKeys.DEPENDENCY_NOT_FOUNT, { className }),
+        appMessages.getWithParams(appMessages.keys.DEPENDENCY_NOT_FOUNT, { className }),
         applicationStatus.INTERNAL_ERROR,
       );
     }

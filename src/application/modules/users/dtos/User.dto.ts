@@ -1,4 +1,4 @@
-import { IResult, Resource, Validator } from "../../../shared/useCase/BaseUseCase";
+import { IResult, Resources, Validator } from "../../../shared/useCase/BaseUseCase";
 import { Gender } from "../../../../domain/user/genre/Gender.enum";
 import { User } from "../../../../domain/user/User";
 
@@ -32,13 +32,13 @@ export class UserDto {
     return userDto;
   }
 
-  isValid(result: IResult, appWords: Resource, validator: Validator): boolean {
+  isValid(result: IResult, appWords: Resources, validator: Validator): boolean {
     const validations: Record<string, unknown> = {};
-    validations[appWords.values.get(appWords.keys.FIRST_NAME)] = this.firstName;
-    validations[appWords.values.get(appWords.keys.LAST_NAME)] = this.lastName;
-    validations[appWords.values.get(appWords.keys.EMAIL)] = this.email;
-    validations[appWords.values.get(appWords.keys.PASSWORD)] = this.password;
-    validations[appWords.values.get(appWords.keys.GENDER)] = this.gender;
+    validations[appWords.get(appWords.keys.FIRST_NAME)] = this.firstName;
+    validations[appWords.get(appWords.keys.LAST_NAME)] = this.lastName;
+    validations[appWords.get(appWords.keys.EMAIL)] = this.email;
+    validations[appWords.get(appWords.keys.PASSWORD)] = this.password;
+    validations[appWords.get(appWords.keys.GENDER)] = this.gender;
 
     return validator.isValidEntry(result, validations);
   }

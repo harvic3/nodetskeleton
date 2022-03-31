@@ -1,8 +1,8 @@
 import { AppConstants } from "../../../../domain/shared/AppConstants";
 import { ApplicationError } from "../../errors/ApplicationError";
-import resources, { resourceKeys } from "../../locals/messages";
 import applicationStatus from "../../status/applicationStatus";
-import words, { wordKeys } from "../../locals/words";
+import appMessages from "../../locals/messages";
+import appWords from "../../locals/words";
 import { pbkdf2Sync } from "crypto";
 
 export default class Encryption {
@@ -24,8 +24,8 @@ export default class Encryption {
     if (!encryptionKey && !this.defaultEncryptionKey) {
       throw new ApplicationError(
         Encryption.name,
-        resources.getWithParams(resourceKeys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
-          toolName: words.get(wordKeys.ENCRYPTION),
+        appMessages.getWithParams(appMessages.keys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
+          toolName: appWords.get(appWords.keys.ENCRYPTION),
         }),
         applicationStatus.INTERNAL_ERROR,
       );

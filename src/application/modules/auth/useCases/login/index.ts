@@ -47,7 +47,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
 
     if (!authenticatedResult.success) {
       result.setError(
-        this.appMessages.values.get(this.appMessages.keys.INVALID_USER_OR_PASSWORD),
+        this.appMessages.get(this.appMessages.keys.INVALID_USER_OR_PASSWORD),
         this.applicationStatus.INVALID_INPUT,
       );
     }

@@ -1,14 +1,15 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
-import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import AppSettings from "../../../../shared/settings/AppSettings";
-import words, { wordKeys } from "../../../../shared/locals/words";
 import Encryption from "../../../../shared/security/encryption";
 import { UserDtoMock } from "../../../../mocks/UserDto.mock";
+import appMessages from "../../../../shared/locals/messages";
+import appWords from "../../../../shared/locals/words";
 import { UserMock } from "../../../../mocks/User.mock";
 import { IUserDto } from "../../dtos/User.dto";
 import { RegisterUserUseCase } from "./index";
@@ -30,8 +31,8 @@ const registerUserUseCase = () =>
 
 describe("when try to register user", () => {
   beforeAll(() => {
-    resources.setDefaultLanguage(LocaleTypeEnum.EN);
-    words.setDefaultLanguage(LocaleTypeEnum.EN);
+    appMessages.setDefaultLanguage(LocaleTypeEnum.EN);
+    appWords.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.EncryptionKey = "hello-alien";
     AppSettings.EncryptionIterations = 1e3;
     AppSettings.EncryptionKeySize = 64;
@@ -54,14 +55,14 @@ describe("when try to register user", () => {
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
-      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+      appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: [
-          words.get(wordKeys.FIRST_NAME),
-          words.get(wordKeys.LAST_NAME),
-          words.get(wordKeys.EMAIL),
-          words.get(wordKeys.PASSWORD),
-          words.get(wordKeys.GENDER),
-        ].join(", "),
+          appWords.get(appWords.keys.FIRST_NAME),
+          appWords.get(appWords.keys.LAST_NAME),
+          appWords.get(appWords.keys.EMAIL),
+          appWords.get(appWords.keys.PASSWORD),
+          appWords.get(appWords.keys.GENDER),
+        ].join(StringUtil.COMMA_SPACE_SEPARATOR),
       }),
     );
   });
@@ -81,8 +82,8 @@ describe("when try to register user", () => {
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
-      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: words.get(wordKeys.PASSWORD),
+      appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
+        missingParams: appWords.get(appWords.keys.PASSWORD),
       }),
     );
   });
@@ -105,7 +106,7 @@ describe("when try to register user", () => {
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
-      resources.getWithParams(resourceKeys.USER_WITH_EMAIL_ALREADY_EXISTS, {
+      appMessages.getWithParams(appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS, {
         email: userDto?.email as string,
       }),
     );
@@ -123,7 +124,7 @@ describe("when try to register user", () => {
       .build();
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
-      resources.get(resourceKeys.INVALID_EMAIL),
+      appMessages.get(appMessages.keys.INVALID_EMAIL),
       applicationStatus.INVALID_INPUT,
     );
 
@@ -146,7 +147,7 @@ describe("when try to register user", () => {
       .build();
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
-      resources.get(resourceKeys.INVALID_PASSWORD),
+      appMessages.get(appMessages.keys.INVALID_PASSWORD),
       applicationStatus.INVALID_INPUT,
     );
 
@@ -172,7 +173,7 @@ describe("when try to register user", () => {
 
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
-      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+      appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text, encryptionKey, iterations",
       }),
       applicationStatus.INTERNAL_ERROR,
@@ -216,6 +217,6 @@ describe("when try to register user", () => {
     // Assert
     expect(result.success).toBeTruthy();
     expect(result.statusCode).toBe(applicationStatus.SUCCESS);
-    expect(result.message).toBe(resources.get(resourceKeys.USER_WAS_CREATED));
+    expect(result.message).toBe(appMessages.get(appMessages.keys.USER_WAS_CREATED));
   });
 });

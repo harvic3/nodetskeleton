@@ -68,7 +68,7 @@
     "luxon": "^2.3.1",
     "mapper-tsk": "^2.0.1",
     "node-fetch": "^3.2.1",
-    "resources-tsk": "^2.1.0",
+    "resources-tsk": "^2.1.1",
     "result-tsk": "^2.1.1",
     "uuid": "^8.3.2",
     "validator-tsk": "^2.0.1"

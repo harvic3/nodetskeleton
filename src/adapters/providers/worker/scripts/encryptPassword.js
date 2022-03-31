@@ -8,8 +8,8 @@ parentPort.postMessage(runTask(workerData.task));
 function encrypt(text, encryptionKey, iterations, keyLength = 128) {
   if (!text || !encryptionKey || !iterations) {
     return {
-      message: BaseWorker.resources.getWithParams(
-        BaseWorker.resourceKeys.SOME_PARAMETERS_ARE_MISSING,
+      message: BaseWorker.appMessages.getWithParams(
+        BaseWorker.appMessages.keys.SOME_PARAMETERS_ARE_MISSING,
         { missingParams: "text, encryptionKey, iterations" },
       ),
       statusCode: BaseWorker.applicationStatus.INTERNAL_ERROR,

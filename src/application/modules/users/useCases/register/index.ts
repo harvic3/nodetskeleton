@@ -43,7 +43,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     if (!userRegistered) return result;
 
     result.setMessage(
-      this.appMessages.values.get(this.appMessages.keys.USER_WAS_CREATED),
+      this.appMessages.get(this.appMessages.keys.USER_WAS_CREATED),
       this.applicationStatus.SUCCESS,
     );
 
@@ -55,7 +55,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     Throw.when(
       this.CONTEXT,
       !isValidEmail,
-      this.appMessages.values.get(this.appMessages.keys.INVALID_EMAIL),
+      this.appMessages.get(this.appMessages.keys.INVALID_EMAIL),
       this.applicationStatus.INVALID_INPUT,
     );
   }
@@ -65,7 +65,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     Throw.when(
       this.CONTEXT,
       !isValidPassword,
-      this.appMessages.values.get(this.appMessages.keys.INVALID_PASSWORD),
+      this.appMessages.get(this.appMessages.keys.INVALID_PASSWORD),
       this.applicationStatus.INVALID_INPUT,
     );
   }
@@ -74,12 +74,9 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const userExists = await this.userRepository.getByEmail(email);
     if (userExists) {
       result.setError(
-        this.appMessages.values.getWithParams(
-          this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS,
-          {
-            email,
-          },
-        ),
+        this.appMessages.getWithParams(this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS, {
+          email,
+        }),
         this.applicationStatus.INVALID_INPUT,
       );
       return BooleanUtil.TRUE;
@@ -115,7 +112,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
 
     if (!registeredUser) {
       result.setError(
-        this.appMessages.values.get(this.appMessages.keys.ERROR_CREATING_USER),
+        this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
       return BooleanUtil.FALSE;

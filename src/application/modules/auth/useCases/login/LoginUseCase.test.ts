@@ -1,16 +1,16 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
-import resources, { resourceKeys } from "../../../../shared/locals/messages";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
-import words, { wordKeys } from "../../../../shared/locals/words";
 import AppSettings from "../../../../shared/settings/AppSettings";
+import Encryption from "../../../../shared/security/encryption";
+import appMessages from "../../../../shared/locals/messages";
 import { UserMock } from "../../../../mocks/User.mock";
+import appWords from "../../../../shared/locals/words";
 import { TokenDto } from "../../dtos/TokenDto";
 import { mock } from "jest-mock-extended";
 import { LoginUseCase } from "./index";
-import Encryption from "../../../../shared/security/encryption";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();
@@ -26,8 +26,8 @@ const tokenExpirationTime = 3600;
 
 describe("when try to login", () => {
   beforeAll(() => {
-    resources.setDefaultLanguage(LocaleTypeEnum.EN);
-    words.setDefaultLanguage(LocaleTypeEnum.EN);
+    appMessages.setDefaultLanguage(LocaleTypeEnum.EN);
+    appWords.setDefaultLanguage(LocaleTypeEnum.EN);
     AppSettings.JWTExpirationTime = tokenExpirationTime;
     AppSettings.EncryptionKey = "hello-alien";
     AppSettings.EncryptionIterations = 1e3;
@@ -49,8 +49,10 @@ describe("when try to login", () => {
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
-      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: `${words.get(wordKeys.EMAIL)}, ${words.get(wordKeys.PASSWORD)}`,
+      appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
+        missingParams: `${appWords.get(appWords.keys.EMAIL)}, ${appWords.get(
+          appWords.keys.PASSWORD,
+        )}`,
       }),
     );
     expect(result.success).toBeFalsy();
@@ -62,8 +64,8 @@ describe("when try to login", () => {
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
-      resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-        missingParams: words.get(wordKeys.PASSWORD),
+      appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
+        missingParams: appWords.get(appWords.keys.PASSWORD),
       }),
     );
     expect(result.success).toBeFalsy();
@@ -77,7 +79,7 @@ describe("when try to login", () => {
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
-    expect(result.error).toBe(resources.get(resourceKeys.INVALID_USER_OR_PASSWORD));
+    expect(result.error).toBe(appMessages.get(appMessages.keys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
   it("should return a 400 error if email or password was invalid", async () => {
@@ -89,7 +91,7 @@ describe("when try to login", () => {
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
-    expect(result.error).toBe(resources.get(resourceKeys.INVALID_USER_OR_PASSWORD));
+    expect(result.error).toBe(appMessages.get(appMessages.keys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
   it("should return a session response if user and password are valid", async () => {
