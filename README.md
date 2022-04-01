@@ -1265,7 +1265,14 @@ So, for this feature the project has a basic `api-gateway` to route an entry poi
 
 You should note that you need, `Docker` installed on your machine and once you have this ready, then you should do the following:
 
-> First, open your console a go to the root directory of NodeTskeleton project.
+Before anything else, ypu need to create a .env file in tsk-gateway root directory
+
+```txt
+WITH_DOCKER_HOST=true
+PORT=8080
+```
+
+> So, first, open your console a go to the root directory of NodeTskeleton project.
 
 > Second, execute the next sequence of commands:
 

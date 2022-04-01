@@ -60,7 +60,7 @@ services:
 
   # redis-db:
   #   image: redis
-  #   container_name: tskeleton-cache
+  #   container_name: tskeleton-redis
   #   ports:
   #     - 6379:6379
 
