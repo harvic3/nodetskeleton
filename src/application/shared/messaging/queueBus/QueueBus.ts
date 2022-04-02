@@ -14,13 +14,9 @@ export class QueueBus implements IQueueBus {
     private readonly eventQueue: IEventQueue,
   ) {}
 
-  async glueAndPublish<T>(
-    channel: ChannelNameEnum,
-    topicName: TopicNameEnum,
-    message: T,
-  ): Promise<void> {
+  async pushPub<T>(channel: ChannelNameEnum, topicName: TopicNameEnum, message: T): Promise<void> {
     const queueMessage = new EventMessage<T>(channel, topicName, message);
-    this.eventQueue
+    return this.eventQueue
       .push(queueMessage)
       .then(() => {
         const busMessage = new EventMessage<T>(channel, topicName);

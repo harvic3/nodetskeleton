@@ -136,6 +136,6 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
 
   private async publishUserCreatedEvent(user: User): Promise<void> {
     user.password = await this.encryptPassword(user);
-    this.queueBus.glueAndPublish(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
+    this.queueBus.pushPub(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
   }
 }
