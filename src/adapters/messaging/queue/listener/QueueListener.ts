@@ -1,9 +1,10 @@
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
-import { MessageQueueHandler, QueueArgs } from "../../handlers/queue/MessageQueue.handler";
 import { IEventQueue } from "../../../../application/shared/messaging/queue/IEventQueue";
 import { TopicNameEnum } from "../../../../application/shared/messaging/TopicName.enum";
+import { MessageQueueHandler } from "../../handlers/queue/MessageQueue.handler";
 import AppSettings from "../../../../application/shared/settings/AppSettings";
 import { ServiceContext } from "../../../controllers/base/Base.controller";
+import { QueueArgs } from "../../handlers/queue/IMessageQueue.handler";
 import {
   ManageLastLoginEventUseCase,
   ManageUserCreatedEventUseCase,

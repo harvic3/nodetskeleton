@@ -1,12 +1,12 @@
-import BaseController, {
-  Request,
-  Response,
-  RequestBase,
-  NextFunction,
-  RequestHandler,
-  EntryPointHandler,
-} from "../base/Base.controller";
 import container, { PongUseCase } from "./container/index";
+import BaseController, {
+  EntryPointHandler,
+  RequestHandler,
+  NextFunction,
+  RequestBase,
+  Response,
+  Request,
+} from "../base/Base.controller";
 
 class HealthController extends BaseController {
   constructor() {

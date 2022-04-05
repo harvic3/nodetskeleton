@@ -1,19 +1,15 @@
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { IEventQueue } from "../../../../application/shared/messaging/queue/IEventQueue";
-import { TopicNameEnum } from "../../../../application/shared/messaging/TopicName.enum";
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
+import { IMessageQueueHandler, QueueArgs } from "./IMessageQueue.handler";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { Container } from "../../../../infrastructure/ioc/Container";
 import queueMessageUseCaseContainer from "./container";
 
-export type QueueArgs = {
-  queueName: ChannelNameEnum;
-  topicName: TopicNameEnum;
-};
 
-export class MessageQueueHandler {
+export class MessageQueueHandler implements IMessageQueueHandler {
   private readingChannels: ChannelNameEnum[] = [];
   private eventQueue: IEventQueue | undefined;
   private queueNameToUseCaseMap: Map<string, string>;

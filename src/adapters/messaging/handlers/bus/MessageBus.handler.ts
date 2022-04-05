@@ -1,10 +1,10 @@
-import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { TopicNameEnum } from "../../../../application/shared/messaging/TopicName.enum";
 import { EventMessage } from "../../../../application/shared/messaging/EventMessage";
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
 import AppSettings from "../../../../application/shared/settings/AppSettings";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { Container } from "../../../../infrastructure/ioc/Container";
+import { Args, IMessageBusHandler } from "./IMessageBus.handler";
 import { QueueClientEnum } from "../../queue/QueueClient.enum";
 import { IUser } from "../../../../domain/user/IUser";
 import messageBusUseCasesContainer from "./container";
@@ -12,12 +12,7 @@ import { EventEmitter } from "events";
 
 type MessageTypes = IUser;
 
-type Args = {
-  channel: ChannelNameEnum;
-  message: string;
-};
-
-export class MessageBusHandler {
+export class MessageBusHandler implements IMessageBusHandler {
   constructor(private readonly messageBusUseCases: Container) {}
 
   async handle(args: Args): Promise<void> {
