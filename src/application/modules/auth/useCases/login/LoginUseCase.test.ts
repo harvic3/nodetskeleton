@@ -1,10 +1,13 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
+import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
+import { MockConstants } from "../../../../mocks/MockConstants";
 import appMessages from "../../../../shared/locals/messages";
 import { UserMock } from "../../../../mocks/User.mock";
 import appWords from "../../../../shared/locals/words";
@@ -15,11 +18,11 @@ import { LoginUseCase } from "./index";
 // Mocks
 const logProviderMock = mock<ILogProvider>();
 const authProviderMock = mock<IAuthProvider>();
+const eventPublisherMock = mock<IEventPublisher>();
 
 // Constants
-const loginUseCase = () => new LoginUseCase(logProviderMock, authProviderMock);
-const email = "nikolatesla@elion.com";
-const passwordB64 = StringUtil.encodeBase64("HelloWorld8+");
+const loginUseCase = () => new LoginUseCase(logProviderMock, authProviderMock, eventPublisherMock);
+const passwordB64 = StringUtil.encodeBase64(MockConstants.EXAMPLE_PASSWORD);
 const jwt =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
 const tokenExpirationTime = 3600;
@@ -59,7 +62,10 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64: undefined });
+    const result = await loginUseCase().execute({
+      email: MockConstants.USER_EMAIL,
+      passwordB64: undefined,
+    });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -75,7 +81,10 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
+    const result = await loginUseCase().execute({
+      email: MockConstants.USER_EMAIL,
+      passwordB64: passwordB64 as string,
+    });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -87,7 +96,10 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
+    const result = await loginUseCase().execute({
+      email: MockConstants.USER_EMAIL,
+      passwordB64: passwordB64 as string,
+    });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -99,9 +111,13 @@ describe("when try to login", () => {
     const user = new UserMock().withEmail().withFirstName().withGender().build();
     authProviderMock.login.mockResolvedValueOnce(user);
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
+    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
-    const result = await loginUseCase().execute({ email, passwordB64: passwordB64 as string });
+    const result = await loginUseCase().execute({
+      email: MockConstants.USER_EMAIL,
+      passwordB64: passwordB64 as string,
+    });
 
     // Assert
     const data = result.data as TokenDto;

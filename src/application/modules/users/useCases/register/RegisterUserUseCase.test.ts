@@ -1,6 +1,8 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
+import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
@@ -14,11 +16,14 @@ import { UserMock } from "../../../../mocks/User.mock";
 import { IUserDto } from "../../dtos/User.dto";
 import { RegisterUserUseCase } from "./index";
 import { mock } from "jest-mock-extended";
+import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();
 const userRepositoryMock = mock<IUSerRepository>();
 const workerProviderMock = mock<IWorkerProvider>();
+const eventPublisherMock = mock<IEventPublisher>();
+const evenQueueMock = mock<IEventQueue>();
 
 // Builders
 const userBuilder = () => new UserMock();
@@ -27,7 +32,13 @@ const applicationErrorBuilder = new ApplicationErrorMock();
 
 // Constants
 const registerUserUseCase = () =>
-  new RegisterUserUseCase(logProviderMock, userRepositoryMock, workerProviderMock);
+  new RegisterUserUseCase(
+    logProviderMock,
+    userRepositoryMock,
+    workerProviderMock,
+    eventPublisherMock,
+    evenQueueMock,
+  );
 
 describe("when try to register user", () => {
   beforeAll(() => {
@@ -210,6 +221,8 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(createdUser);
     workerProviderMock.executeTask.mockResolvedValueOnce("encrypted-password");
+    evenQueueMock.push.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
     const result = await registerUserUseCase().execute(userDto);
