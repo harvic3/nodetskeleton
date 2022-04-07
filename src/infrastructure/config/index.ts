@@ -47,13 +47,13 @@ export default {
   Services: {
     MessageBus: {
       Host: process.env.MESSAGE_BUS_CONNECTION_HOST || "localhost",
-      Port: Number(process.env.MESSAGE_BUS_CONNECTION_PORT || 6379),
-      DbIndex: Number(process.env.MESSAGE_BUS_DB_INDEX || 0),
+      Port: Number(process.env.MESSAGE_BUS_CONNECTION_PORT) || 6379,
+      DbIndex: Number(process.env.MESSAGE_BUS_DB_INDEX) || 0,
     },
     MessageQueue: {
       Host: process.env.MESSAGE_QUEUE_CONNECTION_HOST || "localhost",
-      Port: Number(process.env.MESSAGE_QUEUE_CONNECTION_PORT || 6379),
-      DbIndex: Number(process.env.MESSAGE_QUEUE_DB_INDEX || 1),
+      Port: Number(process.env.MESSAGE_QUEUE_CONNECTION_PORT) || 6379,
+      DbIndex: Number(process.env.MESSAGE_QUEUE_DB_INDEX) || 1,
     },
   },
   Params: {
