@@ -2,6 +2,7 @@ import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useC
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
+import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
@@ -45,7 +46,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     email: string,
     passwordB64: string,
   ): Promise<TryResult<User>> {
-    const encryptedPassword = Encryption.encrypt(`${email}-${passwordB64}`);
+    const encryptedPassword = Encryption.encrypt(new PasswordBuilder(email, passwordB64).value);
     const authenticatedResult = await TryWrapper.syncExec(
       this.authProvider.login(email, encryptedPassword),
     );

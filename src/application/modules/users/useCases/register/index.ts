@@ -5,12 +5,14 @@ import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvi
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { ChannelNameEnum } from "../../../../shared/messaging/ChannelName.enum";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
+import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
 import { TopicNameEnum } from "../../../../shared/messaging/TopicName.enum";
 import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
+import { TypeParser } from "../../../../../domain/shared/utils/TypeParser";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -18,8 +20,8 @@ import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
-import { User } from "../../../../../domain/user/User";
 import { IUserDto, UserDto } from "../../dtos/User.dto";
+import { User } from "../../../../../domain/user/User";
 
 export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   private readonly queueBus: IQueueBus;
@@ -110,7 +112,10 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   private async encryptPassword(user: IUser): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: `${(user.email as Email).value}-${(user as User).password}`,
+      text: new PasswordBuilder(
+        TypeParser.cast<Email>(user.email).value as string,
+        TypeParser.cast<User>(user as User).password as string,
+      ).value,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
