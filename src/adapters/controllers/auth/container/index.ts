@@ -1,4 +1,4 @@
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
 import { authProvider, logProvider } from "../../../providers/container";
 

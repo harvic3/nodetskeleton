@@ -1,5 +1,5 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import { userRepository } from "../../../repositories/container";
 import { logProvider, workerProvider } from "../../../providers/container";
 

@@ -16,6 +16,7 @@ type EntryPointHandler = (
   res: Response,
   next: NextFunction,
 ) => Promise<void>;
+
 export {
   EntryPointHandler,
   Request,

@@ -9,7 +9,7 @@ import { ErrorHandler } from "..";
 export class ErrorHandlerMiddleware {
   handle: ErrorHandler = (
     err: ApplicationError,
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction,
   ) => {

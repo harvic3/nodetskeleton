@@ -13,7 +13,7 @@ const TOKEN_PARTS = 2;
 const TOKEN_POSITION_VALUE = 1;
 
 class AuthorizationMiddleware {
-  handle: Middleware = (req: Request, res: Response, next: NextFunction): void => {
+  handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
     if (req.isWhiteList) return next();
 
     const auth = req.headers.authorization;
@@ -21,7 +21,7 @@ class AuthorizationMiddleware {
     if (!auth)
       return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
-    const jwtParts = ArrayUtil.allOrDefault((auth as string).split(/\s+/));
+    const jwtParts = ArrayUtil.allOrDefault(auth.split(/\s+/));
     if (jwtParts.length !== TOKEN_PARTS)
       return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
