@@ -80,6 +80,7 @@ Is a tool for separating `controlled` from `uncontrolled errors` and allows you 
 
 ```ts
 throw new ApplicationError(
+	this.CONTEXT,
 	resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
 	error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
 	JSON.stringify(error),
@@ -118,12 +119,12 @@ return async function (err: ApplicationError, context: Context): Promise<void> {
 It is a basic `internationalization` tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
 
 ```ts
-import resources, { resourceKeys } from "../locals/index";
+import resources from "../locals/index";
 
-const simpleMessage = resources.get(resourceKeys.ITEM_PRODUCT_DOES_NOT_EXIST);
+const simpleMessage = resources.get(resources.keys.ITEM_PRODUCT_DOES_NOT_EXIST);
 
-const enrichedMessage = resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-	missingParams: keysNotFound.join(", "),
+const enrichedMessage = resources.getWithParams(resources.keys.SOME_PARAMETERS_ARE_MISSING, {
+	missingParams: keysNotFound.join(StringUtil.COMMA_SPACE_SEPARATOR),
 });
 
 // The contents of the local files are as follows:
@@ -148,7 +149,7 @@ export default {
 */
 
 // You can add enriched messages according to your own needs, for example:
-const yourEnrichedMessage = resources.getWithParams(resourceKeys.YOUR_OWN_NEED, {
+const yourEnrichedMessage = resources.getWithParams(resources.keys.YOUR_OWN_NEED, {
 	name: firstName, lastName, age: userAge
 });
 //
@@ -158,7 +159,7 @@ For use it in any UseCase you can do something like:
 
 ```ts
 result.setError(
-	this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
+	this.resources.get(this.resources.keys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
 	this.applicationStatus.INTERNAL_SERVER_ERROR,
 );
 ```
@@ -273,29 +274,40 @@ Its main function is to avoid you having to write the same code in every use cas
 The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
 
 ```ts
-import resources, { resourceKeys, Resources } from "../locals/index";
+import messageResources, { Resources } from "../locals/messages/index";
+import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
-import * as applicationStatusCodes from "../status/applicationStatusCodes.json";
+import applicationStatus from "../status/applicationStatus";
+import wordResources from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
+import { Throw } from "../errors/Throw";
+import { IResult } from "result-tsk";
+export { Validator, Resources };
 
 export abstract class BaseUseCase<T> {
-  constructor() {
-    this.mapper = mapper;
-    this.resources = resources;
-    this.validator = new Validator(
-      resources,
-      resourceKeys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatusCode.BAD_REQUEST,
-    );
-  }
   mapper: IMap;
   validator: Validator;
-  resources: Resources;
-  resourceKeys = resourceKeys;
-  applicationStatusCodes = applicationStatusCodes;
+  appMessages: Resources;
+  appWords: Resources;
+  applicationStatus = applicationStatus;
 
-	abstract execute(args?: T): Promise<IResult>;
+  constructor(public readonly CONTEXT: string, public readonly logProvider: ILogProvider) {
+    this.mapper = mapper;
+    this.appMessages = messageResources;
+    this.appWords = wordResources;
+    this.validator = new Validator(
+      messageResources,
+      messageResources.keys.SOME_PARAMETERS_ARE_MISSING,
+      applicationStatus.INVALID_INPUT,
+    );
+  }
+
+  handleResultError(result: IResult): void {
+    Throw.when(this.CONTEXT, !!result?.error, result.error, result.statusCode);
+  }
+
+  abstract execute(args?: T): Promise<IResult>;
 }
 ```
 
@@ -741,7 +753,10 @@ For cpu intensive tasks you have the possibility to use the `WorkerProvider` whi
 private async encryptPassword(user: User): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: `${user.email}-${user.password}`,
+      text: new PasswordBuilder(
+        TypeParser.cast<Email>(user.email).value as string,
+        TypeParser.cast<User>(user as User).password as string,
+      ).value,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
