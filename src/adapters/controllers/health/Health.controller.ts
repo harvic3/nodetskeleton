@@ -15,7 +15,7 @@ class HealthController extends BaseController {
   }
 
   pong: EntryPointHandler = async (
-    req: Request | RequestBase,
+    _req: Request | RequestBase,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {

@@ -27,7 +27,8 @@ export class WorkerProvider extends BaseProvider implements IWorkerProvider {
       });
     });
 
-    if (agent.error) throw new ApplicationError(WorkerProvider.name, agent.message, agent.statusCode);
+    if (agent.error)
+      throw new ApplicationError(WorkerProvider.name, agent.message, agent.statusCode);
 
     return Promise.resolve(taskResult as ET);
   }
