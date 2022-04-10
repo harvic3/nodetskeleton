@@ -3,8 +3,10 @@ import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDiction
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
+import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { TypeParser } from "../../../../../domain/shared/utils/TypeParser";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -12,8 +14,8 @@ import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
-import { User } from "../../../../../domain/user/User";
 import { IUserDto, UserDto } from "../../dtos/User.dto";
+import { User } from "../../../../../domain/user/User";
 
 export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   constructor(
@@ -97,7 +99,10 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   private async encryptPassword(user: IUser): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: `${(user.email as Email).value}-${(user as User).password}`,
+      text: new PasswordBuilder(
+        TypeParser.cast<Email>(user.email).value as string,
+        TypeParser.cast<User>(user as User).password as string,
+      ).value,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };
