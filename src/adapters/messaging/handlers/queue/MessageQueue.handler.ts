@@ -5,7 +5,7 @@ import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import { IMessageQueueHandler, QueueArgs } from "./IMessageQueue.handler";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
-import { Container } from "../../../../infrastructure/ioc/Container";
+import { Container } from "../../../../infrastructure/dic/Container";
 import queueMessageUseCaseContainer from "./container";
 
 

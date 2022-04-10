@@ -1,5 +1,5 @@
 import { IEventPublisher } from "../../../../application/shared/messaging/bus/IEventPublisher";
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
 import busContainer, { EventClientEnum } from "../../../messaging/bus/container";
 import { authProvider, logProvider } from "../../../providers/container";

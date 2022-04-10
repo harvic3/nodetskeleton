@@ -1,7 +1,7 @@
 import busContainer, { EventClientEnum, EventPublisher } from "../../../messaging/bus/container";
 import queueContainer, { EventQueue, QueueClientEnum } from "../../../messaging/queue/container";
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import { logProvider, workerProvider } from "../../../providers/container";
 import { userRepository } from "../../../repositories/container";
 

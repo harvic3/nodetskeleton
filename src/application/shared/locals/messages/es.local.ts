@@ -1,5 +1,6 @@
 export default {
   SOMETHING_WENT_WRONG: "Oh, lo sentimos, algo no salió bien con esta acción!",
+  RESOURCE_NOT_FOUND: "Recurso no encontrado!",
   SOME_PARAMETERS_ARE_MISSING: "Faltan algunos parámetros: {{missingParams}}.",
   UNKNOWN_RESPONSE_STATUS: "Estado de respuesta del servidor desconocido.",
   TOOL_HAS_NOT_BEEN_INITIALIZED: "La herramienta {{toolName}} no ha sido configurada.",

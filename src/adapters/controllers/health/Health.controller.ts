@@ -1,11 +1,11 @@
-import container, { PongUseCase } from "./container/index";
+import container, { PongUseCase, NotFoundUseCase } from "./container/index";
 import BaseController, {
-  EntryPointHandler,
-  RequestHandler,
-  NextFunction,
-  RequestBase,
-  Response,
   Request,
+  Response,
+  RequestBase,
+  NextFunction,
+  RequestHandler,
+  EntryPointHandler,
 } from "../base/Base.controller";
 
 class HealthController extends BaseController {
@@ -20,6 +20,14 @@ class HealthController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     return this.handleResultData(res, next, container.get<PongUseCase>(PongUseCase.name));
+  };
+
+  resourceNotFound: EntryPointHandler = async (
+    _req: Request | RequestBase,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    return this.handleResult(res, next, container.get<NotFoundUseCase>(NotFoundUseCase.name));
   };
 
   protected initializeRoutes(): void {

@@ -1,4 +1,5 @@
 import BaseController, { ServiceContext } from "../../adapters/controllers/base/Base.controller";
+import healthController from "../../adapters/controllers/health/Health.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
@@ -54,6 +55,7 @@ export default class AppWrapper {
         console.log(`${controller?.constructor?.name} was initialized`);
         this.app.use(AppSettings.ServerRoot, controller.router);
       });
+    this.app.use(healthController.resourceNotFound);
     this.loadErrorHandler();
   }
 
@@ -77,6 +79,7 @@ export default class AppWrapper {
       console.log(`${controller?.constructor?.name} was loaded`);
       this.app.use(AppSettings.ServerRoot, (controller as BaseController)?.router);
     }
+    this.app.use(healthController.resourceNotFound);
     this.loadErrorHandler();
 
     return Promise.resolve();

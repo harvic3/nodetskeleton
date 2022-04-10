@@ -1,4 +1,4 @@
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import messageQueueHandler from "../../handlers/queue/MessageQueue.handler";
 import { QueueListener } from "../listener/QueueListener";
 import { QueueClientEnum } from "../QueueClient.enum";

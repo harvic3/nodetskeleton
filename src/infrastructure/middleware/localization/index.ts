@@ -5,7 +5,7 @@ import config from "../../config";
 import { Middleware } from "..";
 
 export class LocalizationMiddleware {
-  handle: Middleware = (req: Request, res: Response, next: NextFunction) => {
+  handle: Middleware = (req: Request, _res: Response, next: NextFunction) => {
     const language = req.headers["accept-language"] || config.Params.DefaultLang;
     resources.init(language);
     words.init(language);

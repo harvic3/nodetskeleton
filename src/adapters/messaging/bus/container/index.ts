@@ -1,4 +1,4 @@
-import { Container, IContainerDictionary } from "../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
 import { EventSubscriber } from "../subscriber/EventSubscriber";
 import { EventPublisher } from "../publisher/EventPublisher";
 import { EventListener } from "../listener/EventListener";

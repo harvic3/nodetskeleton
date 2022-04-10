@@ -1,4 +1,4 @@
-import { Container, IContainerDictionary } from "../../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../../infrastructure/dic/Container";
 import { QueueClientEnum } from "../../../queue/QueueClient.enum";
 import { tskQueueEventEmitter } from "../../../queue/container";
 

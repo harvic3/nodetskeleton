@@ -26,7 +26,7 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
     const founded = await userModel.getByAuthentication(email, encryptedPassword);
     if (!founded) return Promise.reject();
 
-    (founded as User).email = new Email(TypeParser.cast<string>(founded.email));
+    founded.email = new Email(TypeParser.cast<string>(founded.email));
     return Promise.resolve(founded);
   }
 }

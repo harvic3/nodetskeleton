@@ -1,6 +1,6 @@
 import { ManageUserCreatedEventUseCase } from "../../../../../application/modules/auth/messaging/queue/useCases/userCreatedEvent";
 import { ManageLastLoginEventUseCase } from "../../../../../application/modules/users/messaging/queue/useCases/lastLoginEvent";
-import { Container, IContainerDictionary } from "../../../../../infrastructure/ioc/Container";
+import { Container, IContainerDictionary } from "../../../../../infrastructure/dic/Container";
 import { userRepository } from "../../../../repositories/container";
 import { logProvider } from "../../../../providers/container";
 
