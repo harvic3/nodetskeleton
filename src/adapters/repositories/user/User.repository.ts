@@ -12,7 +12,7 @@ export class UserRepository extends BaseRepository implements IUSerRepository {
     const founded = await userModel.getByEmail(email);
     if (!founded) return Promise.resolve(null);
 
-    (founded as User).email = new Email(TypeParser.cast<string>(founded.email));
+    founded.email = new Email(TypeParser.cast<string>(founded.email));
     return Promise.resolve(founded);
   }
 

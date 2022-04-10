@@ -45,7 +45,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     email: string,
     passwordB64: string,
   ): Promise<TryResult<User>> {
-    const encryptedPassword = Encryption.encrypt(`${email.toLowerCase()}-${passwordB64}`);
+    const encryptedPassword = Encryption.encrypt(`${email}-${passwordB64}`);
     const authenticatedResult = await TryWrapper.syncExec(
       this.authProvider.login(email, encryptedPassword),
     );
