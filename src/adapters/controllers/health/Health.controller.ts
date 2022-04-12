@@ -1,37 +1,36 @@
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
 import BaseController, {
-  Request,
-  Response,
-  RequestBase,
-  NextFunction,
-  RequestHandler,
+  IRequest,
+  IResponse,
+  INextFunction,
   EntryPointHandler,
+  IRouterType,
 } from "../base/Base.controller";
 
 class HealthController extends BaseController {
   constructor() {
     super();
-    this.initializeRoutes();
   }
 
   pong: EntryPointHandler = async (
-    _req: Request | RequestBase,
-    res: Response,
-    next: NextFunction,
+    _req: IRequest,
+    res: IResponse,
+    next: INextFunction,
   ): Promise<void> => {
     return this.handleResultData(res, next, container.get<PongUseCase>(PongUseCase.name));
   };
 
   resourceNotFound: EntryPointHandler = async (
-    _req: Request | RequestBase,
-    res: Response,
-    next: NextFunction,
+    _req: IRequest,
+    res: IResponse,
+    next: INextFunction,
   ): Promise<void> => {
     return this.handleResult(res, next, container.get<NotFoundUseCase>(NotFoundUseCase.name));
   };
 
-  protected initializeRoutes(): void {
-    this.router.get("/ping", this.pong as RequestHandler);
+  initializeRoutes(router: IRouterType): void {
+    this.router = router();
+    this.router.get("/ping", this.pong);
   }
 }
 

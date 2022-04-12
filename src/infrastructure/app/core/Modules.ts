@@ -1,15 +1,17 @@
-export { IRequest as Request } from "./IRequest";
+import * as appServer from "express";
+
+const Router = appServer.Router;
+
 export {
-  ServerApp,
-  bodyParser,
-  Router,
-  RouterType,
+  Request,
   Response,
-  RequestBase,
   NextFunction,
   Application,
+  Router,
   RequestHandler,
   RequestParamHandler,
   ErrorRequestHandler,
+  json as bodyParser,
   urlencoded,
-} from "./ServerModules";
+} from "express";
+export { appServer as ServerApp };

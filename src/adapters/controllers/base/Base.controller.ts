@@ -1,56 +1,39 @@
 import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
-import { ServiceContext } from "../../../infrastructure/app/server/ServiceContext";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
-import {
-  Router,
-  Request,
-  Response,
-  RouterType,
-  RequestBase,
-  NextFunction,
-  RequestHandler,
-} from "../../../infrastructure/app/core/Modules";
+import { ServiceContext } from "./context/ServiceContext";
+import { INextFunction } from "./context/INextFunction";
+import { IRouterType } from "./context/IRouterType";
+import { IResponse } from "./context/IResponse";
+import { IRequest } from "./context/IRequest";
 
-type EntryPointHandler = (
-  req: Request | RequestBase,
-  res: Response,
-  next: NextFunction,
-) => Promise<void>;
+type EntryPointHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
 
-export {
-  EntryPointHandler,
-  Request,
-  RequestBase,
-  Response,
-  NextFunction,
-  RequestHandler,
-  ServiceContext,
-};
+export { EntryPointHandler, IRequest, IResponse, INextFunction, IRouterType, ServiceContext };
 
 export default abstract class BaseController {
-  router: RouterType;
+  router?: IRouterType;
 
   constructor(readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON) {
-    this.router = Router();
+    // this.router = Router();
   }
 
-  private getResult(res: Response, result: IResult): void {
+  private getResult(res: IResponse, result: IResult): void {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
   }
 
-  private getResultDto(res: Response, result: IResult): void {
+  private getResultDto(res: IResponse, result: IResult): void {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result.toResultDto());
   }
 
-  private getResultData(res: Response, result: IResult): void {
+  private getResultData(res: IResponse, result: IResult): void {
     res
       .status(HttpStatusResolver.getCode(result.statusCode.toString()))
       .json(result.message ? result.toResultDto() : result.toResultDto().data);
   }
 
   async handleResult<T>(
-    res: Response,
-    next: NextFunction,
+    res: IResponse,
+    next: INextFunction,
     useCase: BaseUseCase<T>,
     args?: T,
   ): Promise<void> {
@@ -62,8 +45,8 @@ export default abstract class BaseController {
   }
 
   async handleResultDto<T>(
-    res: Response,
-    next: NextFunction,
+    res: IResponse,
+    next: INextFunction,
     useCase: BaseUseCase<T>,
     args?: T,
   ): Promise<void> {
@@ -75,8 +58,8 @@ export default abstract class BaseController {
   }
 
   async handleResultData<T>(
-    res: Response,
-    next: NextFunction,
+    res: IResponse,
+    next: INextFunction,
     useCase: BaseUseCase<T>,
     args?: T,
   ): Promise<void> {
@@ -87,5 +70,5 @@ export default abstract class BaseController {
     }
   }
 
-  protected abstract initializeRoutes(): void;
+  abstract initializeRoutes(router: IRouterType): void;
 }

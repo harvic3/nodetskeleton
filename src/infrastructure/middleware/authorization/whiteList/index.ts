@@ -1,7 +1,9 @@
+import { IRequest } from "../../../../adapters/controllers/base/context/IRequest";
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
+import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
+import { Middleware } from "../../types";
 import config from "../../../config";
-import { Middleware } from "../..";
 
 const ROUTE_WHITE_LIST = [
   `${config.Server.Root}/ping`,
@@ -11,12 +13,12 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    req.isWhiteList = BooleanUtil.NOT;
+    TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.NOT;
 
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === req.path);
 
     if (existsUnauthorizedPath) {
-      req.isWhiteList = BooleanUtil.YES;
+      TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.YES;
     }
 
     return next();
