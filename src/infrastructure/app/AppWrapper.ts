@@ -19,22 +19,23 @@ import { sync } from "fast-glob";
 import config from "../config";
 import helmet from "helmet";
 import {
-  ServerApp,
-  Application,
+  Router,
+  Express,
+  AppServer,
   bodyParser,
   urlencoded,
+  Application,
   RequestHandler,
   ErrorRequestHandler,
-  Router,
 } from "./core/Modules";
 
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
-  app: Application;
+  app: Express;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
-    this.app = ServerApp();
+    this.app = AppServer();
     this.app.set("trust proxy", BooleanUtil.YES);
     this.loadMiddleware();
     console.log(

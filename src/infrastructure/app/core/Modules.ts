@@ -1,6 +1,4 @@
-import * as appServer from "express";
-
-const Router = appServer.Router;
+import * as AppServer from "express";
 
 export {
   Request,
@@ -13,5 +11,6 @@ export {
   ErrorRequestHandler,
   json as bodyParser,
   urlencoded,
+  Express,
 } from "express";
-export { appServer as ServerApp };
+export { AppServer };
