@@ -1,3 +1,4 @@
+import { ServiceContext } from "../../../adapters/controllers/base/context/ServiceContext";
 import { ChannelNameEnum } from "../../../application/shared/messaging/ChannelName.enum";
 import { Listener, MessageBus, Publisher, Subscriber } from "../../messaging/MessageBus";
 import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueListener";
@@ -46,9 +47,19 @@ export class MessagingClient {
   }
 
   private setSubscriptions(): void {
-    busContainer
-      .get<EventSubscriber>(EventClientEnum.TSK_BUS_SUBSCRIBER)
-      .subscribe(ChannelNameEnum.QUEUE_USERS);
+    const channelsToSuscribe: ChannelNameEnum[] = [];
+    if (AppSettings.ServiceContext === ServiceContext.USERS)
+      channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
+    if (AppSettings.ServiceContext === ServiceContext.SECURITY)
+      channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
+    if (AppSettings.ServiceContext === ServiceContext.NODE_TS_SKELETON) {
+      channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
+      channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
+    }
+
+    channelsToSuscribe.forEach((channel) => {
+      busContainer.get<EventSubscriber>(EventClientEnum.TSK_BUS_SUBSCRIBER).subscribe(channel);
+    });
   }
 
   private initializeBusSockets(): void {

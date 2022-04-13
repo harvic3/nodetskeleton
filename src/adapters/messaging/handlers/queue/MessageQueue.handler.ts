@@ -48,7 +48,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
           ) as string,
         )
         .execute(this.eventQueue)
-        .then((result) => {
+        .then((_result) => {
           this.removeChannel(args.queueName);
           return Promise.resolve();
         })
