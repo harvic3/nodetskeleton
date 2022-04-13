@@ -13,9 +13,7 @@ export { EntryPointHandler, IRequest, IResponse, INextFunction, IRouterType, Ser
 export default abstract class BaseController {
   router?: IRouterType;
 
-  constructor(readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON) {
-    // this.router = Router();
-  }
+  constructor(readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON) {}
 
   private getResult(res: IResponse, result: IResult): void {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
