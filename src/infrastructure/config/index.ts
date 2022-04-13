@@ -1,5 +1,5 @@
+import { ServiceContext } from "../../adapters/controllers/base/context/ServiceContext";
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
-import { ServiceContext } from "../app/server/ServiceContext";
 import { Normalize } from "./Normalize";
 import "dotenv/config";
 

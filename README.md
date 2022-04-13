@@ -502,9 +502,14 @@ For `ioc` our `container` strategy manage the `instances` of the `UseCases` for 
 ```ts
 // For ExpressJs
 import { GetFeelingTextUseCase } from "../../../application/modules/feeling/useCases/getFeeling";
-import { Request, Response, NextFunction } from "../../../infrastructure/server/CoreModules";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
-import BaseController from "../BaseController";
+import BaseController, {
+  IRequest,
+  IResponse,
+  INextFunction,
+  EntryPointHandler,
+  IRouterType,
+} from "../base/Base.controller";
 import container, {
   anotherUseCaseOrService,
 } from "./container/index";
@@ -512,29 +517,29 @@ import container, {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.initializeRoutes();
 	}
 	/*...*/
-	// *Way One*
+	// *Way One* RECOMMENDED
 	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		try {
-			const textDto: TextDto = req.body;
-			this.handleResult(res, await container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name).execute(textDto));
-		} catch (error) {
-			next(error);
-		}
+		const textDto: TextDto = req.body;
+		return this.handleResult(
+			res,
+			next,
+			container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+			textDto,
+    );
 	};
 
 	// *Way Two*
 	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		try {
-			const textDto: TextDto = req.body;
-			this.handleResult(res, await getFeelingTextUseCase.execute(textDto));
-		} catch (error) {
-			next(error);
-		}
+		const textDto: TextDto = req.body;
+		return this.handleResult(res, next, getFeelingTextUseCase, textDto);
 	};
-	/*...*/
+
+	initializeRoutes(router: IRouterType): void {
+		this.router = router();
+		this.router.get("/feeling", this.getFeelingText);
+  }
 }
 ```
 
@@ -569,7 +574,7 @@ The location of the `controllers` must be in the `adapters` directory, there you
 The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
 
 ```ts
-// Controller example with export default
+// Controller example with default export
 import BaseController, { Context } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import container, {
@@ -579,14 +584,12 @@ import container, {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.initializeRoutes();
 	}
 	/*...*/
 }
 
-const instance = new TextFeelingController();
 // You can see the default export
-export default instance;
+export default new TextFeelingController();
 ```
 Example of the handling of the `controllers` in the `index` file of our application:
 
@@ -606,17 +609,18 @@ const controllers: BaseController[] = [
 	/*...*/
 ];
 
-const app = new App(controllers);
+const appWrapper = new AppWrapper(controllers);
 /*...*/
 ```
 
 ### Routes
 
-The strategy is to manage the routes `within` the `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
+The strategy is to manage the routes `within` the same `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
 
 ```ts
 /*...*/
-private initializeRoutes() {
+initializeRoutes(router: IRouterType): void {
+  this.router = router();
 	this.router.post("/v1/cars", authorization(), this.create);
 	this.router.get("/v1/cars/:idMask", authorization(), this.get);
 	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -634,13 +638,20 @@ If you need to manage a `root path` in your `application` then this part is conf
 
 ```ts
 /*...*/
-private loadControllers(controllers: BaseController[]) {
-	controllers.forEach((controller) => {
-		// This is the line and the parameter comes from `config`.
-		controller.router.prefix(config.server.root);
-		this.app.use(controller.router.routes());
-		this.app.use(controller.router.allowedMethods());
-	});
+private loadControllersByConstructor(controllers: BaseController[]): void {
+	controllers
+		.filter(
+			(controller: BaseController) =>
+				controller.serviceContext === AppSettings.ServiceContext ||
+				controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+		)
+		.forEach((controller) => {
+			// This is the line and the parameter comes from `config`
+			controller.router.prefix(AppSettings.ServerRoot);
+			this.app.use(controller.router.routes());
+			this.app.use(controller.router.allowedMethods());
+			console.log(`${controller?.constructor?.name} was initialized`);
+		});
 }
 /*...*/
 ```
@@ -660,8 +671,15 @@ The controllers should be `exported as default` modules to make the handling of 
 
 ```ts
 // Controller example with default export
-import BaseController, { Request, Response, NextFunction } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import BaseController, {
+  IRequest,
+  IResponse,
+  INextFunction,
+  EntryPointHandler,
+  IRouterType,
+  ServiceContext,
+} from "../base/Base.controller";
 import container, {
   anotherUseCaseOrService,
 } from "./container/index";
@@ -669,14 +687,12 @@ import container, {
 class TextFeelingController extends BaseController {
 	public constructor() {
 		super();
-		this.initializeRoutes();
 	}
 	/*...*/
 }
 
-const instance = new TextFeelingController();
 // You can see the default export
-export default instance;
+export default new TextFeelingController();;
 // Or just use export default new TextFeelingController();
 ```
 Example of the handling of the `controllers` in the `index` file of our application:
@@ -684,9 +700,9 @@ Example of the handling of the `controllers` in the `index` file of our applicat
 ```ts
 /*...*/
 // Region controllers
-import productController from "./adapters/controllers/product/Product.controller";
 import shoppingCarController from "./adapters/controllers/shoppingCart/ShoppingCar.controller";
 import categoryController from "./adapters/controllers/category/CategoryController";
+import productController from "./adapters/controllers/product/Product.controller";
 /*...*/
 // End controllers
 
@@ -697,7 +713,7 @@ const controllers: BaseController[] = [
 	/*...*/
 ];
 
-const app = new App(controllers);
+const appWrapper = new AppWrapper(controllers);
 /*...*/
 ```
 
@@ -707,7 +723,8 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 
 ```ts
 /*...*/
-private initializeRoutes() {
+initializeRoutes(router: IRouterType): void {
+  this.router = router();
 	this.router.post("/v1/cars", authorization(), this.create);
 	this.router.get("/v1/cars/:idMask", authorization(), this.get);
 	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -725,11 +742,21 @@ If you need to manage a `root path` in your `application` then this part is conf
 
 ```ts
 /*...*/
-private loadControllers(controllers: BaseController[]): void {
-	controllers.forEach((controller) => {
-		// This is the line and the parameter comes from `config`.
-		this.app.use(config.server.root, controller.router);
-	});
+private loadControllersByConstructor(controllers: BaseController[]): void {
+	controllers
+		.filter(
+			(controller: BaseController) =>
+				controller.serviceContext === AppSettings.ServiceContext ||
+				controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+		)
+		.forEach((controller) => {
+			controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
+			// This is the line and the parameter comes from `config`.
+			this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
+			console.log(`${controller?.constructor?.name} was initialized`);
+		});
+	this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
+	this.loadErrorHandler();
 }
 /*...*/
 ```
