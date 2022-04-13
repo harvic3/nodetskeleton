@@ -14,16 +14,16 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
-		1. [Errors](#errors)
-		1. [Locals](#locals)
-		1. [Mapper](#mapper)
-		1. [UseCase](#usecase)
-		1. [Validator](#validator)
+    1. [Errors](#errors)
+    1. [Locals](#locals)
+    1. [Mapper](#mapper)
+    1. [UseCase](#usecase)
+    1. [Validator](#validator)
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
   1. [Using NodeTskeleton 👾](#using-nodetskeleton)
-		1. [Using with KoaJs 🦋](#using-with-koajs)
-		1. [Using with ExpressJs 🐛](#using-with-expressjs)
-		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
+    1. [Using with KoaJs 🦋](#using-with-koajs)
+    1. [Using with ExpressJs 🐛](#using-with-expressjs)
+    1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
   1. [Workers 🔄](#workers)
   1. [GraphQL ✡](#graphql)
   1. [Infrastructure 🏗️](#infrastructure)
@@ -80,10 +80,10 @@ Is a tool for separating `controlled` from `uncontrolled errors` and allows you 
 
 ```ts
 throw new ApplicationError(
-	this.CONTEXT,
-	resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-	error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
-	JSON.stringify(error),
+  this.CONTEXT,
+  resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+  error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
+  JSON.stringify(error),
 );
 ```
 
@@ -91,11 +91,11 @@ Or if the pointer of your program is in the scope of your UseCase you can use th
 
 ```ts
 if (!someCondition) { // Or any validation result
-	result.setError(
-		this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-		this.applicationStatus.INTERNAL_SERVER_ERROR,
-	)
-	this.handleResultError(result);
+  result.setError(
+    this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+    this.applicationStatus.INTERNAL_SERVER_ERROR,
+  )
+  this.handleResultError(result);
 }
 ```
 
@@ -103,12 +103,12 @@ The function of this `class` will be reflected in your `error handler` as it wil
 
 ```ts
 return async function (err: ApplicationError, context: Context): Promise<void> {
-	const result = new Result();
-	if (err?.name === "ApplicationError") {
-		console.log("Controlled application error", err.message);
-	} else {
-		console.log("No controlled application error", err);
-	}
+  const result = new Result();
+  if (err?.name === "ApplicationError") {
+    console.log("Controlled application error", err.message);
+  } else {
+    console.log("No controlled application error", err);
+  }
 };
 ```
 
@@ -124,33 +124,33 @@ import resources from "../locals/index";
 const simpleMessage = resources.get(resources.keys.ITEM_PRODUCT_DOES_NOT_EXIST);
 
 const enrichedMessage = resources.getWithParams(resources.keys.SOME_PARAMETERS_ARE_MISSING, {
-	missingParams: keysNotFound.join(StringUtil.COMMA_SPACE_SEPARATOR),
+  missingParams: keysNotFound.join(StringUtil.COMMA_SPACE_SEPARATOR),
 });
 
 // The contents of the local files are as follows:
 /* 
 // en: 
 export default {
-	...
-	SOME_PARAMETERS_ARE_MISSING: "Some parameters are missing: {{missingParams}}.",
-	ITEM_PRODUCT_DOES_NOT_EXIST: "The item product does not exist.",
-	YOUR_OWN_NEED: "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
-	...
+  ...
+  SOME_PARAMETERS_ARE_MISSING: "Some parameters are missing: {{missingParams}}.",
+  ITEM_PRODUCT_DOES_NOT_EXIST: "The item product does not exist.",
+  YOUR_OWN_NEED: "You are the user {{name}}, your last name is {{lastName}} and your age is {{age}}.",
+  ...
 }
 // es: 
 export default {
-	...
-	SOME_PARAMETERS_ARE_MISSING: "Faltan algunos parámetros: {{missingParams}}.",
-	ITEM_PRODUCT_DOES_NOT_EXIST: "El item del producto no existe.",
-	YOUR_OWN_NEED: "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
-	...
+  ...
+  SOME_PARAMETERS_ARE_MISSING: "Faltan algunos parámetros: {{missingParams}}.",
+  ITEM_PRODUCT_DOES_NOT_EXIST: "El item del producto no existe.",
+  YOUR_OWN_NEED: "Usted es el usuario {{name}}, su apellido es {{lastName}} y su edad es {{age}}.",
+  ...
 }
 ...
 */
 
 // You can add enriched messages according to your own needs, for example:
 const yourEnrichedMessage = resources.getWithParams(resources.keys.YOUR_OWN_NEED, {
-	name: firstName, lastName, age: userAge
+  name: firstName, lastName, age: userAge
 });
 //
 ```
@@ -159,8 +159,8 @@ For use it in any UseCase you can do something like:
 
 ```ts
 result.setError(
-	this.resources.get(this.resources.keys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
-	this.applicationStatus.INTERNAL_SERVER_ERROR,
+  this.resources.get(this.resources.keys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
+  this.applicationStatus.INTERNAL_SERVER_ERROR,
 );
 ```
 
@@ -181,14 +181,14 @@ This tool maps objects or arrays of objects, for example:
 ```ts
 // For object
 const textFeelingDto = this.mapper.mapObject<TextFeeling, TextFeelingDto>(
-	textFeeling,
-	new TextFeelingDto(),
+  textFeeling,
+  new TextFeelingDto(),
 );
 
 // For array object
 const productsDto: ProductDto[] = this.mapper.mapArray<Product, ProductDto>(
-	products,
-	() => this.mapper.activator(ProductDto),
+  products,
+  () => this.mapper.activator(ProductDto),
 );
 ```
 
@@ -206,32 +206,32 @@ This tool is now available as an `NPM package`.
 
 ```ts
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
-	constructor(private productQueryService: IProductQueryService) {
-		super();
-	}
+  constructor(private productQueryService: IProductQueryService) {
+    super();
+  }
 
-	async execute(idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
-		// We create the instance of our type of result at the beginning of the use case.
-		const result = new Result<ProductDto>();
-		// With the resulting object we can control validations within other functions.
-		if (!this.validator.isValidEntry(result, { productMaskId: idMask })) {
-			return result;
-		}
-		const product: Product = await this.productQueryService.getByMaskId(idMask);
-		if (!product) {
-			// The result object helps us with the error response and the code.
-			result.setError(
-				this.resources.get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
-				this.applicationStatusCodes.NOT_FOUND,
-			);
-			return result;
-		}
-		const productDto = this.mapper.mapObject<Product, ProductDto>(product, new ProductDto());
-		// The result object also helps you with the response data.
-		result.setData(productDto, this.applicationStatusCodes.SUCCESS);
-		// And finally you give it back.
-		return result;
-	}
+  async execute(idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
+    // We create the instance of our type of result at the beginning of the use case.
+    const result = new Result<ProductDto>();
+    // With the resulting object we can control validations within other functions.
+    if (!this.validator.isValidEntry(result, { productMaskId: idMask })) {
+      return result;
+    }
+    const product: Product = await this.productQueryService.getByMaskId(idMask);
+    if (!product) {
+      // The result object helps us with the error response and the code.
+      result.setError(
+        this.resources.get(this.resourceKeys.PRODUCT_DOES_NOT_EXIST),
+        this.applicationStatusCodes.NOT_FOUND,
+      );
+      return result;
+    }
+    const productDto = this.mapper.mapObject<Product, ProductDto>(product, new ProductDto());
+    // The result object also helps you with the response data.
+    result.setData(productDto, this.applicationStatusCodes.SUCCESS);
+    // And finally you give it back.
+    return result;
+  }
 }
 ```
 
@@ -247,15 +247,15 @@ The `result` object can help you in unit tests as shown below:
 
 ```ts
 it("should return a 400 error if quantity is null or zero", async () => {
-	itemDto.quantity = null;
-	const result = await addUseCase.execute({ userUid, itemDto });
-	expect(result.success).toBeFalsy();
-	expect(result.error).toBe(
-		resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
-			missingParams: "quantity",
-		}),
-	);
-	expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
+  itemDto.quantity = null;
+  const result = await addUseCase.execute({ userUid, itemDto });
+  expect(result.success).toBeFalsy();
+  expect(result.error).toBe(
+    resources.getWithParams(resourceKeys.SOME_PARAMETERS_ARE_MISSING, {
+      missingParams: "quantity",
+    }),
+  );
+  expect(result.statusCode).toBe(resultCodes.BAD_REQUEST);
 });
 ```
 
@@ -325,8 +325,8 @@ export class LoginUseCase
   }
 
   async execute(params: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
-		// Your UseCase implementation
-	}
+    // Your UseCase implementation
+  }
 }
 
 // UseCase without input params
@@ -337,8 +337,8 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
   }
 
   async execute(): Promise<IResultT<User[]>> {
-		// Your UseCase implementation
-	}
+    // Your UseCase implementation
+  }
 }
 ```
 
@@ -351,24 +351,24 @@ The `validator` is a `very simple` but `dynamic tool` and with it you will be ab
 ```ts
 /*...*/
 async execute(params: { userUid: string, itemDto: CarItemDto }): Promise<IResult<CarItemDto>> {
-	const result = new Result<CarItemDto>();
-	if (
-		!this.validator.isValidEntry(result, {
-			User_Identifier: params.userUid,
-			Car_Item: params.itemDto,
-			Order_Id: params.itemDto?.orderId,
-			Product_Detail_Id: params.itemDto?.productDetailId,
-			Quantity: params.itemDto?.quantity,
-		})
-	) {
-		/* 
-		The error message on the result object will include a base message and will add to 
-		it all the parameter names that were passed on the object that do not have a valid value.
-		*/
-		return result;
-	}
-	/*...*/
-	return result;
+  const result = new Result<CarItemDto>();
+  if (
+    !this.validator.isValidEntry(result, {
+      User_Identifier: params.userUid,
+      Car_Item: params.itemDto,
+      Order_Id: params.itemDto?.orderId,
+      Product_Detail_Id: params.itemDto?.productDetailId,
+      Quantity: params.itemDto?.quantity,
+    })
+  ) {
+    /* 
+    The error message on the result object will include a base message and will add to 
+    it all the parameter names that were passed on the object that do not have a valid value.
+    */
+    return result;
+  }
+  /*...*/
+  return result;
 }
 /*...*/
 ```
@@ -433,15 +433,15 @@ const result = new Result();
 const validEmail = "carlsagan@orion.com";
 person.setEmail(validEmail);
 if (!validator.isValidEntry(result, {
-	Name: person.name,
-	Last_Name: person.lastName,
-	Age: [
-		() => greaterThan("Age", 25, person.age),
-		() => evenNumber("Age", person.age),
-	],
-	Email: [() => validateEmail(person.email)],
+  Name: person.name,
+  Last_Name: person.lastName,
+  Age: [
+    () => greaterThan("Age", 25, person.age),
+    () => evenNumber("Age", person.age),
+  ],
+  Email: [() => validateEmail(person.email)],
 })) {
-	return result;
+  return result;
 };
 // result.error would have the following message
 // "Some parameters are missing or not valid: The number Age must be greater than 25, The Age param should be even."
@@ -515,30 +515,30 @@ import container, {
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-	public constructor() {
-		super();
-	}
-	/*...*/
-	// *Way One* RECOMMENDED
-	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		const textDto: TextDto = req.body;
-		return this.handleResult(
-			res,
-			next,
-			container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
-			textDto,
+  public constructor() {
+    super();
+  }
+  /*...*/
+  // *Way One* RECOMMENDED
+  getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const textDto: TextDto = req.body;
+    return this.handleResult(
+      res,
+      next,
+      container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+      textDto,
     );
-	};
+  };
 
-	// *Way Two*
-	getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		const textDto: TextDto = req.body;
-		return this.handleResult(res, next, getFeelingTextUseCase, textDto);
-	};
+  // *Way Two*
+  getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const textDto: TextDto = req.body;
+    return this.handleResult(res, next, getFeelingTextUseCase, textDto);
+  };
 
-	initializeRoutes(router: IRouterType): void {
-		this.router = router();
-		this.router.get("/feeling", this.getFeelingText);
+  initializeRoutes(router: IRouterType): void {
+    this.router = router();
+    this.router.get("/feeling", this.getFeelingText);
   }
 }
 ```
@@ -582,10 +582,10 @@ import container, {
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-	public constructor() {
-		super();
-	}
-	/*...*/
+  public constructor() {
+    super();
+  }
+  /*...*/
 }
 
 // You can see the default export
@@ -603,10 +603,10 @@ import categoryController from "./adapters/controllers/category/CategoryControll
 // End controllers
 
 const controllers: BaseController[] = [
-	productController,
-	shoppingCarController,
-	categoryController,
-	/*...*/
+  productController,
+  shoppingCarController,
+  categoryController,
+  /*...*/
 ];
 
 const appWrapper = new AppWrapper(controllers);
@@ -621,13 +621,13 @@ The strategy is to manage the routes `within` the same `controller`, this allows
 /*...*/
 initializeRoutes(router: IRouterType): void {
   this.router = router();
-	this.router.post("/v1/cars", authorization(), this.create);
-	this.router.get("/v1/cars/:idMask", authorization(), this.get);
-	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
-	this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
-	this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
-	this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
-	/*...*/
+  this.router.post("/v1/cars", authorization(), this.create);
+  this.router.get("/v1/cars/:idMask", authorization(), this.get);
+  this.router.post("/v1/cars/:idMask", authorization(), this.buy);
+  this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
+  this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
+  this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
+  /*...*/
 }
 /*...*/
 ```
@@ -639,19 +639,19 @@ If you need to manage a `root path` in your `application` then this part is conf
 ```ts
 /*...*/
 private loadControllersByConstructor(controllers: BaseController[]): void {
-	controllers
-		.filter(
-			(controller: BaseController) =>
-				controller.serviceContext === AppSettings.ServiceContext ||
-				controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
-		)
-		.forEach((controller) => {
-			// This is the line and the parameter comes from `config`
-			controller.router.prefix(AppSettings.ServerRoot);
-			this.app.use(controller.router.routes());
-			this.app.use(controller.router.allowedMethods());
-			console.log(`${controller?.constructor?.name} was initialized`);
-		});
+  controllers
+    .filter(
+      (controller: BaseController) =>
+        controller.serviceContext === AppSettings.ServiceContext ||
+        controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+    )
+    .forEach((controller) => {
+      // This is the line and the parameter comes from `config`
+      controller.router.prefix(AppSettings.ServerRoot);
+      this.app.use(controller.router.routes());
+      this.app.use(controller.router.allowedMethods());
+      console.log(`${controller?.constructor?.name} was initialized`);
+    });
 }
 /*...*/
 ```
@@ -685,10 +685,10 @@ import container, {
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-	public constructor() {
-		super();
-	}
-	/*...*/
+  public constructor() {
+    super();
+  }
+  /*...*/
 }
 
 // You can see the default export
@@ -707,10 +707,10 @@ import productController from "./adapters/controllers/product/Product.controller
 // End controllers
 
 const controllers: BaseController[] = [
-	productController,
-	shoppingCarController,
-	categoryController,
-	/*...*/
+  productController,
+  shoppingCarController,
+  categoryController,
+  /*...*/
 ];
 
 const appWrapper = new AppWrapper(controllers);
@@ -725,13 +725,13 @@ The strategy is to manage the routes `within` the `controller`, this allows us a
 /*...*/
 initializeRoutes(router: IRouterType): void {
   this.router = router();
-	this.router.post("/v1/cars", authorization(), this.create);
-	this.router.get("/v1/cars/:idMask", authorization(), this.get);
-	this.router.post("/v1/cars/:idMask", authorization(), this.buy);
-	this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
-	this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
-	this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
-	/*...*/
+  this.router.post("/v1/cars", authorization(), this.create);
+  this.router.get("/v1/cars/:idMask", authorization(), this.get);
+  this.router.post("/v1/cars/:idMask", authorization(), this.buy);
+  this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
+  this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
+  this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
+  /*...*/
 }
 /*...*/
 ```
@@ -743,20 +743,20 @@ If you need to manage a `root path` in your `application` then this part is conf
 ```ts
 /*...*/
 private loadControllersByConstructor(controllers: BaseController[]): void {
-	controllers
-		.filter(
-			(controller: BaseController) =>
-				controller.serviceContext === AppSettings.ServiceContext ||
-				controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
-		)
-		.forEach((controller) => {
-			controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
-			// This is the line and the parameter comes from `config`.
-			this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
-			console.log(`${controller?.constructor?.name} was initialized`);
-		});
-	this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
-	this.loadErrorHandler();
+  controllers
+    .filter(
+      (controller: BaseController) =>
+        controller.serviceContext === AppSettings.ServiceContext ||
+        controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+    )
+    .forEach((controller) => {
+      controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
+      // This is the line and the parameter comes from `config`.
+      this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
+      console.log(`${controller?.constructor?.name} was initialized`);
+    });
+  this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
+  this.loadErrorHandler();
 }
 /*...*/
 ```
@@ -816,7 +816,7 @@ And inside the WorkerProvider is where the magic happens, especially in the next
 
 ```ts
 const worker = new Worker(TaskDictionary[task.taskEnum], {
-	workerData: { task: task },
+  workerData: { task: task },
 });
 ```
 
@@ -1214,33 +1214,33 @@ Note that the system take the `ServiceContext` Server parameter in the `config f
 const serviceContext = process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON;
 ...
 Controllers: {
-	ContextPaths: [
-		// Health Controller should always be included, and others by default according to your needs.
-		Normalize.pathFromOS(
-			Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"), 
-		),
-		Normalize.pathFromOS(
-			Normalize.absolutePath(
-				__dirname,
-				`../../adapters/controllers/${serviceContext}/*.controller.??`,
-			),
-		),
-	],
-	// If the SERVICE_CONTEXT parameter is not set in the environment variables file, then the application will load by default all controllers that exist in the home directory.
-	DefaultPath: [
-		Normalize.pathFromOS(
-			Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
-		),
-	],
-	Ignore: [Normalize.pathFromOS("**/base")],
+  ContextPaths: [
+    // Health Controller should always be included, and others by default according to your needs.
+    Normalize.pathFromOS(
+      Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"), 
+    ),
+    Normalize.pathFromOS(
+      Normalize.absolutePath(
+        __dirname,
+        `../../adapters/controllers/${serviceContext}/*.controller.??`,
+      ),
+    ),
+  ],
+  // If the SERVICE_CONTEXT parameter is not set in the environment variables file, then the application will load by default all controllers that exist in the home directory.
+  DefaultPath: [
+    Normalize.pathFromOS(
+      Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
+    ),
+  ],
+  Ignore: [Normalize.pathFromOS("**/base")],
 },
 Server: {
-	...
+  ...
   ServiceContext: {
-		// This is the flag that tells the application whether or not to load the drivers per service context.
-		LoadWithContext: !!process.env.SERVICE_CONTEXT,
-		Context: serviceContext,
-	},
+    // This is the flag that tells the application whether or not to load the drivers per service context.
+    LoadWithContext: !!process.env.SERVICE_CONTEXT,
+    Context: serviceContext,
+  },
 }
 ```
 
@@ -1279,13 +1279,13 @@ It is important to note (understand) that the service contexts must be the names
 
 ```ts
 adapters
-	controllers 
-		auth // Context for SECURITY (auth)
-			Auth.controller.ts
-		users // Context for USERS (users)
-			Users.controller.ts
-		otherContext // And other service contexts according to your needs
-			...
+  controllers 
+    auth // Context for SECURITY (auth)
+      Auth.controller.ts
+    users // Context for USERS (users)
+      Users.controller.ts
+    otherContext // And other service contexts according to your needs
+      ...
 application
 ...
 ```
@@ -1299,7 +1299,7 @@ class AuthController extends BaseController {
     super(ServiceContext.SECURITY);
     this.initializeRoutes();
   }
-	...
+  ...
 }
 ```
 
