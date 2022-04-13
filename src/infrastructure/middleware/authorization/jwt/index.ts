@@ -1,5 +1,6 @@
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
+import { IRequest } from "../../../../adapters/controllers/base/context/IRequest";
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
 import appMessages from "../../../../application/shared/locals/messages";
 import { authProvider } from "../../../../adapters/providers/container";
@@ -7,14 +8,14 @@ import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
 import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
 import { ISession } from "../../../../domain/session/ISession";
-import { Middleware } from "../..";
+import { Middleware } from "../../types";
 
 const TOKEN_PARTS = 2;
 const TOKEN_POSITION_VALUE = 1;
 
 class AuthorizationMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    if (req.isWhiteList) return next();
+    if (TypeParser.cast<IRequest>(req).isWhiteList) return next();
 
     const auth = req.headers.authorization;
 
@@ -30,7 +31,7 @@ class AuthorizationMiddleware {
     if (!sessionResult.success)
       return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
-    req.session = TypeParser.cast<ISession>(sessionResult.value);
+    TypeParser.cast<IRequest>(req).session = TypeParser.cast<ISession>(sessionResult.value);
 
     return next();
   };

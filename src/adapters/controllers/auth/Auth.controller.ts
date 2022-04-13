@@ -1,24 +1,22 @@
 import container, { LoginUseCase } from "./container";
 import BaseController, {
-  Request,
-  Response,
-  NextFunction,
-  RequestBase,
-  RequestHandler,
-  ServiceContext,
+  IRequest,
+  IResponse,
+  INextFunction,
   EntryPointHandler,
+  IRouterType,
+  ServiceContext,
 } from "../base/Base.controller";
 
 class AuthController extends BaseController {
   constructor() {
     super(ServiceContext.SECURITY);
-    this.initializeRoutes();
   }
 
   login: EntryPointHandler = async (
-    req: Request | RequestBase,
-    res: Response,
-    next: NextFunction,
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
   ): Promise<void> => {
     const email = req.body?.email as string;
     const passwordB64 = req.body?.password as string;
@@ -29,8 +27,9 @@ class AuthController extends BaseController {
     });
   };
 
-  protected initializeRoutes(): void {
-    this.router.post("/v1/auth/login", this.login as RequestHandler);
+  initializeRoutes(router: IRouterType): void {
+    this.router = router();
+    this.router.post("/v1/auth/login", this.login);
   }
 }
 

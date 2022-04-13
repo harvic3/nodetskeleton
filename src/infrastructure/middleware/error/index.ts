@@ -2,9 +2,9 @@ import { HttpStatusResolver } from "../../../adapters/controllers/base/httpRespo
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
 import resources from "../../../application/shared/locals/messages";
+import { ErrorHandler } from "../types";
 import { Result } from "result-tsk";
 import config from "../../config";
-import { ErrorHandler } from "..";
 
 export class ErrorHandlerMiddleware {
   handle: ErrorHandler = (
