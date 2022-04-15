@@ -94,12 +94,13 @@ export default class AppWrapper {
   }
 
   private loadMiddleware(): void {
-    this.app.use(helmet());
-    this.app.use(bodyParser());
-    this.app.use(urlencoded({ extended: BooleanUtil.YES }));
-    this.app.use(localizationMiddleware.handle as RequestHandler);
-    this.app.use(routeWhiteListMiddleware.handle as RequestHandler);
-    this.app.use(authorizationMiddleware.handle.bind(this) as RequestHandler);
+    this.app
+      .use(helmet())
+      .use(bodyParser())
+      .use(urlencoded({ extended: BooleanUtil.YES }))
+      .use(localizationMiddleware.handle as RequestHandler)
+      .use(routeWhiteListMiddleware.handle as RequestHandler)
+      .use(authorizationMiddleware.handle.bind(this) as RequestHandler);
   }
 
   private loadErrorHandler(): void {
