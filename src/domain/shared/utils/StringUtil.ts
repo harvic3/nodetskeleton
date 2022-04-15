@@ -4,6 +4,7 @@ import { Nulldifined } from "../Nulldifined";
 export class StringUtil {
   static EMPTY = "";
   static COMMA_SPACE_SEPARATOR = ", ";
+  static COMMA_SEPARATOR = ",";
 
   static isValidAsPassword(password: string | Nulldifined): boolean {
     if (!password) return false;
