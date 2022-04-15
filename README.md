@@ -1378,7 +1378,6 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
 
   1. Database connections 
     In release and production environments you can use the same database connection configuration section of the config file to connect to your different databases in each of the service contexts even under the same technology (NoSQL, SQL or another one) and this can be achieved through the ENVs configuration of each service. 
-
     But at local level (development) you can use the same database according to the technology because by using prefixes in the tables and collections you will not have collisions and you can simplify and facilitate the development and the use of resources. 
     You must take into account that you cannot create relationships between tables or collections that are in different service contexts because this will not work in a productive environment since the databases will be different.
 
