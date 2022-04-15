@@ -563,7 +563,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs
 
-Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton/tree/feature/for-koajs" target="_blank" >Link</a>
+Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton/tree/support/tskeleton-koajs" target="_blank" >Link</a>
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
