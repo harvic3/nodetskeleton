@@ -1,19 +1,21 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
-import TResponse from "./TResponse";
-import resources, { resourceKeys } from "../../application/shared/locals/index";
-import * as resultCodes from "../../application/shared/result/resultCodes.json";
-import { Options } from "./Options";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
+import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
+import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
+import appMessages from "../../application/shared/locals/messages";
 export { BodyInit as BodyType, Headers } from "node-fetch";
+import TResponse from "./TResponse";
 
+type HttpResponseType<T> = T | string | ArrayBuffer | unknown;
+
+const SERIALIZED = BooleanUtil.YES;
 const serialization = {
   json: "json",
   string: "string",
-  buffer: "buffer",
   arrayBuffer: "arrayBuffer",
 };
 
-class HttpClient {
+export class HttpClient {
   Methods = {
     GET: "GET",
     POST: "POST",
@@ -23,92 +25,96 @@ class HttpClient {
     HEAD: "HEAD",
   };
   SerializationMethod = serialization;
-  async Send<T>(
+  async send<R, E>(
     url: string,
-    method = this.Methods.GET,
     {
+      method = this.Methods.GET,
       body,
       headers,
       options,
       serializationMethod = this.SerializationMethod.json,
     }: {
+      method?: string;
       body?: BodyType;
       headers?: Headers;
-      options?: Options;
+      options?: RequestInit;
       serializationMethod?: string;
     },
-  ): Promise<TResponse<T>> {
-    const request = BuildRequest(url, method, body, headers, options);
-    const result = new TResponse<T>();
+  ): Promise<TResponse<R, E>> {
+    const request = this.buildRequest(url, method, body, headers, options);
+    const result = new TResponse<R, E>();
     try {
       const response = await fetch(url, request);
       if (response.ok) {
-        result.SetResponse(await ProcessResponseData<T>(response, serializationMethod));
+        result.setResponse(await this.processResponseData<R>(response, serializationMethod));
       } else {
-        result.SetErrorMessage(response.statusText);
+        const errorResponse = await this.processErrorResponse<E>(response);
+        if (errorResponse[1] === SERIALIZED) {
+          result.setErrorMessage(
+            response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
+          );
+          result.setErrorResponse(errorResponse[0] as E);
+        } else {
+          result.setErrorMessage(response.statusText);
+          result.setErrorResponse(errorResponse[0] as E);
+        }
       }
-      result.SetStatusCode(response.status);
+      result.setStatusCode(response.status);
     } catch (error) {
-      result.SetErrorMessage(error.message);
-      result.SetStatusCode(error.code || null);
-      result.SetError(error);
+      result.setErrorMessage((error as Error).message);
+      result.setStatusCode(httpStatus.INTERNAL_SERVER_ERROR);
+      result.setError(error as Error);
     }
     return result;
   }
-}
 
-function BuildRequest(
-  url: string,
-  method: string,
-  body?: BodyType,
-  headers?: Headers,
-  options?: RequestInit,
-): Request {
-  if (!options) {
-    options = new Options();
+  private buildRequest(
+    url: string,
+    method: string,
+    body?: BodyType,
+    headers?: Headers,
+    options?: RequestInit,
+  ): Request {
+    if (!options) options = {};
+    options["method"] = method;
+    if (body) options["body"] = body;
+    if (headers) options["headers"] = headers;
+
+    return new Request(url, options);
   }
-  options.method = method;
-  if (body) {
-    options.body = body;
-  }
-  if (headers) {
-    options.headers = headers;
-  }
-  const request = new Request(url, options);
-  const optionsKey = Object.keys(options);
-  optionsKey.forEach((key) => {
-    if (key !== "method" && key !== "body" && key !== "headers") {
-      request[key] = options[key];
+
+  private async processErrorResponse<E>(response: Response): Promise<[E | string, boolean]> {
+    let result = null;
+    try {
+      result = await response.text();
+      return [JSON.parse(result), SERIALIZED];
+    } catch (error) {
+      return [result as E | string, !SERIALIZED];
     }
-  });
-  return request;
-}
+  }
 
-async function ProcessResponseData<T>(
-  response: Response,
-  serializationMethod: string,
-): Promise<T | string | Buffer | ArrayBuffer> {
-  try {
-    switch (serializationMethod) {
-      case serialization.buffer:
-        return await response.buffer();
-      case serialization.arrayBuffer:
-        return await response.arrayBuffer();
-      case serialization.string:
-        return await response.text();
-        break;
-      default:
-        return await response.json();
+  private async processResponseData<R>(
+    response: Response,
+    serializationMethod: string,
+  ): Promise<HttpResponseType<R>> {
+    try {
+      switch (serializationMethod) {
+        case serialization.arrayBuffer:
+          return await response.arrayBuffer();
+        case serialization.string:
+          return await response.text();
+        default:
+          return await response.json();
+      }
+    } catch (error) {
+      throw new ApplicationError(
+        HttpClient.name,
+        appMessages.get(appMessages.keys.PROCESSING_DATA_CLIENT_ERROR),
+        httpStatus.INTERNAL_SERVER_ERROR,
+        JSON.stringify(error),
+      );
     }
-  } catch (error) {
-    throw new ApplicationError(
-      resources.Get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-      error?.code || resultCodes.INTERNAL_SERVER_ERROR,
-      JSON.stringify(error),
-    );
   }
 }
 
-const instance = new HttpClient();
-
-export default instance;
+export default new HttpClient();

@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  tskeleton-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node:16-slim
+    container_name: tskeleton-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NODE_ENV=$NODE_ENV
+      - SERVICE_CONTEXT=$SERVICE_CONTEXT
+      - SERVER_ROOT=$SERVER_ROOT
+      - SERVER_HOST=$SERVER_HOST
+      - SERVER_PORT=$SERVER_PORT
+      - ORIGINS=$ORIGINS
+      - ENCRYPTION_KEY=$ENCRYPTION_KEY
+      - JWT_SECRET_KEY=$JWT_SECRET_KEY
+    ports:
+      - "3003:3003"
+    volumes:
+      - .:/usr/node/app
+      - /usr/node/app/dist
+      - /usr/node/app/node_modules
+    networks:
+      - nodetskeleton-net
+    command: >
+      npm run start
+
+networks:
+  nodetskeleton-net:
+    driver: bridge

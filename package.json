@@ -1,16 +1,19 @@
 {
   "name": "nodetskeleton",
   "version": "1.0.0",
-  "description": "A skeleton for use typescript with NodeJs",
+  "description": "A skeleton based to clean architecture for use typescript with NodeJs",
   "main": "./dist/index.js",
   "scripts": {
+    "dev": "ts-node-dev --respawn -- src/index.ts",
     "full-test": "rm -rf coverage/* && npm run build && jest --coverage --collectCoverageFrom=src/**",
     "test": "npm run build && jest --coverage --collectCoverageFrom=src/**",
     "build": "rm -rf dist/* && tsc --sourceMap false",
+    "up:build": "docker-compose up -d --build",
+    "up": "docker-compose up -d",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
-    "precommit": "npm run lint && npm run pretty-quick --staged && npm run test",
+    "pre-commit": "npm run lint && npm run pretty-quick --staged && npm run test",
     "start": "node dist/index"
   },
   "repository": {
@@ -23,46 +26,61 @@
     "skeleton",
     "nodejs",
     "typescript",
-    "template"
+    "template",
+    "clean architecture"
   ],
-  "author": "vickodev",
+  "author": "Vickodev<Victor A. Higuita C.>",
   "license": "MIT",
   "homepage": "https://github.com/harvic3/nodetskeleton/blob/master/README.md",
   "devDependencies": {
-    "@types/dotenv": "^8.2.0",
-    "@types/jest": "^26.0.8",
-    "@types/koa": "^2.11.3",
-    "@types/koa-bodyparser": "^4.3.0",
+    "@types/jest": "^27.4.1",
+    "@types/jest": "^27.4.1",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.7",
     "@types/koa-router": "^7.4.1",
-    "@types/koa__cors": "^3.0.1",
-    "@types/node": "^14.0.27",
-    "@types/node-fetch": "^2.5.7",
-    "@typescript-eslint/eslint-plugin": "^3.7.1",
-    "@typescript-eslint/parser": "^3.7.1",
-    "eslint": "^7.6.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
-    "husky": "^4.2.5",
-    "jest": "^26.2.2",
+    "@types/koa__cors": "^3.1.1",
+    "@types/luxon": "^2.3.0",
+    "@types/node": "^17.0.21",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "jest": "^27.5.1",
     "jest-fetch-mock": "^3.0.3",
-    "jest-mock-extended": "^1.0.9",
-    "prettier": "^2.0.5",
-    "pretty-quick": "^2.0.1",
-    "ts-jest": "^26.1.4",
-    "typescript": "^3.9.7"
+    "jest-mock-extended": "^2.0.4",
+    "prettier": "^2.5.1",
+    "pretty-quick": "^3.1.3",
+    "ts-jest": "^27.1.3",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.6.2"
+  },
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8.0.0"
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
-    "dotenv": "^8.2.0",
-    "koa": "^2.13.0",
+    "dotenv": "^16.0.0",
+    "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
-    "koa-router": "^9.1.0",
-    "moment": "^2.27.0",
-    "node-fetch": "^2.6.0"
+    "koa-router": "^10.1.0",
+    "fast-glob": "^3.2.11",
+    "jsonwebtoken": "^8.5.1",
+    "luxon": "^2.3.1",
+    "mapper-tsk": "^2.0.1",
+    "node-fetch": "^3.2.1",
+    "resources-tsk": "^2.1.1",
+    "result-tsk": "^2.1.1",
+    "uuid": "^8.3.2",
+    "validator-tsk": "^2.0.1"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run precommit"
+      "pre-commit": "npm run pre-commit"
     }
   }
 }

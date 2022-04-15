@@ -1,10 +1,10 @@
 {
-  "version": "3.9.7",
+  "version": "4.6.2",
   "compilerOptions": {
-    "lib": ["es5", "es6"],
-    "outDir": "./dist/",
+    "lib": ["ES7"],
+    "outDir": "dist",
     "sourceMap": true,
-    "target": "es5",
+    "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -13,9 +13,11 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": false,
     "alwaysStrict": true,
+    "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["./src/**/*.test.ts"],
+  "compileOnSave": true,
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
   "include": ["./src/**/*"]
 }

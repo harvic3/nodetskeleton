@@ -1,0 +1,21 @@
+{
+  "version": "4.6.2",
+  "compilerOptions": {
+    "lib": ["ES7"],
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": false,
+    "alwaysStrict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
+  "include": ["./src/**/*"]
+}

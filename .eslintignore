@@ -9,4 +9,4 @@ coverage/*
 # custom definition files
 README.md
 .env
-.env.EXAMPLE
+.envEXAMPLE

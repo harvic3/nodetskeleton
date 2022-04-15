@@ -1,26 +1,71 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import { ServiceContext } from "../../adapters/controllers/base/context/ServiceContext";
+import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
+import { Normalize } from "./Normalize";
+import "dotenv/config";
 
 const dev = "development";
 
+if (!process.env?.NODE_ENV || process.env.NODE_ENV === dev) {
+  console.log("Running in dev mode");
+}
+
+const serviceContext = process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKELETON;
+
 export default {
-  env: process.env.NODE_ENV || dev,
-  server: {
-    root: process.env.SERVER_ROOT || "/api",
-    host: process.env.SERVER_HOST || "localhost",
-    port: process.env.SERVER_PORT || 5030,
-    origins: process.env.ORIGINS || "http://localhost:4501",
+  Environment: process.env.NODE_ENV || dev,
+  Controllers: {
+    ContextPaths: [
+      Normalize.pathFromOS(
+        Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"),
+      ),
+      Normalize.pathFromOS(
+        Normalize.absolutePath(
+          __dirname,
+          `../../adapters/controllers/${serviceContext}/*.controller.??`,
+        ),
+      ),
+    ],
+    DefaultPath: [
+      Normalize.pathFromOS(
+        Normalize.absolutePath(__dirname, "../../adapters/controllers/**/*.controller.??"),
+      ),
+    ],
+    Ignore: [Normalize.pathFromOS("**/base")],
   },
-  params: {
-    envs: {
-      dev,
-      pdn: "production",
-      test: "testing",
+  Server: {
+    Root: process.env.SERVER_ROOT || "/api",
+    Host: process.env.SERVER_HOST || "localhost",
+    Port: process.env.SERVER_PORT || 3003,
+    Origins:
+      process.env.ORIGINS || "http://localhost:3000,http://localhost:3001,http://localhost:3002",
+    ServiceName: process.env.SERVICE_NAME || "NodeTskeleton",
+    ServiceContext: {
+      LoadWithContext: !!process.env.SERVICE_CONTEXT,
+      Context: serviceContext,
     },
-    defaultError: {
-      code: 500,
-      message: "SOMETHING_WENT_WRONG",
+  },
+  Params: {
+    Envs: {
+      Dev: dev,
+      Test: "testing",
+      Release: "release",
+      Production: "production",
     },
-    defaultLang: "en",
+    DefaultApplicationError: {
+      Code: "500",
+      Message: "SOMETHING_WENT_WRONG",
+    },
+    Security: {
+      JWT: {
+        SecretKey: process.env.JWT_SECRET_KEY,
+        ExpireInSeconds: 3600,
+      },
+      CRYPTO: {
+        EncryptionKey: process.env.ENCRYPTION_KEY,
+        EncryptionIterations: Number(process.env.ENCRYPTION_ITERATIONS) || 5e4,
+        EncryptionKeySize: Number(process.env.ENCRYPTION_KEY_SIZE) || 128,
+      },
+    },
+    DefaultLang: LocaleTypeEnum.EN,
   },
 };

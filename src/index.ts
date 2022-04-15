@@ -1,12 +1,15 @@
-import App from "./infrastructure/server/App";
-import BaseController from "./adapters/controllers/BaseController";
+import AppWrapper from "./infrastructure/app/AppWrapper";
+import { HttpServer } from "./infrastructure/app/server/HttpServer";
+import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
-// Region controllers
-import textFeelingController from "./adapters/controllers/textFeeling/TextFeeling.controller";
-// End controllers
+const appWrapper = new AppWrapper();
+const server = new HttpServer(appWrapper);
+server.start();
 
-const controllers: BaseController[] = [textFeelingController];
+process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
+  errorHandlerMiddleware.manageNodeException("UncaughtException", error);
+});
 
-const app = new App(controllers);
-
-app.Listen();
+process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+});

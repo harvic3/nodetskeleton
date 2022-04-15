@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "uid": "9b2cbd49a3f8425b993a234dccf5493a",
+      "maskedUid": "9847163202704ab1ae9d5532049e7cee",
+      "firstName": "Vickodev",
+      "lastName": "Higuita",
+      "email": "nodetskeleton@email.com",
+      "gender": "Male",
+      "password": "PIq/guktlcg0s2iG3YKOKaGd74Jzb4a0+0tA9U6X4/qqCn6XZORHkZlosziso8w7a6ErstJBg5cQ6bbp6opcmAv1KJvpstwUrCPS7AYjC0DSVtySlMoJXp3PVXeUgsvJ+lm65qbUcJJjueprWSq8xQRbYvuVAOqpVzzE+c+jIwg=",
+      "createdAt": "1856-06-10T18:30:51.876-05:00",
+      "verified": true
+    }
+  ]
+}
