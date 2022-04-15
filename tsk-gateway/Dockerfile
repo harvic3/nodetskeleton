@@ -1,12 +1,12 @@
 FROM node:16-slim
 
-WORKDIR /usr/node/gateway
+WORKDIR /usr/node/tsk-gateway
 
 COPY package*.json ./
 
 RUN npm i
 
-ADD ./ /usr/node/gateway
+ADD ./ /usr/node/tsk-gateway
 
 RUN npm run build
 
