@@ -40,16 +40,16 @@ services:
       npm run start
 
   tsk-gateway:
-    image: gateway-image
+    image: tsk-gateway-image
     container_name: tskeleton-gateway
     env_file: .env
     restart: always
     ports:
       - 8080:8080
     volumes:
-      - .:/usr/node/gateway
-      - /usr/node/gateway/dist
-      - /usr/node/gateway/node_modules
+      - .:/usr/node/tsk-gateway
+      - /usr/node/tsk-gateway/dist
+      - /usr/node/tsk-gateway/node_modules
     networks:
       - tskeleton-net
     depends_on:
