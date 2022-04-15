@@ -1,8 +1,11 @@
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../application/shared/status/applicationStatus";
 import appMessages from "../../application/shared/locals/messages";
+import { IContainer, IContainerDictionary } from "./IContainer";
 
-export class Container {
+export { IContainerDictionary };
+
+export class Container implements IContainer {
   constructor(private readonly container: IContainerDictionary) {}
 
   get<T>(className: string): T {
@@ -16,8 +19,4 @@ export class Container {
 
     return this.container[className]() as T;
   }
-}
-
-export interface IContainerDictionary {
-  [className: string]: Function;
 }
