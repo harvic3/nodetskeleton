@@ -563,7 +563,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs
 
-Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>
+Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton/tree/feature/for-koajs" target="_blank" >Link</a>
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
@@ -575,10 +575,10 @@ The controllers should be `exported as default` modules to make the handling of 
 
 ```ts
 // Controller example with default export
-import BaseController, { Context } from "../BaseController";
+import BaseController, { IContext } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import container, {
-  anotherUseCaseOrService,
+  AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
@@ -620,7 +620,7 @@ The strategy is to manage the routes `within` the same `controller`, this allows
 ```ts
 /*...*/
 initializeRoutes(router: IRouterType): void {
-  this.router = router();
+  this.router = router;
   this.router.post("/v1/cars", authorization(), this.create);
   this.router.get("/v1/cars/:idMask", authorization(), this.get);
   this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -647,10 +647,10 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
     )
     .forEach((controller) => {
       // This is the line and the parameter comes from `config`
-      controller.router.prefix(AppSettings.ServerRoot);
-      this.app.use(controller.router.routes());
-      this.app.use(controller.router.allowedMethods());
-      console.log(`${controller?.constructor?.name} was initialized`);
+      controller.router?.prefix(config.Server.Root);
+        this.app
+          .use(TypeParser.cast<Router.IMiddleware<any, {}>>(controller.router?.routes()))
+          .use(TypeParser.cast<Router.IMiddleware<any, {}>>(controller.router?.allowedMethods()));
     });
 }
 /*...*/
@@ -681,7 +681,7 @@ import BaseController, {
   ServiceContext,
 } from "../base/Base.controller";
 import container, {
-  anotherUseCaseOrService,
+  AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
@@ -1297,7 +1297,6 @@ All the above works for `dynamic loading of controllers`, therefore, if you are 
 class AuthController extends BaseController {
   constructor() {
     super(ServiceContext.SECURITY);
-    this.initializeRoutes();
   }
   ...
 }
@@ -1323,10 +1322,10 @@ PORT=8080
 docker build . -t tskeleton-image
 ```
 
->> Build the `gateway image`
+>> Build the `tsk gateway image`
 ```console
 cd tsk-gateway
-docker build . -t gateway-image
+docker build . -t tsk-gateway-image
 ```
 
 >> Run docker-compose for launch our solution
@@ -1370,6 +1369,19 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
     "email": "nodetskeleton@conemail.com"
 }'
 ```
+
+### Considerations and recommendations
+
+  1. Database tables or collection names
+    It is recommended to use `prefixes` in the table or collection names because in microservice context you need to replicate data and you may have collisions in the local environment, for example, for the SECURITY service context you can use sec_users for the users table or collection and in the same way for the USERS service context you can use usr_users. 
+    The idea is that you use an abbreviation of the service context as a prefix to the name of your tables or collections.
+
+  1. Database connections 
+    In release and production environments you can use the same database connection configuration section of the config file to connect to your different databases in each of the service contexts even under the same technology (NoSQL, SQL or another one) and this can be achieved through the ENVs configuration of each service. 
+
+    But at local level (development) you can use the same database according to the technology because by using prefixes in the tables and collections you will not have collisions and you can simplify and facilitate the development and the use of resources. 
+    You must take into account that you cannot create relationships between tables or collections that are in different service contexts because this will not work in a productive environment since the databases will be different.
+
 
 ### Observation
 If you are not going to use this functionality you can delete the `tsk-gateway` directory.
