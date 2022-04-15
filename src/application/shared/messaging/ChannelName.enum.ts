@@ -1,4 +1,4 @@
 export enum ChannelNameEnum {
   QUEUE_USERS = "queue:users",
-  QUEUE_SECURITY = "queue:security",
+  QUEUE_SECURITY = "queue:auth",
 }

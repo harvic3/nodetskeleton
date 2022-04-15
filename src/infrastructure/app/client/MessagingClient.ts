@@ -1,10 +1,10 @@
-import { ServiceContext } from "../../../adapters/controllers/base/context/ServiceContext";
 import { ChannelNameEnum } from "../../../application/shared/messaging/ChannelName.enum";
 import { Listener, MessageBus, Publisher, Subscriber } from "../../messaging/MessageBus";
 import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueListener";
 import AppSettings from "../../../application/shared/settings/AppSettings";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
+import ArrayUtil from "../../../domain/shared/utils/ArrayUtil";
 import { MessageQueue } from "../../messaging/MessageQueue";
 import queueContainer, {
   EventQueue,
@@ -47,19 +47,18 @@ export class MessagingClient {
   }
 
   private setSubscriptions(): void {
-    const channelsToSuscribe: ChannelNameEnum[] = [];
-    if (AppSettings.ServiceContext === ServiceContext.USERS)
-      channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
-    if (AppSettings.ServiceContext === ServiceContext.SECURITY)
-      channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
-    if (AppSettings.ServiceContext === ServiceContext.NODE_TS_SKELETON) {
+    const channelsToSuscribe: ChannelNameEnum[] =
+      Object.values(ChannelNameEnum).filter((value) =>
+        value.includes(AppSettings.ServiceContext),
+      ) || ArrayUtil.EMPTY_ARRAY;
+    if (!channelsToSuscribe.length) {
       channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
       channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
     }
 
-    channelsToSuscribe.forEach((channel) => {
+    for (const channel of channelsToSuscribe) {
       busContainer.get<EventSubscriber>(EventClientEnum.TSK_BUS_SUBSCRIBER).subscribe(channel);
-    });
+    }
   }
 
   private initializeBusSockets(): void {

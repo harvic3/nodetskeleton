@@ -39,18 +39,21 @@ export class QueueListener {
         ManageUserCreatedEventUseCase.name;
       useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
         ManageLastLoginEventUseCase.name;
+      this.messageQueueHandler.setUseCasesContext(useCasesContext);
+      return;
     }
 
     if (AppSettings.ServiceContext === ServiceContext.USERS) {
       useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
         ManageUserCreatedEventUseCase.name;
+      this.messageQueueHandler.setUseCasesContext(useCasesContext);
+      return;
     }
 
     if (AppSettings.ServiceContext === ServiceContext.SECURITY) {
       useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
         ManageLastLoginEventUseCase.name;
+      this.messageQueueHandler.setUseCasesContext(useCasesContext);
     }
-
-    this.messageQueueHandler.setUseCasesContext(useCasesContext);
   }
 }
