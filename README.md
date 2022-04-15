@@ -563,7 +563,7 @@ In this `template` is included the example code base for `KoaJs` and `ExpressJs`
 
 ## Using with KoaJs
 
-Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton-koa" target="_blank" >Link</a>
+Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton/tree/feature/for-koajs" target="_blank" >Link</a>
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
@@ -575,10 +575,10 @@ The controllers should be `exported as default` modules to make the handling of 
 
 ```ts
 // Controller example with default export
-import BaseController, { Context } from "../BaseController";
+import BaseController, { IContext } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import container, {
-  anotherUseCaseOrService,
+  AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
@@ -620,7 +620,7 @@ The strategy is to manage the routes `within` the same `controller`, this allows
 ```ts
 /*...*/
 initializeRoutes(router: IRouterType): void {
-  this.router = router();
+  this.router = router;
   this.router.post("/v1/cars", authorization(), this.create);
   this.router.get("/v1/cars/:idMask", authorization(), this.get);
   this.router.post("/v1/cars/:idMask", authorization(), this.buy);
@@ -647,10 +647,10 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
     )
     .forEach((controller) => {
       // This is the line and the parameter comes from `config`
-      controller.router.prefix(AppSettings.ServerRoot);
-      this.app.use(controller.router.routes());
-      this.app.use(controller.router.allowedMethods());
-      console.log(`${controller?.constructor?.name} was initialized`);
+      controller.router?.prefix(config.Server.Root);
+        this.app
+          .use(TypeParser.cast<Router.IMiddleware<any, {}>>(controller.router?.routes()))
+          .use(TypeParser.cast<Router.IMiddleware<any, {}>>(controller.router?.allowedMethods()));
     });
 }
 /*...*/
@@ -681,7 +681,7 @@ import BaseController, {
   ServiceContext,
 } from "../base/Base.controller";
 import container, {
-  anotherUseCaseOrService,
+  AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
