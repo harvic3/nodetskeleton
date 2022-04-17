@@ -1,11 +1,19 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
-import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
-import { userRepository } from "../../../repositories/container";
-import { logProvider, workerProvider } from "../../../providers/container";
+import providerContainer, { LogProvider, WorkerProvider } from "../../../providers/container";
+import repositoryContainer, { UserRepository } from "../../../repositories/container";
+import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
+import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
 
-const dictionary: IContainerDictionary = {};
-dictionary[RegisterUserUseCase.name] = () =>
-  new RegisterUserUseCase(logProvider, userRepository, workerProvider);
+const dictionary = new ContainerDictionary();
+dictionary.addScoped(
+  RegisterUserUseCase.name,
+  () =>
+    new RegisterUserUseCase(
+      providerContainer.get<LogProvider>(LogProvider.name),
+      repositoryContainer.get<UserRepository>(UserRepository.name),
+      providerContainer.get<WorkerProvider>(WorkerProvider.name),
+    ),
+);
 
 export { RegisterUserUseCase };
-export default new Container(dictionary);
+export default new ServiceContainer(dictionary);

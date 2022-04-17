@@ -1,9 +1,17 @@
-import { Container, IContainerDictionary } from "../../../../infrastructure/dic/Container";
+import providerContainer, { AuthProvider, LogProvider } from "../../../providers/container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
-import { authProvider, logProvider } from "../../../providers/container";
+import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
+import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
 
-const dictionary: IContainerDictionary = {};
-dictionary[LoginUseCase.name] = () => new LoginUseCase(logProvider, authProvider);
+const dictionary = new ContainerDictionary();
+dictionary.addScoped(
+  LoginUseCase.name,
+  () =>
+    new LoginUseCase(
+      providerContainer.get<LogProvider>(LogProvider.name),
+      providerContainer.get<AuthProvider>(AuthProvider.name),
+    ),
+);
 
 export { LoginUseCase };
-export default new Container(dictionary);
+export default new ServiceContainer(dictionary);

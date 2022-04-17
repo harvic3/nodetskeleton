@@ -1,4 +1,5 @@
 import { IUserDto } from "../../../application/modules/users/dtos/User.dto";
+import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import container, { RegisterUserUseCase } from "./container";
 import BaseController, {
   INextFunction,
@@ -9,8 +10,8 @@ import BaseController, {
 } from "../base/Base.controller";
 
 class UsersController extends BaseController {
-  constructor() {
-    super(ServiceContext.USERS);
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer, ServiceContext.USERS);
   }
 
   singUp: EntryPointHandler = async (ctx: IContext, next: INextFunction): Promise<void> => {
@@ -19,7 +20,7 @@ class UsersController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      container.get<RegisterUserUseCase>(RegisterUserUseCase.name),
+      this.serviceContainer.get<RegisterUserUseCase>(RegisterUserUseCase.name),
       userDto,
     );
   };
@@ -30,4 +31,4 @@ class UsersController extends BaseController {
   }
 }
 
-export default new UsersController();
+export default new UsersController(container);

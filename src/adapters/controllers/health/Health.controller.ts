@@ -1,4 +1,5 @@
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
+import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import BaseController, {
   INextFunction,
   EntryPointHandler,
@@ -7,19 +8,27 @@ import BaseController, {
 } from "../base/Base.controller";
 
 class HealthController extends BaseController {
-  constructor() {
-    super();
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer);
   }
 
   pong: EntryPointHandler = async (ctx: IContext, next: INextFunction): Promise<void> => {
-    return this.handleResultData(ctx, next, container.get<PongUseCase>(PongUseCase.name));
+    return this.handleResultData(
+      ctx,
+      next,
+      this.serviceContainer.get<PongUseCase>(PongUseCase.name),
+    );
   };
 
   resourceNotFound: EntryPointHandler = async (
     ctx: IContext,
     next: INextFunction,
   ): Promise<void> => {
-    return this.handleResult(ctx, next, container.get<NotFoundUseCase>(NotFoundUseCase.name));
+    return this.handleResult(
+      ctx,
+      next,
+      this.serviceContainer.get<NotFoundUseCase>(NotFoundUseCase.name),
+    );
   };
 
   initializeRoutes(router: IRouterType): void {
@@ -28,4 +37,4 @@ class HealthController extends BaseController {
   }
 }
 
-export default new HealthController();
+export default new HealthController(container);
