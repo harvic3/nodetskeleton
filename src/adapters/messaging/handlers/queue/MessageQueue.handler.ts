@@ -3,18 +3,17 @@ import { IEventQueue } from "../../../../application/shared/messaging/queue/IEve
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import { IMessageQueueHandler, QueueArgs } from "./IMessageQueue.handler";
+import { IServiceContainer } from "../../../shared/dic/IServiceContainer";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
-import { Container } from "../../../../infrastructure/dic/Container";
 import queueMessageUseCaseContainer from "./container";
-
 
 export class MessageQueueHandler implements IMessageQueueHandler {
   private readingChannels: ChannelNameEnum[] = [];
   private eventQueue: IEventQueue | undefined;
   private queueNameToUseCaseMap: Map<string, string>;
 
-  constructor(private readonly messageQueueUseCasesContainer: Container) {
+  constructor(private readonly messageQueueUseCasesContainer: IServiceContainer) {
     this.queueNameToUseCaseMap = new Map();
   }
 

@@ -1,4 +1,5 @@
 import { IWorkerProvider } from "../../../application/shared/worker/providerContracts/IWorkerProvider";
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { IWorkerError } from "../../../application/shared/worker/models/IWorkerError";
 import { WorkerTask } from "../../../application/shared/worker/models/WorkerTask";
 import { ApplicationError, BaseProvider, Result } from "../base/BaseProvider";
@@ -6,6 +7,10 @@ import { TaskDictionary } from "./models/TaskDictionary";
 import { Worker } from "worker_threads";
 
 export class WorkerProvider extends BaseProvider implements IWorkerProvider {
+  constructor(logProvider: ILogProvider) {
+    super(logProvider);
+  }
+
   async executeTask<ET>(task: WorkerTask): Promise<ET> {
     const agent = new Result();
     const taskResult = await new Promise((resolve, reject) => {

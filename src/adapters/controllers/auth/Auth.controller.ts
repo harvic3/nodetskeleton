@@ -1,3 +1,4 @@
+import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import container, { LoginUseCase } from "./container";
 import BaseController, {
   IRequest,
@@ -9,8 +10,8 @@ import BaseController, {
 } from "../base/Base.controller";
 
 class AuthController extends BaseController {
-  constructor() {
-    super(ServiceContext.SECURITY);
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer, ServiceContext.SECURITY);
   }
 
   login: EntryPointHandler = async (
@@ -21,10 +22,15 @@ class AuthController extends BaseController {
     const email = req.body?.email as string;
     const passwordB64 = req.body?.password as string;
 
-    return this.handleResult(res, next, container.get<LoginUseCase>(LoginUseCase.name), {
-      email,
-      passwordB64,
-    });
+    return this.handleResult(
+      res,
+      next,
+      this.serviceContainer.get<LoginUseCase>(LoginUseCase.name),
+      {
+        email,
+        passwordB64,
+      },
+    );
   };
 
   initializeRoutes(router: IRouterType): void {
@@ -33,4 +39,4 @@ class AuthController extends BaseController {
   }
 }
 
-export default new AuthController();
+export default new AuthController(container);

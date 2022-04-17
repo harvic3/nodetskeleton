@@ -2,8 +2,8 @@ import { TopicNameEnum } from "../../../../application/shared/messaging/TopicNam
 import { EventMessage } from "../../../../application/shared/messaging/EventMessage";
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
 import AppSettings from "../../../../application/shared/settings/AppSettings";
+import { IServiceContainer } from "../../../shared/dic/IServiceContainer";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
-import { Container } from "../../../../infrastructure/dic/Container";
 import { Args, IMessageBusHandler } from "./IMessageBus.handler";
 import { QueueClientEnum } from "../../queue/QueueClient.enum";
 import { IUser } from "../../../../domain/user/IUser";
@@ -13,7 +13,7 @@ import { EventEmitter } from "events";
 type MessageTypes = IUser;
 
 export class MessageBusHandler implements IMessageBusHandler {
-  constructor(private readonly messageBusUseCases: Container) {}
+  constructor(private readonly messageBusUseCases: IServiceContainer) {}
 
   async handle(args: Args): Promise<void> {
     const message = EventMessage.fromJSON<MessageTypes>(args.message);

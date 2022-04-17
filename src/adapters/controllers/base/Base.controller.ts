@@ -1,6 +1,7 @@
 import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
-import { ServiceContext } from "./context/ServiceContext";
+import { IServiceContainer } from "../../shared/dic/IServiceContainer";
+import { ServiceContext } from "../../shared/ServiceContext";
 import { INextFunction } from "./context/INextFunction";
 import { IRouterType } from "./context/IRouterType";
 import { IResponse } from "./context/IResponse";
@@ -13,7 +14,12 @@ export { EntryPointHandler, IRequest, IResponse, INextFunction, IRouterType, Ser
 export default abstract class BaseController {
   router?: IRouterType;
 
-  constructor(readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON) {}
+  constructor(
+    readonly serviceContainer: IServiceContainer,
+    readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON,
+  ) {
+    this.serviceContainer.setContext(serviceContext);
+  }
 
   private getResult(res: IResponse, result: IResult): void {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
