@@ -1,5 +1,9 @@
+import { ContainerDictionary } from "../../shared/dic/ContainerDictionary";
+import { ServiceContainer } from "../../shared/dic/ServiceContainer";
 import { UserRepository } from "../user/User.repository";
 
-const userRepository = new UserRepository();
+const dictionary = new ContainerDictionary();
+dictionary.addSingleton(UserRepository.name, new UserRepository());
 
-export { userRepository };
+export { UserRepository };
+export default new ServiceContainer(dictionary);
