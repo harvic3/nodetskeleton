@@ -465,16 +465,17 @@ This strategy is only needed in the `adapter layer` dependencies for `controller
 import { GetHighestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getHighest";
 import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
 import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
-import { Container, IContainerDictionary } from "../../../shared/Container";
+import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
 import { textFeelingService } from "../../../providers/container/index";
+import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
 
-const dictionary: IContainerDictionary = {};
-dictionary[GetHighestFeelingSentenceUseCase.name] = () => new GetHighestFeelingSentenceUseCase(textFeelingService);
-dictionary[GetLowestFeelingSentenceUseCase.name] = () => new GetLowestFeelingSentenceUseCase(textFeelingService);
-dictionary[GetFeelingTextUseCase.name] = () => new GetFeelingTextUseCase(textFeelingService);
+const dictionary = new ContainerDictionary();
+dictionary.addScoped(GetHighestFeelingSentenceUseCase.name, () => new GetHighestFeelingSentenceUseCase(textFeelingService));
+dictionary.addScoped(GetLowestFeelingSentenceUseCase.name, () => new GetLowestFeelingSentenceUseCase(textFeelingService));
+dictionary.addScoped(GetFeelingTextUseCase.name, () => new GetFeelingTextUseCase(textFeelingService));
 
 // This class instance contains the UseCases needed for your controller
-export default new Container(dictionary); // *Way One*
+export default new ServiceContainer(dictionary); // *Way One*
 // You can also export separate instances if required, like this:
 const anotherUseCaseOrService = new AnotherUseCaseOrService();
 export { anotherUseCaseOrService }; // *Way Two*
@@ -501,7 +502,6 @@ For `ioc` our `container` strategy manage the `instances` of the `UseCases` for 
 
 ```ts
 // For ExpressJs
-import { GetFeelingTextUseCase } from "../../../application/modules/feeling/useCases/getFeeling";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
 import BaseController, {
   IRequest,
@@ -511,41 +511,36 @@ import BaseController, {
   IRouterType,
 } from "../base/Base.controller";
 import container, {
-  anotherUseCaseOrService,
+  GetFeelingTextUseCase,
+  AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-  public constructor() {
-    super();
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer);
   }
   /*...*/
-  // *Way One* RECOMMENDED
   getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const textDto: TextDto = req.body;
     return this.handleResult(
       res,
       next,
-      container.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+      this.serviceContainer.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
       textDto,
     );
   };
-
-  // *Way Two*
-  getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const textDto: TextDto = req.body;
-    return this.handleResult(res, next, getFeelingTextUseCase, textDto);
-  };
+  /*...*/
 
   initializeRoutes(router: IRouterType): void {
     this.router = router();
     this.router.get("/feeling", this.getFeelingText);
   }
 }
+
+export default new TextFeelingController(container);
 ```
 
-The *Way One* delivers a different instance for each UseCase call.
-
-The *Way Two* delivers the same instance (only one instance) for each useCase call, which can lead to the most common problem, mutations.
+The way `addScoped` delivers a different instance for each UseCase call but `addSingleton` return the same instance by each call.
 
 As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.
 
@@ -575,30 +570,45 @@ The controllers should be `exported as default` modules to make the handling of 
 
 ```ts
 // Controller example with default export
-import BaseController, { IContext } from "../BaseController";
 import { TextDto } from "../../../application/modules/feeling/dtos/TextReq.dto";
+import BaseController, { IContext, INextFunction } from "../BaseController";
 import container, {
   AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-  public constructor() {
-    super();
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer);
   }
   /*...*/
+  getFeelingText = async (ctx: IContext, next: INextFunction): Promise<void> => {
+    const textDto: TextDto = ctx.request.body;
+    return this.handleResult(
+      ctx,
+      next,
+      this.serviceContainer.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+      textDto,
+    );
+  };
+  /*...*/
+
+  initializeRoutes(router: IRouterType): void {
+    this.router = router;
+    this.router.get("/feeling", this.getFeelingText);
+  }
 }
 
 // You can see the default export
-export default new TextFeelingController();
+export default new TextFeelingController(container);
 ```
 Example of the handling of the `controllers` in the `index` file of our application:
 
 ```ts
 /*...*/
 // Region controllers
-import productController from "./adapters/controllers/product/Product.controller";
 import shoppingCarController from "./adapters/controllers/shoppingCart/ShoppingCar.controller";
 import categoryController from "./adapters/controllers/category/CategoryController";
+import productController from "./adapters/controllers/product/Product.controller";
 /*...*/
 // End controllers
 
@@ -681,19 +691,19 @@ import BaseController, {
   ServiceContext,
 } from "../base/Base.controller";
 import container, {
+  TextFeelingController,
   AnotherUseCaseOrService,
 } from "./container/index";
 
 class TextFeelingController extends BaseController {
-  public constructor() {
-    super();
+  constructor(serviceContainer: IServiceContainer) {
+    super(serviceContainer);
   }
   /*...*/
 }
 
 // You can see the default export
-export default new TextFeelingController();;
-// Or just use export default new TextFeelingController();
+export default new TextFeelingController(container);
 ```
 Example of the handling of the `controllers` in the `index` file of our application:
 
@@ -777,7 +787,7 @@ And then, continue with the step `installation`.
 For cpu intensive tasks you have the possibility to use the `WorkerProvider` which enables you to run any script in an abstracted way, for example:
 
 ```ts
-private async encryptPassword(user: User): Promise<string> {
+  private async encryptPassword(user: User): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
       text: new PasswordBuilder(
