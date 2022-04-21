@@ -30,7 +30,11 @@ export class MessageBusHandler implements IMessageBusHandler {
             .get<BaseUseCase<EventMessage<MessageTypes>>>(`${args.channel}:${message?.topicName}`)
             .execute(TypeParser.cast<EventMessage<MessageTypes>>(message));
     } catch (error) {
-      console.error(MessageBusHandler.name, new Date().toISOString(), error);
+      console.error(
+        `${
+          MessageBusHandler.name
+        } ${new Date().toISOString()} Error: ${error} Message: ${JSON.stringify(message)}`,
+      );
     }
 
     return Promise.resolve();

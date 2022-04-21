@@ -36,7 +36,7 @@ export class EventSubscriber implements IEventSubscriber {
   async unsubscribe(channel: ChannelNameEnum): Promise<boolean> {
     if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
 
-    return Promise.resolve(this.subscriber?.unsubscribe(channel, () => {}))
+    return Promise.resolve(this.subscriber?.unsubscribe(channel))
       .then(() => {
         console.log(
           `${this.serviceName} unsubscribed to ${channel} channel at ${new Date().toISOString()}.`,

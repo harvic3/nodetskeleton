@@ -9,7 +9,7 @@ export type RedisConnectionOptions = {
   port?: number;
   path?: string;
   dbIndex: number;
-  password?: string | undefined;
+  password?: string;
 };
 
 export abstract class RedisConnection {

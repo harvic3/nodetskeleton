@@ -11,14 +11,14 @@ export class EventListener implements IEventListener {
 
   listen(): void {
     this.listener?.on("message", (channel: string, message: string) => {
-      try {
-        messageBusHandler.handle({ channel: channel as ChannelNameEnum, message });
-      } catch (error) {
+      Promise.resolve(
+        messageBusHandler.handle({ channel: channel as ChannelNameEnum, message }),
+      ).catch((error) => {
         console.error(
           `Error in ${this.serviceName} service listener ${new Date().toISOString()}:`,
           error,
         );
-      }
+      });
     });
   }
 
