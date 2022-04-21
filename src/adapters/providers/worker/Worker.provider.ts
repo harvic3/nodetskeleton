@@ -1,7 +1,7 @@
 import { IWorkerProvider } from "../../../application/shared/worker/providerContracts/IWorkerProvider";
 import { IWorkerError } from "../../../application/shared/worker/models/IWorkerError";
 import { WorkerTask } from "../../../application/shared/worker/models/WorkerTask";
-import { ApplicationError, BaseProvider, Result } from "../base/BaseProvider";
+import { ApplicationError, BaseProvider, Result } from "../base/Base.provider";
 import { TaskDictionary } from "./models/TaskDictionary";
 import { Worker } from "worker_threads";
 
