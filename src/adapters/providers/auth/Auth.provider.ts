@@ -4,7 +4,7 @@ import AppSettings from "../../../application/shared/settings/AppSettings";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { AppConstants } from "../../../domain/shared/AppConstants";
 import { ISession } from "../../../domain/session/ISession";
-import { BaseProvider } from "../base/BaseProvider";
+import { BaseProvider } from "../base/Base.provider";
 import { Email } from "../../../domain/user/Email";
 import { User } from "../../../domain/user/User";
 import { sign, verify } from "jsonwebtoken";

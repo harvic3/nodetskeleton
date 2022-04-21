@@ -2,7 +2,7 @@ import { IUSerRepository } from "../../../application/modules/users/providerCont
 import userModel from "../../../infrastructure/dataBases/nodeTsKeleton/User.model";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { Nulldifined } from "../../../domain/shared/Nulldifined";
-import { BaseRepository } from "../base/BaseRepository";
+import { BaseRepository } from "../base/Base.repository";
 import { IUser } from "../../../domain/user/IUser";
 import { Email } from "../../../domain/user/Email";
 import { User } from "../../../domain/user/User";
