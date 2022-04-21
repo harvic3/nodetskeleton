@@ -24,9 +24,10 @@ export abstract class RedisConnection {
   ) {}
 
   close(): void {
-    if (this.subscriberListenerClient && !this.subscriberListenerClient?.connected)
+    if (this.subscriberListenerClient && this.subscriberListenerClient?.connected)
       this.subscriberListenerClient?.quit();
-    if (this.publisher && !this.publisher?.connected) this.publisher?.quit();
+
+    if (this.publisher && this.publisher?.connected) this.publisher?.quit();
   }
 
   initialize(clientType: ClientModeEnum = ClientModeEnum.PUB_SUB_MODE): void {

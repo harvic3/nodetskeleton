@@ -1,6 +1,7 @@
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { Subscriber } from "../../../../infrastructure/messaging/MessageBus";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
+import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import {
   IEventSubscriber,
   SubscribedChannel,
@@ -73,28 +74,28 @@ export class EventSubscriber implements IEventSubscriber {
 
   private addChannel(channel: ChannelNameEnum): void {
     const exists = this.subscribedChannels.some((subscription) => subscription.channel === channel);
-    if (!exists) {
-      this.subscribedChannels.push({ channel, subscribed: BooleanUtil.NOT });
-    }
+    if (exists) return;
+
+    this.subscribedChannels.push({ channel, subscribed: BooleanUtil.NOT });
   }
 
   private removeChannel(channel: ChannelNameEnum): void {
     const exists = this.subscribedChannels.find((subscription) => subscription.channel === channel);
-    if (exists) {
-      const index = this.subscribedChannels.indexOf(exists);
-      if (index >= ArrayUtil.FIRST_ELEMENT_INDEX) {
-        this.subscribedChannels.splice(index, 1);
-      }
-    }
+    if (!exists) return;
+
+    const index = this.subscribedChannels.indexOf(exists);
+    if (!ArrayUtil.isValidIndex(index)) return;
+
+    this.subscribedChannels.splice(index, NumberUtil.ONE);
   }
 
   private setSubscribed(channel: ChannelNameEnum): void {
     const subscription = this.subscribedChannels.find(
-      (subscription) => subscription.channel === channel,
+      (_subscription) => _subscription.channel === channel,
     );
-    if (subscription) {
-      subscription.subscribed = BooleanUtil.YES;
-    }
+    if (!subscription) return;
+
+    subscription.subscribed = BooleanUtil.YES;
   }
 
   private initializeSubscriptions(): void {

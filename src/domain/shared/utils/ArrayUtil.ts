@@ -38,4 +38,8 @@ export default class ArrayUtil {
   static any(list: any[] | Nulldifined): boolean {
     return !!list?.length;
   }
+
+  static isValidIndex(index: number): boolean {
+    return index >= ArrayUtil.FIRST_ELEMENT_INDEX;
+  }
 }
