@@ -6,32 +6,32 @@ import { IServiceContainer } from "./IServiceContainer";
 import { ServiceContext } from "../ServiceContext";
 
 export class ServiceContainer implements IServiceContainer {
-  private context?: string;
-  private value: Record<string, Function> = {};
+  #context?: string;
+  #value: Record<string, Function> = {};
 
   constructor(dictionary?: IContainerDictionary) {
     if (dictionary) {
-      this.value = dictionary.getDictionary();
+      this.#value = dictionary.getDictionary();
     }
   }
 
   setContext(context: ServiceContext): void {
-    this.context = `${ServiceContainer.name}_${context}`;
+    this.#context = `${ServiceContainer.name}_${context}`;
   }
 
   get<T>(className: string): T {
-    if (!this.value[className]) {
+    if (!this.#value[className]) {
       throw new ApplicationError(
-        this.context || ServiceContainer.name,
+        this.#context || ServiceContainer.name,
         appMessages.getWithParams(appMessages.keys.DEPENDENCY_NOT_FOUNT, { className }),
         applicationStatus.INTERNAL_ERROR,
       );
     }
 
-    return this.value[className]() as T;
+    return this.#value[className]() as T;
   }
 
   addDictionary(dictionary: IContainerDictionary): void {
-    this.value = { ...this.value, ...dictionary.getDictionary() };
+    this.#value = { ...this.#value, ...dictionary.getDictionary() };
   }
 }

@@ -23,7 +23,7 @@ export class WorkerProvider extends BaseProvider implements IWorkerProvider {
         reject(error);
       });
       worker.on("exit", (exitCode) => {
-        console.log(`Worker exited with code ${exitCode}`);
+        console.log(`Worker in task ${task.taskEnum} exited with code ${exitCode}`);
       });
     });
 

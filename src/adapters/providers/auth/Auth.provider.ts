@@ -1,4 +1,5 @@
 import { IAuthProvider } from "../../../application/modules/auth/providerContracts/IAuth.provider";
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import userModel from "../../../infrastructure/dataBases/nodeTsKeleton/User.model";
 import AppSettings from "../../../application/shared/settings/AppSettings";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
@@ -10,6 +11,10 @@ import { User } from "../../../domain/user/User";
 import { sign, verify } from "jsonwebtoken";
 
 export class AuthProvider extends BaseProvider implements IAuthProvider {
+  constructor(readonly logProvider: ILogProvider) {
+    super(logProvider);
+  }
+
   async getJwt(session: ISession): Promise<string> {
     const token = sign(session, AppSettings.JWTEncryptionKey, {
       algorithm: AppConstants.HS512_ALGORITHM,

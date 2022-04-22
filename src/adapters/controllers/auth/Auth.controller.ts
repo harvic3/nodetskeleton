@@ -25,7 +25,7 @@ class AuthController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.serviceContainer.get<LoginUseCase>(LoginUseCase.name),
+      this.servicesContainer.get<LoginUseCase>(LoginUseCase.name),
       {
         email,
         passwordB64,

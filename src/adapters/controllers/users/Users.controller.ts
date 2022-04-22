@@ -25,7 +25,7 @@ class UsersController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.serviceContainer.get<RegisterUserUseCase>(RegisterUserUseCase.name),
+      this.servicesContainer.get<RegisterUserUseCase>(RegisterUserUseCase.name),
       userDto,
     );
   };
