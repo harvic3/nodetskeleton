@@ -10,12 +10,12 @@ const dictionary = new ContainerDictionary();
 dictionary.addSingleton(LogProvider.name, new LogProvider(logger));
 dictionary.addSingleton(
   AuthProvider.name,
-  new AuthProvider(dictionary.getService<LogProvider>(LogProvider.name)),
+  new AuthProvider(dictionary.getCopy<LogProvider>(LogProvider.name)),
 );
 dictionary.addSingleton(HealthProvider.name, new HealthProvider());
 dictionary.addSingleton(
   WorkerProvider.name,
-  new WorkerProvider(dictionary.getService<LogProvider>(LogProvider.name)),
+  new WorkerProvider(dictionary.getCopy<LogProvider>(LogProvider.name)),
 );
 
 export { LogProvider, AuthProvider, HealthProvider, WorkerProvider };
