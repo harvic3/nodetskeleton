@@ -16,7 +16,7 @@ class HealthController extends BaseController {
     return this.handleResultData(
       ctx,
       next,
-      this.serviceContainer.get<PongUseCase>(PongUseCase.name),
+      this.servicesContainer.get<PongUseCase>(PongUseCase.name),
     );
   };
 
@@ -27,7 +27,7 @@ class HealthController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.serviceContainer.get<NotFoundUseCase>(NotFoundUseCase.name),
+      this.servicesContainer.get<NotFoundUseCase>(NotFoundUseCase.name),
     );
   };
 

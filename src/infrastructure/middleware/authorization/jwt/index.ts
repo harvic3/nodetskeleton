@@ -1,7 +1,7 @@
+import providerContainer, { AuthProvider } from "../../../../adapters/providers/container";
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
 import appMessages from "../../../../application/shared/locals/messages";
-import { authProvider } from "../../../../adapters/providers/container";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
 import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
@@ -28,7 +28,10 @@ class AuthorizationMiddleware {
       return Promise.resolve();
 
     const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
-    const sessionResult = TryWrapper.exec(authProvider.verifyJwt, [token]);
+    const sessionResult = TryWrapper.exec(
+      providerContainer.get<AuthProvider>(AuthProvider.name).verifyJwt,
+      [token],
+    );
     if (!sessionResult.success)
       // return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
       return Promise.resolve();

@@ -1,3 +1,4 @@
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import messageResources, { Resources } from "../../../application/shared/locals/messages";
 export { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../../application/shared/status/applicationStatus";
@@ -6,7 +7,7 @@ import mapper, { IMap } from "mapper-tsk";
 export { Result } from "result-tsk";
 
 export abstract class BaseProvider {
-  constructor() {
+  constructor(readonly logProvider: ILogProvider) {
     this.mapper = mapper;
     this.appMessages = messageResources;
     this.validator = new Validator(

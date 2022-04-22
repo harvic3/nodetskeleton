@@ -14,10 +14,10 @@ export default abstract class BaseController {
   router?: IRouterType;
 
   constructor(
-    readonly serviceContainer: IServiceContainer,
+    readonly servicesContainer: IServiceContainer,
     readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON,
   ) {
-    this.serviceContainer.setContext(serviceContext);
+    this.servicesContainer.setContext(serviceContext);
   }
 
   private getResult(ctx: IContext, result: IResult): void {
