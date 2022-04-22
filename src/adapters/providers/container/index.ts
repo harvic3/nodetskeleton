@@ -6,15 +6,17 @@ import { WorkerProvider } from "../worker/Worker.provider";
 import { AuthProvider } from "../auth/Auth.provider";
 import { LogProvider } from "../log/Log.provider";
 
-const logProvider = new LogProvider(logger);
-const authProvider = new AuthProvider(logProvider);
-
 const dictionary = new ContainerDictionary();
 dictionary.addSingleton(LogProvider.name, new LogProvider(logger));
-dictionary.addSingleton(AuthProvider.name, authProvider);
+dictionary.addSingleton(
+  AuthProvider.name,
+  new AuthProvider(dictionary.getService<LogProvider>(LogProvider.name)),
+);
 dictionary.addSingleton(HealthProvider.name, new HealthProvider());
-dictionary.addSingleton(WorkerProvider.name, new WorkerProvider(logProvider));
+dictionary.addSingleton(
+  WorkerProvider.name,
+  new WorkerProvider(dictionary.getService<LogProvider>(LogProvider.name)),
+);
 
-export { authProvider, logProvider };
 export { LogProvider, AuthProvider, HealthProvider, WorkerProvider };
 export default new ServiceContainer(dictionary);

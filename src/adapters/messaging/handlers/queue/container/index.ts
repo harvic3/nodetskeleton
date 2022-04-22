@@ -2,19 +2,19 @@ import { ManageUserCreatedEventUseCase } from "../../../../../application/module
 import { ManageLastLoginEventUseCase } from "../../../../../application/modules/users/messaging/queue/useCases/lastLoginEvent";
 import repositoryContainer, { UserRepository } from "../../../../repositories/container";
 import { ContainerDictionary } from "../../../../shared/dic/ContainerDictionary";
+import providerContainer, { LogProvider } from "../../../../providers/container";
 import { ServiceContainer } from "../../../../shared/dic/ServiceContainer";
-import { logProvider } from "../../../../providers/container";
 
 const dictionary = new ContainerDictionary();
 dictionary.addScoped(
   ManageUserCreatedEventUseCase.name,
-  () => new ManageUserCreatedEventUseCase(logProvider),
+  () => new ManageUserCreatedEventUseCase(providerContainer.get<LogProvider>(LogProvider.name)),
 );
 dictionary.addScoped(
   ManageLastLoginEventUseCase.name,
   () =>
     new ManageLastLoginEventUseCase(
-      logProvider,
+      providerContainer.get<LogProvider>(LogProvider.name),
       repositoryContainer.get<UserRepository>(UserRepository.name),
     ),
 );

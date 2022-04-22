@@ -11,7 +11,7 @@ import { User } from "../../../domain/user/User";
 import { sign, verify } from "jsonwebtoken";
 
 export class AuthProvider extends BaseProvider implements IAuthProvider {
-  constructor(logProvider: ILogProvider) {
+  constructor(readonly logProvider: ILogProvider) {
     super(logProvider);
   }
 
