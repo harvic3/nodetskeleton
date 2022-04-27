@@ -4,13 +4,13 @@ import { EventLog } from "../../../application/shared/log/EventLog";
 import { Logger } from "../../../infrastructure/logger/Logger";
 
 export class LogProvider implements ILogProvider {
-  constructor(private readonly log: Logger) {}
+  constructor(private readonly logger: Logger) {}
 
   async logEvent(event: EventLog): Promise<void> {
-    return this.log.info(event);
+    return this.logger.info(event);
   }
 
   async logError(error: ErrorLog): Promise<void> {
-    return this.log.error(error);
+    return this.logger.error(error);
   }
 }
