@@ -1,7 +1,7 @@
 {
-  "version": "4.6.2",
+  "version": "4.6.4",
   "compilerOptions": {
-    "lib": ["ES7"],
+    "lib": ["ESNext"],
     "outDir": "dist",
     "sourceMap": true,
     "target": "ES2022",
