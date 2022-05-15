@@ -1,19 +1,19 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
-import providerContainer, { LogProvider, WorkerProvider } from "../../../providers/container";
-import repositoryContainer, { UserRepository } from "../../../repositories/container";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import { LogProvider, WorkerProvider } from "../../../providers/container";
+import { UserRepository } from "../../../repositories/container";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = `UsersControllerContainer`;
+
+kernel.addScoped(
   RegisterUserUseCase.name,
   () =>
     new RegisterUserUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      repositoryContainer.get<UserRepository>(UserRepository.name),
-      providerContainer.get<WorkerProvider>(WorkerProvider.name),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<UserRepository>(CONTEXT, UserRepository.name),
+      kernel.get<WorkerProvider>(CONTEXT, WorkerProvider.name),
     ),
 );
 
 export { RegisterUserUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

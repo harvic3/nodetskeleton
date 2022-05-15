@@ -1,17 +1,17 @@
-import providerContainer, { AuthProvider, LogProvider } from "../../../providers/container";
+import { AuthProvider, LogProvider } from "../../../providers/container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = `AuthControllerContainer`;
+
+kernel.addScoped(
   LoginUseCase.name,
   () =>
     new LoginUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      providerContainer.get<AuthProvider>(AuthProvider.name),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<AuthProvider>(CONTEXT, AuthProvider.name),
     ),
 );
 
 export { LoginUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

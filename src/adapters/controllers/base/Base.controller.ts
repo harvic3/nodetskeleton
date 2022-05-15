@@ -15,11 +15,10 @@ export default abstract class BaseController {
   router?: IRouterType;
 
   constructor(
+    readonly CONTEXT: string,
     readonly servicesContainer: IServiceContainer,
     readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON,
-  ) {
-    this.servicesContainer.setContext(serviceContext);
-  }
+  ) {}
 
   private getResult(res: IResponse, result: IResult): void {
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);

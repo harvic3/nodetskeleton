@@ -206,8 +206,12 @@ This tool is now available as an `NPM package`.
 
 ```ts
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
-  constructor(private productQueryService: IProductQueryService) {
-    super();
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly healthProvider: IHealthProvider,
+    private readonly productQueryService: IProductQueryService,
+  ) {
+    super(GetProductUseCase.name, logProvider);
   }
 
   async execute(idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
@@ -303,6 +307,7 @@ export abstract class BaseUseCase<T> {
     );
   }
 
+  // Avoid use this, it is better to control errors through the Result Traveling Pattern.
   handleResultError(result: IResult): void {
     Throw.when(this.CONTEXT, !!result?.error, result.error, result.statusCode);
   }
@@ -465,17 +470,15 @@ This strategy is only needed in the `adapter layer` dependencies for `controller
 import { GetHighestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getHighest";
 import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
 import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
 import { textFeelingService } from "../../../providers/container/index";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(GetHighestFeelingSentenceUseCase.name, () => new GetHighestFeelingSentenceUseCase(textFeelingService));
-dictionary.addScoped(GetLowestFeelingSentenceUseCase.name, () => new GetLowestFeelingSentenceUseCase(textFeelingService));
-dictionary.addScoped(GetFeelingTextUseCase.name, () => new GetFeelingTextUseCase(textFeelingService));
+kernel.addScoped(GetHighestFeelingSentenceUseCase.name, () => new GetHighestFeelingSentenceUseCase(textFeelingService));
+kernel.addScoped(GetLowestFeelingSentenceUseCase.name, () => new GetLowestFeelingSentenceUseCase(textFeelingService));
+kernel.addScoped(GetFeelingTextUseCase.name, () => new GetFeelingTextUseCase(textFeelingService));
 
-// This class instance contains the UseCases needed for your controller
-export default new ServiceContainer(dictionary); // *Way One*
+// This class contains the UseCases needed for your controller
+export default kernel; // *Way One*
 // You can also export separate instances if required, like this:
 const anotherUseCaseOrService = new AnotherUseCaseOrService();
 export { anotherUseCaseOrService }; // *Way Two*
@@ -515,9 +518,9 @@ import container, {
   AnotherUseCaseOrService,
 } from "./container/index";
 
-class TextFeelingController extends BaseController {
+export class TextFeelingController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer);
+    super(TextFeelingController.name, serviceContainer);
   }
   /*...*/
   getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -525,7 +528,7 @@ class TextFeelingController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.serviceContainer.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
       textDto,
     );
   };
@@ -576,9 +579,9 @@ import container, {
   AnotherUseCaseOrService,
 } from "./container/index";
 
-class TextFeelingController extends BaseController {
+export class TextFeelingController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer);
+    super(TextFeelingController.name, serviceContainer);
   }
   /*...*/
   getFeelingText = async (ctx: IContext, next: INextFunction): Promise<void> => {
@@ -586,7 +589,7 @@ class TextFeelingController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.serviceContainer.get<GetFeelingTextUseCase>(GetFeelingTextUseCase.name),
+      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
       textDto,
     );
   };
@@ -695,9 +698,9 @@ import container, {
   AnotherUseCaseOrService,
 } from "./container/index";
 
-class TextFeelingController extends BaseController {
+export class TextFeelingController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer);
+    super(TextFeelingController.name, serviceContainer);
   }
   /*...*/
 }
@@ -989,17 +992,12 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "email": "nodetskeleton@conemail.com"
 }'
 ```
-
-### Observation 👀
-
-Copies of those files `launch.json` and `tasks.json` were attached at the end of this document.
-
 **[⬆ back to the past](#table-of-contents)**
 
 
 ## Run Test
 
-> The tests are implemented for each use case in its respective folder. 
+> The end to end tests are implemented for each use case in its respective folder. 
 
 > Ideally, each use case of your application should be supported by its respective test.
 
@@ -1021,6 +1019,16 @@ npm run test
 ## Application debugger
 
 If you are using VS Code the easiest way to debug the solution is to follow these instructions:
+
+> The short way is the next:
+
+Press `Ctrl + J` keys and later `click in down arrow` to add other terminal and select `JavaScript Debug Terminal` and later 
+
+```console
+$ npm run dev
+```
+
+> The complicated way is:
 
 First go to `package.json` file.
 
