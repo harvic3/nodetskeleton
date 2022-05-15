@@ -12,12 +12,14 @@ export { EntryPointHandler, IContext, INextFunction, IRouterType, ServiceContext
 
 export default abstract class BaseController {
   router?: IRouterType;
+  serviceContext: ServiceContext;
 
   constructor(
+    readonly CONTEXT: string,
     readonly servicesContainer: IServiceContainer,
-    readonly serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON,
+    serviceContext: ServiceContext = ServiceContext.NODE_TS_SKELETON,
   ) {
-    this.servicesContainer.setContext(serviceContext);
+    this.serviceContext = serviceContext;
   }
 
   private getResult(ctx: IContext, result: IResult): void {

@@ -1,12 +1,13 @@
-import providerContainer, { AuthProvider } from "../../../../adapters/providers/container";
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
+import { AuthProvider } from "../../../../adapters/providers/auth/Auth.provider";
 import appMessages from "../../../../application/shared/locals/messages";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
 import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
 import { ISession } from "../../../../domain/session/ISession";
 import { Context, Next } from "../../../app/core/Modules";
+import kernel from "../../../../adapters/shared/kernel";
 import { Middleware } from "../../types";
 
 const TOKEN_PARTS = 2;
@@ -29,7 +30,7 @@ class AuthorizationMiddleware {
 
     const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(
-      providerContainer.get<AuthProvider>(AuthProvider.name).verifyJwt,
+      kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
       [token],
     );
     if (!sessionResult.success)

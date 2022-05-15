@@ -7,16 +7,16 @@ import BaseController, {
   IContext,
 } from "../base/Base.controller";
 
-class HealthController extends BaseController {
+export class HealthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer);
+    super(HealthController.name, serviceContainer);
   }
 
   pong: EntryPointHandler = async (ctx: IContext, next: INextFunction): Promise<void> => {
     return this.handleResultData(
       ctx,
       next,
-      this.servicesContainer.get<PongUseCase>(PongUseCase.name),
+      this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name),
     );
   };
 
@@ -27,7 +27,7 @@ class HealthController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.servicesContainer.get<NotFoundUseCase>(NotFoundUseCase.name),
+      this.servicesContainer.get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name),
     );
   };
 

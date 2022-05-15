@@ -9,9 +9,9 @@ import BaseController, {
   IContext,
 } from "../base/Base.controller";
 
-class UsersController extends BaseController {
+export class UsersController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer, ServiceContext.USERS);
+    super(UsersController.name, serviceContainer, ServiceContext.USERS);
   }
 
   singUp: EntryPointHandler = async (ctx: IContext, next: INextFunction): Promise<void> => {
@@ -20,7 +20,7 @@ class UsersController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.servicesContainer.get<RegisterUserUseCase>(RegisterUserUseCase.name),
+      this.servicesContainer.get<RegisterUserUseCase>(this.CONTEXT, RegisterUserUseCase.name),
       userDto,
     );
   };
