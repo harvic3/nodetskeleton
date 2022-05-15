@@ -1,23 +1,23 @@
-import busContainer, { EventClientEnum, EventPublisher } from "../../../messaging/bus/container";
-import queueContainer, { EventQueue, QueueClientEnum } from "../../../messaging/queue/container";
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
-import providerContainer, { LogProvider, WorkerProvider } from "../../../providers/container";
-import repositoryContainer, { UserRepository } from "../../../repositories/container";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import { EventClientEnum, EventPublisher } from "../../../messaging/bus/container";
+import { EventQueue, QueueClientEnum } from "../../../messaging/queue/container";
+import { LogProvider, WorkerProvider } from "../../../providers/container";
+import { UserRepository } from "../../../repositories/container";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = `UsersControllerContainer`;
+
+kernel.addScoped(
   RegisterUserUseCase.name,
   () =>
     new RegisterUserUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      repositoryContainer.get<UserRepository>(UserRepository.name),
-      providerContainer.get<WorkerProvider>(WorkerProvider.name),
-      busContainer.get<EventPublisher>(EventClientEnum.TSK_BUS_PUBLISHER),
-      queueContainer.get<EventQueue>(QueueClientEnum.TSK_QUEUE_PUBLISHER),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<UserRepository>(CONTEXT, UserRepository.name),
+      kernel.get<WorkerProvider>(CONTEXT, WorkerProvider.name),
+      kernel.get<EventPublisher>(CONTEXT, EventClientEnum.TSK_BUS_PUBLISHER),
+      kernel.get<EventQueue>(CONTEXT, QueueClientEnum.TSK_QUEUE_PUBLISHER),
     ),
 );
 
 export { RegisterUserUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

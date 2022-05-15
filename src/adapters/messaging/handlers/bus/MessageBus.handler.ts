@@ -21,13 +21,16 @@ export class MessageBusHandler implements IMessageBusHandler {
     try {
       String(args.channel).includes(AppSettings.QUEUE_BASE_NAME)
         ? this.messageBusUseCases
-            .get<EventEmitter>(QueueClientEnum.TSK_QUEUE_LISTENER_EMITTER)
+            .get<EventEmitter>(MessageBusHandler.name, QueueClientEnum.TSK_QUEUE_LISTENER_EMITTER)
             .emit(QueueClientEnum.TSK_QUEUE_LISTENER_EMITTER, {
               queueName: args.channel,
               topicName: message?.topicName as TopicNameEnum,
             })
         : this.messageBusUseCases
-            .get<BaseUseCase<EventMessage<MessageTypes>>>(`${args.channel}:${message?.topicName}`)
+            .get<BaseUseCase<EventMessage<MessageTypes>>>(
+              MessageBusHandler.name,
+              `${args.channel}:${message?.topicName}`,
+            )
             .execute(TypeParser.cast<EventMessage<MessageTypes>>(message));
     } catch (error) {
       console.error(

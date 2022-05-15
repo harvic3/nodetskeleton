@@ -42,6 +42,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
     try {
       return this.messageQueueUseCasesContainer
         .get<BaseUseCase<IEventQueue>>(
+          MessageQueueHandler.name,
           this.queueNameToUseCaseMap.get(
             TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topicName}`),
           ) as string,

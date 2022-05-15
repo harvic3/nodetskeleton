@@ -8,9 +8,9 @@ import BaseController, {
   IRouterType,
 } from "../base/Base.controller";
 
-class HealthController extends BaseController {
+export class HealthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer);
+    super(HealthController.name, serviceContainer);
   }
 
   pong: EntryPointHandler = async (
@@ -21,7 +21,7 @@ class HealthController extends BaseController {
     return this.handleResultData(
       res,
       next,
-      this.servicesContainer.get<PongUseCase>(PongUseCase.name),
+      this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name),
     );
   };
 
@@ -33,7 +33,7 @@ class HealthController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.servicesContainer.get<NotFoundUseCase>(NotFoundUseCase.name),
+      this.servicesContainer.get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name),
     );
   };
 

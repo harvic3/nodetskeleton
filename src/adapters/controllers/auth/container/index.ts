@@ -1,20 +1,20 @@
 import { IEventPublisher } from "../../../../application/shared/messaging/bus/IEventPublisher";
-import providerContainer, { AuthProvider, LogProvider } from "../../../providers/container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
-import busContainer, { EventClientEnum } from "../../../messaging/bus/container";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import { AuthProvider, LogProvider } from "../../../providers/container";
+import { EventClientEnum } from "../../../messaging/bus/container";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = `AuthControllerContainer`;
+
+kernel.addScoped(
   LoginUseCase.name,
   () =>
     new LoginUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      providerContainer.get<AuthProvider>(AuthProvider.name),
-      busContainer.get<IEventPublisher>(EventClientEnum.TSK_BUS_PUBLISHER),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<AuthProvider>(CONTEXT, AuthProvider.name),
+      kernel.get<IEventPublisher>(CONTEXT, EventClientEnum.TSK_BUS_PUBLISHER),
     ),
 );
 
 export { LoginUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

@@ -1,7 +1,7 @@
-import providerContainer, { AuthProvider } from "../../../../adapters/providers/container";
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
 import { IRequest } from "../../../../adapters/controllers/base/context/IRequest";
+import kernel, { AuthProvider } from "../../../../adapters/providers/container";
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
 import appMessages from "../../../../application/shared/locals/messages";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
@@ -28,7 +28,7 @@ class AuthorizationMiddleware {
 
     const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(
-      providerContainer.get<AuthProvider>(AuthProvider.name).verifyJwt,
+      kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
       [token],
     );
     if (!sessionResult.success)

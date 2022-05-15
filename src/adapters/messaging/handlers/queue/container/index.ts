@@ -1,23 +1,23 @@
 import { ManageUserCreatedEventUseCase } from "../../../../../application/modules/auth/messaging/queue/useCases/userCreatedEvent";
 import { ManageLastLoginEventUseCase } from "../../../../../application/modules/users/messaging/queue/useCases/lastLoginEvent";
-import repositoryContainer, { UserRepository } from "../../../../repositories/container";
-import { ContainerDictionary } from "../../../../shared/dic/ContainerDictionary";
-import providerContainer, { LogProvider } from "../../../../providers/container";
-import { ServiceContainer } from "../../../../shared/dic/ServiceContainer";
+import { UserRepository } from "../../../../repositories/container";
+import { LogProvider } from "../../../../providers/container";
+import kernel from "../../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = "QueueContainer";
+
+kernel.addScoped(
   ManageUserCreatedEventUseCase.name,
-  () => new ManageUserCreatedEventUseCase(providerContainer.get<LogProvider>(LogProvider.name)),
+  () => new ManageUserCreatedEventUseCase(kernel.get<LogProvider>(CONTEXT, LogProvider.name)),
 );
-dictionary.addScoped(
+kernel.addScoped(
   ManageLastLoginEventUseCase.name,
   () =>
     new ManageLastLoginEventUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      repositoryContainer.get<UserRepository>(UserRepository.name),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<UserRepository>(CONTEXT, UserRepository.name),
     ),
 );
 
 export { ManageUserCreatedEventUseCase, ManageLastLoginEventUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

@@ -1,22 +1,22 @@
-import { ContainerDictionary } from "../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../shared/dic/ServiceContainer";
 import { HealthProvider } from "../health/Health.provider";
 import logger from "../../../infrastructure/logger/Logger";
 import { WorkerProvider } from "../worker/Worker.provider";
 import { AuthProvider } from "../auth/Auth.provider";
 import { LogProvider } from "../log/Log.provider";
+import kernel from "../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addSingleton(LogProvider.name, new LogProvider(logger));
-dictionary.addSingleton(
+const CONTEXT = "ProviderContainer";
+
+kernel.addSingleton(LogProvider.name, new LogProvider(logger));
+kernel.addSingleton(
   AuthProvider.name,
-  new AuthProvider(dictionary.getCopy<LogProvider>(LogProvider.name)),
+  new AuthProvider(kernel.get<LogProvider>(CONTEXT, LogProvider.name)),
 );
-dictionary.addSingleton(HealthProvider.name, new HealthProvider());
-dictionary.addSingleton(
+kernel.addSingleton(HealthProvider.name, new HealthProvider());
+kernel.addSingleton(
   WorkerProvider.name,
-  new WorkerProvider(dictionary.getCopy<LogProvider>(LogProvider.name)),
+  new WorkerProvider(kernel.get<LogProvider>(CONTEXT, LogProvider.name)),
 );
 
 export { LogProvider, AuthProvider, HealthProvider, WorkerProvider };
-export default new ServiceContainer(dictionary);
+export default kernel;
