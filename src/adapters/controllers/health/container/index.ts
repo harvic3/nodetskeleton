@@ -1,26 +1,26 @@
-import providerContainer, { LogProvider, HealthProvider } from "../../../providers/container";
 import { NotFoundUseCase } from "../../../../application/modules/health/useCases/default";
 import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
-import { ContainerDictionary } from "../../../shared/dic/ContainerDictionary";
-import { ServiceContainer } from "../../../shared/dic/ServiceContainer";
+import { LogProvider, HealthProvider } from "../../../providers/container";
+import kernel from "../../../shared/kernel";
 
-const dictionary = new ContainerDictionary();
-dictionary.addScoped(
+const CONTEXT = `HealthControllerContainer`;
+
+kernel.addScoped(
   PongUseCase.name,
   () =>
     new PongUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      providerContainer.get<HealthProvider>(HealthProvider.name),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<HealthProvider>(CONTEXT, HealthProvider.name),
     ),
 );
-dictionary.addScoped(
+kernel.addScoped(
   NotFoundUseCase.name,
   () =>
     new NotFoundUseCase(
-      providerContainer.get<LogProvider>(LogProvider.name),
-      providerContainer.get<HealthProvider>(HealthProvider.name),
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<HealthProvider>(CONTEXT, HealthProvider.name),
     ),
 );
 
 export { PongUseCase, NotFoundUseCase };
-export default new ServiceContainer(dictionary);
+export default kernel;

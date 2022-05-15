@@ -1,5 +1,6 @@
 import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import container, { LoginUseCase } from "./container";
+
 import BaseController, {
   IRequest,
   IResponse,
@@ -9,9 +10,9 @@ import BaseController, {
   ServiceContext,
 } from "../base/Base.controller";
 
-class AuthController extends BaseController {
+export class AuthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(serviceContainer, ServiceContext.SECURITY);
+    super(AuthController.name, serviceContainer, ServiceContext.SECURITY);
   }
 
   login: EntryPointHandler = async (
@@ -25,7 +26,7 @@ class AuthController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.servicesContainer.get<LoginUseCase>(LoginUseCase.name),
+      this.servicesContainer.get<LoginUseCase>(this.CONTEXT, LoginUseCase.name),
       {
         email,
         passwordB64,

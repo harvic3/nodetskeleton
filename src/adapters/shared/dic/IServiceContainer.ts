@@ -1,8 +1,5 @@
-import { ServiceContext } from "../ServiceContext";
-import { IContainerDictionary } from "./IContainerDictionary";
-
 export interface IServiceContainer {
-  setContext(context: ServiceContext): void;
-  get<T>(className: string): T;
-  addDictionary(dictionary: IContainerDictionary): void;
+  addScoped(className: string, activator: Function): void;
+  addSingleton(className: string, object: object): void;
+  get<T>(context: string, className: string): T;
 }
