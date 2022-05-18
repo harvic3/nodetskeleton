@@ -8,4 +8,4 @@ Thanks!
 
 ## Maintainers
 
-- [Vickodev]([https://github.com/0xTim](https://github.com/harvic3))
+- [Vickodev](https://github.com/harvic3)
