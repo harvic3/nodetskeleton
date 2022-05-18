@@ -16,32 +16,32 @@ import {
 } from "../../../adapters/messaging/bus/container";
 
 export class MessagingClient {
-  tskMessageBus?: MessageBus;
-  tskMessageQueue?: MessageQueue;
+  tskMessageBus: MessageBus;
+  tskMessageQueue: MessageQueue;
 
   constructor() {
-    this.createBusClients();
-    this.createQueueClients();
+    this.tskMessageBus = this.createMessageBus();
+    this.tskMessageBus.initialize();
+    this.tskMessageQueue = this.createMessageQueue();
+    this.tskMessageQueue.initialize(ClientModeEnum.PUB_MODE);
   }
 
-  private createBusClients(): void {
+  private createMessageBus(): MessageBus {
     const connectionOpts = {
       host: AppSettings.MessageBusConnection.Host,
       port: AppSettings.MessageBusConnection.Port,
       dbIndex: AppSettings.MessageBusConnection.DbIndex,
     };
-    this.tskMessageBus = new MessageBus(EventClientEnum.TSK_MESSAGE_BUS, connectionOpts);
-    this.tskMessageBus.initialize();
+    return new MessageBus(EventClientEnum.TSK_MESSAGE_BUS, connectionOpts);
   }
 
-  private createQueueClients(): void {
+  private createMessageQueue(): MessageQueue {
     const connectionOpts = {
       host: AppSettings.MessageQueueConnection.Host,
       port: AppSettings.MessageQueueConnection.Port,
       dbIndex: AppSettings.MessageQueueConnection.DbIndex,
     };
-    this.tskMessageQueue = new MessageQueue(QueueClientEnum.TSK_QUEUE, connectionOpts);
-    this.tskMessageQueue.initialize(ClientModeEnum.PUB_MODE);
+    return new MessageQueue(QueueClientEnum.TSK_QUEUE, connectionOpts);
   }
 
   private setSubscriptions(): void {

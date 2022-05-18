@@ -33,7 +33,7 @@ import {
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
   app: Express;
-  messagingClient?: MessagingClient;
+  messagingClient: MessagingClient;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
@@ -47,7 +47,7 @@ export default class AppWrapper {
       this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.YES;
     }
-    this.initializeMessagingClient();
+    this.messagingClient = new MessagingClient();
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
@@ -116,10 +116,6 @@ export default class AppWrapper {
       AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
-  }
-
-  private initializeMessagingClient(): void {
-    this.messagingClient = new MessagingClient();
   }
 
   initializeServices(): Promise<void> {
