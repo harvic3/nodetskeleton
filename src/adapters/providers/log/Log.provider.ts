@@ -1,10 +1,10 @@
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { EventLog } from "../../../application/shared/log/EventLog";
-import { Logger } from "../../../infrastructure/logger/Logger";
+import { ILogger } from "./ILogger";
 
 export class LogProvider implements ILogProvider {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly logger: ILogger) {}
 
   async logEvent(event: EventLog): Promise<void> {
     return this.logger.info(event);

@@ -1,7 +1,8 @@
 import { ErrorLog } from "../../application/shared/log/ErrorLog";
 import { EventLog } from "../../application/shared/log/EventLog";
+import { ILogger } from "../../adapters/providers/log/ILogger";
 
-export class Logger {
+export class Logger implements ILogger {
   info(event: EventLog): void {
     console.log(`Event ${new Date().toISOString()}:`, event);
   }
@@ -10,5 +11,3 @@ export class Logger {
     console.error(`Error ${new Date().toISOString()}:`, error);
   }
 }
-
-export default new Logger();

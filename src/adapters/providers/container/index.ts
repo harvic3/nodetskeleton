@@ -1,16 +1,24 @@
+import { UserRepository } from "../../repositories/user/User.repository";
+import { IUserModel } from "../../repositories/user/IUser.model";
 import { HealthProvider } from "../health/Health.provider";
-import logger from "../../../infrastructure/logger/Logger";
 import { WorkerProvider } from "../worker/Worker.provider";
 import { AuthProvider } from "../auth/Auth.provider";
 import { LogProvider } from "../log/Log.provider";
 import kernel from "../../shared/kernel";
+import { ILogger } from "../log/ILogger";
 
 const CONTEXT = "ProviderContainer";
 
-kernel.addSingleton(LogProvider.name, new LogProvider(logger));
+kernel.addSingleton(
+  LogProvider.name,
+  new LogProvider(kernel.get<ILogger>(CONTEXT, kernel.classToIName(LogProvider.name))),
+);
 kernel.addSingleton(
   AuthProvider.name,
-  new AuthProvider(kernel.get<LogProvider>(CONTEXT, LogProvider.name)),
+  new AuthProvider(
+    kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+    kernel.get<IUserModel>(CONTEXT, kernel.classToIName(UserRepository.name)),
+  ),
 );
 kernel.addSingleton(HealthProvider.name, new HealthProvider());
 kernel.addSingleton(
