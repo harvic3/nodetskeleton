@@ -1,3 +1,4 @@
+import { IUserModel as IUserModel } from "../../../adapters/repositories/user/IUser.model";
 import GuidUtils from "../../../application/shared/utils/GuidUtils";
 import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { IUser } from "../../../domain/user/IUser";
@@ -5,12 +6,12 @@ import { User } from "../../../domain/user/User";
 import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
 
-export class UserModel {
+export class UserModel implements IUserModel {
   async getByEmail(email: string | Nulldifined): Promise<User | null> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const founded = dbData.users.find((element) => element.email === email);
       if (!founded) {
-        resolve(null);
+        return resolve(null);
       }
       const user = mapper.mapObject(founded, new User());
       return resolve(user);
@@ -23,20 +24,18 @@ export class UserModel {
         (user) => user.email === email && user.password === encryptedPassword,
       );
       if (!founded) {
-        reject(null);
+        return reject(null);
       }
       const domainUser = mapper.mapObject(founded, new User());
-      resolve(domainUser);
+      return resolve(domainUser);
     });
   }
 
   async create(user: IUser): Promise<User> {
     user.uid = GuidUtils.getV4();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       dbData.users.push(user as any);
-      resolve(user as User);
+      return resolve(user as User);
     });
   }
 }
-
-export default new UserModel();
