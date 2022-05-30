@@ -34,10 +34,10 @@ export class ErrorHandlerMiddleware {
 
   manageNodeException(
     exceptionType: string,
-    exc: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
+    exception: NodeJS.UncaughtExceptionListener | Promise<unknown>,
   ): void {
     // Send to your logger system or repository this error
-    console.log(`Node ${exceptionType} type:`, exc);
+    console.log(`Node ${exceptionType} type:`, exception);
   }
 }
 

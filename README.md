@@ -847,7 +847,15 @@ Coming soon ;)
 
 ## Infrastructure
 
+In this layer you can add the connections services of all services, your repository models, and other services.
+
 The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infrastructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
+
+The infrastructure has his container for the Model Repositories, LogProvider, connections and other essential services that we will need to start before any service in our app, this container is located in `src/infrastructure/container` and this service is initialized in `src/index` file as follow: 
+```ts
+import infraContainer from "./infrastructure/container";
+infraContainer.load();
+```
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -1100,7 +1108,15 @@ Something important is to know if we really did the job of building our clean ar
 
 For the purpose of giving clarity to the following statement we will define `coupling` as the action of dependence, that is to say that `X depends on Y to function`.
 
-Coupling is not bad if it is well managed, but in a software solution `there should not be coupling` of the `domain and application layers with any other`, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice versa, but avoid it as possible.
+Coupling is not bad if it is well managed, but in a software solution `there should not be coupling` of the `domain and application layers with any other`, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice-versa*, but avoid the latter as much as possible*.
+
+The clean architecture is very clear in its rules and dictates that the adapter layer cannot depend on the infrastructure layer, but in practice in certain languages like JavaScript (TypeScript) it is quite complicated to achieve this without the use of Dependency Inversion libraries like TypeDi or another one, and for this NodeTsKeleton includes a TSKernel artifact to help you avoid this problem, however in practice having this type of coupling does not represent a major problem over time and I say this from experience, however I leave this decision to your discretion and if you need an example of what to do then check the following lines of the main index file of the application.
+
+```ts
+// src/index
+import infraContainer from "./infrastructure/container";
+infraContainer.load();
+```
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -1119,6 +1135,8 @@ For some reason that I don't understand yet, the dynamic loading of modules pres
 // Node App in Cluster mode
 import { cpus } from "os";
 import "express-async-errors";
+import infraContainer from "./infrastructure/container";
+infraContainer.load();
 import * as cluster from "cluster";
 import config from "./infrastructure/config";
 import AppWrapper from "./infrastructure/app/AppWrapper";
@@ -1142,9 +1160,15 @@ function startApp(): void {
     errorHandlerMiddleware.manageNodeException("UncaughtException", error);
   });
 
-  process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
-    errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
-  });
+  process.on(
+    "unhandledRejection",
+    (reason: NodeJS.UnhandledRejectionListener, promiseError: Promise<unknown>) => {
+      errorHandlerMiddleware.manageNodeException(
+        `UnhandledRejection - Reason: ${reason}`,
+        promiseError,
+      );
+    },
+  );
 }
 
 if (cluster.isMaster) {
@@ -1166,6 +1190,8 @@ if (cluster.isMaster) {
 
 // Node App without Cluster mode and controllers dynamic load.
 import "express-async-errors";
+import infraContainer from "./infrastructure/container";
+infraContainer.load();
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
@@ -1178,12 +1204,20 @@ process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
   errorHandlerMiddleware.manageNodeException("UncaughtException", error);
 });
 
-process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
-  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
-});
+process.on(
+  "unhandledRejection",
+  (reason: NodeJS.UnhandledRejectionListener, promiseError: Promise<unknown>) => {
+    errorHandlerMiddleware.manageNodeException(
+      `UnhandledRejection - Reason: ${reason}`,
+      promiseError,
+    );
+  },
+);
 
 // Node App without Cluster mode with controllers load by constructor.
 import "express-async-errors";
+import infraContainer from "./infrastructure/container";
+infraContainer.load();
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
@@ -1204,9 +1238,15 @@ process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
   errorHandlerMiddleware.manageNodeException("UncaughtException", error);
 });
 
-process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
-  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
-});
+process.on(
+  "unhandledRejection",
+  (reason: NodeJS.UnhandledRejectionListener, promiseError: Promise<unknown>) => {
+    errorHandlerMiddleware.manageNodeException(
+      `UnhandledRejection - Reason: ${reason}`,
+      promiseError,
+    );
+  },
+);
 ```
 **[⬆ back to the past](#table-of-contents)**
 

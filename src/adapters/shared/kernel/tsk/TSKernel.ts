@@ -4,6 +4,9 @@ import appMessages from "../../../../application/shared/locals/messages";
 import { IServiceContainer } from "../../dic/IServiceContainer";
 
 export class TSKernel implements IServiceContainer {
+  readonly #classNameBase = "ClassName";
+  // You can will use something like this too: 'ClassName.interface' for example
+  readonly #interfaceName = `I${this.#classNameBase}`;
   #serviceCollection: Record<string, Function> = {};
 
   addScoped(className: string, activator: Function): void {
@@ -24,5 +27,9 @@ export class TSKernel implements IServiceContainer {
     }
 
     return this.#serviceCollection[className]() as T;
+  }
+
+  classToIName(className: string): string {
+    return this.#interfaceName.replace(this.#classNameBase, className);
   }
 }
