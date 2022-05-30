@@ -1,6 +1,13 @@
 import { UserRepository } from "../user/User.repository";
+import { IUserModel } from "../user/IUser.model";
 import kernel from "../../shared/kernel";
 
-kernel.addSingleton(UserRepository.name, new UserRepository());
+const CONTEXT = "RepositoryContainer";
 
-export { UserRepository };
+kernel.addSingleton(
+  UserRepository.name,
+  new UserRepository(kernel.get<IUserModel>(CONTEXT, kernel.classToIName(UserRepository.name))),
+);
+
+export { UserRepository as UserRepository };
+export default kernel;
