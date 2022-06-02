@@ -27,7 +27,7 @@ export class QueueListener {
 
   listen(): void {
     this.emitter.on(this.serviceName, this.readQueue.bind(this));
-    console.log(`${this.serviceName} is listening`);
+    console.log(`${this.serviceName} emitter is listening`);
     this.setUseCaseContext();
   }
 

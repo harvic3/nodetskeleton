@@ -9,21 +9,21 @@ import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import queueMessageUseCaseContainer from "./container";
 
 export class MessageQueueHandler implements IMessageQueueHandler {
-  private readingChannels: ChannelNameEnum[] = [];
-  private eventQueue: IEventQueue | undefined;
-  private queueNameToUseCaseMap: Map<string, string>;
+  #readingChannels: ChannelNameEnum[] = [];
+  #eventQueue: IEventQueue | undefined;
+  #queueNameToUseCaseMap: Map<string, string>;
 
-  constructor(private readonly messageQueueUseCasesContainer: IServiceContainer) {
-    this.queueNameToUseCaseMap = new Map();
+  constructor(private readonly messageQueueUseCases: IServiceContainer) {
+    this.#queueNameToUseCaseMap = new Map();
   }
 
   setEventQueue(eventQueue: IEventQueue): void {
-    this.eventQueue = eventQueue;
+    this.#eventQueue = eventQueue;
   }
 
   setUseCasesContext(useCasesContext: Record<string, string>): void {
     Object.keys(useCasesContext).forEach((channelNameTopic) => {
-      this.queueNameToUseCaseMap.set(channelNameTopic, useCasesContext[channelNameTopic]);
+      this.#queueNameToUseCaseMap.set(channelNameTopic, useCasesContext[channelNameTopic]);
     });
   }
 
@@ -32,22 +32,22 @@ export class MessageQueueHandler implements IMessageQueueHandler {
 
     if (this.isChannelReading(args.queueName)) return Promise.resolve();
 
-    if (!this.queueNameToUseCaseMap) {
+    if (!this.#queueNameToUseCaseMap) {
       console.error(MessageQueueHandler.name, "Queue name to use case map is not set");
       return Promise.resolve();
     }
 
-    this.readingChannels.push(args.queueName);
+    this.#readingChannels.push(args.queueName);
 
     try {
-      return this.messageQueueUseCasesContainer
+      return this.messageQueueUseCases
         .get<BaseUseCase<IEventQueue>>(
           MessageQueueHandler.name,
-          this.queueNameToUseCaseMap.get(
-            TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topicName}`),
+          this.#queueNameToUseCaseMap.get(
+            TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topic}`),
           ) as string,
         )
-        .execute(this.eventQueue)
+        .execute(this.#eventQueue)
         .then((_result) => {
           this.removeChannel(args.queueName);
           return Promise.resolve();
@@ -65,7 +65,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
   }
 
   private validateRequest(args: QueueArgs): boolean {
-    if (!args.queueName && !args.topicName) {
+    if (!args.queueName && !args.topic) {
       console.error(MessageQueueHandler.name, "Invalid queue request");
       return BooleanUtil.NOT;
     }
@@ -73,11 +73,11 @@ export class MessageQueueHandler implements IMessageQueueHandler {
   }
 
   private isChannelReading(channel: ChannelNameEnum): boolean {
-    return this.readingChannels.includes(channel);
+    return this.#readingChannels.includes(channel);
   }
 
   private removeChannel(channel: ChannelNameEnum): void {
-    this.readingChannels.splice(this.readingChannels.indexOf(channel), NumberUtil.DELETE_ONE);
+    this.#readingChannels.splice(this.#readingChannels.indexOf(channel), NumberUtil.DELETE_ONE);
   }
 }
 

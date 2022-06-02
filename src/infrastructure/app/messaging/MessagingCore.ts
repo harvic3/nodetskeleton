@@ -15,7 +15,7 @@ import {
   EventListener,
 } from "../../../adapters/messaging/bus/container";
 
-export class MessagingClient {
+export class MessagingCore {
   tskMessageBus: MessageBus;
   tskMessageQueue: MessageQueue;
 
@@ -56,33 +56,33 @@ export class MessagingClient {
 
     for (const channel of channelsToSuscribe) {
       kernel
-        .get<EventSubscriber>(MessagingClient.name, EventClientEnum.TSK_BUS_SUBSCRIBER)
+        .get<EventSubscriber>(MessagingCore.name, EventClientEnum.TSK_BUS_SUBSCRIBER)
         .subscribe(channel);
     }
   }
 
   private initializeBusSockets(): void {
     kernel
-      .get<EventSubscriber>(MessagingClient.name, EventClientEnum.TSK_BUS_SUBSCRIBER)
+      .get<EventSubscriber>(MessagingCore.name, EventClientEnum.TSK_BUS_SUBSCRIBER)
       .initialize(TypeParser.cast<Subscriber>(this.tskMessageBus?.getSubscriber()));
     kernel
-      .get<EventListener>(MessagingClient.name, EventClientEnum.TSK_BUS_LISTENER)
+      .get<EventListener>(MessagingCore.name, EventClientEnum.TSK_BUS_LISTENER)
       .initialize(TypeParser.cast<Listener>(this.tskMessageBus?.getListener()));
     kernel
-      .get<EventPublisher>(MessagingClient.name, EventClientEnum.TSK_BUS_PUBLISHER)
+      .get<EventPublisher>(MessagingCore.name, EventClientEnum.TSK_BUS_PUBLISHER)
       .initialize(TypeParser.cast<Publisher>(this.tskMessageBus?.getPublisher()));
   }
 
   private initializeQueueSockets(): void {
     kernel
-      .get<EventQueue>(MessagingClient.name, QueueClientEnum.TSK_QUEUE_PUBLISHER)
+      .get<EventQueue>(MessagingCore.name, QueueClientEnum.TSK_QUEUE_PUBLISHER)
       .initialize(TypeParser.cast<Publisher>(this.tskMessageQueue?.getQueuePublisher()));
   }
 
   private initListeners(): void {
-    kernel.get<EventListener>(MessagingClient.name, EventClientEnum.TSK_BUS_LISTENER).listen();
+    kernel.get<EventListener>(MessagingCore.name, EventClientEnum.TSK_BUS_LISTENER).listen();
 
-    kernel.get<QueueListener>(MessagingClient.name, QueueListener.name).listen();
+    kernel.get<QueueListener>(MessagingCore.name, QueueListener.name).listen();
   }
 
   initialize(): void {

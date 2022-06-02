@@ -8,7 +8,7 @@ import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
-import { MessagingClient } from "./client/MessagingClient";
+import { MessagingCore } from "./messaging/MessagingCore";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
 import BaseController, {
@@ -33,7 +33,7 @@ import {
 export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
   app: Express;
-  messagingClient: MessagingClient;
+  messagingCore: MessagingCore;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
@@ -47,7 +47,7 @@ export default class AppWrapper {
       this.loadControllersByConstructor(controllers as BaseController[]);
       this.controllersLoadedByConstructor = BooleanUtil.YES;
     }
-    this.messagingClient = new MessagingClient();
+    this.messagingCore = new MessagingCore();
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
@@ -122,11 +122,11 @@ export default class AppWrapper {
     return new Promise((resolve, reject) => {
       this.loadControllersDynamically()
         .then(() => {
-          this.messagingClient?.initialize();
+          this.messagingCore?.initialize();
           resolve();
         })
         .catch((error) => {
-          this.messagingClient?.close();
+          this.messagingCore?.close();
           reject(error);
         });
     });

@@ -4,14 +4,14 @@ import { Publisher } from "../../../../infrastructure/messaging/MessageBus";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 
 export class EventPublisher implements IEventPublisher {
-  private publisher: Publisher | undefined;
+  #publisher: Publisher | undefined;
 
   constructor(private readonly serviceName: string) {}
 
   async publish<T>(message: EventMessage<T>): Promise<boolean> {
     if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
 
-    return Promise.resolve(this.publisher?.publish(message.channel, message.toJSON()))
+    return Promise.resolve(this.#publisher?.publish(message.channel, message.toJSON()))
       .then(() => BooleanUtil.SUCCESS)
       .catch((error) => {
         console.error(
@@ -23,22 +23,22 @@ export class EventPublisher implements IEventPublisher {
   }
 
   online(): boolean {
-    return this.publisher?.connected || BooleanUtil.NOT;
+    return this.#publisher?.connected || BooleanUtil.NOT;
   }
 
   initialize(client: Publisher): void {
     if (!client) return;
 
-    this.publisher = client;
+    this.#publisher = client;
     console.log(
       `${this.serviceName} publisher service initialized at ${new Date().toISOString()}.`,
     );
 
-    this.publisher?.on("connect", () => {
+    this.#publisher?.on("connect", () => {
       console.log(`Publisher ${this.serviceName} CONNECTED`);
     });
 
-    this.publisher?.on("error", (error) => {
+    this.#publisher?.on("error", (error) => {
       console.error(
         `Publisher ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,

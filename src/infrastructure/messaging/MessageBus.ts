@@ -12,14 +12,12 @@ export class MessageBus extends RedisConnection {
   }
 
   getListener(): IEventListener | undefined {
-    return this.initialized
-      ? TypeParser.cast<IEventListener>(this.subscriberListenerClient)
-      : undefined;
+    return this.initialized ? TypeParser.cast<IEventListener>(this.subscriberListener) : undefined;
   }
 
   getSubscriber(): IEventSubscriber | undefined {
     return this.initialized
-      ? TypeParser.cast<IEventSubscriber>(this.subscriberListenerClient)
+      ? TypeParser.cast<IEventSubscriber>(this.subscriberListener)
       : undefined;
   }
 

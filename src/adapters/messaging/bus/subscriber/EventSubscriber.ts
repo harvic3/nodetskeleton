@@ -9,7 +9,7 @@ import {
 import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
 
 export class EventSubscriber implements IEventSubscriber {
-  private subscriber: Subscriber | undefined;
+  #subscriber: Subscriber | undefined;
   subscribedChannels: SubscribedChannel[] = [];
 
   constructor(private readonly serviceName: string) {}
@@ -19,7 +19,7 @@ export class EventSubscriber implements IEventSubscriber {
 
     if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
 
-    return Promise.resolve(this.subscriber?.subscribe(channel))
+    return Promise.resolve(this.#subscriber?.subscribe(channel))
       .then(() => {
         console.log(
           `${this.serviceName} subscribed to ${channel} channel at ${new Date().toISOString()}.`,
@@ -36,7 +36,7 @@ export class EventSubscriber implements IEventSubscriber {
   async unsubscribe(channel: ChannelNameEnum): Promise<boolean> {
     if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
 
-    return Promise.resolve(this.subscriber?.unsubscribe(channel))
+    return Promise.resolve(this.#subscriber?.unsubscribe(channel))
       .then(() => {
         console.log(
           `${this.serviceName} unsubscribed to ${channel} channel at ${new Date().toISOString()}.`,
@@ -51,20 +51,20 @@ export class EventSubscriber implements IEventSubscriber {
   }
 
   online(): boolean {
-    return this.subscriber?.connected || BooleanUtil.NOT;
+    return this.#subscriber?.connected || BooleanUtil.NOT;
   }
 
   initialize(client: Subscriber): void {
     if (!client) return;
 
-    this.subscriber = client;
+    this.#subscriber = client;
 
-    this.subscriber?.on("connect", () => {
+    this.#subscriber?.on("connect", () => {
       console.log(`Subscriber ${this.serviceName} CONNECTED`);
       this.initializeSubscriptions();
     });
 
-    this.subscriber?.on("error", (error) => {
+    this.#subscriber?.on("error", (error) => {
       console.error(
         `Subscriber ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,
