@@ -44,7 +44,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
         .get<BaseUseCase<IEventQueue>>(
           MessageQueueHandler.name,
           this.#queueNameToUseCaseMap.get(
-            TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topic}`),
+            TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topicName}`),
           ) as string,
         )
         .execute(this.#eventQueue)
@@ -65,7 +65,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
   }
 
   private validateRequest(args: QueueArgs): boolean {
-    if (!args.queueName && !args.topic) {
+    if (!args.queueName && !args.topicName) {
       console.error(MessageQueueHandler.name, "Invalid queue request");
       return BooleanUtil.NOT;
     }

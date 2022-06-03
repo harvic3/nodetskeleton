@@ -4,7 +4,7 @@ import { TopicNameEnum } from "../../../../application/shared/messaging/TopicNam
 
 export type QueueArgs = {
   queueName: ChannelNameEnum;
-  topic: TopicNameEnum;
+  topicName: TopicNameEnum;
 };
 
 export interface IMessageQueueHandler {
