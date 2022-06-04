@@ -5,13 +5,14 @@ import { MessageQueueHandler } from "../../handlers/queue/MessageQueue.handler";
 import AppSettings from "../../../../application/shared/settings/AppSettings";
 import { ServiceContext } from "../../../controllers/base/Base.controller";
 import { QueueArgs } from "../../handlers/queue/IMessageQueue.handler";
+import { IQueueListener } from "./IQueueListener";
 import {
   ManageLastLoginEventUseCase,
   ManageUserCreatedEventUseCase,
 } from "../../handlers/queue/container";
 import { EventEmitter } from "events";
 
-export class QueueListener {
+export class QueueListener implements IQueueListener {
   constructor(
     private readonly serviceName: string,
     private readonly messageQueueHandler: MessageQueueHandler,
@@ -34,26 +35,23 @@ export class QueueListener {
   private setUseCaseContext(): void {
     const useCasesContext: Record<string, string> = {};
 
-    if (AppSettings.ServiceContext === ServiceContext.NODE_TS_SKELETON) {
-      useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
-        ManageUserCreatedEventUseCase.name;
-      useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
-        ManageLastLoginEventUseCase.name;
-      this.messageQueueHandler.setUseCasesContext(useCasesContext);
-      return;
+    switch (AppSettings.ServiceContext) {
+      case ServiceContext.USERS:
+        useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
+          ManageUserCreatedEventUseCase.name;
+        break;
+      case ServiceContext.SECURITY:
+        useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
+          ManageLastLoginEventUseCase.name;
+        break;
+      default:
+        useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
+          ManageUserCreatedEventUseCase.name;
+        useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
+          ManageLastLoginEventUseCase.name;
+        break;
     }
 
-    if (AppSettings.ServiceContext === ServiceContext.USERS) {
-      useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
-        ManageUserCreatedEventUseCase.name;
-      this.messageQueueHandler.setUseCasesContext(useCasesContext);
-      return;
-    }
-
-    if (AppSettings.ServiceContext === ServiceContext.SECURITY) {
-      useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
-        ManageLastLoginEventUseCase.name;
-      this.messageQueueHandler.setUseCasesContext(useCasesContext);
-    }
+    this.messageQueueHandler.setUseCasesContext(useCasesContext);
   }
 }

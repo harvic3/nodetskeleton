@@ -33,7 +33,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
     if (this.isChannelReading(args.queueName)) return Promise.resolve();
 
     if (!this.#queueNameToUseCaseMap) {
-      console.error(MessageQueueHandler.name, "Queue name to use case map is not set");
+      console.error(MessageQueueHandler.name, "Queue name to use case map was not mapped");
       return Promise.resolve();
     }
 

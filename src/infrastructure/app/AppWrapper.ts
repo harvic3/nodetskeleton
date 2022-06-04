@@ -1,3 +1,5 @@
+import infraContainer from "../container";
+infraContainer.load();
 import healthController from "../../adapters/controllers/health/Health.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";

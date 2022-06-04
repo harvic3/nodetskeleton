@@ -3,10 +3,11 @@ import { IEventSubscriber } from "../../application/shared/messaging/bus/IEventS
 import { IEventPublisher } from "../../application/shared/messaging/bus/IEventPublisher";
 import { IEventListener } from "../../application/shared/messaging/bus/IEventListener";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
+import { IMessageBus } from "./IMessageBus";
 
 export { Listener, Publisher, Subscriber } from "../dataBases/redis/RedisConnection";
 
-export class MessageBus extends RedisConnection {
+export class MessageBus extends RedisConnection implements IMessageBus {
   constructor(serviceName: string, redisConnectionOptions: RedisConnectionOptions) {
     super(serviceName, redisConnectionOptions);
   }

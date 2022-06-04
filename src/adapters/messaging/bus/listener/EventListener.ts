@@ -10,6 +10,8 @@ export class EventListener implements IEventListener {
   constructor(private readonly serviceName: string) {}
 
   listen(): void {
+    if (!this.#listener) return;
+
     this.#listener?.on("message", (channel: string, message: string) => {
       Promise.resolve(
         messageBusHandler.handle({ channel: channel as ChannelNameEnum, message }),

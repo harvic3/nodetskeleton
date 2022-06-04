@@ -14,7 +14,7 @@ export type RedisConnectionOptions = {
 export interface IRedisConnection {
   initialized: boolean;
   connected: boolean;
-  subscriberListenerClient: RedisClient | undefined;
+  subscriberListener: RedisClient | undefined;
   publisher: RedisClient | undefined;
 
   close(): void;
