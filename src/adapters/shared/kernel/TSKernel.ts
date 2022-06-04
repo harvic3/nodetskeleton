@@ -1,11 +1,11 @@
-import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
-import applicationStatus from "../../../../application/shared/status/applicationStatus";
-import appMessages from "../../../../application/shared/locals/messages";
-import { IServiceContainer } from "../../dic/IServiceContainer";
+import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
+import applicationStatus from "../../../application/shared/status/applicationStatus";
+import appMessages from "../../../application/shared/locals/messages";
+import { IServiceContainer } from "../dic/IServiceContainer";
 
 export class TSKernel implements IServiceContainer {
   readonly #classNameBase = "ClassName";
-  // You can will use something like this too: 'ClassName.interface' for example
+  // You could use something like this too: 'ClassName.interface' for example
   readonly #interfaceName = `I${this.#classNameBase}`;
   #serviceCollection: Record<string, Function> = {};
 
@@ -33,3 +33,5 @@ export class TSKernel implements IServiceContainer {
     return this.#interfaceName.replace(this.#classNameBase, className);
   }
 }
+
+export default new TSKernel();

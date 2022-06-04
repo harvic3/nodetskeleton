@@ -1,8 +1,7 @@
 import { UserRepository } from "../../adapters/repositories/user/User.repository";
+import kernel, { TSKernel } from "../../adapters/shared/kernel/TSKernel";
 import { LogProvider } from "../../adapters/providers/log/Log.provider";
-import { TSKernel } from "../../adapters/shared/kernel/tsk/TSKernel";
 import { UserModel } from "../dataBases/nodeTsKeleton/User.model";
-import kernel from "../../adapters/shared/kernel";
 import { Logger } from "../logger/Logger";
 
 class InfrastructureServiceContainer {

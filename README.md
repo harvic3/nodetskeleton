@@ -471,7 +471,7 @@ import { GetHighestFeelingSentenceUseCase } from "../../../../application/module
 import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
 import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
 import { textFeelingService } from "../../../providers/container/index";
-import kernel from "../../../shared/kernel";
+import kernel from "../../../shared/kernel/TSKernel";
 
 kernel.addScoped(GetHighestFeelingSentenceUseCase.name, () => new GetHighestFeelingSentenceUseCase(textFeelingService));
 kernel.addScoped(GetLowestFeelingSentenceUseCase.name, () => new GetLowestFeelingSentenceUseCase(textFeelingService));

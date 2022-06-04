@@ -1,6 +1,6 @@
 import { UserRepository } from "../user/User.repository";
 import { IUserModel } from "../user/IUser.model";
-import kernel from "../../shared/kernel";
+import kernel from "../../shared/kernel/TSKernel";
 
 const CONTEXT = "RepositoryContainer";
 
