@@ -26,7 +26,7 @@ class AuthorizationMiddleware {
     if (jwtParts.length !== TOKEN_PARTS)
       return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
 
-    const token = ArrayUtil.getIndex(jwtParts, TOKEN_POSITION_VALUE);
+    const token = ArrayUtil.getWithIndex(jwtParts, TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(
       kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
       [token],
