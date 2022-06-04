@@ -2,7 +2,7 @@ import { IEventPublisher } from "../../../../application/shared/messaging/bus/IE
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
 import { AuthProvider, LogProvider } from "../../../providers/container";
 import { EventClientEnum } from "../../../messaging/bus/container";
-import kernel from "../../../shared/kernel";
+import kernel from "../../../shared/kernel/TSKernel";
 
 const CONTEXT = `AuthControllerContainer`;
 

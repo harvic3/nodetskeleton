@@ -104,7 +104,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const maskedUid = GuidUtil.getV4WithoutDashes();
     const createdAt = DateTimeUtils.getISONow();
     const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.NOT_VERIFIED);
-    // buildedUser.password = await this.encryptPassword(buildedUser);
+    buildedUser.password = await this.encryptPassword(buildedUser);
 
     return buildedUser;
   }
@@ -140,7 +140,6 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   }
 
   private async publishUserCreatedEvent(user: User): Promise<void> {
-    user.password = await this.encryptPassword(user);
     this.queueBus.pushPub(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
   }
 }

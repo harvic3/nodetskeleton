@@ -3,7 +3,7 @@ import { EventClientEnum, EventPublisher } from "../../../messaging/bus/containe
 import { EventQueue, QueueClientEnum } from "../../../messaging/queue/container";
 import { LogProvider, WorkerProvider } from "../../../providers/container";
 import { UserRepository } from "../../../repositories/container";
-import kernel from "../../../shared/kernel";
+import kernel from "../../../shared/kernel/TSKernel";
 
 const CONTEXT = `UsersControllerContainer`;
 

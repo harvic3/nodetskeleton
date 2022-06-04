@@ -6,8 +6,8 @@ import AppSettings from "../../../application/shared/settings/AppSettings";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
 import ArrayUtil from "../../../domain/shared/utils/ArrayUtil";
+import kernel from "../../../adapters/shared/kernel/TSKernel";
 import { MessageQueue } from "../../messaging/MessageQueue";
-import kernel from "../../../adapters/shared/kernel";
 import {
   EventClientEnum,
   EventPublisher,

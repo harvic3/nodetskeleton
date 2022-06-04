@@ -2,7 +2,7 @@ import messageQueueHandler from "../../handlers/queue/MessageQueue.handler";
 import { QueueListener } from "../listener/QueueListener";
 import { QueueClientEnum } from "../QueueClient.enum";
 import { EventQueue } from "../publisher/EventQueue";
-import kernel from "../../../shared/kernel";
+import kernel from "../../../shared/kernel/TSKernel";
 import { EventEmitter } from "events";
 
 const tskQueueEventEmitter = new EventEmitter();
