@@ -851,9 +851,9 @@ In this layer you can add the connections services of all services, your reposit
 
 The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infrastructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
 
-The infrastructure has his container for the Model Repositories, LogProvider, connections and other essential services that we will need to start before any service in our app, this container is located in `src/infrastructure/container` and this service is initialized in `src/index` file as follow: 
+The infrastructure has his container for the Model Repositories, LogProvider, connections and other essential services that we will need to start before any service in our app, this container is located in `src/infrastructure/container` and this service is initialized at the beginning of `AppWrapper` file as follow: 
 ```ts
-import infraContainer from "./infrastructure/container";
+import infraContainer from "../container";
 infraContainer.load();
 ```
 

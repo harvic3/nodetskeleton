@@ -19,11 +19,11 @@ export default class ArrayUtil {
     return list[lastIndex];
   }
 
-  static getIndex<T>(list: T[], position: number): T | null {
+  static getWithIndex<T>(list: T[], index: number): T | null {
     if (!list?.length) {
       return null;
     }
-    return list[position];
+    return list[index];
   }
 
   static allOrDefault<T>(list: T[] | Nulldifined): T[] {
