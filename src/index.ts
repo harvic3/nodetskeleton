@@ -1,5 +1,3 @@
-import infraContainer from "./infrastructure/container";
-infraContainer.load();
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
