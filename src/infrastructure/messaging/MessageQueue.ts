@@ -1,9 +1,9 @@
+import { IMessageQueue } from "./IMessageQueue";
 import {
   Publisher,
   RedisConnection,
   RedisConnectionOptions,
 } from "../dataBases/redis/RedisConnection";
-import { IMessageQueue } from "./IMessageQueue";
 
 export class MessageQueue extends RedisConnection implements IMessageQueue {
   constructor(serviceName: string, redisConnectionOptions: RedisConnectionOptions) {
