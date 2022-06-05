@@ -18,6 +18,7 @@ import BaseController, {
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
 import { resolve as resolvePath } from "path";
+import { CacheCore } from "./cache/CacheCore";
 import { sync } from "fast-glob";
 import config from "../config";
 import helmet from "helmet";
@@ -36,6 +37,7 @@ export default class AppWrapper {
   private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
   app: Express;
   messagingCore: MessagingCore;
+  cacheCore: CacheCore;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
@@ -50,6 +52,7 @@ export default class AppWrapper {
       this.controllersLoadedByConstructor = BooleanUtil.YES;
     }
     this.messagingCore = new MessagingCore();
+    this.cacheCore = new CacheCore();
   }
 
   private loadControllersByConstructor(controllers: BaseController[]): void {
@@ -125,10 +128,12 @@ export default class AppWrapper {
       this.loadControllersDynamically()
         .then(() => {
           this.messagingCore?.initialize();
+          this.cacheCore?.initialize();
           resolve();
         })
         .catch((error) => {
           this.messagingCore?.close();
+          this.cacheCore?.close();
           reject(error);
         });
     });

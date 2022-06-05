@@ -1,15 +1,11 @@
-export class CacheMessage<T> {
-  constructor(public readonly key: string, public data: T) {}
-
-  toJSON(): string | null {
-    if (!this.data) return null;
-
-    return JSON.stringify(this.data);
+export class CacheMessage {
+  static toJSON<T>(data: T): string {
+    return JSON.stringify(data);
   }
 
-  static fromJSON<T>(json: string): CacheMessage<T> | null {
+  static fromJSON<T>(json: string): T | null {
     if (!json) return null;
 
-    return JSON.parse(json) as CacheMessage<T>;
+    return JSON.parse(json) as T;
   }
 }

@@ -1,3 +1,9 @@
+type RedisServiceOptions = {
+  Host: string;
+  Port: number;
+  DbIndex: number;
+};
+
 export default class AppSettings {
   static QUEUE_BASE_NAME = "queue";
   static ServiceContext: string;
@@ -12,16 +18,9 @@ export default class AppSettings {
   static ServerOrigins: string;
   static JWTEncryptionKey: string;
   static JWTExpirationTime: number;
-  static MessageBusConnection: {
-    Host: string;
-    Port: number;
-    DbIndex: number;
-  };
-  static MessageQueueConnection: {
-    Host: string;
-    Port: number;
-    DbIndex: number;
-  };
+  static MessageBusConnection: RedisServiceOptions;
+  static MessageQueueConnection: RedisServiceOptions;
+  static AuthCacheConnection: RedisServiceOptions;
 
   static init(config: Record<string, any>): void {
     this.ServiceContext = config.Server.ServiceContext.Context;
@@ -38,5 +37,6 @@ export default class AppSettings {
     this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
     this.MessageBusConnection = config.Services.MessageBus;
     this.MessageQueueConnection = config.Services.MessageQueue;
+    this.AuthCacheConnection = config.Services.AuthCache;
   }
 }

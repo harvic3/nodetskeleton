@@ -92,7 +92,7 @@ export class MessagingCore {
   }
 
   close(): void {
-    this.tskMessageBus?.close();
-    this.tskMessageQueue?.close();
+    this.tskMessageBus?.disconnect();
+    this.tskMessageQueue?.disconnect();
   }
 }

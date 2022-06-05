@@ -19,7 +19,7 @@ export abstract class RedisConnection {
   publisher: RedisClient | undefined;
 
   constructor(
-    private readonly serviceName: string,
+    public readonly serviceName: string,
     private readonly connectionOptions: RedisConnectionOptions,
   ) {}
 

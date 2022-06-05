@@ -55,6 +55,11 @@ export default {
       Port: Number(process.env.MESSAGE_QUEUE_CONNECTION_PORT) || 6379,
       DbIndex: Number(process.env.MESSAGE_QUEUE_DB_INDEX) || 1,
     },
+    AuthCache: {
+      Host: process.env.AUTH_CACHE_CONNECTION_HOST || "localhost",
+      Port: Number(process.env.AUTH_CACHE_CONNECTION_PORT) || 6379,
+      DbIndex: Number(process.env.AUTH_CACHE_DB_INDEX) || 2,
+    },
   },
   Params: {
     Envs: {

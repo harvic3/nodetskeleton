@@ -1,8 +1,6 @@
-import { CacheMessage } from "../CacheMessage";
-
 export interface ICacheProvider {
-  get<T>(key: string): Promise<CacheMessage<T>>;
+  get<T>(key: string): Promise<T | null>;
   set<T>(key: string, data: T): Promise<boolean>;
   delete(key: string): Promise<boolean>;
-  setExpire(key: string, time: number): Promise<boolean>;
+  expireIn(key: string, timeInSeconds: number): Promise<boolean>;
 }
