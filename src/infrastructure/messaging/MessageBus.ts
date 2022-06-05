@@ -1,8 +1,10 @@
-import { RedisConnection, RedisConnectionOptions } from "../dataBases/redis/RedisConnection";
-import { IEventSubscriber } from "../../application/shared/messaging/bus/IEventSubscriber";
-import { IEventPublisher } from "../../application/shared/messaging/bus/IEventPublisher";
-import { IEventListener } from "../../application/shared/messaging/bus/IEventListener";
-import { TypeParser } from "../../domain/shared/utils/TypeParser";
+import {
+  Listener,
+  Publisher,
+  RedisConnection,
+  RedisConnectionOptions,
+  Subscriber,
+} from "../dataBases/redis/RedisConnection";
 import { IMessageBus } from "./IMessageBus";
 
 export { Listener, Publisher, Subscriber } from "../dataBases/redis/RedisConnection";
@@ -12,18 +14,16 @@ export class MessageBus extends RedisConnection implements IMessageBus {
     super(serviceName, redisConnectionOptions);
   }
 
-  getListener(): IEventListener | undefined {
-    return this.initialized ? TypeParser.cast<IEventListener>(this.subscriberListener) : undefined;
+  getListener(): Listener | undefined {
+    return this.initialized ? this.subscriberListener : undefined;
   }
 
-  getSubscriber(): IEventSubscriber | undefined {
-    return this.initialized
-      ? TypeParser.cast<IEventSubscriber>(this.subscriberListener)
-      : undefined;
+  getSubscriber(): Subscriber | undefined {
+    return this.initialized ? this.subscriberListener : undefined;
   }
 
-  getPublisher(): IEventPublisher | undefined {
-    return this.initialized ? TypeParser.cast<IEventPublisher>(this.publisher) : undefined;
+  getPublisher(): Publisher | undefined {
+    return this.initialized ? this.publisher : undefined;
   }
 
   disconnect(): void {

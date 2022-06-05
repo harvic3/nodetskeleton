@@ -3,7 +3,6 @@ import { ChannelNameEnum } from "../../../application/shared/messaging/ChannelNa
 import { Listener, MessageBus, Publisher, Subscriber } from "../../messaging/MessageBus";
 import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueListener";
 import AppSettings from "../../../application/shared/settings/AppSettings";
-import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
 import ArrayUtil from "../../../domain/shared/utils/ArrayUtil";
 import kernel from "../../../adapters/shared/kernel/TSKernel";
@@ -64,19 +63,19 @@ export class MessagingCore {
   private initializeBusSockets(): void {
     kernel
       .get<EventSubscriber>(MessagingCore.name, EventClientEnum.TSK_BUS_SUBSCRIBER)
-      .initialize(TypeParser.cast<Subscriber>(this.tskMessageBus?.getSubscriber()));
+      .initialize(this.tskMessageBus?.getSubscriber() as Subscriber);
     kernel
       .get<EventListener>(MessagingCore.name, EventClientEnum.TSK_BUS_LISTENER)
-      .initialize(TypeParser.cast<Listener>(this.tskMessageBus?.getListener()));
+      .initialize(this.tskMessageBus?.getListener() as Listener);
     kernel
       .get<EventPublisher>(MessagingCore.name, EventClientEnum.TSK_BUS_PUBLISHER)
-      .initialize(TypeParser.cast<Publisher>(this.tskMessageBus?.getPublisher()));
+      .initialize(this.tskMessageBus?.getPublisher() as Publisher);
   }
 
   private initializeQueueSockets(): void {
     kernel
       .get<EventQueue>(MessagingCore.name, QueueClientEnum.TSK_QUEUE_PUBLISHER)
-      .initialize(TypeParser.cast<Publisher>(this.tskMessageQueue?.getQueuePublisher()));
+      .initialize(this.tskMessageQueue?.getQueuePublisher() as Publisher);
   }
 
   private initListeners(): void {
