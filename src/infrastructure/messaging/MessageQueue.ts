@@ -1,6 +1,8 @@
-import { RedisConnection, RedisConnectionOptions } from "../dataBases/redis/RedisConnection";
-import { IEventQueue } from "../../application/shared/messaging/queue/IEventQueue";
-import { TypeParser } from "../../domain/shared/utils/TypeParser";
+import {
+  Publisher,
+  RedisConnection,
+  RedisConnectionOptions,
+} from "../dataBases/redis/RedisConnection";
 import { IMessageQueue } from "./IMessageQueue";
 
 export class MessageQueue extends RedisConnection implements IMessageQueue {
@@ -8,8 +10,8 @@ export class MessageQueue extends RedisConnection implements IMessageQueue {
     super(serviceName, redisConnectionOptions);
   }
 
-  getQueuePublisher(): IEventQueue | undefined {
-    return this.initialized ? TypeParser.cast<IEventQueue>(this.publisher) : undefined;
+  getQueuePublisher(): Publisher | undefined {
+    return this.initialized ? this.publisher : undefined;
   }
 
   disconnect(): void {
