@@ -5,4 +5,7 @@ export class MockConstants {
   static USER_LAST_NAME = "Tesla";
   static USER_EMAIL = "nikolatesla@elion.com";
   static EXAMPLE_PASSWORD = "Hello*Alien8";
+  static IP_ADDRESS = "127.0.0.1";
+  static USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36";
 }

@@ -20,7 +20,12 @@ import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
-type ILoginRequest = { email: string; passwordB64: string; userAgent: string; ipAddress: string };
+type ILoginRequest = {
+  email: string | undefined;
+  passwordB64: string | undefined;
+  userAgent: string | undefined;
+  ipAddress: string | undefined;
+};
 
 export class LoginUseCase extends BaseUseCase<ILoginRequest> {
   private readonly queueBus: IQueueBus;
@@ -56,8 +61,8 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
     this.publishUserLastLoginEvent(
       authenticatedResult.value as User,
       new Date(),
-      args.ipAddress,
-      args.userAgent,
+      args.ipAddress as string,
+      args.userAgent as string,
     );
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
