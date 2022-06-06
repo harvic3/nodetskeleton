@@ -5,4 +5,6 @@ export default {
   LAST_NAME: "Last name",
   GENDER: "Gender",
   ENCRYPTION: "Encryption",
+  IP_ADDRESS: "IP address",
+  USER_AGENT: "User agent",
 };

@@ -1,5 +1,6 @@
 import { ISession } from "../session/ISession";
 import { Gender } from "./genre/Gender.enum";
+import { ILastLogin } from "./ILastLogin";
 import { Email } from "./Email";
 import { IUser } from "./IUser";
 
@@ -13,6 +14,7 @@ export class User implements IUser {
   gender: Gender | undefined;
   verified: boolean | undefined;
   createdAt: string | undefined;
+  lastLogin: ILastLogin | undefined;
 
   constructor(props?: {
     uid: string | undefined;
@@ -23,6 +25,7 @@ export class User implements IUser {
     gender: Gender | undefined;
     createdAt: string | undefined;
     verified: boolean | undefined;
+    lastLogin?: ILastLogin,
   }) {
     this.uid = props?.uid;
     this.maskedUid = props?.maskedUid;
@@ -32,6 +35,7 @@ export class User implements IUser {
     this.gender = props?.gender;
     this.createdAt = props?.createdAt;
     this.verified = props?.verified;
+    this.lastLogin = props?.lastLogin;
   }
 
   createSession(sessionId: string): ISession {
@@ -41,5 +45,13 @@ export class User implements IUser {
       emailVerified: this.verified,
       name: this.firstName,
     } as ISession;
+  }
+
+  setLastLogin(loginAt: string, client: string, ip: string): void {
+    this.lastLogin = {
+      loginAt,
+      userAgent: client,
+      ipAddress: ip,
+    };
   }
 }

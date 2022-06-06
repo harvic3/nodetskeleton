@@ -2,30 +2,46 @@ import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useC
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
+import { ChannelNameEnum } from "../../../../shared/messaging/ChannelName.enum";
+import { LastLoginDto } from "../../../users/messaging/queue/dtos/LastLoginDto";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
-import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
+import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
+import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
+import { TopicNameEnum } from "../../../../shared/messaging/TopicName.enum";
+import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
+import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
+import { CredentialsDto } from "../../dtos/Credentials.dto";
 import GuidUtil from "../../../../shared/utils/GuidUtils";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
-export class LoginUseCase extends BaseUseCase<ICredentials> {
+type ILoginRequest = { email: string; passwordB64: string; userAgent: string; ipAddress: string };
+
+export class LoginUseCase extends BaseUseCase<ILoginRequest> {
+  private readonly queueBus: IQueueBus;
+
   constructor(
     readonly logProvider: ILogProvider,
     private readonly authProvider: IAuthProvider,
     private readonly eventPublisher: IEventPublisher,
+    private readonly eventQueue: IEventQueue,
   ) {
     super(LoginUseCase.name, logProvider);
+    this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
   }
 
-  async execute(args: ICredentials): Promise<IResultT<TokenDto>> {
+  async execute(args: ILoginRequest): Promise<IResultT<TokenDto>> {
     const result = new ResultT<TokenDto>();
 
-    const credentialsDto = CredentialsDto.fromJSON(args);
-    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return result;
+    const credentialsDto = CredentialsDto.fromJSON({
+      email: args.email,
+      passwordB64: args.passwordB64,
+    });
+    if (!this.isValidRequest(result, credentialsDto, args)) return result;
 
     const authenticatedResult = await this.userLogin(
       result,
@@ -35,10 +51,30 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     if (!authenticatedResult.success) return result;
 
     const tokenDto: TokenDto = await this.createSession(authenticatedResult.value as User);
+    this.publishUserLastLoginEvent(
+      authenticatedResult.value as User,
+      new Date(),
+      args.ipAddress,
+      args.userAgent,
+    );
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
 
     return result;
+  }
+
+  private isValidRequest(
+    result: IResult,
+    credentialsDto: CredentialsDto,
+    args: ILoginRequest,
+  ): boolean {
+    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return BooleanUtil.NOT;
+
+    const validations: Record<string, unknown> = {};
+    validations[this.appWords.get(this.appWords.keys.IP_ADDRESS)] = args?.ipAddress;
+    validations[this.appWords.get(this.appWords.keys.USER_AGENT)] = args?.userAgent;
+
+    return this.validator.isValidEntry(result, validations);
   }
 
   private async userLogin(
@@ -67,5 +103,20 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
 
     const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);
     return Promise.resolve(tokenDto);
+  }
+
+  private async publishUserLastLoginEvent(
+    user: User,
+    loginDate: Date,
+    ipAddress: string,
+    userAgent: string,
+  ): Promise<void> {
+    const lastLogin = new LastLoginDto({
+      userUid: user.uid as string,
+      loginAt: loginDate.toISOString(),
+      ipAddress,
+      userAgent,
+    });
+    return this.queueBus.pushPub(ChannelNameEnum.QUEUE_SECURITY, TopicNameEnum.LOGGED, lastLogin);
   }
 }

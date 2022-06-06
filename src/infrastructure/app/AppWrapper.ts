@@ -9,6 +9,7 @@ import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import clientInfoMiddleware from "../middleware/clientInfo";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import { MessagingCore } from "./messaging/MessagingCore";
 import words from "../../application/shared/locals/words";
@@ -103,6 +104,7 @@ export default class AppWrapper {
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: BooleanUtil.YES }))
+      .use(clientInfoMiddleware.handle as RequestHandler)
       .use(localizationMiddleware.handle as RequestHandler)
       .use(routeWhiteListMiddleware.handle as RequestHandler)
       .use(authorizationMiddleware.handle.bind(this) as RequestHandler);

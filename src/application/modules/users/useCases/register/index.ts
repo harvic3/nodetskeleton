@@ -140,6 +140,6 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   }
 
   private async publishUserCreatedEvent(user: User): Promise<void> {
-    this.queueBus.pushPub(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
+    return this.queueBus.pushPub(ChannelNameEnum.QUEUE_USERS, TopicNameEnum.ADDED, user);
   }
 }
