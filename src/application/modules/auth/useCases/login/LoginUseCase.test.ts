@@ -1,3 +1,4 @@
+import { ICacheProvider } from "../../../../shared/cache/providerContracts/ICache.provider";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
@@ -21,10 +22,17 @@ const logProviderMock = mock<ILogProvider>();
 const authProviderMock = mock<IAuthProvider>();
 const eventPublisherMock = mock<IEventPublisher>();
 const eventQueueMock = mock<IEventQueue>();
+const authCacheProviderMock = mock<ICacheProvider>();
 
 // Constants
 const loginUseCase = () =>
-  new LoginUseCase(logProviderMock, authProviderMock, eventPublisherMock, eventQueueMock);
+  new LoginUseCase(
+    logProviderMock,
+    authProviderMock,
+    eventPublisherMock,
+    eventQueueMock,
+    authCacheProviderMock,
+  );
 const passwordB64 = StringUtil.encodeBase64(MockConstants.EXAMPLE_PASSWORD);
 const jwt =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
@@ -128,6 +136,7 @@ describe("when try to login", () => {
     eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
     eventQueueMock.push.mockResolvedValueOnce(BooleanUtil.SUCCESS);
     eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    authCacheProviderMock.set.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
     const result = await loginUseCase().execute({
