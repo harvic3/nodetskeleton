@@ -1,4 +1,5 @@
 import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import { ICacheProvider } from "../../../../shared/cache/providerContracts/ICache.provider";
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
@@ -29,6 +30,7 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
     private readonly authProvider: IAuthProvider,
     private readonly eventPublisher: IEventPublisher,
     private readonly eventQueue: IEventQueue,
+    private readonly authCacheProvider: ICacheProvider,
   ) {
     super(LoginUseCase.name, logProvider);
     this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
@@ -99,6 +101,8 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
 
   private async createSession(authenticatedUser: User): Promise<TokenDto> {
     const session: ISession = authenticatedUser.createSession(GuidUtil.getV4());
+    this.authCacheProvider.set(authenticatedUser.maskedUid as string, session);
+
     const token = await this.authProvider.getJwt(session);
 
     const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);

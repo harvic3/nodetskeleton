@@ -55,7 +55,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const userRegistered = await this.registerUser(result, user);
     if (!userRegistered) return result;
 
-    await this.publishUserCreatedEvent(user);
+    this.publishUserCreatedEvent(user);
 
     result.setMessage(
       this.appMessages.get(this.appMessages.keys.USER_WAS_CREATED),
