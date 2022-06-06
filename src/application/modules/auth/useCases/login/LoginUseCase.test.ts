@@ -1,6 +1,7 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
+import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
@@ -19,9 +20,11 @@ import { LoginUseCase } from "./index";
 const logProviderMock = mock<ILogProvider>();
 const authProviderMock = mock<IAuthProvider>();
 const eventPublisherMock = mock<IEventPublisher>();
+const eventQueueMock = mock<IEventQueue>();
 
 // Constants
-const loginUseCase = () => new LoginUseCase(logProviderMock, authProviderMock, eventPublisherMock);
+const loginUseCase = () =>
+  new LoginUseCase(logProviderMock, authProviderMock, eventPublisherMock, eventQueueMock);
 const passwordB64 = StringUtil.encodeBase64(MockConstants.EXAMPLE_PASSWORD);
 const jwt =
   "TGEgdmlkYSBlcyB0b2RvIGVzbyBxdWUgc2UgcGFzYSBtaWVudHJhcyB0dSBleGlzdGVuY2lhIHNlIHZhIGVuIHVuIGVzY3JpdG9yaW8gZGV0csOhcyBkZSB1biBjb21wdXRhZG9yLg==";
@@ -47,7 +50,12 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase().execute({ email: undefined, passwordB64: undefined });
+    const result = await loginUseCase().execute({
+      email: undefined,
+      passwordB64: undefined,
+      ipAddress: undefined,
+      userAgent: undefined,
+    });
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -65,6 +73,8 @@ describe("when try to login", () => {
     const result = await loginUseCase().execute({
       email: MockConstants.USER_EMAIL,
       passwordB64: undefined,
+      ipAddress: MockConstants.IP_ADDRESS,
+      userAgent: MockConstants.USER_AGENT,
     });
 
     // Assert
@@ -84,6 +94,8 @@ describe("when try to login", () => {
     const result = await loginUseCase().execute({
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
+      ipAddress: MockConstants.IP_ADDRESS,
+      userAgent: MockConstants.USER_AGENT,
     });
 
     // Assert
@@ -99,6 +111,8 @@ describe("when try to login", () => {
     const result = await loginUseCase().execute({
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
+      ipAddress: MockConstants.IP_ADDRESS,
+      userAgent: MockConstants.USER_AGENT,
     });
 
     // Assert
@@ -112,11 +126,15 @@ describe("when try to login", () => {
     authProviderMock.login.mockResolvedValueOnce(user);
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
     eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    eventQueueMock.push.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
     const result = await loginUseCase().execute({
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
+      ipAddress: MockConstants.IP_ADDRESS,
+      userAgent: MockConstants.USER_AGENT,
     });
 
     // Assert

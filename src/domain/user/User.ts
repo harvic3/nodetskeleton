@@ -44,6 +44,7 @@ export class User implements IUser {
       email: this.email?.value,
       emailVerified: this.verified,
       name: this.firstName,
+      maskedUserUid: this.maskedUid,
     } as ISession;
   }
 
