@@ -30,6 +30,8 @@ export class AuthController extends BaseController {
       {
         email,
         passwordB64,
+        ipAddress: req.ipAddress,
+        userAgent: req.userAgent,
       },
     );
   };

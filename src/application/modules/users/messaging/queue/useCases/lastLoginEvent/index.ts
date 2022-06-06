@@ -5,7 +5,7 @@ import { BooleanUtil } from "../../../../../../../domain/shared/utils/BooleanUti
 import { IEventQueue } from "../../../../../../shared/messaging/queue/IEventQueue";
 import { IUSerRepository } from "../../../../providerContracts/IUser.repository";
 import { EventMessage } from "../../../../../../shared/messaging/EventMessage";
-import { ILastLogin } from "../../dtos/ILastLogin";
+import { LastLoginDto } from "../../dtos/LastLoginDto";
 
 export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
   private readonly channelName = ChannelNameEnum.QUEUE_SECURITY;
@@ -17,7 +17,7 @@ export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
   async execute(eventQueue: IEventQueue): Promise<IResult> {
     const result = new Result();
     while (BooleanUtil.YES) {
-      const message = await eventQueue.pop<EventMessage<ILastLogin>>(this.channelName);
+      const message = await eventQueue.pop<EventMessage<LastLoginDto>>(this.channelName);
       if (!message) break;
       console.log(ChannelNameEnum.QUEUE_SECURITY, message);
     }

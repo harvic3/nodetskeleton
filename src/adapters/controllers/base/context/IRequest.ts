@@ -6,4 +6,6 @@ export interface IRequest {
   body: any;
   params: Record<string, string>;
   query: Record<string, string>;
+  ipAddress: string;
+  userAgent: string;
 }
