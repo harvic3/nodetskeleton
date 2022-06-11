@@ -18,3 +18,4 @@ kernel.addSingleton(
 );
 
 export { EventClientEnum, EventListener, EventPublisher, EventSubscriber };
+export default kernel;

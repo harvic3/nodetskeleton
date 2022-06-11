@@ -4,7 +4,6 @@ import { Listener, MessageBus, Publisher, Subscriber } from "../../messaging/Mes
 import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueListener";
 import AppSettings from "../../../application/shared/settings/AppSettings";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
-import ArrayUtil from "../../../domain/shared/utils/ArrayUtil";
 import kernel from "../../../adapters/shared/kernel/TSKernel";
 import { MessageQueue } from "../../messaging/MessageQueue";
 import {
@@ -44,13 +43,19 @@ export class MessagingCore {
   }
 
   private setSubscriptions(): void {
-    const channelsToSuscribe: ChannelNameEnum[] =
-      Object.values(ChannelNameEnum).filter((value) =>
-        value.includes(AppSettings.ServiceContext),
-      ) || ArrayUtil.EMPTY_ARRAY;
-    if (!channelsToSuscribe.length) {
-      channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
-      channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
+    const channelsToSuscribe: ChannelNameEnum[] = [];
+
+    switch (AppSettings.ServiceContext) {
+      case ChannelNameEnum.QUEUE_USERS:
+        channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
+        break;
+      case ChannelNameEnum.QUEUE_SECURITY:
+        channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
+        break;
+      default:
+        channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
+        channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
+        break;
     }
 
     for (const channel of channelsToSuscribe) {
