@@ -3,6 +3,7 @@ import { ChannelNameEnum } from "../../../application/shared/messaging/ChannelNa
 import { Listener, MessageBus, Publisher, Subscriber } from "../../messaging/MessageBus";
 import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueListener";
 import AppSettings from "../../../application/shared/settings/AppSettings";
+import { ServiceContext } from "../../../adapters/shared/ServiceContext";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
 import kernel from "../../../adapters/shared/kernel/TSKernel";
 import { MessageQueue } from "../../messaging/MessageQueue";
@@ -46,10 +47,10 @@ export class MessagingCore {
     const channelsToSuscribe: ChannelNameEnum[] = [];
 
     switch (AppSettings.ServiceContext) {
-      case ChannelNameEnum.QUEUE_USERS:
+      case ServiceContext.USERS:
         channelsToSuscribe.push(ChannelNameEnum.QUEUE_SECURITY);
         break;
-      case ChannelNameEnum.QUEUE_SECURITY:
+      case ServiceContext.SECURITY:
         channelsToSuscribe.push(ChannelNameEnum.QUEUE_USERS);
         break;
       default:
