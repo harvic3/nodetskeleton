@@ -21,3 +21,4 @@ kernel.addSingleton(
 );
 
 export { QueueClientEnum, EventQueue, tskQueueEventEmitter };
+export default kernel;

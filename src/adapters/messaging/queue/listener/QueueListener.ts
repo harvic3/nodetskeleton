@@ -36,11 +36,11 @@ export class QueueListener implements IQueueListener {
     const useCasesContext: Record<string, string> = {};
 
     switch (AppSettings.ServiceContext) {
-      case ServiceContext.USERS:
+      case ServiceContext.SECURITY:
         useCasesContext[`${ChannelNameEnum.QUEUE_USERS}:${TopicNameEnum.ADDED}`] =
           ManageUserCreatedEventUseCase.name;
         break;
-      case ServiceContext.SECURITY:
+      case ServiceContext.USERS:
         useCasesContext[`${ChannelNameEnum.QUEUE_SECURITY}:${TopicNameEnum.LOGGED}`] =
           ManageLastLoginEventUseCase.name;
         break;
