@@ -4,10 +4,10 @@ import { ApplicationError } from "../../../application/shared/errors/Application
 import kernel, { LogProvider } from "../../../adapters/providers/container";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
 import resources from "../../../application/shared/locals/messages";
+import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ErrorHandler } from "../types";
 import { Result } from "result-tsk";
 import config from "../../config";
-import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 
 export class ErrorHandlerMiddleware {
   constructor(private readonly logProvider: ILogProvider) {}
