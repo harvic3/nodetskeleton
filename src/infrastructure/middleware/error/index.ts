@@ -1,20 +1,33 @@
 import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
+import kernel, { LogProvider } from "../../../adapters/providers/container";
 import appMessages from "../../../application/shared/locals/messages";
+import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { Context } from "../../app/core/Modules";
 import { ErrorHandler } from "../types";
 import { Result } from "result-tsk";
 import config from "../../config";
 
 export class ErrorHandlerMiddleware {
+  constructor(private readonly logProvider: ILogProvider) { }
+
   handle: ErrorHandler = (err: ApplicationError, ctx: Context) => {
     const result = new Result();
-    if (err?.name.includes("ApplicationError")) {
-      console.log("Controlled application error:", err.name, err.message);
+    if (err?.name.includes(ApplicationError.name)) {
+      this.logProvider.logWarning(err);
       result.setError(err.message, err.errorCode);
     } else {
       // Send to your logger system or repository this error
-      console.log("No controlled application error:", err);
+      this.logProvider.logError(
+        new ErrorLog({
+          context: ErrorHandlerMiddleware.name,
+          name: "UncontrolledError",
+          message: err.message,
+          stack: err.stack ?? JSON.stringify(err),
+          metadata: { body: ctx.body, params: ctx.params, query: ctx.query, path: ctx.path },
+        }),
+      );
       result.setError(
         appMessages.get(config.Params.DefaultApplicationError.Message),
         config.Params.DefaultApplicationError.Code,
@@ -37,4 +50,6 @@ export class ErrorHandlerMiddleware {
   }
 }
 
-export default new ErrorHandlerMiddleware();
+export default new ErrorHandlerMiddleware(
+  kernel.get(ErrorHandlerMiddleware.name, LogProvider.name),
+);
