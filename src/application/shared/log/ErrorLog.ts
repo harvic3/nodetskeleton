@@ -17,7 +17,7 @@ export class ErrorLog extends EventLog {
       metadata: props.metadata,
     });
     this.name = props.name;
-    this.stack = props.stack || undefined;
+    this.stack = props?.stack;
   }
 
   static fromError(context: string, error: Error): ErrorLog {

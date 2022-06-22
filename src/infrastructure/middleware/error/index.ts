@@ -1,25 +1,38 @@
 import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
+import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
+import kernel, { LogProvider } from "../../../adapters/providers/container";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
 import resources from "../../../application/shared/locals/messages";
 import { ErrorHandler } from "../types";
 import { Result } from "result-tsk";
 import config from "../../config";
+import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 
 export class ErrorHandlerMiddleware {
+  constructor(private readonly logProvider: ILogProvider) {}
+
   handle: ErrorHandler = (
     err: ApplicationError,
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     const result = new Result();
-    if (err?.name.includes("ApplicationError")) {
-      console.log("Controlled application error:", err.name, err.message);
+    if (err?.name.includes(ApplicationError.name)) {
+      this.logProvider.logWarning(err);
       result.setError(err.message, err.errorCode);
     } else {
       // Send to your logger system or repository this error
-      console.log("No controlled application error:", err);
+      this.logProvider.logError(
+        new ErrorLog({
+          context: ErrorHandlerMiddleware.name,
+          name: "UncontrolledError",
+          message: err.message,
+          stack: err.stack ?? JSON.stringify(err),
+          metadata: { body: req.body, params: req.params, query: req.query, path: req.path },
+        }),
+      );
       result.setError(
         resources.get(config.Params.DefaultApplicationError.Message),
         config.Params.DefaultApplicationError.Code,
@@ -41,4 +54,6 @@ export class ErrorHandlerMiddleware {
   }
 }
 
-export default new ErrorHandlerMiddleware();
+export default new ErrorHandlerMiddleware(
+  kernel.get(ErrorHandlerMiddleware.name, LogProvider.name),
+);
