@@ -50,7 +50,7 @@ export class ErrorHandlerMiddleware {
     exception: NodeJS.UncaughtExceptionListener | Promise<unknown>,
   ): void {
     // Send to your logger system or repository this error
-    console.log(`Node ${exceptionType} type:`, exception);
+    console.log(`Node ${exceptionType}:`, exception);
   }
 }
 
