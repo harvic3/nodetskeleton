@@ -6,11 +6,11 @@ export type TryResult<T> = { success: boolean; value?: T; error?: Error };
 export class TryWrapper {
   static exec<T>(action: Function, params: any[]): TryResult<T> {
     try {
-      return { value: action(...params) as T, success: BooleanUtil.YES, error: undefined };
+      return { value: action(...params) as T, success: BooleanUtil.SUCCESS, error: undefined };
     } catch (error) {
       return {
         value: undefined,
-        success: BooleanUtil.NOT,
+        success: BooleanUtil.FAILED,
         error: TypeParser.cast<Error>(error),
       };
     }
@@ -18,11 +18,11 @@ export class TryWrapper {
 
   static async syncExec<T>(promise: Promise<T>): Promise<TryResult<T>> {
     try {
-      return { value: await promise, success: BooleanUtil.YES, error: undefined };
+      return { value: await promise, success: BooleanUtil.SUCCESS, error: undefined };
     } catch (error) {
       return {
         value: undefined,
-        success: BooleanUtil.NOT,
+        success: BooleanUtil.FAILED,
         error: TypeParser.cast<Error>(error),
       };
     }

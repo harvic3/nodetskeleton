@@ -49,7 +49,7 @@ export class HttpClient {
         result.setResponse(await this.processResponseData<R>(response, serializationMethod));
       } else {
         const errorResponse = await this.processErrorResponse<E>(response);
-        if (errorResponse[1] === SERIALIZED) {
+        if (BooleanUtil.areEqual(errorResponse[1], SERIALIZED)) {
           result.setErrorMessage(
             response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
           );
