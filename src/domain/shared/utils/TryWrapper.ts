@@ -18,7 +18,7 @@ export class TryWrapper {
 
   static async syncExec<T>(promise: Promise<T>): Promise<TryResult<T>> {
     try {
-      return { value: await promise, success: BooleanUtil.YES, error: undefined };
+      return { value: await promise, success: BooleanUtil.SUCCESS, error: undefined };
     } catch (error) {
       return {
         value: undefined,

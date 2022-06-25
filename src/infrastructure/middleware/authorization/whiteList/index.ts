@@ -13,9 +13,11 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.NOT;
+    TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.NO;
 
-    const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === req.path);
+    const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) =>
+      BooleanUtil.areEqual(path, req.path),
+    );
 
     if (existsUnauthorizedPath) {
       TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.YES;
