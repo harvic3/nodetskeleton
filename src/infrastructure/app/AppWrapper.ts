@@ -35,7 +35,7 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  private readonly controllersLoadedByConstructor = BooleanUtil.NOT;
+  private readonly controllersLoadedByConstructor = BooleanUtil.NO;
   app: Express;
   messagingCore: MessagingCore;
   cacheCore: CacheCore;
@@ -60,8 +60,8 @@ export default class AppWrapper {
     controllers
       .filter(
         (controller: BaseController) =>
-          controller.serviceContext === AppSettings.ServiceContext ||
-          controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+          BooleanUtil.areEqual(controller.serviceContext, AppSettings.ServiceContext) ||
+          BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
       )
       .forEach((controller) => {
         controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));

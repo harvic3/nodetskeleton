@@ -1,11 +1,12 @@
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
 import { ServiceContext } from "../../adapters/shared/ServiceContext";
+import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { Normalize } from "./Normalize";
 import "dotenv/config";
 
 const dev = "development";
 
-if (!process.env?.NODE_ENV || process.env.NODE_ENV === dev) {
+if (!process.env?.NODE_ENV || BooleanUtil.areEqual(process.env.NODE_ENV, dev)) {
   console.log("Running in dev mode");
 }
 
