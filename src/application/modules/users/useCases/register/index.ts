@@ -84,7 +84,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
       return BooleanUtil.YES;
     }
 
-    return BooleanUtil.NOT;
+    return BooleanUtil.NO;
   }
 
   private async buildUser(userDto: UserDto): Promise<User> {

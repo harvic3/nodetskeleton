@@ -11,7 +11,7 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (ctx: Context, next: Next): Promise<void> => {
-    ctx.isWhiteList = BooleanUtil.NOT;
+    ctx.isWhiteList = BooleanUtil.NO;
 
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === ctx.request.path);
 

@@ -102,9 +102,14 @@ if (!someCondition) { // Or any validation result
 The function of this `class` will be reflected in your `error handler` as it will let you know when an exception was thrown by your `system` or by an `uncontrolled error`, as shown below:
 
 ```ts
-return async function (err: ApplicationError, context: Context): Promise<void> {
+  handle: ErrorHandler = (
+    err: ApplicationError,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
   const result = new Result();
-  if (err?.name === "ApplicationError") {
+  if (err?.name.includes(ApplicationError.name)) {
     console.log("Controlled application error", err.message);
   } else {
     console.log("No controlled application error", err);
@@ -655,8 +660,8 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
   controllers
     .filter(
       (controller: BaseController) =>
-        controller.serviceContext === AppSettings.ServiceContext ||
-        controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+        BooleanUtil.areEqual(controller.serviceContext, AppSettings.ServiceContext) ||
+        BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
     )
     .forEach((controller) => {
       // This is the line and the parameter comes from `config`
@@ -759,8 +764,8 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
   controllers
     .filter(
       (controller: BaseController) =>
-        controller.serviceContext === AppSettings.ServiceContext ||
-        controller.serviceContext === ServiceContext.NODE_TS_SKELETON,
+        BooleanUtil.areEqual(controller.serviceContext, AppSettings.ServiceContext) ||
+        BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
     )
     .forEach((controller) => {
       controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));

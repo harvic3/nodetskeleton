@@ -1,4 +1,5 @@
 import { IUserModel as IUserModel } from "../../../adapters/repositories/user/IUser.model";
+import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
 import GuidUtils from "../../../application/shared/utils/GuidUtils";
 import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { IUser } from "../../../domain/user/IUser";
@@ -9,7 +10,7 @@ import mapper from "mapper-tsk";
 export class UserModel implements IUserModel {
   async getByEmail(email: string | Nulldifined): Promise<User | null> {
     return new Promise((resolve) => {
-      const founded = dbData.users.find((element) => element.email === email);
+      const founded = dbData.users.find((element) => BooleanUtil.areEqual(element.email, email));
       if (!founded) {
         return resolve(null);
       }
@@ -21,7 +22,9 @@ export class UserModel implements IUserModel {
   async getByAuthentication(email: string, encryptedPassword: string | null): Promise<User> {
     return new Promise((resolve, reject) => {
       const founded = dbData.users.find(
-        (user) => user.email === email && user.password === encryptedPassword,
+        (user) =>
+          BooleanUtil.areEqual(user.email, email) &&
+          BooleanUtil.areEqual(user.password, encryptedPassword),
       );
       if (!founded) {
         return reject(null);
