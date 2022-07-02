@@ -11,9 +11,6 @@ process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
   errorHandlerMiddleware.manageNodeException("UncaughtException", error);
 });
 
-process.on(
-  "unhandledRejection",
-  (reason: NodeJS.UnhandledRejectionListener, promiseError: Promise<unknown>) => {
-    errorHandlerMiddleware.manageNodeException(`UnhandledRejection ${reason}`, promiseError);
-  },
-);
+process.on("unhandledRejection", (reason: NodeJS.UnhandledRejectionListener) => {
+  errorHandlerMiddleware.manageNodeException("UnhandledRejection", reason);
+});
