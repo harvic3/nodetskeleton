@@ -3,6 +3,7 @@ import { ILogProvider } from "../../../application/shared/log/providerContracts/
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import kernel, { LogProvider } from "../../../adapters/providers/container";
 import appMessages from "../../../application/shared/locals/messages";
+import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { Context } from "../../app/core/Modules";
 import { ErrorHandler } from "../types";
@@ -43,10 +44,14 @@ export class ErrorHandlerMiddleware {
 
   manageNodeException(
     exceptionType: string,
-    exception: NodeJS.UncaughtExceptionListener | Promise<unknown>,
+    exception: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
   ): void {
     // Send to your logger system or repository this error
-    console.log(`Node ${exceptionType}:`, exception);
+    const { message, stack, name } =
+      typeof exception !== "object"
+        ? { message: exception?.toString(), stack: undefined, name: undefined }
+        : TypeParser.cast<Error>(exception ?? {});
+    console.log(`Node ${exceptionType}:`, { message, stack, name });
   }
 }
 
