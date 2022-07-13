@@ -31,7 +31,10 @@ export class MessageBusHandler implements IMessageBusHandler {
               MessageBusHandler.name,
               `${args.channel}:${message?.topicName}`,
             )
-            .execute(TypeParser.cast<EventMessage<MessageTypes>>(message));
+            .execute(
+              AppSettings.DefaultLanguage,
+              TypeParser.cast<EventMessage<MessageTypes>>(message),
+            );
     } catch (error) {
       console.error(
         `${

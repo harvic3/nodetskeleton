@@ -7,6 +7,7 @@ import { IServiceContainer } from "../../../shared/dic/IServiceContainer";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import queueMessageUseCaseContainer from "./container";
+import AppSettings from "../../../../application/shared/settings/AppSettings";
 
 export class MessageQueueHandler implements IMessageQueueHandler {
   #readingChannels: ChannelNameEnum[] = [];
@@ -47,7 +48,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
             TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topicName}`),
           ) as string,
         )
-        .execute(this.#eventQueue)
+        .execute(AppSettings.DefaultLanguage, this.#eventQueue)
         .then((_result) => {
           this.removeChannel(args.queueName);
           return Promise.resolve();
@@ -67,7 +68,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
   private validateRequest(args: QueueArgs): boolean {
     if (!args.queueName && !args.topicName) {
       console.error(MessageQueueHandler.name, "Invalid queue request");
-      return BooleanUtil.NOT;
+      return BooleanUtil.NO;
     }
     return BooleanUtil.YES;
   }

@@ -10,12 +10,12 @@ export class EventQueue implements IEventQueue {
   constructor(private readonly serviceName: string) {}
 
   async push<T>(message: EventMessage<T>): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
+    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
 
     return new Promise((resolve) => {
       this.#publisher?.rpush(message.channel, message.toJSON(), (error) => {
         if (error) {
-          return resolve(BooleanUtil.NOT);
+          return resolve(BooleanUtil.NO);
         }
         return resolve(BooleanUtil.YES);
       });
@@ -36,7 +36,7 @@ export class EventQueue implements IEventQueue {
   }
 
   online(): boolean {
-    return this.#publisher?.connected || BooleanUtil.NOT;
+    return this.#publisher?.connected || BooleanUtil.NO;
   }
 
   initialize(client: Publisher): void {

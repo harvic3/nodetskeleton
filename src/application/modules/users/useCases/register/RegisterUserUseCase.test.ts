@@ -60,7 +60,7 @@ describe("when try to register user", () => {
     const userDto = {} as IUserDto;
 
     // Act
-    const result = await registerUserUseCase().execute(userDto);
+    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -87,7 +87,7 @@ describe("when try to register user", () => {
       .build();
 
     // Act
-    const result = await registerUserUseCase().execute(userDto);
+    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -111,7 +111,7 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(userWithSameEmail);
 
     // Act
-    const result = await registerUserUseCase().execute(userDto);
+    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -140,7 +140,7 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(userDto);
+    const resultPromise = useCase.execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -163,7 +163,7 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(userDto);
+    const resultPromise = useCase.execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -192,7 +192,7 @@ describe("when try to register user", () => {
     workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
 
     // Act
-    const result = useCase.execute(userDto);
+    const result = useCase.execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     await expect(result).rejects.toThrowError(applicationErrorBuilder.build());
@@ -225,7 +225,7 @@ describe("when try to register user", () => {
     eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
-    const result = await registerUserUseCase().execute(userDto);
+    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
 
     // Assert
     expect(result.success).toBeTruthy();

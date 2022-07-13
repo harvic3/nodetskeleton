@@ -13,6 +13,7 @@ import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { TypeParser } from "../../../../../domain/shared/utils/TypeParser";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -37,7 +38,8 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
   }
 
-  async execute(args: IUserDto): Promise<IResult> {
+  async execute(locale: LocaleTypeEnum, args: IUserDto): Promise<IResult> {
+    this.setLocale(locale);
     const result = new Result();
 
     const userDto = UserDto.fromJSON(args);
@@ -133,7 +135,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
-      return BooleanUtil.NOT;
+      return BooleanUtil.NO;
     }
 
     return BooleanUtil.YES;

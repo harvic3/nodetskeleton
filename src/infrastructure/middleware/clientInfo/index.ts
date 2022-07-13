@@ -6,7 +6,7 @@ import { Middleware } from "../types";
 
 class ClientInfoMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.NOT;
+    TypeParser.cast<IRequest>(req).isWhiteList = BooleanUtil.NO;
 
     TypeParser.cast<IRequest>(req).ipAddress = req.ip || (req.headers["x-forwarded-for"] as string);
     TypeParser.cast<IRequest>(req).userAgent = req.headers["user-agent"] as string;

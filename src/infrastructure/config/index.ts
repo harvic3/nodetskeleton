@@ -84,6 +84,6 @@ export default {
         EncryptionKeySize: Number(process.env.ENCRYPTION_KEY_SIZE) || 128,
       },
     },
-    DefaultLang: LocaleTypeEnum.EN,
+    DefaultLanguage: LocaleTypeEnum.EN,
   },
 };

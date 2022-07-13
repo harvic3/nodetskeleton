@@ -3,6 +3,7 @@ import { ILogProvider } from "../../../../../../shared/log/providerContracts/ILo
 import { ChannelNameEnum } from "../../../../../../shared/messaging/ChannelName.enum";
 import { BooleanUtil } from "../../../../../../../domain/shared/utils/BooleanUtil";
 import { IEventQueue } from "../../../../../../shared/messaging/queue/IEventQueue";
+import { LocaleTypeEnum } from "../../../../../../shared/locals/LocaleType.enum";
 import { IUSerRepository } from "../../../../providerContracts/IUser.repository";
 import { EventMessage } from "../../../../../../shared/messaging/EventMessage";
 import { LastLoginDto } from "../../dtos/LastLoginDto";
@@ -14,7 +15,8 @@ export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
     super(ManageLastLoginEventUseCase.name, logProvider);
   }
 
-  async execute(eventQueue: IEventQueue): Promise<IResult> {
+  async execute(locale: LocaleTypeEnum, eventQueue: IEventQueue): Promise<IResult> {
+    this.setLocale(locale);
     const result = new Result();
     while (BooleanUtil.YES) {
       const message = await eventQueue.pop<EventMessage<LastLoginDto>>(this.channelName);
