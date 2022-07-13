@@ -17,7 +17,7 @@ export class EventSubscriber implements IEventSubscriber {
   async subscribe(channel: ChannelNameEnum): Promise<boolean> {
     this.addChannel(channel);
 
-    if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
+    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
 
     return Promise.resolve(this.#subscriber?.subscribe(channel))
       .then(() => {
@@ -34,7 +34,7 @@ export class EventSubscriber implements IEventSubscriber {
   }
 
   async unsubscribe(channel: ChannelNameEnum): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
+    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
 
     return Promise.resolve(this.#subscriber?.unsubscribe(channel))
       .then(() => {
@@ -51,7 +51,7 @@ export class EventSubscriber implements IEventSubscriber {
   }
 
   online(): boolean {
-    return this.#subscriber?.connected || BooleanUtil.NOT;
+    return this.#subscriber?.connected || BooleanUtil.NO;
   }
 
   initialize(client: Subscriber): void {
@@ -76,7 +76,7 @@ export class EventSubscriber implements IEventSubscriber {
     const exists = this.subscribedChannels.some((subscription) => subscription.channel === channel);
     if (exists) return;
 
-    this.subscribedChannels.push({ channel, subscribed: BooleanUtil.NOT });
+    this.subscribedChannels.push({ channel, subscribed: BooleanUtil.NO });
   }
 
   private removeChannel(channel: ChannelNameEnum): void {

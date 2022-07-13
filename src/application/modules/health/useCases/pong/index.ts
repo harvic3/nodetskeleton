@@ -1,6 +1,7 @@
 import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
 
@@ -12,7 +13,8 @@ export class PongUseCase extends BaseUseCase<undefined> {
     super(PongUseCase.name, logProvider);
   }
 
-  async execute(): Promise<IResultT<string>> {
+  async execute(locale: LocaleTypeEnum): Promise<IResultT<string>> {
+    this.setLocale(locale);
     const result = new ResultT<string>();
 
     const message = await this.healthProvider.get(

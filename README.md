@@ -219,7 +219,8 @@ export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{
     super(GetProductUseCase.name, logProvider);
   }
 
-  async execute(idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
+  async execute(locale: LocaleTypeEnum, idMask: string): Promise<IResult<ProductDto>> { // If object input type is (params: { idMask: string}) so you can access to it like params.idMask
+    this.setLocale(locale);
     // We create the instance of our type of result at the beginning of the use case.
     const result = new Result<ProductDto>();
     // With the resulting object we can control validations within other functions.
@@ -317,7 +318,7 @@ export abstract class BaseUseCase<T> {
     Throw.when(this.CONTEXT, !!result?.error, result.error, result.statusCode);
   }
 
-  abstract execute(args?: T): Promise<IResult>;
+  abstract execute(locale: LocaleTypeEnum, args?: T): Promise<IResult>;
 }
 ```
 
@@ -334,7 +335,8 @@ export class LoginUseCase
     super();
   }
 
-  async execute(params: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
+  async execute(locale: LocaleTypeEnum, args: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
+    this.setLocale(locale);
     // Your UseCase implementation
   }
 }
@@ -346,7 +348,8 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
     super();
   }
 
-  async execute(): Promise<IResultT<User[]>> {
+  async execute(locale: LocaleTypeEnum): Promise<IResultT<User[]>> {
+    this.setLocale(locale);
     // Your UseCase implementation
   }
 }
@@ -413,7 +416,7 @@ function validateEmail(email: string): string {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     return null;
   }
-  return resources.getWithParams(resourceKeys.NOT_VALID_EMAIL, { email });
+  return resources.getWithParams(resourceKeys.NO_VALID_EMAIL, { email });
 }
 
 function greaterThan(numberName: string, base: number, evaluate: number): string {
@@ -528,12 +531,13 @@ export class TextFeelingController extends BaseController {
     super(TextFeelingController.name, serviceContainer);
   }
   /*...*/
-  getFeelingText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getFeelingText = async (req: IRequest, res: IResponse, next: INextFunction): Promise<void> => {
     const textDto: TextDto = req.body;
     return this.handleResult(
       res,
       next,
       this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
+      req.locale,
       textDto,
     );
   };
@@ -595,6 +599,7 @@ export class TextFeelingController extends BaseController {
       ctx,
       next,
       this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
+      ctx.locale,
       textDto,
     );
   };
@@ -1140,8 +1145,6 @@ For some reason that I don't understand yet, the dynamic loading of modules pres
 // Node App in Cluster mode
 import { cpus } from "os";
 import "express-async-errors";
-import infraContainer from "./infrastructure/container";
-infraContainer.load();
 import * as cluster from "cluster";
 import config from "./infrastructure/config";
 import AppWrapper from "./infrastructure/app/AppWrapper";
@@ -1195,8 +1198,6 @@ if (cluster.isMaster) {
 
 // Node App without Cluster mode and controllers dynamic load.
 import "express-async-errors";
-import infraContainer from "./infrastructure/container";
-infraContainer.load();
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
@@ -1221,8 +1222,6 @@ process.on(
 
 // Node App without Cluster mode with controllers load by constructor.
 import "express-async-errors";
-import infraContainer from "./infrastructure/container";
-infraContainer.load();
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";

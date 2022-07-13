@@ -50,7 +50,7 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase().execute({
+    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
       email: undefined,
       passwordB64: undefined,
       ipAddress: undefined,
@@ -70,7 +70,7 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase().execute({
+    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
       email: MockConstants.USER_EMAIL,
       passwordB64: undefined,
       ipAddress: MockConstants.IP_ADDRESS,
@@ -91,7 +91,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({
+    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
       ipAddress: MockConstants.IP_ADDRESS,
@@ -108,7 +108,7 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute({
+    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
       ipAddress: MockConstants.IP_ADDRESS,
@@ -130,7 +130,7 @@ describe("when try to login", () => {
     eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
-    const result = await loginUseCase().execute({
+    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
       email: MockConstants.USER_EMAIL,
       passwordB64: passwordB64 as string,
       ipAddress: MockConstants.IP_ADDRESS,

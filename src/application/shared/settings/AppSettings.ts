@@ -1,8 +1,10 @@
+import { LocaleTypeEnum } from "../locals/LocaleType.enum";
+
 export default class AppSettings {
   static QUEUE_BASE_NAME = "queue";
   static ServiceContext: string;
   static ServiceName: string;
-  static DefaultLang: string;
+  static DefaultLanguage: LocaleTypeEnum;
   static EncryptionKey: string;
   static EncryptionIterations: number;
   static EncryptionKeySize: number;
@@ -26,7 +28,7 @@ export default class AppSettings {
   static init(config: Record<string, any>): void {
     this.ServiceContext = config.Server.ServiceContext.Context;
     this.ServiceName = config.Server.ServiceName;
-    this.DefaultLang = config.Params.DefaultLang;
+    this.DefaultLanguage = config.Params.DefaultLanguage;
     this.EncryptionKey = config.Params.Security.CRYPTO.EncryptionKey;
     this.EncryptionIterations = config.Params.Security.CRYPTO.EncryptionIterations;
     this.EncryptionKeySize = config.Params.Security.CRYPTO.EncryptionKeySize;

@@ -9,7 +9,7 @@ export class EventPublisher implements IEventPublisher {
   constructor(private readonly serviceName: string) {}
 
   async publish<T>(message: EventMessage<T>): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NOT);
+    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
 
     return Promise.resolve(this.#publisher?.publish(message.channel, message.toJSON()))
       .then(() => BooleanUtil.SUCCESS)
@@ -23,7 +23,7 @@ export class EventPublisher implements IEventPublisher {
   }
 
   online(): boolean {
-    return this.#publisher?.connected || BooleanUtil.NOT;
+    return this.#publisher?.connected || BooleanUtil.NO;
   }
 
   initialize(client: Publisher): void {

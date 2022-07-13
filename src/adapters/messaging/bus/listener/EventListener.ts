@@ -25,7 +25,7 @@ export class EventListener implements IEventListener {
   }
 
   online(): boolean {
-    return this.#listener?.connected || BooleanUtil.NOT;
+    return this.#listener?.connected || BooleanUtil.NO;
   }
 
   initialize(client: Listener): void {

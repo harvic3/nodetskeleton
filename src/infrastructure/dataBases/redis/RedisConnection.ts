@@ -13,8 +13,8 @@ export type RedisConnectionOptions = {
 };
 
 export abstract class RedisConnection {
-  initialized = BooleanUtil.NOT;
-  connected = BooleanUtil.NOT;
+  initialized = BooleanUtil.NO;
+  connected = BooleanUtil.NO;
   subscriberListener: RedisClient | undefined;
   publisher: RedisClient | undefined;
 
