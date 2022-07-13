@@ -1,3 +1,4 @@
+import { LocaleTypeEnum } from "../../../../application/shared/locals/LocaleType.enum";
 import { ISession } from "../../../../domain/session/ISession";
 
 export interface IRequest {
@@ -6,4 +7,5 @@ export interface IRequest {
   body: any;
   params: Record<string, string>;
   query: Record<string, string>;
+  locale: LocaleTypeEnum;
 }

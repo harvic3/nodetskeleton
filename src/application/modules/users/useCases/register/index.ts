@@ -7,6 +7,7 @@ import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { TypeParser } from "../../../../../domain/shared/utils/TypeParser";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -26,7 +27,8 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     super(RegisterUserUseCase.name, logProvider);
   }
 
-  async execute(args: IUserDto): Promise<IResult> {
+  async execute(locale: LocaleTypeEnum, args: IUserDto): Promise<IResult> {
+    this.setLocale(locale);
     const result = new Result();
 
     const userDto = UserDto.fromJSON(args);

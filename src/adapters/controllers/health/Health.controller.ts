@@ -14,7 +14,7 @@ export class HealthController extends BaseController {
   }
 
   pong: EntryPointHandler = async (
-    _req: IRequest,
+    req: IRequest,
     res: IResponse,
     next: INextFunction,
   ): Promise<void> => {
@@ -22,11 +22,12 @@ export class HealthController extends BaseController {
       res,
       next,
       this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name),
+      req.locale,
     );
   };
 
   resourceNotFound: EntryPointHandler = async (
-    _req: IRequest,
+    req: IRequest,
     res: IResponse,
     next: INextFunction,
   ): Promise<void> => {
@@ -34,6 +35,7 @@ export class HealthController extends BaseController {
       res,
       next,
       this.servicesContainer.get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name),
+      req.locale,
     );
   };
 

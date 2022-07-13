@@ -1,6 +1,7 @@
 import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 
 export class NotFoundUseCase extends BaseUseCase<undefined> {
   constructor(
@@ -10,7 +11,8 @@ export class NotFoundUseCase extends BaseUseCase<undefined> {
     super(NotFoundUseCase.name, logProvider);
   }
 
-  async execute(): Promise<IResult> {
+  async execute(locale: LocaleTypeEnum): Promise<IResult> {
+    this.setLocale(locale);
     const result = new Result();
 
     result.setError(

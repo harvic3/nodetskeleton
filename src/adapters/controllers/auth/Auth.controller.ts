@@ -27,6 +27,7 @@ export class AuthController extends BaseController {
       res,
       next,
       this.servicesContainer.get<LoginUseCase>(this.CONTEXT, LoginUseCase.name),
+      req.locale,
       {
         email,
         passwordB64,

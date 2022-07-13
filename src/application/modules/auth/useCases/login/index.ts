@@ -2,6 +2,7 @@ import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useC
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
+import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
@@ -16,7 +17,8 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     super(LoginUseCase.name, logProvider);
   }
 
-  async execute(args: ICredentials): Promise<IResultT<TokenDto>> {
+  async execute(locale: LocaleTypeEnum, args: ICredentials): Promise<IResultT<TokenDto>> {
+    this.setLocale(locale);
     const result = new ResultT<TokenDto>();
 
     const credentialsDto = CredentialsDto.fromJSON(args);
