@@ -17,6 +17,7 @@ export class HealthController extends BaseController {
       ctx,
       next,
       this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name),
+      ctx.locale,
     );
   };
 
@@ -28,6 +29,7 @@ export class HealthController extends BaseController {
       ctx,
       next,
       this.servicesContainer.get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name),
+      ctx.locale,
     );
   };
 

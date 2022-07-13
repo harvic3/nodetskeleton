@@ -103,8 +103,8 @@ export default class AppWrapper {
 
   private setup(): void {
     AppSettings.init(config);
-    resources.setDefaultLanguage(AppSettings.DefaultLang);
-    words.setDefaultLanguage(AppSettings.DefaultLang);
+    resources.setDefaultLanguage(AppSettings.DefaultLanguage);
+    words.setDefaultLanguage(AppSettings.DefaultLanguage);
     Encryption.init(
       AppSettings.EncryptionKey,
       AppSettings.EncryptionIterations,

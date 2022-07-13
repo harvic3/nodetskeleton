@@ -1,4 +1,5 @@
 import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
+import { LocaleTypeEnum } from "../../../application/shared/locals/LocaleType.enum";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import { ServiceContext } from "../../shared/ServiceContext";
@@ -45,10 +46,11 @@ export default abstract class BaseController {
     ctx: IContext,
     next: INextFunction,
     useCase: BaseUseCase<T>,
+    locale: LocaleTypeEnum,
     args?: T,
   ): Promise<void> {
     try {
-      return this.getResult(ctx, await useCase.execute(args));
+      return this.getResult(ctx, await useCase.execute(locale, args));
     } catch (error) {
       ctx.app.emit("error", error, ctx);
       return next();
@@ -59,10 +61,11 @@ export default abstract class BaseController {
     ctx: IContext,
     next: INextFunction,
     useCase: BaseUseCase<T>,
+    locale: LocaleTypeEnum,
     args?: T,
   ): Promise<void> {
     try {
-      return this.getResultDto(ctx, await useCase.execute(args));
+      return this.getResultDto(ctx, await useCase.execute(locale, args));
     } catch (error) {
       ctx.app.emit("error", error, ctx);
       return next();
@@ -73,10 +76,11 @@ export default abstract class BaseController {
     ctx: IContext,
     next: INextFunction,
     useCase: BaseUseCase<T>,
+    locale: LocaleTypeEnum,
     args?: T,
   ): Promise<void> {
     try {
-      return this.getResultData(ctx, await useCase.execute(args));
+      return this.getResultData(ctx, await useCase.execute(locale, args));
     } catch (error) {
       ctx.app.emit("error", error, ctx);
       return next();

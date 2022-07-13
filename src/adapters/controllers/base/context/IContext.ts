@@ -1,3 +1,4 @@
+import { LocaleTypeEnum } from "../../../../application/shared/locals/LocaleType.enum";
 import { ISession } from "../../../../domain/session/ISession";
 
 type IRequest = {
@@ -26,5 +27,6 @@ export interface IContext {
   response: IResponse;
   status: number;
   body: unknown;
+  locale: LocaleTypeEnum;
   app: App;
 }

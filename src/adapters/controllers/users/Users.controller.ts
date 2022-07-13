@@ -21,6 +21,7 @@ export class UsersController extends BaseController {
       ctx,
       next,
       this.servicesContainer.get<RegisterUserUseCase>(this.CONTEXT, RegisterUserUseCase.name),
+      ctx.locale,
       userDto,
     );
   };
