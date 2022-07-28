@@ -9,15 +9,13 @@ import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
 import { TopicNameEnum } from "../../../../shared/messaging/TopicName.enum";
 import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
-import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
-import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
-import { TypeParser } from "../../../../../domain/shared/utils/TypeParser";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
-import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import DateTimeUtils from "../../../../shared/utils/DateTimeUtil";
 import AppSettings from "../../../../shared/settings/AppSettings";
-import GuidUtil from "../../../../shared/utils/GuidUtils";
+import GuidUtil from "../../../../shared/utils/GuidUtil";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
 import { Throw } from "../../../../shared/errors/Throw";
@@ -49,10 +47,10 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
 
     this.validateEmail(user.email);
 
+    this.validatePassword(userDto.getCredentialsDto().passwordBuilder as PasswordBuilder);
+
     const userExists = await this.userExists(result, user.email?.value as string);
     if (userExists) return result;
-
-    this.validatePassword(userDto.password as string);
 
     const userRegistered = await this.registerUser(result, user);
     if (!userRegistered) return result;
@@ -68,20 +66,18 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   }
 
   private validateEmail(email: Email | undefined): void {
-    const isValidEmail = email?.isValid();
     Throw.when(
       this.CONTEXT,
-      !isValidEmail,
+      !email?.isValid(),
       this.appMessages.get(this.appMessages.keys.INVALID_EMAIL),
       this.applicationStatus.INVALID_INPUT,
     );
   }
 
-  private validatePassword(passwordBase64: string): void {
-    const isValidPassword = StringUtil.isValidAsPassword(StringUtil.decodeBase64(passwordBase64));
+  private validatePassword(passwordBuilder: PasswordBuilder): void {
     Throw.when(
       this.CONTEXT,
-      !isValidPassword,
+      !passwordBuilder.isValid(),
       this.appMessages.get(this.appMessages.keys.INVALID_PASSWORD),
       this.applicationStatus.INVALID_INPUT,
     );
@@ -106,18 +102,17 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const maskedUid = GuidUtil.getV4WithoutDashes();
     const createdAt = DateTimeUtils.getISONow();
     const buildedUser = userDto.toDomain(undefined, maskedUid, createdAt, BooleanUtil.NOT_VERIFIED);
-    buildedUser.password = await this.encryptPassword(buildedUser);
+    buildedUser.password = await this.encryptPassword(
+      userDto.getCredentialsDto().passwordBuilder as PasswordBuilder,
+    );
 
     return buildedUser;
   }
 
-  private async encryptPassword(user: IUser): Promise<string> {
+  private async encryptPassword(passwordBuilder: PasswordBuilder): Promise<string> {
     const task: WorkerTask = new WorkerTask(TaskDictionaryEnum.ENCRYPT_PASSWORD);
     const workerArgs = {
-      text: new PasswordBuilder(
-        TypeParser.cast<Email>(user.email).value as string,
-        TypeParser.cast<User>(user as User).password as string,
-      ).value,
+      text: passwordBuilder.value,
       encryptionKey: AppSettings.EncryptionKey,
       iterations: AppSettings.EncryptionIterations,
     };

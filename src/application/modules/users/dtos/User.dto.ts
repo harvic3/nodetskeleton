@@ -1,5 +1,6 @@
 import { IResult, Resources, Validator } from "../../../shared/useCase/BaseUseCase";
 import { Gender } from "../../../../domain/user/genre/Gender.enum";
+import { CredentialsDto } from "../../auth/dtos/Credentials.dto";
 import { User } from "../../../../domain/user/User";
 
 export type IUserDto = {
@@ -57,5 +58,9 @@ export class UserDto {
     user.password = this.password;
 
     return user;
+  }
+
+  getCredentialsDto(): CredentialsDto {
+    return CredentialsDto.fromJSON({ email: this.email, passwordB64: this.password });
   }
 }
