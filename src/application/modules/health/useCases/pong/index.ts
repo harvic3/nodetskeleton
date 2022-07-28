@@ -2,7 +2,7 @@ import { BaseUseCase, IResultT, ResultT } from "../../../../shared/useCase/BaseU
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IHealthProvider } from "../../providerContracts/IHealth.provider";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
-import DateTimeUtils from "../../../../shared/utils/DateTimeUtils";
+import DateTimeUtils from "../../../../shared/utils/DateTimeUtil";
 import AppSettings from "../../../../shared/settings/AppSettings";
 
 export class PongUseCase extends BaseUseCase<undefined> {

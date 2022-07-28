@@ -1,6 +1,6 @@
 import { IUserModel as IUserModel } from "../../../adapters/repositories/user/IUser.model";
 import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
-import GuidUtils from "../../../application/shared/utils/GuidUtils";
+import GuidUtils from "../../../application/shared/utils/GuidUtil";
 import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { IUser } from "../../../domain/user/IUser";
 import { User } from "../../../domain/user/User";
