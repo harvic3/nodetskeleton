@@ -8,7 +8,7 @@ import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
-import GuidUtil from "../../../../shared/utils/GuidUtils";
+import GuidUtil from "../../../../shared/utils/GuidUtil";
 import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
@@ -27,7 +27,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     const authenticatedResult = await this.userLogin(
       result,
       credentialsDto.email?.value as string,
-      credentialsDto?.passwordB64 as string,
+      credentialsDto?.passwordBuilder as PasswordBuilder,
     );
     if (!authenticatedResult.success) return result;
 
@@ -41,9 +41,9 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
   private async userLogin(
     result: IResult,
     email: string,
-    passwordB64: string,
+    passwordBuilder: PasswordBuilder,
   ): Promise<TryResult<User>> {
-    const encryptedPassword = Encryption.encrypt(new PasswordBuilder(email, passwordB64).value);
+    const encryptedPassword = Encryption.encrypt(passwordBuilder.value);
     const authenticatedResult = await TryWrapper.syncExec(
       this.authProvider.login(email, encryptedPassword),
     );

@@ -1,8 +1,8 @@
-import { IGuidUtils } from "../../../domain/shared/utilityContracts/IGuidUtil";
+import { IGuidUtil } from "../../../domain/shared/utilityContracts/IGuidUtil";
 import { StringUtil } from "../../../domain/shared/utils/StringUtil";
 import { v4 } from "uuid";
 
-export class GuidUtil implements IGuidUtils {
+export class GuidUtil implements IGuidUtil {
   getV4(): string {
     return v4();
   }
