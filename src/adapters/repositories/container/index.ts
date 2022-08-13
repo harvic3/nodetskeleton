@@ -6,7 +6,9 @@ const CONTEXT = "RepositoryContainer";
 
 kernel.addSingleton(
   UserRepository.name,
-  new UserRepository(kernel.get<IUserModel>(CONTEXT, kernel.classToIName(UserRepository.name))),
+  new UserRepository(
+    kernel.get<IUserModel>(CONTEXT, kernel.classToInterfaceName(UserRepository.name)),
+  ),
 );
 
 export { UserRepository as UserRepository };
