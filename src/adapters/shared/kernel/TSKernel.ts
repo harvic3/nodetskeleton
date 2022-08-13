@@ -5,8 +5,8 @@ import { IServiceContainer } from "../dic/IServiceContainer";
 
 export class TSKernel implements IServiceContainer {
   readonly #classNameBase = "ClassName";
-  // You could use something like this too: 'ClassName.interface' for example
-  readonly #interfaceName = `I${this.#classNameBase}`;
+  // You could use something like this too 'ClassName.interface' for example
+  readonly #interfaceBaseName = `I${this.#classNameBase}`;
   #serviceCollection: Record<string, Function> = {};
 
   addScoped(className: string, activator: Function): void {
@@ -29,8 +29,8 @@ export class TSKernel implements IServiceContainer {
     return this.#serviceCollection[className]() as T;
   }
 
-  classToIName(className: string): string {
-    return this.#interfaceName.replace(this.#classNameBase, className);
+  classToInterfaceName(className: string): string {
+    return this.#interfaceBaseName.replace(this.#classNameBase, className);
   }
 }
 
