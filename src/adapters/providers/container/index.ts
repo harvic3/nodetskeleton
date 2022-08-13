@@ -11,13 +11,13 @@ const CONTEXT = "ProviderContainer";
 
 kernel.addSingleton(
   LogProvider.name,
-  new LogProvider(kernel.get<ILogger>(CONTEXT, kernel.classToIName(LogProvider.name))),
+  new LogProvider(kernel.get<ILogger>(CONTEXT, kernel.classToInterfaceName(LogProvider.name))),
 );
 kernel.addSingleton(
   AuthProvider.name,
   new AuthProvider(
     kernel.get<LogProvider>(CONTEXT, LogProvider.name),
-    kernel.get<IUserModel>(CONTEXT, kernel.classToIName(UserRepository.name)),
+    kernel.get<IUserModel>(CONTEXT, kernel.classToInterfaceName(UserRepository.name)),
   ),
 );
 kernel.addSingleton(HealthProvider.name, new HealthProvider());

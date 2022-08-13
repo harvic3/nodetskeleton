@@ -9,10 +9,13 @@ class InfrastructureServiceContainer {
 
   load(): void {
     // Load Providers to kernel
-    this.tsKernel.addSingleton(this.tsKernel.classToIName(LogProvider.name), new Logger());
+    this.tsKernel.addSingleton(this.tsKernel.classToInterfaceName(LogProvider.name), new Logger());
 
     // Load Model Repositories to kernel
-    this.tsKernel.addSingleton(this.tsKernel.classToIName(UserRepository.name), new UserModel());
+    this.tsKernel.addSingleton(
+      this.tsKernel.classToInterfaceName(UserRepository.name),
+      new UserModel(),
+    );
   }
 }
 

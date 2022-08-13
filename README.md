@@ -2,13 +2,13 @@
 
 ## Introduction 🤖
 
-`NodeTskeleton` is a `Clean Architecture` based `template project` for `NodeJs` using `TypeScript` to implement with any `web server framework` or even any user interface.
+**NodeTskeleton** is a **Clean Architecture** based **template project** for **NodeJs** using **TypeScript** to implement with any **web server framework** or even any user interface.
 
-The main philosophy of `NodeTskeleton` is that your solution (`domain` and `application`, `“business logic”`) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
+The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
-The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of `database`, `providers`or `services`, the `framework`, `libraries` or any other dependencies.
+The design of **NodeTskeleton** is based in **Clean Architecture**, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of **database**, **providers**or **services**, the **framework**, **libraries** or any other dependencies.
 
-`NodeTskeleton` has the minimum `tools` necessary for you to develop the `business logic` of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
+**NodeTskeleton** has the minimum **tools** necessary for you to develop the **business logic** of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
 ## Table of contents
 
@@ -45,9 +45,9 @@ The design of `NodeTskeleton` is based in `Clean Architecture`, an architecture 
 
 Applications are generally developed to be used by people, so people should be the focus of them.
 
-For this reason `user stories` are written, stories that give us information about the type of user, procedures that the user performs in a part of the application `(module)`, important information that serves to `structure the solution` of our application, and in practice, how is this?
+For this reason **user stories** are written, stories that give us information about the type of user, procedures that the user performs in a part of the application **(module)**, important information that serves to **structure the solution** of our application, and in practice, how is this?
 
-The user stories must be in the `src/application` path of our solution, there we create a directory that we will call `modules` and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
+The user stories must be in the **src/application** path of our solution, there we create a directory that we will call **modules** and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
 
 <div style="text-align:center"> <img src="https://i.ibb.co/t2mHGmC/Node-Tskeleton.png" alt="Node-Tskeleton" border="10"> </div>
 
@@ -59,24 +59,24 @@ The user stories must be in the `src/application` path of our solution, there we
 
 ### Observations 👀
 
-- If your application has no `roles`, then there's no mess, it's just `modules`. ;)
+- If your application has no **roles**, then there's no mess, it's just **modules**. ;)
 
-- But taking into consideration that if the roles are not yet defined in your application, `the best option` would be to follow a `dynamic role strategy` based on `permissions` and `each use case within the application (or use case group) would be a specific permission` that would feed the strategy of dynamic roles.
+- But taking into consideration that if the roles are not yet defined in your application, **the best option** would be to follow a **dynamic role strategy** based on **permissions** and **each use case within the application (or use case group) would be a specific permission** that would feed the strategy of dynamic roles.
 
-- Note that you can `repeat` modules between `roles`, because a `module can be used by different roles`, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
+- Note that you can **repeat** modules between **roles**, because a **module can be used by different roles**, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
 
-- This strategy makes the project easy to `navigate`, easy to `change`, `scale` and `maintain`, which boils down to `good mental health`, besides you will be able to integrate new developers to your projects in a faster way.
+- This strategy makes the project easy to **navigate**, easy to **change**, **scale** and **maintain**, which boils down to **good mental health**, besides you will be able to integrate new developers to your projects in a faster way.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
 ## Included tools
 
-`NodeTskeleton` includes some tools in the `src/application/shared` path which are described below:
+**NodeTskeleton** includes some tools in the **src/application/shared** path which are described below:
 
 ### Errors 
 
-Is a tool for separating `controlled` from `uncontrolled errors` and allows you to launch application errors according to your business rules, example:
+Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules, example:
 
 ```ts
 throw new ApplicationError(
@@ -99,7 +99,7 @@ if (!someCondition) { // Or any validation result
 }
 ```
 
-The function of this `class` will be reflected in your `error handler` as it will let you know when an exception was thrown by your `system` or by an `uncontrolled error`, as shown below:
+The function of this **class** will be reflected in your **error handler** as it will let you know when an exception was thrown by your **system** or by an **uncontrolled error**, as shown below:
 
 ```ts
   handle: ErrorHandler = (
@@ -121,7 +121,7 @@ The function of this `class` will be reflected in your `error handler` as it wil
 
 ### Locals
 
-It is a basic `internationalization` tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
+It is a basic **internationalization** tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
 
 ```ts
 import resources from "../locals/index";
@@ -171,7 +171,7 @@ result.setError(
 
 And you can add all the parameters you need with as many messages in your application as required.
 
-This tool is now available as an `NPM package`.
+This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/resources-tsk" target="_blank" >See in NPM</a>
 
@@ -197,9 +197,9 @@ const productsDto: ProductDto[] = this.mapper.mapArray<Product, ProductDto>(
 );
 ```
 
-`Activator` is the function responsible for returning a new instance for each call, otherwise you would have an array with the same object repeated N times. 
+**Activator** is the function responsible for returning a new instance for each call, otherwise you would have an array with the same object repeated N times. 
 
-This tool is now available as an `NPM package`.
+This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/mapper-tsk" target="_blank" >See in NPM</a>
 
@@ -207,7 +207,7 @@ This tool is now available as an `NPM package`.
 
 ### Result
 
-`result` is a `tool` that helps us control the flow of our `use cases` and allows us to `manage the response`, be it an `object`, an `array` of objects, a `message` or an `error` as follows:
+**result** is a **tool** that helps us control the flow of our **use cases** and allows us to **manage the response**, be it an **object**, an **array** of objects, a **message** or an **error** as follows:
 
 ```ts
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
@@ -245,7 +245,7 @@ export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{
 }
 ```
 
-The `result` object may or may not have a `type` of `response`, it fits your needs, and the `result instance without type` cannot be assigned `data`.
+The **result** object may or may not have a **type** of **response**, it fits your needs, and the **result instance without type** cannot be assigned **data**.
 
 ```ts
 const resultWithType = new Result<ProductDto>();
@@ -253,7 +253,24 @@ const resultWithType = new Result<ProductDto>();
 const resultWithoutType = new Result();
 ```
 
-The `result` object can help you in unit tests as shown below:
+For clean code you can return validation result and handles the error clean way through **result** visitor pattern method like:
+
+```ts
+async execute(args: ActionDto): Promise<IResult> {
+    const result = new Result();
+
+    if (!this.isValidRequest(result, args)) return result;
+    // or 
+    this.validateRequest(result, args);
+    if (result.hasError()) return result;
+
+    /*...*/
+
+    return result;
+}
+```
+
+The **result** object can help you in unit tests as shown below:
 
 ```ts
 it("should return a 400 error if quantity is null or zero", async () => {
@@ -269,7 +286,7 @@ it("should return a 400 error if quantity is null or zero", async () => {
 });
 ```
 
-This tool is now available as an `NPM package`.
+This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/result-tsk" target="_blank" >See in NPM</a>
 
@@ -277,11 +294,11 @@ This tool is now available as an `NPM package`.
 
 ### UseCase
 
-The `UseCase` is a `base class` for `extending` use cases and if you were a retailer you could see it in action in the above explanation of the `Result` tool.
+The **UseCase** is a **base class** for **extending** use cases and if you were a retailer you could see it in action in the above explanation of the **Result** tool.
 
-Its main function is to avoid you having to write the same code in every use case you have to build because it contains the instances of the `common tools` you will use in the case implementations.
+Its main function is to avoid you having to write the same code in every use case you have to build because it contains the instances of the **common tools** you will use in the case implementations.
 
-The tools extended by this class are: the `mapper`, the `validator`, the `message resources` and their `keys`, and the `result codes`.
+The tools extended by this class are: the **mapper**, the **validator**, the **message resources** and their **keys**, and the **result codes**.
 
 ```ts
 import messageResources, { Resources } from "../locals/messages/index";
@@ -322,7 +339,7 @@ export abstract class BaseUseCase<T> {
 }
 ```
 
-Type `T` in `BaseUseCase<T>` is a way for the optimal control of the input parameters of your UseCase unit code.
+Type **T** in **BaseUseCase<T>** is a way for the optimal control of the input parameters of your UseCase unit code.
 
 So, you can use it like the next examples: 
 
@@ -359,7 +376,7 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
 
 ### Validator
 
-The `validator` is a `very simple` but `dynamic tool` and with it you will be able to `validate any type of object and/or parameters` that your use case `requires as input`, and with it you will be able to `return enriched messages` to the `client` regarding the `errors` or necessary parameters not identified in the `input requirements`, for example:
+The **validator** is a **very simple** but **dynamic tool** and with it you will be able to **validate any type of object and/or parameters** that your use case **requires as input**, and with it you will be able to **return enriched messages** to the **client** regarding the **errors** or necessary parameters not identified in the **input requirements**, for example:
 
 ```ts
 /*...*/
@@ -385,30 +402,30 @@ async execute(params: { userUid: string, itemDto: CarItemDto }): Promise<IResult
 }
 /*...*/
 ```
-Suppose that in the above example the `itemDto object` has no `orderId` and no `quantity`, then the `result of the error` in the `object result` based on the message of the `SOME_PARAMETERS_ARE_MISSING` for `english local file` would be something like this:
+Suppose that in the above example the **itemDto object** has no **orderId** and no **quantity**, then the **result of the error** in the **object result** based on the message of the **SOME_PARAMETERS_ARE_MISSING** for **english local file** would be something like this:
 
-`Some parameters are missing or not valid: Order_Id, Quantity.`
+**Some parameters are missing or not valid: Order_Id, Quantity.**
 
 ### Important note
 
-In the `validation process` the `result of messages` obtained `will be inserted` in the `{{missingParams}}` key of the local message.
-> You can change the message, but not the key `{{missingParams}}`.
+In the **validation process** the **result of messages** obtained **will be inserted** in the **{{missingParams}}** key of the local message.
+> You can change the message, but not the key **{{missingParams}}**.
 
 #### Validations functions (new feature 🤩)
 
-The validation functions extend the `isValidEntry` method to inject `small functions` created for your `own needs`.
+The validation functions extend the **isValidEntry** method to inject **small functions** created for your **own needs**.
 
 The philosophy of this tool is that it adapts to your own needs and not that you adapt to it.
 
-To do this the `isValidEntry function` input value key pair also accepts `array of small functions` that must perform a specific task with the parameter to be validated.
+To do this the **isValidEntry function** input value key pair also accepts **array of small functions** that must perform a specific task with the parameter to be validated.
 
 #### Observation
 
-If you are going to use the `validation functions` feature, you must send as a parameter an array even if it is only a function.
+If you are going to use the **validation functions** feature, you must send as a parameter an array even if it is only a function.
 
 #### Important note
 
-The validation functions should return `NULL` if the parameter for validate `is valid` and a `string message` indicating the reason why the parameter `is not valid`.
+The validation functions should return **NULL** if the parameter for validate **is valid** and a **string message** indicating the reason why the parameter **is not valid**.
 
 ```ts
 // Validator functions created to meet your own needs
@@ -460,7 +477,7 @@ if (!validator.isValidEntry(result, {
 // "Some parameters are missing or not valid: The number Age must be greater than 25, The Age param should be even."
 ```
 
-This tool is now available as an `NPM package`.
+This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/validator-tsk" target="_blank" >See in NPM</a>
 
@@ -469,9 +486,9 @@ This tool is now available as an `NPM package`.
 
 ## Dependency injection strategy
 
-For `dependency injection`, no external libraries are used. Instead, a `container dictionary strategy` is used in which instances and their dependencies are created and then resolved from container class.
+For **dependency injection**, no external libraries are used. Instead, a **container dictionary strategy** is used in which instances and their dependencies are created and then resolved from container class.
 
-This strategy is only needed in the `adapter layer` dependencies for `controllers` like `services` and `providers`, and also for the objects used in the `use case tests`, for example:
+This strategy is only needed in the **adapter layer** dependencies for **controllers** like **services** and **providers**, and also for the objects used in the **use case tests**, for example:
 
 ```ts
 // In the path src/adapters/controllers/textFeeling there is a folder called container and the index file have the following code lines:
@@ -509,7 +526,7 @@ export { healthProvider, textFeelingService };
 // And your repositories (folder src/adapters/repositories) must have the same strategy
 ```
 
-For `ioc` our `container` strategy manage the `instances` of the `UseCases` for the specific `controller` and here the necessary dependencies for the operation of those `UseCases` are injected, then they are `exported` and into the `controller` they are `imported` and `used` from our `container` as following:
+For **IOC** our **container** strategy manage the **instances** of the **UseCases** for the specific **controller** and here the necessary dependencies for the operation of those **UseCases** are injected, then they are **exported** and into the **controller** they are **imported** and **used** from our **container** as following:
 
 ```ts
 // For ExpressJs
@@ -552,33 +569,33 @@ export class TextFeelingController extends BaseController {
 export default new TextFeelingController(container);
 ```
 
-The way `addScoped` delivers a different instance for each UseCase call but `addSingleton` return the same instance by each call.
+The way **addScoped** delivers a different instance for each UseCase call but **addSingleton** return the same instance by each call.
 
-As you can see this makes it easy to manage the `injection of dependencies` without the need to use `sophisticated libraries` that add more complexity to our applications.
+As you can see this makes it easy to manage the **injection of dependencies** without the need to use **sophisticated libraries** that add more complexity to our applications.
 
-But if you prefer or definitely your project need a library, you can use something like `awilix`, `inversifyJs` or `typedi`.
+But if you prefer or definitely your project need a library, you can use something like **awilix**, **inversifyJs** or **typedi**.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
 ## Using NodeTskeleton
 
-In this `template` is included the example code base for `KoaJs` and `ExpressJs`, but if you have a `web framework of your preference` you must configure those described below according to the framework.
+In this **template** is included the example code base for **KoaJs** and **ExpressJs**, but if you have a **web framework of your preference** you must configure those described below according to the framework.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
 ## Using with KoaJs
 
-Go to `repo for KoaJs` in this <a href="https://github.com/harvic3/nodetskeleton/tree/support/tskeleton-koajs" target="_blank" >Link</a>
+Go to **repo for KoaJs** in this <a href="https://github.com/harvic3/nodetskeleton/tree/support/tskeleton-koajs" target="_blank" >Link</a>
 
 And then, continue with the <a href="https://github.com/harvic3/nodetskeleton#installation" target="_self" >installation</a> step described at the end of this manual.
 
 ### Controllers
 
-The location of the `controllers` must be in the `adapters` directory, there you can place them by responsibility in separate directories.
+The location of the **controllers** must be in the **adapters** directory, there you can place them by responsibility in separate directories.
 
-The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
+The controllers should be **exported as default** modules to make the handling of these in the index file of our application easier.
 
 ```ts
 // Controller example with default export
@@ -614,7 +631,7 @@ export class TextFeelingController extends BaseController {
 // You can see the default export
 export default new TextFeelingController(container);
 ```
-Example of the handling of the `controllers` in the `index` file of our application:
+Example of the handling of the **controllers** in the **index** file of our application:
 
 ```ts
 /*...*/
@@ -638,7 +655,7 @@ const appWrapper = new AppWrapper(controllers);
 
 ### Routes
 
-The strategy is to manage the routes `within` the same `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
+The strategy is to manage the routes **within** the same **controller**, this allows us a **better management** of these, in addition to a greater capacity for **maintenance** and **control** according to the **responsibilities** of the controller.
 
 ```ts
 /*...*/
@@ -657,7 +674,7 @@ initializeRoutes(router: IRouterType): void {
 
 ### Root path
 
-If you need to manage a `root path` in your `application` then this part is configured in `App`, the `infrastructure server module` that loads the controllers as well:
+If you need to manage a **root path** in your **application** then this part is configured in **App**, the **infrastructure server module** that loads the controllers as well:
 
 ```ts
 /*...*/
@@ -684,13 +701,13 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 
 ## Using with ExpressJs
 
-Clone this repo or use it as template, and then, continue with the `installation` step described in this guide.
+Clone this repo or use it as template, and then, continue with the **installation** step described in this guide.
 
 ### Controllers
 
-The location of the `controllers` must be in the `adapters` directory, there you can place them by responsibility in separate directories.
+The location of the **controllers** must be in the **adapters** directory, there you can place them by responsibility in separate directories.
 
-The controllers should be `exported as default` modules to make the handling of these in the index file of our application easier.
+The controllers should be **exported as default** modules to make the handling of these in the index file of our application easier.
 
 ```ts
 // Controller example with default export
@@ -718,7 +735,7 @@ export class TextFeelingController extends BaseController {
 // You can see the default export
 export default new TextFeelingController(container);
 ```
-Example of the handling of the `controllers` in the `index` file of our application:
+Example of the handling of the **controllers** in the **index** file of our application:
 
 ```ts
 /*...*/
@@ -742,7 +759,7 @@ const appWrapper = new AppWrapper(controllers);
 
 ### Routes
 
-The strategy is to manage the routes `within` the `controller`, this allows us a `better management` of these, in addition to a greater capacity for `maintenance` and `control` according to the `responsibilities` of the controller.
+The strategy is to manage the routes **within** the **controller**, this allows us a **better management** of these, in addition to a greater capacity for **maintenance** and **control** according to the **responsibilities** of the controller.
 
 ```ts
 /*...*/
@@ -761,7 +778,7 @@ initializeRoutes(router: IRouterType): void {
 
 ### Root path
 
-If you need to manage a `root path` in your `application` then this part is configured in `App`, the `infrastructure server module` that loads the controllers as well:
+If you need to manage a **root path** in your **application** then this part is configured in **App**, the **infrastructure server module** that loads the controllers as well:
 
 ```ts
 /*...*/
@@ -789,15 +806,15 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 
 ## Using with another web server framework
 
-> You must implement the configuration made with `ExpressJs` or `KoaJs` with the framework of your choice and `install` all the `dependencies` and `devDependencies` for your framework, You must also modify the `Server` module, `Middleware` in `infrastructure` directory and the `BaseController` and `Controllers` in adapters directory.
+> You must implement the configuration made with **ExpressJs** or **KoaJs** with the framework of your choice and **install** all the **dependencies** and **devDependencies** for your framework, You must also modify the **Server** module, **Middleware** in **infrastructure** directory and the **BaseController** and **Controllers** in adapters directory.
 
-And then, continue with the step `installation`.
+And then, continue with the step **installation**.
 
 **[⬆ back to the past](#table-of-contents)**
 
 ## Workers
 
-For cpu intensive tasks you have the possibility to use the `WorkerProvider` which enables you to run any script in an abstracted way, for example:
+For cpu intensive tasks you have the possibility to use the **WorkerProvider** which enables you to run any script in an abstracted way, for example:
 
 ```ts
   private async encryptPassword(user: User): Promise<string> {
@@ -814,10 +831,10 @@ For cpu intensive tasks you have the possibility to use the `WorkerProvider` whi
     const workerResult = await this.workerProvider.executeTask<string>(task);
 
     return Promise.resolve(workerResult);
-}
+  }
 ```
 
-At the application layer level the `WorkerTask` class allows you to create a work task in which you pass the type through an enum in which you can add your tasks and assign some parameters to it.
+At the application layer level the **WorkerTask** class allows you to create a work task in which you pass the type through an enum in which you can add your tasks and assign some parameters to it.
 
 ```ts
 export enum TaskDictionaryEnum {
@@ -859,9 +876,9 @@ Coming soon ;)
 
 In this layer you can add the connections services of all services, your repository models, and other services.
 
-The infrastructure includes a customizable `HttpClient` with its `response model` in `src/infrastructure/httpClient/TResponse.ts` for error control, and at the application level a class strategy `src/application/shared/result/...` is included as a standardized response model.
+The infrastructure includes a customizable **HttpClient** with its **response model** in **src/infrastructure/httpClient/TResponse.ts** for error control, and at the application level a class strategy **src/application/shared/result/...** is included as a standardized response model.
 
-The infrastructure has his container for the Model Repositories, LogProvider, connections and other essential services that we will need to start before any service in our app, this container is located in `src/infrastructure/container` and this service is initialized at the beginning of `AppWrapper` file as follow: 
+The infrastructure has his container for the Model Repositories, LogProvider, connections and other essential services that we will need to start before any service in our app, this container is located in **src/infrastructure/container** and this service is initialized at the beginning of **AppWrapper** file as follow: 
 ```ts
 import infraContainer from "../container";
 infraContainer.load();
@@ -872,9 +889,9 @@ infraContainer.load();
 
 ## Installation
 
-Depending on your need you have two options, `local` and with `docker compose`, but first of all we need to set up the `.env file`:
+Depending on your need you have two options, **local** and with **docker compose**, but first of all we need to set up the **.env file**:
 
-Go to project root directory, create a `.env file` and inside it copy and paste this content:
+Go to project root directory, create a **.env file** and inside it copy and paste this content:
 
 ```txt
 NODE_ENV=development
@@ -889,7 +906,7 @@ ENCRYPTION_KEY_SIZE=128
 JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
 ```
 
-`SERVICE_CONTEXT` env can be empty or delete it if you don't pretend use multi service feature.
+**SERVICE_CONTEXT** env can be empty or delete it if you don't pretend use multi service feature.
 
 ### Local
 
@@ -920,9 +937,9 @@ node dist/index
 
 > Finally, in any web browser go to:
 
-`localhost:3003/api/ping`
+**localhost:3003/api/ping**
 
-> And you can use `PostMan` as follow:
+> And you can use **PostMan** as follow:
 
 Try import this request. So, click to Import > Select Raw text, and paste the next code:
 
@@ -978,7 +995,7 @@ docker-compose up -d --build
 
 > Finally, in any internet explorer go to:
 
-`localhost:3003/api/ping`
+**localhost:3003/api/ping**
 
 > And you can use PostMan too:
 
@@ -1019,7 +1036,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
 
 > Ideally, each use case of your application should be supported by its respective test.
 
-> The tests use the `Jest` library and can be run in two ways:
+> The tests use the **Jest** library and can be run in two ways:
 
 ```console
 npm t
@@ -1040,7 +1057,7 @@ If you are using VS Code the easiest way to debug the solution is to follow thes
 
 > The short way is the next:
 
-Press `Ctrl + J` keys and later `click in down arrow` to add other terminal and select `JavaScript Debug Terminal` and later 
+Press **Ctrl + J** keys and later **click in down arrow** to add other terminal and select **JavaScript Debug Terminal** and later 
 
 ```console
 $ npm run dev
@@ -1048,11 +1065,11 @@ $ npm run dev
 
 > The complicated way is:
 
-First go to `package.json` file.
+First go to **package.json** file.
 
-Second, into package.json file locate the `debug` command just above the `scripts` section and click on it.
+Second, into package.json file locate the **debug** command just above the **scripts** section and click on it.
 
-Third, choose the `dev script` when the execution options appear.
+Third, choose the **dev script** when the execution options appear.
 
 So, wait a moment and then you will see something like this on the console.
 
@@ -1070,7 +1087,7 @@ HealthController was loaded
 Server NodeTskeleton running on localhost:3003/api
 ```
 
-To stop the debug just press `Ctrl C` and close the console that was opened to run the debug script.
+To stop the debug just press **Ctrl C** and close the console that was opened to run the debug script.
 
 This method will allow you to develop and have the solution be attentive to your changes (hot reload) without the need to restart the service, VS Code does it for you automatically.
 
@@ -1085,16 +1102,16 @@ This method will allow you to develop and have the solution be attentive to your
 npm run build
 ```
 
-> The result code will be stored in the `dist` directory.
+> The result code will be stored in the **dist** directory.
 
-> You can also add your `scripts` in the `package.json` file and use them with your deployment strategies, even with `docker`.
+> You can also add your **scripts** in the **package.json** file and use them with your deployment strategies, even with **docker**.
 
-> To be able to `debug`, the system generates `javascript map files` in the `dist` directory, but this is only for testing purposes. When the `build` command runs, everything inside the `dist` directory is removed and only the `necessary code` is generated.
+> To be able to **debug**, the system generates **javascript map files** in the **dist** directory, but this is only for testing purposes. When the **build** command runs, everything inside the **dist** directory is removed and only the **necessary code** is generated.
 
 ```console
 tsc
 ```
-> With the previous command you can also generate the code of the `dist` directory but this command is configured in the `TS config file` to generate the `map files` needed by the application to perform the `debugging` process.
+> With the previous command you can also generate the code of the **dist** directory but this command is configured in the **TS config file** to generate the **map files** needed by the application to perform the **debugging** process.
 
 
 ## Test your Clean Architecture
@@ -1103,22 +1120,22 @@ Something important is to know if we really did the job of building our clean ar
 
 1. Make sure you don't have any pending changes in your application to upload to your repository, otherwise upload them if you do.
 
-2. Identify and remove `adapters` and `infrastructure` `directories` from your solution, as well as the `index.ts` file.
+2. Identify and remove **adapters** and **infrastructure** **directories** from your solution, as well as the **index.ts** file.
 
-3. Execute the test command `npm t` or `npm run test` and the build command `tsc` or `npm run build` too, and everything should run smoothly, otherwise you violated the principle of dependency inversion or due to bad practice, application layers were coupled that should not be coupled.
+3. Execute the test command **npm t** or **npm run test** and the build command **tsc** or **npm run build** too, and everything should run smoothly, otherwise you violated the principle of dependency inversion or due to bad practice, application layers were coupled that should not be coupled.
 
-4. Run the `git checkout .` command to get everything back to normal.
+4. Run the **git checkout .** command to get everything back to normal.
 
-5. Most importantly, no `domain entity` can make use of an `application service` and less of a `provider service` (repository or provider), the `application services use the entities`, the flow goes from the `most external part` of the application `to the most internal part` of it.
+5. Most importantly, no **domain entity** can make use of an **application service** and less of a **provider service** (repository or provider), the **application services use the entities**, the flow goes from the **most external part** of the application **to the most internal part** of it.
 
 **[⬆ back to the past](#table-of-contents)**
 
 
 ## Coupling
 
-For the purpose of giving clarity to the following statement we will define `coupling` as the action of dependence, that is to say that `X depends on Y to function`.
+For the purpose of giving clarity to the following statement we will define **coupling** as the action of dependence, that is to say that **X depends on Y to function**.
 
-Coupling is not bad if it is well managed, but in a software solution `there should not be coupling` of the `domain and application layers with any other`, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice-versa*, but avoid the latter as much as possible*.
+Coupling is not bad if it is well managed, but in a software solution **there should not be coupling** of the **domain and application layers with any other**, but there can be coupling of the infrastructure layer or the adapters layer with the application and/or domain layer, or coupling of the infrastructure layer with the adapters layer and vice-versa*, but avoid the latter as much as possible*.
 
 The clean architecture is very clear in its rules and dictates that the adapter layer cannot depend on the infrastructure layer, but in practice in certain languages like JavaScript (TypeScript) it is quite complicated to achieve this without the use of Dependency Inversion libraries like TypeDi or another one, and for this NodeTsKeleton includes a TSKernel artifact to help you avoid this problem, however in practice having this type of coupling does not represent a major problem over time and I say this from experience, however I leave this decision to your discretion and if you need an example of what to do then check the following lines of the main index file of the application.
 
@@ -1135,11 +1152,11 @@ infraContainer.load();
 
 NodeJs solutions run on a single thread, so it is important not to run CPU-intensive tasks, however NodeJs in Cluster Mode can run on several cores, so if you want to get the most out of your solution running on a multi-core machine, this is probably a good option, but if your machine has no more than one core, this will not help.
 
-So, for Cluster de App, replace `src/index.ts` code for the next code example.
+So, for Cluster de App, replace **src/index.ts** code for the next code example.
 
 
 ### Observation 👀
-For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the `AppWrapper` class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the `AppWrapper` internal class method.
+For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the **AppWrapper** class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the **AppWrapper** internal class method.
 
 ```ts
 // Node App in Cluster mode
@@ -1259,7 +1276,7 @@ process.on(
 
 TypeScript's strict mode is quite useful because it helps you maintain the type safety of your application making the development stage of your solution more controlled and thus avoiding the possible errors that not having this option enabled can bring.
 
-This option is enabled by default in NodeTskeleton and is managed in the `tsconfig.json` file of your solution, but if you are testing and don't want to have headaches you can disable it.
+This option is enabled by default in NodeTskeleton and is managed in the **tsconfig.json** file of your solution, but if you are testing and don't want to have headaches you can disable it.
 
 ```json
   "strict": true,
@@ -1267,9 +1284,9 @@ This option is enabled by default in NodeTskeleton and is managed in the `tsconf
 
 ## Multi service monorepo
 
-With this simple option you can develop a single code base and by means of the configuration file through the `ENVs` (environment variables) decide which service context to put online, so with the execution of different PipeLines.
+With this simple option you can develop a single code base and by means of the configuration file through the **ENVs** (environment variables) decide which service context to put online, so with the execution of different PipeLines.
 
-Note that the system take the `ServiceContext` Server parameter in the `config file` from value of your `.env file` as follows:
+Note that the system take the **ServiceContext** Server parameter in the **config file** from value of your **.env file** as follows:
 
 ```ts
 // infrastructure/config/index
@@ -1306,8 +1323,8 @@ Server: {
 }
 ```
 
-Note that by default all solution `Controllers` are set to the `NodeTskeleton context` which is the default value `DefaultPath`, but you are free to create as many contexts as your solution needs and load your `Controllers` on the context that you set in `SERVICE_CONTEXT` env.
-The `HealthController` must always words for any context `ContextPaths` or for `NodeTskeleton context`, it cannot change because you need a health check point for each exposed service.
+Note that by default all solution **Controllers** are set to the **NodeTskeleton context** which is the default value **DefaultPath**, but you are free to create as many contexts as your solution needs and load your **Controllers** on the context that you set in **SERVICE_CONTEXT** env.
+The **HealthController** must always words for any context **ContextPaths** or for **NodeTskeleton context**, it cannot change because you need a health check point for each exposed service.
 
 For example, the application have the SECURITY context and you can get it as follow:
 
@@ -1320,9 +1337,9 @@ SERVER_ROOT=/api
 
 So the path into ContextPaths settings that contains ${serviceContext} constant will have the following value:
 `../../adapters/controllers/users/*.controller.??`
-Then in the `AppWrapper` class, the system will load the controllers that must be exposed according to the service context.
+Then in the **AppWrapper** class, the system will load the controllers that must be exposed according to the service context.
 
-The `ServiceContext` file is located in the infrastructure server directory: 
+The **ServiceContext** file is located in the infrastructure server directory: 
 
 ```ts
 // NodeTskeleton is the only context created, but you can create more o change this.
@@ -1352,7 +1369,7 @@ application
 ...
 ```
 
-All the above works for `dynamic loading of controllers`, therefore, if you are going to work the solution in `CLUSTER` mode you must inject the controllers by constructor as indicated in the `cluster mode explanation` and you must assign the context to each controller as shown in the following example: 
+All the above works for **dynamic loading of controllers**, therefore, if you are going to work the solution in **CLUSTER** mode you must inject the controllers by constructor as indicated in the **cluster mode explanation** and you must assign the context to each controller as shown in the following example: 
 
 ```ts
 // For example, the application have the SECURITY context and the Authentication Controller responds to this context as well:
@@ -1364,20 +1381,20 @@ class AuthController extends BaseController {
 }
 ```
 
-So, for this feature the project has a basic `api-gateway` to route an entry point to the different ports exposed by each service (context).
+So, for this feature the project has a basic **api-gateway** to route an entry point to the different ports exposed by each service (context).
 
-You should note that you need, `Docker` installed on your machine and once you have this ready, then you should do the following:
+You should note that you need, **Docker** installed on your machine and once you have this ready, then you should do the following:
 
 > First, open your console a go to the root directory of NodeTskeleton project.
 
 > Second, execute the next sequence of commands:
 
->> Build the `tskeleton image`
+>> Build the **tskeleton image**
 ```console
 docker build . -t tskeleton-image
 ```
 
->> Build the `tsk gateway image`
+>> Build the **tsk gateway image**
 ```console
 cd tsk-gateway
 docker build . -t tsk-gateway-image
@@ -1388,7 +1405,7 @@ docker build . -t tsk-gateway-image
 docker-compose up --build
 ```
 
-And latter you can use `Postman` or web browser for use the exposed endpoints of two services based in NodeTskeleton project
+And latter you can use **Postman** or web browser for use the exposed endpoints of two services based in NodeTskeleton project
 
 > Security service
 >> Health
@@ -1428,7 +1445,7 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
 ### Considerations and recommendations
 
   1. Database tables or collection names
-    It is recommended to use `prefixes` in the table or collection names because in microservice context you need to replicate data and you may have collisions in the local environment, for example, for the SECURITY service context you can use sec_users for the users table or collection and in the same way for the USERS service context you can use usr_users. 
+    It is recommended to use **prefixes** in the table or collection names because in microservice context you need to replicate data and you may have collisions in the local environment, for example, for the SECURITY service context you can use sec_users for the users table or collection and in the same way for the USERS service context you can use usr_users. 
     The idea is that you use an abbreviation of the service context as a prefix to the name of your tables or collections.
 
   1. Database connections 
@@ -1438,20 +1455,20 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
 
 
 ### Observation
-If you are not going to use this functionality you can delete the `tsk-gateway` directory.
+If you are not going to use this functionality you can delete the **tsk-gateway** directory.
 
 
 ## Conclusions
 
-- The clean architecture allows us to develop the `use cases` and the `domain` (business logic) of an application without worrying about the type of database, web server framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
+- The clean architecture allows us to develop the **use cases** and the **domain** (business logic) of an application without worrying about the type of database, web server framework, protocols, services, providers, among other things that can be trivial and that the same application during the development will tell us what could be the best choice for the infrastructure and adapters of our application.
 
-- The clean architecture, the hexagonal architecture, the onion architecture and the ports and adapters architecture in the background can be the same, the final purpose is to decouple the `business layer` of our application from the `outside world`, basically it leads us to think about designing our solutions from the `inside to outside` and `not` from the `outside to inside`.
+- The clean architecture, the hexagonal architecture, the onion architecture and the ports and adapters architecture in the background can be the same, the final purpose is to decouple the **business layer** of our application from the **outside world**, basically it leads us to think about designing our solutions from the **inside to outside** and **not** from the **outside to inside**.
 
-- When we develop with clean architecture we can more `easily change` any `"external dependency"` of our application without major concerns, obviously there are some that will require more effort than others, for example migrating from a NoSql schema to a SQL schema where probably the queries will be affected, however our business logic can remain intact and work for both models.
+- When we develop with clean architecture we can more **easily change** any **"external dependency"** of our application without major concerns, obviously there are some that will require more effort than others, for example migrating from a NoSql schema to a SQL schema where probably the queries will be affected, however our business logic can remain intact and work for both models.
 
-- The advantages that clean architecture offers us are very significant; it is one of the `best practices for making scalable software` that `works for your business` and `not for your preferred framework`.
+- The advantages that clean architecture offers us are very significant; it is one of the **best practices for making scalable software** that **works for your business** and **not for your preferred framework**.
 
-- Clean architecture is basically based on the famous and well-known five `SOLID principles` that we had not mentioned until this moment and that we very little internalized.
+- Clean architecture is basically based on the famous and well-known five **SOLID principles** that we had not mentioned until this moment and that we very little internalized.
 
 - If you liked it and you learned something, give me my star in the project that is the way you can thank me, don't be a damn selfish person who doesn't recognize the effort of others.
 
@@ -1476,9 +1493,9 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 > Use this resource at your own risk.
 
--`You are welcome to contribute to this project, dare to do so.`
+-**You are welcome to contribute to this project, dare to do so.**
 
--`If you are interested you can contact me by this means.`
+-**If you are interested you can contact me by this means.**
 
 - 📫 <a href="mailto:harvic3@protonmail.com" target="_blank" >Write to him</a>
 
