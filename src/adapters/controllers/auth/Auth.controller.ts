@@ -1,4 +1,4 @@
-import { IServiceContainer } from "../../shared/dic/IServiceContainer";
+import { IServiceContainer } from "../../shared/kernel";
 import container, { LoginUseCase } from "./container";
 
 import BaseController, {
