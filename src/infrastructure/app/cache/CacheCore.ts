@@ -1,8 +1,8 @@
 import { CacheProviderEnum } from "../../../adapters/providers/cache/CacheProvider.enum";
 import { CacheProvider } from "../../../adapters/providers/cache/Cache.provider";
 import AppSettings from "../../../application/shared/settings/AppSettings";
-import kernel from "../../../adapters/shared/kernel/TSKernel";
 import { CacheClient } from "../../cache/CacheClient";
+import kernel from "../../../adapters/shared/kernel";
 
 export class CacheCore {
   tskAuthCache: CacheClient;

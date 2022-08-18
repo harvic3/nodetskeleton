@@ -6,7 +6,7 @@ import { EventQueue } from "../../../messaging/queue/publisher/EventQueue";
 import { AuthProvider, LogProvider } from "../../../providers/container";
 import { CacheProvider } from "../../../providers/cache/Cache.provider";
 import { EventClientEnum } from "../../../messaging/bus/container";
-import kernel from "../../../shared/kernel/TSKernel";
+import kernel from "../../../shared/kernel";
 
 const CONTEXT = `AuthControllerContainer`;
 

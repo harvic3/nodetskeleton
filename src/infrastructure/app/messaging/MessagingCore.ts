@@ -5,8 +5,8 @@ import { QueueListener } from "../../../adapters/messaging/queue/listener/QueueL
 import AppSettings from "../../../application/shared/settings/AppSettings";
 import { ServiceContext } from "../../../adapters/shared/ServiceContext";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
-import kernel from "../../../adapters/shared/kernel/TSKernel";
 import { MessageQueue } from "../../messaging/MessageQueue";
+import kernel from "../../../adapters/shared/kernel";
 import {
   EventClientEnum,
   EventPublisher,

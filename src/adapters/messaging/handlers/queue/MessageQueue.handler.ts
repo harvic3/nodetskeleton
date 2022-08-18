@@ -1,13 +1,13 @@
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { IEventQueue } from "../../../../application/shared/messaging/queue/IEventQueue";
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
+import AppSettings from "../../../../application/shared/settings/AppSettings";
 import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import { IMessageQueueHandler, QueueArgs } from "./IMessageQueue.handler";
-import { IServiceContainer } from "../../../shared/dic/IServiceContainer";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
+import { IServiceContainer } from "../../../shared/kernel";
 import queueMessageUseCaseContainer from "./container";
-import AppSettings from "../../../../application/shared/settings/AppSettings";
 
 export class MessageQueueHandler implements IMessageQueueHandler {
   #readingChannels: ChannelNameEnum[] = [];
