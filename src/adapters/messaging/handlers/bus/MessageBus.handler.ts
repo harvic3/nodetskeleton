@@ -2,10 +2,10 @@ import { TopicNameEnum } from "../../../../application/shared/messaging/TopicNam
 import { EventMessage } from "../../../../application/shared/messaging/EventMessage";
 import { BaseUseCase } from "../../../../application/shared/useCase/BaseUseCase";
 import AppSettings from "../../../../application/shared/settings/AppSettings";
-import { IServiceContainer } from "../../../shared/dic/IServiceContainer";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { Args, IMessageBusHandler } from "./IMessageBus.handler";
 import { QueueClientEnum } from "../../queue/QueueClient.enum";
+import { IServiceContainer } from "../../../shared/kernel";
 import { IUser } from "../../../../domain/user/IUser";
 import messageBusUseCasesContainer from "./container";
 import { EventEmitter } from "events";

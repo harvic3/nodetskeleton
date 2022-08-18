@@ -2,7 +2,7 @@ import { ManageUserCreatedEventUseCase } from "../../../../../application/module
 import { ManageLastLoginEventUseCase } from "../../../../../application/modules/users/messaging/queue/useCases/lastLoginEvent";
 import { UserRepository } from "../../../../repositories/container";
 import { LogProvider } from "../../../../providers/container";
-import kernel from "../../../../shared/kernel/TSKernel";
+import kernel from "../../../../shared/kernel";
 
 const CONTEXT = "QueueContainer";
 

@@ -2,7 +2,7 @@ import { EventSubscriber } from "../subscriber/EventSubscriber";
 import { EventPublisher } from "../publisher/EventPublisher";
 import { EventListener } from "../listener/EventListener";
 import { EventClientEnum } from "../EventClient.enum";
-import kernel from "../../../shared/kernel/TSKernel";
+import kernel from "../../../shared/kernel";
 
 kernel.addSingleton(
   EventClientEnum.TSK_BUS_LISTENER,
