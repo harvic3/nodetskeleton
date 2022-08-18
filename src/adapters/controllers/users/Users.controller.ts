@@ -1,6 +1,6 @@
 import { IUserDto } from "../../../application/modules/users/dtos/User.dto";
-import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import container, { RegisterUserUseCase } from "./container";
+import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
   INextFunction,
   EntryPointHandler,

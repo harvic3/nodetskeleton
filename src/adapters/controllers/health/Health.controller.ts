@@ -1,5 +1,5 @@
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
-import { IServiceContainer } from "../../shared/dic/IServiceContainer";
+import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
   INextFunction,
   EntryPointHandler,

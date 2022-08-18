@@ -1,7 +1,7 @@
 import { NotFoundUseCase } from "../../../../application/modules/health/useCases/default";
 import { PongUseCase } from "../../../../application/modules/health/useCases/pong";
 import { LogProvider, HealthProvider } from "../../../providers/container";
-import kernel from "../../../shared/kernel/TSKernel";
+import kernel from "../../../shared/kernel";
 
 const CONTEXT = `HealthControllerContainer`;
 

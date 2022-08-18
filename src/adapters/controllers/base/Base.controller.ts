@@ -1,9 +1,9 @@
 import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { LocaleTypeEnum } from "../../../application/shared/locals/LocaleType.enum";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
-import { IServiceContainer } from "../../shared/dic/IServiceContainer";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { INextFunction } from "./context/INextFunction";
+import { IServiceContainer } from "../../shared/kernel";
 import { IRouterType } from "./context/IRouterType";
 import { IContext } from "./context/IContext";
 

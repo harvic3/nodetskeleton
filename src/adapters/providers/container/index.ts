@@ -4,7 +4,7 @@ import { HealthProvider } from "../health/Health.provider";
 import { WorkerProvider } from "../worker/Worker.provider";
 import { AuthProvider } from "../auth/Auth.provider";
 import { LogProvider } from "../log/Log.provider";
-import kernel from "../../shared/kernel/TSKernel";
+import kernel from "../../shared/kernel";
 import { ILogger } from "../log/ILogger";
 
 const CONTEXT = "ProviderContainer";

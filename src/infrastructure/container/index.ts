@@ -1,11 +1,11 @@
 import { UserRepository } from "../../adapters/repositories/user/User.repository";
-import kernel, { TSKernel } from "../../adapters/shared/kernel/TSKernel";
+import kernel, { IServiceContainer } from "../../adapters/shared/kernel";
 import { LogProvider } from "../../adapters/providers/log/Log.provider";
 import { UserModel } from "../dataBases/nodeTsKeleton/User.model";
 import { Logger } from "../logger/Logger";
 
 class InfrastructureServiceContainer {
-  constructor(readonly tsKernel: TSKernel) {}
+  constructor(readonly tsKernel: IServiceContainer) {}
 
   load(): void {
     // Load Providers to kernel

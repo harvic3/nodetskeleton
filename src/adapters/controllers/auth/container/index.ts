@@ -1,6 +1,6 @@
-import { AuthProvider, LogProvider } from "../../../providers/container";
 import { LoginUseCase } from "../../../../application/modules/auth/useCases/login";
-import kernel from "../../../shared/kernel/TSKernel";
+import { AuthProvider, LogProvider } from "../../../providers/container";
+import kernel from "../../../shared/kernel";
 
 const CONTEXT = `AuthControllerContainer`;
 

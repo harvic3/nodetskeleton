@@ -1,7 +1,7 @@
 import { RegisterUserUseCase } from "../../../../application/modules/users/useCases/register";
 import { LogProvider, WorkerProvider } from "../../../providers/container";
 import { UserRepository } from "../../../repositories/container";
-import kernel from "../../../shared/kernel/TSKernel";
+import kernel from "../../../shared/kernel";
 
 const CONTEXT = `UsersControllerContainer`;
 

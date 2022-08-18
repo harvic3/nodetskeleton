@@ -33,7 +33,6 @@
   "homepage": "https://github.com/harvic3/nodetskeleton/blob/master/README.md",
   "devDependencies": {
     "@types/jest": "^28.1.6",
-    "@types/jest": "^28.1.6",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.7",
@@ -63,6 +62,7 @@
   },
   "dependencies": {
     "@koa/cors": "^3.3.0",
+    "dic-tsk": "^1.0.0",
     "dotenv": "^16.0.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",

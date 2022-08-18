@@ -5,9 +5,9 @@ import appMessages from "../../../../application/shared/locals/messages";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { TryWrapper } from "../../../../domain/shared/utils/TryWrapper";
 import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
-import kernel from "../../../../adapters/shared/kernel/TSKernel";
 import { ISession } from "../../../../domain/session/ISession";
 import { Context, Next } from "../../../app/core/Modules";
+import kernel from "../../../../adapters/shared/kernel";
 import { Middleware } from "../../types";
 
 const TOKEN_PARTS = 2;
