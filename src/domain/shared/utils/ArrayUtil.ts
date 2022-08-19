@@ -2,13 +2,14 @@ import { Nulldifined } from "../Nulldifined";
 
 export default class ArrayUtil {
   static NOT_FOUND_INDEX = -1;
-  static FIRST_ELEMENT_INDEX = 0;
+  static FIRST_INDEX = 0;
+  static INDEX_ONE = 1;
 
   static first<T>(list: T[]): T | null {
     if (!list?.length) {
       return null;
     }
-    return list[ArrayUtil.FIRST_ELEMENT_INDEX];
+    return list[ArrayUtil.FIRST_INDEX];
   }
 
   static last<T>(list: T[]): T | null {
