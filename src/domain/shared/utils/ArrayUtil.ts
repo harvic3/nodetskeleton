@@ -2,7 +2,8 @@ import { Nulldifined } from "../Nulldifined";
 
 export default class ArrayUtil {
   static NOT_FOUND_INDEX = -1;
-  static FIRST_ELEMENT_INDEX = 0;
+  static FIRST_INDEX = 0;
+  static INDEX_ONE = 1;
   static ZERO_ELEMENTS = 0;
   static EMPTY_ARRAY = [];
 
@@ -10,7 +11,7 @@ export default class ArrayUtil {
     if (!list?.length) {
       return null;
     }
-    return list[ArrayUtil.FIRST_ELEMENT_INDEX];
+    return list[ArrayUtil.FIRST_INDEX];
   }
 
   static last<T>(list: T[]): T | null {
@@ -40,6 +41,6 @@ export default class ArrayUtil {
   }
 
   static isValidIndex(index: number): boolean {
-    return index >= ArrayUtil.FIRST_ELEMENT_INDEX;
+    return index >= ArrayUtil.FIRST_INDEX;
   }
 }
