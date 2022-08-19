@@ -1,8 +1,10 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
+import { PropertyAllocatorUtil } from "../../domain/shared/utils/PropertyAllocatorUtil";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
+import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 export { BodyInit as BodyType, Headers } from "node-fetch";
 import TResponse from "./TResponse";
 
@@ -49,14 +51,14 @@ export class HttpClient {
         result.setResponse(await this.processResponseData<R>(response, serializationMethod));
       } else {
         const errorResponse = await this.processErrorResponse<E>(response);
-        if (BooleanUtil.areEqual(errorResponse[1], SERIALIZED)) {
+        if (BooleanUtil.areEqual(errorResponse[ArrayUtil.INDEX_ONE], SERIALIZED)) {
           result.setErrorMessage(
             response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
           );
-          result.setErrorResponse(errorResponse[0] as E);
+          result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as E);
         } else {
           result.setErrorMessage(response.statusText);
-          result.setErrorResponse(errorResponse[0] as E);
+          result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as E);
         }
       }
       result.setStatusCode(response.status);
@@ -75,10 +77,11 @@ export class HttpClient {
     headers?: Headers,
     options?: RequestInit,
   ): Request {
+    const origin = { method, body, headers };
     if (!options) options = {};
-    options["method"] = method;
-    if (body) options["body"] = body;
-    if (headers) options["headers"] = headers;
+    PropertyAllocatorUtil.assign(options, origin, "method");
+    PropertyAllocatorUtil.assign(options, origin, "body");
+    PropertyAllocatorUtil.assign(options, origin, "headers");
 
     return new Request(url, options);
   }
