@@ -486,9 +486,30 @@ This tool is now available as an **NPM package**.
 
 ## Dependency injection strategy
 
-For **dependency injection**, no external libraries are used. Instead, a **container dictionary strategy** is used in which instances and their dependencies are created and then resolved from container class.
+For **dependency injection**, no complex external libraries are used. Instead, a **container dictionary strategy** is used in which instances and their dependencies are created and then resolved from container class using our own kernel through **dic-tsk**, a powerful and simple package.
 
-This strategy is only needed in the **adapter layer** dependencies for **controllers** like **services** and **providers**, and also for the objects used in the **use case tests**, for example:
+This strategy is only needed in the **adapter layer** dependencies for **controllers** like **services** and **providers**, and also for the some services from **infrastructure layer**, for example:
+
+First, all **dic strategy** starts from our **kernel index file** allocated into **adapters layer** as follows:
+```ts
+// adapters/shared/kernel/index
+import applicationStatus from "../../../application/shared/status/applicationStatus";
+import appMessages, { localKeys } from "../../../application/shared/locals/messages";
+import tsKernel, { IServiceContainer } from "dic-tsk";
+
+tsKernel.init({
+  internalErrorCode: applicationStatus.INTERNAL_ERROR,
+  appMessages,
+  appErrorMessageKey: localKeys.DEPENDENCY_NOT_FOUNT,
+  applicationStatus,
+  applicationStatusCodeKey: "INTERNAL_ERROR",
+});
+
+export { IServiceContainer };
+export default tsKernel;
+```
+
+And later, you cane use it as follows:
 
 ```ts
 // In the path src/adapters/controllers/textFeeling there is a folder called container and the index file have the following code lines:
@@ -496,18 +517,15 @@ import { GetHighestFeelingSentenceUseCase } from "../../../../application/module
 import { GetLowestFeelingSentenceUseCase } from "../../../../application/modules/feeling/useCases/getLowest";
 import { GetFeelingTextUseCase } from "../../../../application/modules/feeling/useCases/getFeeling";
 import { textFeelingService } from "../../../providers/container/index";
-import kernel from "../../../shared/kernel/TSKernel";
+import kernel from "../../../shared/kernel";
 
 kernel.addScoped(GetHighestFeelingSentenceUseCase.name, () => new GetHighestFeelingSentenceUseCase(textFeelingService));
 kernel.addScoped(GetLowestFeelingSentenceUseCase.name, () => new GetLowestFeelingSentenceUseCase(textFeelingService));
 kernel.addScoped(GetFeelingTextUseCase.name, () => new GetFeelingTextUseCase(textFeelingService));
 
 // This class contains the UseCases needed for your controller
-export default kernel; // *Way One*
-// You can also export separate instances if required, like this:
-const anotherUseCaseOrService = new AnotherUseCaseOrService();
-export { anotherUseCaseOrService }; // *Way Two*
-// You can combine the two strategies (Way One and Way Two) according to your needs
+export { GetHighestFeelingSentenceUseCase,GetLowestFeelingSentenceUseCase, GetFeelingTextUseCase }; 
+export default kernel;
 ```
 
 Another way to export dependencies is to simply create instances of the respective classes (only recommended with provider and repository services).
@@ -540,7 +558,8 @@ import BaseController, {
 } from "../base/Base.controller";
 import container, {
   GetFeelingTextUseCase,
-  AnotherUseCaseOrService,
+  GetLowestFeelingSentenceUseCase,
+  GetHighestFeelingSentenceUseCase,
 } from "./container/index";
 
 export class TextFeelingController extends BaseController {
@@ -562,7 +581,7 @@ export class TextFeelingController extends BaseController {
 
   initializeRoutes(router: IRouterType): void {
     this.router = router();
-    this.router.get("/feeling", this.getFeelingText);
+    this.router.get("/feelings", this.getFeelingText);
   }
 }
 
@@ -574,6 +593,10 @@ The way **addScoped** delivers a different instance for each UseCase call but **
 As you can see this makes it easy to manage the **injection of dependencies** without the need to use **sophisticated libraries** that add more complexity to our applications.
 
 But if you prefer or definitely your project need a library, you can use something like **awilix**, **inversifyJs** or **typedi**.
+
+This tool is now available as an **NPM package**.
+
+<a href="https://www.npmjs.com/package/dic-tsk" target="_blank" >See in NPM</a>
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -1385,7 +1408,7 @@ So, for this feature the project has a basic **api-gateway** to route an entry p
 
 You should note that you need, **Docker** installed on your machine and once you have this ready, then you should do the following:
 
-Before anything else, ypu need to create a .env file in tsk-gateway root directory
+Before anything else, you need to create a .env file in tsk-gateway root directory
 
 ```txt
 WITH_DOCKER_HOST=true
