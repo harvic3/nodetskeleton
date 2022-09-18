@@ -1,14 +1,14 @@
 import { IUserModel as IUserModel } from "../../../adapters/repositories/user/IUser.model";
+import { Nulldefined } from "../../../domain/shared/types/Nulldefined.type";
 import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
 import GuidUtils from "../../../application/shared/utils/GuidUtil";
-import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { IUser } from "../../../domain/user/IUser";
 import { User } from "../../../domain/user/User";
 import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
 
 export class UserModel implements IUserModel {
-  async getByEmail(email: string | Nulldifined): Promise<User | null> {
+  async getByEmail(email: string | Nulldefined): Promise<User | null> {
     return new Promise((resolve) => {
       const founded = dbData.users.find((element) => BooleanUtil.areEqual(element.email, email));
       if (!founded) {
