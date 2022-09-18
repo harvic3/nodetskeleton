@@ -1,4 +1,4 @@
-import { Nulldifined } from "../Nulldifined";
+import { Nulldefined } from "../types/Nulldefined.type";
 
 export default class ArrayUtil {
   static NOT_FOUND_INDEX = -1;
@@ -29,14 +29,14 @@ export default class ArrayUtil {
     return list[index];
   }
 
-  static allOrDefault<T>(list: T[] | Nulldifined): T[] {
+  static allOrDefault<T>(list: T[] | Nulldefined): T[] {
     if (!list?.length) {
       return [];
     }
     return list;
   }
 
-  static any(list: any[] | Nulldifined): boolean {
+  static any(list: any[] | Nulldefined): boolean {
     return !!list?.length;
   }
 
