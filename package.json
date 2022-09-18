@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn -- src/index.ts",
-    "test": "npm run build && jest --coverage --collectCoverageFrom=src/**",
+    "test": "npm run build && jest --forceExit --coverage --collectCoverageFrom=src/**",
+    "test:watch": "npm run build && jest --forceExit --watchAll",
     "build": "rm -rf dist/* && tsc --sourceMap false",
     "up:build": "docker-compose up -d --build",
     "up": "docker-compose up -d",
