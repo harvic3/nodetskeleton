@@ -1,7 +1,7 @@
-import { Nulldifined } from "../shared/Nulldifined";
+import { Nulldefined } from "../shared/types/Nulldefined.type";
 
 export class Email {
-  constructor(readonly value: string | Nulldifined) {}
+  constructor(readonly value: string | Nulldefined) {}
 
   isValid(): boolean {
     if (!this.value) return false;

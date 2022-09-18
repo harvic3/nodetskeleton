@@ -1,6 +1,6 @@
 import { IUSerRepository } from "../../../application/modules/users/providerContracts/IUser.repository";
+import { Nulldefined } from "../../../domain/shared/types/Nulldefined.type";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
-import { Nulldifined } from "../../../domain/shared/Nulldifined";
 import { BaseRepository } from "../base/Base.repository";
 import { IUser } from "../../../domain/user/IUser";
 import { Email } from "../../../domain/user/Email";
@@ -12,7 +12,7 @@ export class UserRepository extends BaseRepository implements IUSerRepository {
     super();
   }
 
-  async getByEmail(email: string | Nulldifined): Promise<IUser | null> {
+  async getByEmail(email: string | Nulldefined): Promise<IUser | null> {
     const founded = await this.userModel.getByEmail(email);
     if (!founded) return Promise.resolve(null);
 
