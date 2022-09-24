@@ -5,9 +5,11 @@ import applicationStatus from "../../../../shared/status/applicationStatus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
 import { UserDtoMock } from "../../../../mocks/UserDto.mock";
+import { SessionMock } from "../../../../mocks/Session.mock";
 import appMessages from "../../../../shared/locals/messages";
 import appWords from "../../../../shared/locals/words";
 import { UserMock } from "../../../../mocks/User.mock";
@@ -24,6 +26,8 @@ const workerProviderMock = mock<IWorkerProvider>();
 const userBuilder = () => new UserMock();
 const userDtoBuilder = () => new UserDtoMock();
 const applicationErrorBuilder = new ApplicationErrorMock();
+const useCaseTraceBuilder = () => new UseCaseTraceMock();
+const sessionBuilder = () => new SessionMock();
 
 // Constants
 const registerUserUseCase = () =>
@@ -38,7 +42,6 @@ describe("when try to register user", () => {
     AppSettings.EncryptionKeySize = 64;
   });
   beforeEach(() => {
-    applicationErrorBuilder.reset();
     userRepositoryMock.register.mockReset();
     userRepositoryMock.getByEmail.mockReset();
     workerProviderMock.executeTask.mockReset();
@@ -49,7 +52,11 @@ describe("when try to register user", () => {
     const userDto = {} as IUserDto;
 
     // Act
-    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
+    const result = await registerUserUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+      userDto,
+    );
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -76,7 +83,11 @@ describe("when try to register user", () => {
       .build();
 
     // Act
-    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
+    const result = await registerUserUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+      userDto,
+    );
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -100,7 +111,11 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(userWithSameEmail);
 
     // Act
-    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
+    const result = await registerUserUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+      userDto,
+    );
 
     // Assert
     expect(result.success).toBeFalsy();
@@ -129,7 +144,11 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(LocaleTypeEnum.EN, userDto);
+    const resultPromise = useCase.execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+      userDto,
+    );
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -152,7 +171,12 @@ describe("when try to register user", () => {
     );
 
     // Act
-    const resultPromise = useCase.execute(LocaleTypeEnum.EN, userDto);
+    const resultPromise = useCase.execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+
+      userDto,
+    );
 
     // Assert
     await expect(resultPromise).rejects.toThrowError(applicationErrorBuilder.build());
@@ -181,7 +205,12 @@ describe("when try to register user", () => {
     workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
 
     // Act
-    const result = useCase.execute(LocaleTypeEnum.EN, userDto);
+    const result = useCase.execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+
+      userDto,
+    );
 
     // Assert
     await expect(result).rejects.toThrowError(applicationErrorBuilder.build());
@@ -212,7 +241,12 @@ describe("when try to register user", () => {
     workerProviderMock.executeTask.mockResolvedValueOnce("encrypted-password");
 
     // Act
-    const result = await registerUserUseCase().execute(LocaleTypeEnum.EN, userDto);
+    const result = await registerUserUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+
+      userDto,
+    );
 
     // Assert
     expect(result.success).toBeTruthy();

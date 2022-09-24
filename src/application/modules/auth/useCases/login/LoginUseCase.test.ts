@@ -3,6 +3,7 @@ import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
 import appMessages from "../../../../shared/locals/messages";
@@ -15,6 +16,9 @@ import { LoginUseCase } from "./index";
 // Mocks
 const logProviderMock = mock<ILogProvider>();
 const authProviderMock = mock<IAuthProvider>();
+
+// Builders
+const useCaseTraceBuilder = () => new UseCaseTraceMock();
 
 // Constants
 const loginUseCase = () => new LoginUseCase(logProviderMock, authProviderMock);
@@ -44,10 +48,14 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: undefined,
-      passwordB64: undefined,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: undefined,
+        passwordB64: undefined,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -62,10 +70,14 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email,
-      passwordB64: undefined,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email,
+        passwordB64: undefined,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -81,10 +93,14 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email,
-      passwordB64: passwordB64 as string,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email,
+        passwordB64: passwordB64 as string,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -96,10 +112,14 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email,
-      passwordB64: passwordB64 as string,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email,
+        passwordB64: passwordB64 as string,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -113,10 +133,14 @@ describe("when try to login", () => {
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email,
-      passwordB64: passwordB64 as string,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email,
+        passwordB64: passwordB64 as string,
+      },
+    );
 
     // Assert
     const data = result.data as TokenDto;
