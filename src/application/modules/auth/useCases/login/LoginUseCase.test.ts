@@ -7,6 +7,7 @@ import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
 import { MockConstants } from "../../../../mocks/MockConstants";
@@ -23,6 +24,9 @@ const authProviderMock = mock<IAuthProvider>();
 const eventPublisherMock = mock<IEventPublisher>();
 const eventQueueMock = mock<IEventQueue>();
 const authCacheProviderMock = mock<ICacheProvider>();
+
+// Builders
+const useCaseTraceBuilder = () => new UseCaseTraceMock();
 
 // Constants
 const loginUseCase = () =>
@@ -58,12 +62,16 @@ describe("when try to login", () => {
 
   it("should return a 400 error if email and password are null", async () => {
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: undefined,
-      passwordB64: undefined,
-      ipAddress: undefined,
-      userAgent: undefined,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: undefined,
+        passwordB64: undefined,
+        ipAddress: undefined,
+        userAgent: undefined,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -78,12 +86,16 @@ describe("when try to login", () => {
   });
   it("should return a 400 error if password is null", async () => {
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: MockConstants.USER_EMAIL,
-      passwordB64: undefined,
-      ipAddress: MockConstants.IP_ADDRESS,
-      userAgent: MockConstants.USER_AGENT,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: MockConstants.USER_EMAIL,
+        passwordB64: undefined,
+        ipAddress: MockConstants.CLIENT_IP,
+        userAgent: MockConstants.USER_AGENT,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -99,12 +111,16 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: MockConstants.USER_EMAIL,
-      passwordB64: passwordB64 as string,
-      ipAddress: MockConstants.IP_ADDRESS,
-      userAgent: MockConstants.USER_AGENT,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: MockConstants.USER_EMAIL,
+        passwordB64: passwordB64 as string,
+        ipAddress: MockConstants.CLIENT_IP,
+        userAgent: MockConstants.USER_AGENT,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -116,12 +132,16 @@ describe("when try to login", () => {
     authProviderMock.login.mockRejectedValueOnce(null);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: MockConstants.USER_EMAIL,
-      passwordB64: passwordB64 as string,
-      ipAddress: MockConstants.IP_ADDRESS,
-      userAgent: MockConstants.USER_AGENT,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: MockConstants.USER_EMAIL,
+        passwordB64: passwordB64 as string,
+        ipAddress: MockConstants.CLIENT_IP,
+        userAgent: MockConstants.USER_AGENT,
+      },
+    );
 
     // Assert
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
@@ -139,12 +159,16 @@ describe("when try to login", () => {
     authCacheProviderMock.set.mockResolvedValueOnce(BooleanUtil.SUCCESS);
 
     // Act
-    const result = await loginUseCase().execute(LocaleTypeEnum.EN, {
-      email: MockConstants.USER_EMAIL,
-      passwordB64: passwordB64 as string,
-      ipAddress: MockConstants.IP_ADDRESS,
-      userAgent: MockConstants.USER_AGENT,
-    });
+    const result = await loginUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().withClient().build(),
+      {
+        email: MockConstants.USER_EMAIL,
+        passwordB64: passwordB64 as string,
+        ipAddress: MockConstants.CLIENT_IP,
+        userAgent: MockConstants.USER_AGENT,
+      },
+    );
 
     // Assert
     const data = result.data as TokenDto;

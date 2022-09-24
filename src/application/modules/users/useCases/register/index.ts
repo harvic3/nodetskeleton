@@ -13,6 +13,7 @@ import { IUSerRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
+import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtil";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import GuidUtil from "../../../../shared/utils/GuidUtil";
@@ -36,12 +37,13 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
   }
 
-  async execute(locale: LocaleTypeEnum, args: IUserDto): Promise<IResult> {
+  async execute(locale: LocaleTypeEnum, trace: UseCaseTrace, args: IUserDto): Promise<IResult> {
     this.setLocale(locale);
     const result = new Result();
 
     const userDto = UserDto.fromJSON(args);
     if (!userDto.isValid(result, this.appWords, this.validator)) return result;
+    this.initializeUseCaseTrace(trace, args, ["password"]);
 
     const user = await this.buildUser(userDto);
 
@@ -61,6 +63,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
       this.appMessages.get(this.appMessages.keys.USER_WAS_CREATED),
       this.applicationStatus.SUCCESS,
     );
+    trace.setSuccessful();
 
     return result;
   }

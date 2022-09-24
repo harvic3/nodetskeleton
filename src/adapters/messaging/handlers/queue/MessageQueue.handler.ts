@@ -8,6 +8,7 @@ import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { IServiceContainer } from "../../../shared/kernel";
 import queueMessageUseCaseContainer from "./container";
+import { UseCaseTrace } from "../../../../application/shared/log/UseCaseTrace";
 
 export class MessageQueueHandler implements IMessageQueueHandler {
   #readingChannels: ChannelNameEnum[] = [];
@@ -48,7 +49,7 @@ export class MessageQueueHandler implements IMessageQueueHandler {
             TypeParser.cast<ChannelNameEnum>(`${args.queueName}:${args.topicName}`),
           ) as string,
         )
-        .execute(AppSettings.DefaultLanguage, this.#eventQueue)
+        .execute(AppSettings.DefaultLanguage, {} as UseCaseTrace, this.#eventQueue)
         .then((_result) => {
           this.removeChannel(args.queueName);
           return Promise.resolve();

@@ -10,4 +10,5 @@ export interface IRequest {
   locale: LocaleTypeEnum;
   ipAddress: string;
   userAgent: string;
+  origin: string;
 }

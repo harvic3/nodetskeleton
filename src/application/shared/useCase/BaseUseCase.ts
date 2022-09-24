@@ -8,6 +8,7 @@ import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
 import applicationStatus from "../status/applicationStatus";
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
+import { UseCaseTrace } from "../log/UseCaseTrace";
 import AppSettings from "../settings/AppSettings";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
@@ -38,9 +39,14 @@ export abstract class BaseUseCase<T> {
     this.appWords.init(locale);
   }
 
+  initializeUseCaseTrace<I>(audit: UseCaseTrace, input: I, propsToRemove?: string[]): void {
+    audit.setContext(this.CONTEXT);
+    audit.setArgs(input, propsToRemove);
+  }
+
   handleResultError(result: IResult): void {
     Throw.when(this.CONTEXT, !!result?.error, result.error, result.statusCode);
   }
 
-  abstract execute(locale: LocaleTypeEnum, args?: T): Promise<IResult>;
+  abstract execute(locale: LocaleTypeEnum, trace: UseCaseTrace, args?: T): Promise<IResult>;
 }

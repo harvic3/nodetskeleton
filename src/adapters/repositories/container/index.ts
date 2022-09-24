@@ -11,5 +11,5 @@ kernel.addSingleton(
   ),
 );
 
-export { UserRepository as UserRepository };
+export { UserRepository };
 export default kernel;

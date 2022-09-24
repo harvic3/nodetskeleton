@@ -10,6 +10,8 @@ class ClientInfoMiddleware {
 
     TypeParser.cast<IRequest>(req).ipAddress = req.ip || (req.headers["x-forwarded-for"] as string);
     TypeParser.cast<IRequest>(req).userAgent = req.headers["user-agent"] as string;
+    TypeParser.cast<IRequest>(req).origin = (req.headers["origin"] ||
+      req.headers["referrer"]) as string;
 
     return next();
   };
