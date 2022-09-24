@@ -9,6 +9,7 @@ import { IServiceContainer } from "../../../shared/kernel";
 import { IUser } from "../../../../domain/user/IUser";
 import messageBusUseCasesContainer from "./container";
 import { EventEmitter } from "events";
+import { UseCaseTrace } from "../../../../application/shared/log/UseCaseTrace";
 
 type MessageTypes = IUser;
 
@@ -33,6 +34,7 @@ export class MessageBusHandler implements IMessageBusHandler {
             )
             .execute(
               AppSettings.DefaultLanguage,
+              {} as UseCaseTrace,
               TypeParser.cast<EventMessage<MessageTypes>>(message),
             );
     } catch (error) {

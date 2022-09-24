@@ -9,6 +9,7 @@ import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import useCaseTraceMiddleware from "../middleware/trace/index";
 import clientInfoMiddleware from "../middleware/clientInfo";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import { MessagingCore } from "./messaging/MessagingCore";
@@ -104,7 +105,8 @@ export default class AppWrapper {
       .use(clientInfoMiddleware.handle as RequestHandler)
       .use(localizationMiddleware.handle as RequestHandler)
       .use(routeWhiteListMiddleware.handle as RequestHandler)
-      .use(authorizationMiddleware.handle.bind(this) as RequestHandler);
+      .use(authorizationMiddleware.handle.bind(this) as RequestHandler)
+      .use(useCaseTraceMiddleware.handle);
   }
 
   private loadErrorHandler(): void {

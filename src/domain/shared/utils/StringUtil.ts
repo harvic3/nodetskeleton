@@ -2,6 +2,7 @@ import { Nulldefined } from "../types/Nulldefined.type";
 import { AppConstants } from "../AppConstants";
 
 export class StringUtil {
+  static DOT = ".";
   static EMPTY = "";
   static WHITE_SPACE = " ";
   static COMMA_SPACE_SEPARATOR = ", ";

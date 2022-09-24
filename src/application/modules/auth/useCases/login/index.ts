@@ -12,6 +12,7 @@ import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { QueueBus } from "../../../../shared/messaging/queueBus/QueueBus";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
@@ -40,9 +41,14 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
     this.queueBus = new QueueBus(logProvider, eventPublisher, eventQueue);
   }
 
-  async execute(locale: LocaleTypeEnum, args: ILoginRequest): Promise<IResultT<TokenDto>> {
+  async execute(
+    locale: LocaleTypeEnum,
+    trace: UseCaseTrace,
+    args: ILoginRequest,
+  ): Promise<IResultT<TokenDto>> {
     this.setLocale(locale);
     const result = new ResultT<TokenDto>();
+    this.initializeUseCaseTrace(trace, args, ["passwordB64"]);
 
     const credentialsDto = CredentialsDto.fromJSON({
       email: args.email,
@@ -66,6 +72,7 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
     );
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
+    trace.setSuccessful();
 
     return result;
   }

@@ -6,6 +6,7 @@ import { IEventQueue } from "../../../../../../shared/messaging/queue/IEventQueu
 import { LocaleTypeEnum } from "../../../../../../shared/locals/LocaleType.enum";
 import { IUSerRepository } from "../../../../providerContracts/IUser.repository";
 import { EventMessage } from "../../../../../../shared/messaging/EventMessage";
+import { UseCaseTrace } from "../../../../../../shared/log/UseCaseTrace";
 import { LastLoginDto } from "../../dtos/LastLoginDto";
 
 export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
@@ -15,7 +16,11 @@ export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
     super(ManageLastLoginEventUseCase.name, logProvider);
   }
 
-  async execute(locale: LocaleTypeEnum, eventQueue: IEventQueue): Promise<IResult> {
+  async execute(
+    locale: LocaleTypeEnum,
+    _trace: UseCaseTrace,
+    eventQueue: IEventQueue,
+  ): Promise<IResult> {
     this.setLocale(locale);
     const result = new Result();
     while (BooleanUtil.YES) {

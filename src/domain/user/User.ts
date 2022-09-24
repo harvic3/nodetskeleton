@@ -25,7 +25,7 @@ export class User implements IUser {
     gender: Gender | undefined;
     createdAt: string | undefined;
     verified: boolean | undefined;
-    lastLogin?: ILastLogin,
+    lastLogin?: ILastLogin;
   }) {
     this.uid = props?.uid;
     this.maskedUid = props?.maskedUid;

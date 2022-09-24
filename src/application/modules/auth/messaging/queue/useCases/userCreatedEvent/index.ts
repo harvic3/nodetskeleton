@@ -5,6 +5,7 @@ import { IEventQueue } from "../../../../../../shared/messaging/queue/IEventQueu
 import { BooleanUtil } from "../../../../../../../domain/shared/utils/BooleanUtil";
 import { LocaleTypeEnum } from "../../../../../../shared/locals/LocaleType.enum";
 import { EventMessage } from "../../../../../../shared/messaging/EventMessage";
+import { UseCaseTrace } from "../../../../../../shared/log/UseCaseTrace";
 import { IUser } from "../../../../../../../domain/user/IUser";
 
 export class ManageUserCreatedEventUseCase extends BaseUseCase<IEventQueue> {
@@ -14,7 +15,11 @@ export class ManageUserCreatedEventUseCase extends BaseUseCase<IEventQueue> {
     super(ManageUserCreatedEventUseCase.name, logProvider);
   }
 
-  async execute(locale: LocaleTypeEnum, eventQueue: IEventQueue): Promise<IResult> {
+  async execute(
+    locale: LocaleTypeEnum,
+    _trace: UseCaseTrace,
+    eventQueue: IEventQueue,
+  ): Promise<IResult> {
     const result = new Result();
     while (BooleanUtil.YES) {
       const message = await eventQueue.pop<EventMessage<IUser>>(this.channelName);
