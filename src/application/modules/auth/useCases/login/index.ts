@@ -5,6 +5,7 @@ import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { CredentialsDto, ICredentials } from "../../dtos/Credentials.dto";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
 import { ISession } from "../../../../../domain/session/ISession";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
@@ -17,9 +18,14 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     super(LoginUseCase.name, logProvider);
   }
 
-  async execute(locale: LocaleTypeEnum, args: ICredentials): Promise<IResultT<TokenDto>> {
+  async execute(
+    locale: LocaleTypeEnum,
+    trace: UseCaseTrace,
+    args: ICredentials,
+  ): Promise<IResultT<TokenDto>> {
     this.setLocale(locale);
     const result = new ResultT<TokenDto>();
+    this.initializeUseCaseTrace(trace, args, ["passwordB64"]);
 
     const credentialsDto = CredentialsDto.fromJSON(args);
     if (!credentialsDto.isValid(result, this.appWords, this.validator)) return result;
@@ -34,6 +40,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     const tokenDto: TokenDto = await this.createSession(authenticatedResult.value as User);
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
+    trace.setSuccessful();
 
     return result;
   }

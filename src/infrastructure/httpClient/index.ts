@@ -1,6 +1,6 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
-import { PropertyAllocatorUtil } from "../../domain/shared/utils/PropertyAllocatorUtil";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
+import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
@@ -79,9 +79,9 @@ export class HttpClient {
   ): Request {
     const origin = { method, body, headers };
     if (!options) options = {};
-    PropertyAllocatorUtil.assign(options, origin, "method");
-    PropertyAllocatorUtil.assign(options, origin, "body");
-    PropertyAllocatorUtil.assign(options, origin, "headers");
+    ObjectPropertyUtil.assign(options, origin, "method");
+    ObjectPropertyUtil.assign(options, origin, "body");
+    ObjectPropertyUtil.assign(options, origin, "headers");
 
     return new Request(url, options);
   }

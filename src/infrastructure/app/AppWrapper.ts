@@ -9,6 +9,7 @@ import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import useCaseTraceMiddleware from "../middleware/trace/index";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
@@ -99,7 +100,8 @@ export default class AppWrapper {
       .use(urlencoded({ extended: BooleanUtil.YES }))
       .use(localizationMiddleware.handle as RequestHandler)
       .use(routeWhiteListMiddleware.handle as RequestHandler)
-      .use(authorizationMiddleware.handle.bind(this) as RequestHandler);
+      .use(authorizationMiddleware.handle.bind(this) as RequestHandler)
+      .use(useCaseTraceMiddleware.handle);
   }
 
   private loadErrorHandler(): void {
