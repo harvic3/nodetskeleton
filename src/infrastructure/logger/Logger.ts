@@ -5,7 +5,7 @@ import { ILogger } from "../../adapters/providers/log/ILogger";
 
 export class Logger implements ILogger {
   info(event: EventLog): void {
-    console.log(`Event ${new Date().toISOString()}: ${JSON.stringify(event)}`);
+    console.log(`Debug ${new Date().toISOString()}: ${JSON.stringify(event)}`);
   }
 
   error(error: ErrorLog): void {

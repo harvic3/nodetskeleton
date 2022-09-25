@@ -10,6 +10,7 @@ import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import { Router, Server, bodyParser, cors } from "./core/Modules";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
+import useCaseTraceMiddleware from "../middleware/trace/index";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
@@ -94,7 +95,8 @@ export default class AppWrapper {
       .use(bodyParser())
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)
-      .use(authorizationMiddleware.handle.bind(this));
+      .use(authorizationMiddleware.handle.bind(this))
+      .use(useCaseTraceMiddleware.handle);
   }
 
   private loadErrorHandler(): void {

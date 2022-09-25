@@ -19,7 +19,7 @@ class CorsMiddleware {
         return origin;
       }
     }
-    return this.validOrigins[ArrayUtil.FIRST_ELEMENT_INDEX];
+    return this.validOrigins[ArrayUtil.FIRST_INDEX];
   }
 }
 

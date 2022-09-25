@@ -9,7 +9,7 @@ import config from "../../config";
 export class LocalizationMiddleware {
   handle: Middleware = (ctx: Context, next: Next): Promise<void> => {
     const requestLanguage = ctx.headers?.acceptLanguage?.length
-      ? ctx.headers.acceptLanguage[ArrayUtil.FIRST_ELEMENT_INDEX]
+      ? ctx.headers.acceptLanguage[ArrayUtil.FIRST_INDEX]
       : (ctx.headers?.acceptLanguage as LocaleTypeEnum);
     const locale = requestLanguage || config.Params.DefaultLanguage;
     ctx.locale = locale;

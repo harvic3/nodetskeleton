@@ -1,4 +1,5 @@
 import { LocaleTypeEnum } from "../../../../application/shared/locals/LocaleType.enum";
+import { UseCaseTrace } from "../../../../application/shared/log/UseCaseTrace";
 import { ISession } from "../../../../domain/session/ISession";
 
 type IRequest = {
@@ -28,5 +29,6 @@ export interface IContext {
   status: number;
   body: unknown;
   locale: LocaleTypeEnum;
+  trace: UseCaseTrace;
   app: App;
 }
