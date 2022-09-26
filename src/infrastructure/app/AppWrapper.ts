@@ -11,6 +11,7 @@ import { Router, Server, bodyParser, cors } from "./core/Modules";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import useCaseTraceMiddleware from "../middleware/trace/index";
+import clientInfoMiddleware from "../middleware/clientInfo";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
@@ -93,14 +94,15 @@ export default class AppWrapper {
     this.app
       .use(cors(corsMiddleware.handle))
       .use(bodyParser())
+      .use(clientInfoMiddleware.handle)
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)
-      .use(authorizationMiddleware.handle.bind(this))
+      .use(authorizationMiddleware.handle)
       .use(useCaseTraceMiddleware.handle);
   }
 
   private loadErrorHandler(): void {
-    this.app.on("error", errorHandlerMiddleware.handle.bind(this));
+    this.app.on("error", errorHandlerMiddleware.handle.bind(errorHandlerMiddleware));
   }
 
   private setup(): void {

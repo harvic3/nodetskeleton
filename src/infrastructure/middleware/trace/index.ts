@@ -8,13 +8,12 @@ import { Middleware } from "../types";
 
 class UseCaseTraceMiddleware {
   handle: Middleware = (ctx: Context, next: Next): Promise<void> => {
-
     TypeParser.cast<IContext>(ctx).trace = new UseCaseTrace(
       TypeParser.cast<IContext>(ctx).isWhiteList
         ? TypeParser.cast<ISession>({})
         : TypeParser.cast<IContext>(ctx).session,
       new Date(),
-      this.getOrigin(ctx),
+      TypeParser.cast<IContext>(ctx).origin,
       (ctx.headers["x-transaction-id"] as string) || GuidUtil.getV4WithoutDashes(),
     )
       .setRequest({
@@ -23,16 +22,12 @@ class UseCaseTraceMiddleware {
         body: undefined,
       })
       .setClient({
-        ip: (ctx.headers["x-forwarded-for"] || ctx.ip) as string,
-        agent: ctx.headers["user-agent"] as string,
+        ip: TypeParser.cast<IContext>(ctx).ipAddress,
+        agent: TypeParser.cast<IContext>(ctx).userAgent,
       });
 
     return next();
   };
-
-  private getOrigin(ctx: Context): string {
-    return (ctx.headers["origin"] || ctx.headers["referrer"]) as string;
-  }
 }
 
 export default new UseCaseTraceMiddleware();

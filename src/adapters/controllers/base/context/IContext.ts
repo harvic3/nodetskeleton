@@ -30,5 +30,8 @@ export interface IContext {
   body: unknown;
   locale: LocaleTypeEnum;
   trace: UseCaseTrace;
+  ipAddress: string;
+  userAgent: string;
+  origin: string;
   app: App;
 }
