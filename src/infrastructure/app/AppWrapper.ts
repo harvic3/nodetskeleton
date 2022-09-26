@@ -10,6 +10,7 @@ import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
 import localizationMiddleware from "../middleware/localization";
 import useCaseTraceMiddleware from "../middleware/trace/index";
+import clientInfoMiddleware from "../middleware/clientInfo";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
@@ -29,7 +30,6 @@ import {
   urlencoded,
   Application,
   RequestHandler,
-  ErrorRequestHandler,
 } from "./core/Modules";
 
 export default class AppWrapper {
@@ -98,14 +98,15 @@ export default class AppWrapper {
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: BooleanUtil.YES }))
-      .use(localizationMiddleware.handle as RequestHandler)
-      .use(routeWhiteListMiddleware.handle as RequestHandler)
-      .use(authorizationMiddleware.handle.bind(this) as RequestHandler)
+      .use(clientInfoMiddleware.handle)
+      .use(localizationMiddleware.handle)
+      .use(routeWhiteListMiddleware.handle)
+      .use(authorizationMiddleware.handle)
       .use(useCaseTraceMiddleware.handle);
   }
 
   private loadErrorHandler(): void {
-    this.app.use(errorHandlerMiddleware.handle as ErrorRequestHandler);
+    this.app.use(errorHandlerMiddleware.handle);
   }
 
   private setup(): void {

@@ -14,7 +14,7 @@ class UseCaseTraceMiddleware {
         ? TypeParser.cast<ISession>({})
         : TypeParser.cast<IRequest>(req).session,
       new Date(),
-      this.getOrigin(req),
+      TypeParser.cast<IRequest>(req).origin,
       (req.headers["x-transaction-id"] as string) || GuidUtil.getV4WithoutDashes(),
     )
       .setRequest({
@@ -23,16 +23,12 @@ class UseCaseTraceMiddleware {
         body: undefined,
       })
       .setClient({
-        ip: (req.headers["x-forwarded-for"] || req.ip) as string,
-        agent: req.headers["user-agent"] as string,
+        ip: TypeParser.cast<IRequest>(req).ipAddress,
+        agent: TypeParser.cast<IRequest>(req).userAgent,
       });
 
     return next();
   };
-
-  private getOrigin(req: Request): string {
-    return (req.headers["origin"] || req.headers["referrer"]) as string;
-  }
 }
 
 export default new UseCaseTraceMiddleware();

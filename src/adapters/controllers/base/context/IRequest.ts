@@ -8,4 +8,7 @@ export interface IRequest {
   params: Record<string, string>;
   query: Record<string, string>;
   locale: LocaleTypeEnum;
+  ipAddress: string;
+  userAgent: string;
+  origin: string;
 }
