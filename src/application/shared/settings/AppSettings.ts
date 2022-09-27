@@ -13,6 +13,7 @@ export default class AppSettings {
   static ServerOrigins: string;
   static JWTEncryptionKey: string;
   static JWTExpirationTime: number;
+  static DefaultHealthRemoteService: string;
 
   static init(config: Record<string, any>): void {
     this.ServiceContext = config.Server.ServiceContext.Context;
@@ -27,5 +28,6 @@ export default class AppSettings {
     this.ServerOrigins = config.Server.Origins;
     this.JWTEncryptionKey = config.Params.Security.JWT.SecretKey;
     this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
+    this.DefaultHealthRemoteService = config.Params.DefaultHealthRemoteService;
   }
 }
