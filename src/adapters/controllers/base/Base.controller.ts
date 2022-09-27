@@ -7,6 +7,7 @@ import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ServiceContext } from "../../shared/ServiceContext";
+import { HttpHeaderEnum } from "./context/HttpHeader.enum";
 import { INextFunction } from "./context/INextFunction";
 import { LogProvider } from "../../providers/container";
 import { IServiceContainer } from "../../shared/kernel";
@@ -38,17 +39,24 @@ export default abstract class BaseController {
   }
 
   private async getResult(res: IResponse, result: IResult): Promise<void> {
+    this.setTransactionId(res);
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
   }
 
   private async getResultDto(res: IResponse, result: IResult): Promise<void> {
+    this.setTransactionId(res);
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result.toResultDto());
   }
 
   private async getResultData(res: IResponse, result: IResult): Promise<void> {
+    this.setTransactionId(res);
     res
       .status(HttpStatusResolver.getCode(result.statusCode.toString()))
       .json(result.message ? result.toResultDto() : result.toResultDto().data);
+  }
+
+  private setTransactionId(res: IResponse): void {
+    res.setHeader(HttpHeaderEnum.TRANSACTION_ID, res.trace.transactionId);
   }
 
   private async manageUseCaseTrace(trace: UseCaseTrace): Promise<void> {
@@ -79,7 +87,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      return this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace);
     }
   }
 

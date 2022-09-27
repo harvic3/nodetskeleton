@@ -5,19 +5,21 @@ import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus"
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
-export { BodyInit as BodyType, Headers } from "node-fetch";
+import { SerializationType } from "./SerializationType";
 import TResponse from "./TResponse";
 
-type HttpResponseType<T> = T | string | ArrayBuffer | unknown;
+type HttpResponseType<ResType> = ResType | string | ArrayBuffer | unknown;
 
-const SERIALIZED = BooleanUtil.YES;
-const serialization = {
-  json: "json",
-  string: "string",
-  arrayBuffer: "arrayBuffer",
+type ReqArgs = {
+  method: string;
+  serializationMethod: string;
+  body?: BodyType;
+  headers?: Headers;
+  options?: RequestInit;
 };
 
 export class HttpClient {
+  #SERIALIZED = BooleanUtil.YES;
   Methods = {
     GET: "GET",
     POST: "POST",
@@ -26,40 +28,34 @@ export class HttpClient {
     PATCH: "PATCH",
     HEAD: "HEAD",
   };
-  SerializationMethod = serialization;
-  async send<R, E>(
+  SerializationMethod = SerializationType;
+  async send<ResType, ErrType>(
     url: string,
-    {
-      method = this.Methods.GET,
-      body,
-      headers,
-      options,
-      serializationMethod = this.SerializationMethod.json,
-    }: {
-      method?: string;
-      body?: BodyType;
-      headers?: Headers;
-      options?: RequestInit;
-      serializationMethod?: string;
+    reqArgs: ReqArgs = {
+      method: this.Methods.GET,
+      body: undefined,
+      headers: undefined,
+      options: undefined,
+      serializationMethod: SerializationType.JSON,
     },
-  ): Promise<TResponse<R, E>> {
-    const request = this.buildRequest(url, method, body, headers, options);
-    const result = new TResponse<R, E>();
+  ): Promise<TResponse<ResType, ErrType>> {
+    const request = this.buildRequest(
+      url,
+      reqArgs?.method,
+      reqArgs.body,
+      reqArgs.headers,
+      reqArgs.options,
+    );
+    const result = new TResponse<ResType, ErrType>();
     try {
       const response = await fetch(url, request);
       if (response.ok) {
-        result.setResponse(await this.processResponseData<R>(response, serializationMethod));
+        result.setResponse(
+          await this.processResponseData<ResType>(response, reqArgs.serializationMethod),
+        );
       } else {
-        const errorResponse = await this.processErrorResponse<E>(response);
-        if (BooleanUtil.areEqual(errorResponse[ArrayUtil.INDEX_ONE], SERIALIZED)) {
-          result.setErrorMessage(
-            response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
-          );
-          result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as E);
-        } else {
-          result.setErrorMessage(response.statusText);
-          result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as E);
-        }
+        const errorResponse = await this.processClientErrorResponse<ErrType>(response);
+        this.processErrorResponse<ResType, ErrType>(errorResponse, result, response);
       }
       result.setStatusCode(response.status);
     } catch (error) {
@@ -86,26 +82,48 @@ export class HttpClient {
     return new Request(url, options);
   }
 
-  private async processErrorResponse<E>(response: Response): Promise<[E | string, boolean]> {
+  private async processClientErrorResponse<ErrType>(
+    response: Response,
+  ): Promise<[ErrType | string, boolean]> {
     let result = null;
     try {
       result = await response.text();
-      return [JSON.parse(result), SERIALIZED];
+      return [JSON.parse(result), this.#SERIALIZED];
     } catch (error) {
-      return [result as E | string, !SERIALIZED];
+      return [result as ErrType | string, !this.#SERIALIZED];
     }
   }
 
-  private async processResponseData<R>(
+  private processErrorResponse<ResType, ErrType>(
+    errorResponse: [string | ErrType, boolean],
+    result: TResponse<ResType, ErrType>,
     response: Response,
-    serializationMethod: string,
-  ): Promise<HttpResponseType<R>> {
+  ): void {
+    if (BooleanUtil.areEqual(errorResponse[ArrayUtil.INDEX_ONE], this.#SERIALIZED)) {
+      result.setErrorMessage(
+        response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
+      );
+      result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as ErrType);
+    } else {
+      result.setErrorMessage(response.statusText);
+      result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as ErrType);
+    }
+  }
+
+  private async processResponseData<ResType>(
+    response: Response,
+    serializationMethod: SerializationType,
+  ): Promise<HttpResponseType<ResType>> {
     try {
       switch (serializationMethod) {
-        case serialization.arrayBuffer:
+        case SerializationType.BUFFER:
+          return await response.buffer();
+        case SerializationType.ARRAY_BUFFER:
           return await response.arrayBuffer();
-        case serialization.string:
+        case SerializationType.TEXT:
           return await response.text();
+        case SerializationType.BLOB:
+          return await response.blob();
         default:
           return await response.json();
       }
