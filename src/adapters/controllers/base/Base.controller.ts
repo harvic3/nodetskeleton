@@ -103,7 +103,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      return this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace);
     }
   }
 
@@ -119,7 +119,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      return this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace);
     }
   }
 
