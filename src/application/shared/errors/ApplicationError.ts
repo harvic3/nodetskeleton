@@ -1,11 +1,23 @@
 import { StringUtil } from "../../../domain/shared/utils/StringUtil";
 
 export class ApplicationError extends Error {
-  public constructor(context: string, message: string, errorCode: number | string, stack?: string) {
+  constructor(
+    readonly context: string,
+    readonly message: string,
+    readonly errorCode: number | string,
+    readonly stack?: string,
+  ) {
     super(message);
-    this.name = `${StringUtil.cleanWhiteSpace(context)}_${ApplicationError.name}`;
+    this.name = `${context.replace(/\s/g, StringUtil.EMPTY)}_${ApplicationError.name}`;
     this.errorCode = errorCode;
     this.stack = stack;
   }
-  errorCode: number | string;
+
+  toError(): Error {
+    return {
+      message: `${this.message} [${this.errorCode}]`,
+      name: this.name,
+      stack: this.stack,
+    };
+  }
 }

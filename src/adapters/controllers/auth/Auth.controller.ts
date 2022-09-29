@@ -26,12 +26,12 @@ export class AuthController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.servicesContainer.get<LoginUseCase>(this.CONTEXT, LoginUseCase.name),
-      req.locale,
-      {
-        email,
-        passwordB64,
-      },
+      this.servicesContainer
+        .get<LoginUseCase>(this.CONTEXT, LoginUseCase.name)
+        .execute(req.locale, res.trace, {
+          email,
+          passwordB64,
+        }),
     );
   };
 

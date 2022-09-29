@@ -1,9 +1,8 @@
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
-import { BaseUseCase, IResult } from "../../../application/shared/useCase/BaseUseCase";
-import { LocaleTypeEnum } from "../../../application/shared/locals/LocaleType.enum";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
+import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ServiceContext } from "../../shared/ServiceContext";
@@ -75,15 +74,13 @@ export default abstract class BaseController {
     }
   }
 
-  async handleResult<T>(
+  async handleResult(
     res: IResponse,
     next: INextFunction,
-    useCase: BaseUseCase<T>,
-    locale: LocaleTypeEnum,
-    args?: T,
+    useCasePromise: Promise<IResult>,
   ): Promise<void> {
     try {
-      return await this.getResult(res, await useCase.execute(locale, res.trace, args));
+      return await this.getResult(res, await useCasePromise);
     } catch (error) {
       return next(error);
     } finally {
@@ -91,15 +88,13 @@ export default abstract class BaseController {
     }
   }
 
-  async handleResultDto<T>(
+  async handleResultDto(
     res: IResponse,
     next: INextFunction,
-    useCase: BaseUseCase<T>,
-    locale: LocaleTypeEnum,
-    args?: T,
+    useCasePromise: Promise<IResult>,
   ): Promise<void> {
     try {
-      return await this.getResultDto(res, await useCase.execute(locale, res.trace, args));
+      return await this.getResultDto(res, await useCasePromise);
     } catch (error) {
       return next(error);
     } finally {
@@ -107,15 +102,13 @@ export default abstract class BaseController {
     }
   }
 
-  async handleResultData<T>(
+  async handleResultData(
     res: IResponse,
     next: INextFunction,
-    useCase: BaseUseCase<T>,
-    locale: LocaleTypeEnum,
-    args?: T,
+    useCasePromise: Promise<IResult>,
   ): Promise<void> {
     try {
-      return await this.getResultData(res, await useCase.execute(locale, res.trace, args));
+      return await this.getResultData(res, await useCasePromise);
     } catch (error) {
       return next(error);
     } finally {
