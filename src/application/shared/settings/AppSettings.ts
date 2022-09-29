@@ -14,6 +14,7 @@ export default class AppSettings {
   static ServerOrigins: string;
   static JWTEncryptionKey: string;
   static JWTExpirationTime: number;
+  static DefaultHealthRemoteService: string;
   static MessageBusConnection: {
     Host: string;
     Port: number;
@@ -38,6 +39,7 @@ export default class AppSettings {
     this.ServerOrigins = config.Server.Origins;
     this.JWTEncryptionKey = config.Params.Security.JWT.SecretKey;
     this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
+    this.DefaultHealthRemoteService = config.Params.DefaultHealthRemoteService;
     this.MessageBusConnection = config.Services.MessageBus;
     this.MessageQueueConnection = config.Services.MessageQueue;
   }
