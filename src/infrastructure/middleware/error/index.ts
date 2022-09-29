@@ -30,7 +30,7 @@ export class ErrorHandlerMiddleware {
         }),
       );
       result.setError(
-        appMessages.get(config.Params.DefaultApplicationError.Message),
+        appMessages.get(config.Params.DefaultApplicationError.MessageKey),
         config.Params.DefaultApplicationError.Code,
       );
     }

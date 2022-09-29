@@ -1,3 +1,4 @@
+import { HttpHeaderEnum } from "../../../adapters/controllers/base/context/HttpHeader.enum";
 import { IContext } from "../../../adapters/controllers/base/Base.controller";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
@@ -14,7 +15,7 @@ class UseCaseTraceMiddleware {
         : TypeParser.cast<IContext>(ctx).session,
       new Date(),
       TypeParser.cast<IContext>(ctx).origin,
-      (ctx.headers["x-transaction-id"] as string) || GuidUtil.getV4WithoutDashes(),
+      (ctx.headers[HttpHeaderEnum.TRANSACTION_ID] as string) || GuidUtil.getV4WithoutDashes(),
     )
       .setRequest({
         params: ctx.params,

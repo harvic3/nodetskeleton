@@ -16,8 +16,7 @@ export class HealthController extends BaseController {
     return this.handleResultData(
       ctx,
       next,
-      this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name),
-      ctx.locale,
+      this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name).execute(ctx.locale),
     );
   };
 
@@ -28,8 +27,9 @@ export class HealthController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.servicesContainer.get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name),
-      ctx.locale,
+      this.servicesContainer
+        .get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name)
+        .execute(ctx.locale),
     );
   };
 

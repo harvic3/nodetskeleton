@@ -20,9 +20,9 @@ export class UsersController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.servicesContainer.get<RegisterUserUseCase>(this.CONTEXT, RegisterUserUseCase.name),
-      ctx.locale,
-      userDto,
+      this.servicesContainer
+        .get<RegisterUserUseCase>(this.CONTEXT, RegisterUserUseCase.name)
+        .execute(ctx.locale, ctx.trace, userDto),
     );
   };
 
