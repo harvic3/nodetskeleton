@@ -19,6 +19,7 @@ export default class AppSettings {
   static ServerOrigins: string;
   static JWTEncryptionKey: string;
   static JWTExpirationTime: number;
+  static DefaultHealthRemoteService: string;
   static MessageBusConnection: RedisServiceOptions;
   static MessageQueueConnection: RedisServiceOptions;
   static AuthCacheConnection: RedisServiceOptions;
@@ -36,6 +37,7 @@ export default class AppSettings {
     this.ServerOrigins = config.Server.Origins;
     this.JWTEncryptionKey = config.Params.Security.JWT.SecretKey;
     this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
+    this.DefaultHealthRemoteService = config.Params.DefaultHealthRemoteService;
     this.MessageBusConnection = config.Services.MessageBus;
     this.MessageQueueConnection = config.Services.MessageQueue;
     this.AuthCacheConnection = config.Services.AuthCache;

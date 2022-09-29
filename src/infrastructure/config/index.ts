@@ -71,7 +71,7 @@ export default {
     },
     DefaultApplicationError: {
       Code: "500",
-      Message: "SOMETHING_WENT_WRONG",
+      MessageKey: "SOMETHING_WENT_WRONG",
     },
     Security: {
       JWT: {
@@ -85,5 +85,6 @@ export default {
       },
     },
     DefaultLanguage: LocaleTypeEnum.EN,
+    DefaultHealthRemoteService: process.env.REMOTE_HEALTH_SERVICE || "https://google.com/",
   },
 };
