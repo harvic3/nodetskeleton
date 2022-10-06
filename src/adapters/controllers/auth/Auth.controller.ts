@@ -6,7 +6,7 @@ import BaseController, {
   IResponse,
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
   ServiceContext,
 } from "../base/Base.controller";
 
@@ -35,7 +35,7 @@ export class AuthController extends BaseController {
     );
   };
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router();
     this.router.post("/v1/auth/login", this.login);
   }

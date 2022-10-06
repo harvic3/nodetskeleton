@@ -554,7 +554,7 @@ import BaseController, {
   IResponse,
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
 } from "../base/Base.controller";
 import container, {
   GetFeelingTextUseCase,
@@ -572,14 +572,12 @@ export class TextFeelingController extends BaseController {
     return this.handleResult(
       res,
       next,
-      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
-      req.locale,
-      textDto,
+      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name).execute(req.locale, textDto),
     );
   };
   /*...*/
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router();
     this.router.get("/feelings", this.getFeelingText);
   }
@@ -638,14 +636,12 @@ export class TextFeelingController extends BaseController {
     return this.handleResult(
       ctx,
       next,
-      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name),
-      ctx.locale,
-      textDto,
+      this.serviceContainer.get<GetFeelingTextUseCase>(this.CONTEXT, GetFeelingTextUseCase.name).execute(ctx.locale, textDto),
     );
   };
   /*...*/
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router;
     this.router.get("/feeling", this.getFeelingText);
   }
@@ -682,7 +678,7 @@ The strategy is to manage the routes **within** the same **controller**, this al
 
 ```ts
 /*...*/
-initializeRoutes(router: IRouterType): void {
+initializeRoutes(router: IRouter): void {
   this.router = router;
   this.router.post("/v1/cars", authorization(), this.create);
   this.router.get("/v1/cars/:idMask", authorization(), this.get);
@@ -740,7 +736,7 @@ import BaseController, {
   IResponse,
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
   ServiceContext,
 } from "../base/Base.controller";
 import container, {
@@ -786,7 +782,7 @@ The strategy is to manage the routes **within** the **controller**, this allows 
 
 ```ts
 /*...*/
-initializeRoutes(router: IRouterType): void {
+initializeRoutes(router: IRouter): void {
   this.router = router();
   this.router.post("/v1/cars", authorization(), this.create);
   this.router.get("/v1/cars/:idMask", authorization(), this.get);
@@ -813,7 +809,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
         BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
     )
     .forEach((controller) => {
-      controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
+      controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
       // This is the line and the parameter comes from `config`.
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was initialized`);
