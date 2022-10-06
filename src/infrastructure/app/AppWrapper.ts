@@ -16,7 +16,7 @@ import { MessagingCore } from "./messaging/MessagingCore";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
 import BaseController, {
-  IRouterType,
+  IRouter,
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
 import { resolve as resolvePath } from "path";
@@ -64,7 +64,7 @@ export default class AppWrapper {
           BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
       )
       .forEach((controller) => {
-        controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
+        controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
       });
@@ -89,7 +89,7 @@ export default class AppWrapper {
     for (const filePath of controllerPaths) {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
-      controller.initializeRoutes(TypeParser.cast<IRouterType>(Router));
+      controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);
     }

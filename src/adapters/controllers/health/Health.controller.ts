@@ -5,7 +5,7 @@ import BaseController, {
   IResponse,
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
 } from "../base/Base.controller";
 
 export class HealthController extends BaseController {
@@ -39,7 +39,7 @@ export class HealthController extends BaseController {
     );
   };
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router();
     this.router.get("/ping", this.pong);
   }
