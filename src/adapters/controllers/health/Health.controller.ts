@@ -3,7 +3,7 @@ import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
   IContext,
 } from "../base/Base.controller";
 
@@ -33,7 +33,7 @@ export class HealthController extends BaseController {
     );
   };
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router;
     this.router.get("/ping", this.pong);
   }

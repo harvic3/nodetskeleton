@@ -4,7 +4,7 @@ import container, { LoginUseCase } from "./container";
 import BaseController, {
   INextFunction,
   EntryPointHandler,
-  IRouterType,
+  IRouter,
   ServiceContext,
   IContext,
 } from "../base/Base.controller";
@@ -30,7 +30,7 @@ export class AuthController extends BaseController {
     );
   };
 
-  initializeRoutes(router: IRouterType): void {
+  initializeRoutes(router: IRouter): void {
     this.router = router;
     this.router.post("/v1/auth/login", this.login);
   }

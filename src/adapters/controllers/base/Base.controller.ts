@@ -10,15 +10,15 @@ import { HttpHeaderEnum } from "./context/HttpHeader.enum";
 import { INextFunction } from "./context/INextFunction";
 import { LogProvider } from "../../providers/container";
 import { IServiceContainer } from "../../shared/kernel";
-import { IRouterType } from "./context/IRouterType";
 import { IContext } from "./context/IContext";
+import { IRouter } from "./context/IRouter";
 
 type EntryPointHandler = (req: IContext, next: INextFunction) => Promise<void>;
 
-export { EntryPointHandler, IContext, INextFunction, IRouterType, ServiceContext };
+export { EntryPointHandler, IContext, INextFunction, IRouter, ServiceContext };
 
 export default abstract class BaseController {
-  router?: IRouterType;
+  router?: IRouter;
   serviceContext: ServiceContext;
   #logProvider: ILogProvider;
   #useCaseTraceRepository: IUseCaseTraceRepository;
@@ -120,5 +120,5 @@ export default abstract class BaseController {
     }
   }
 
-  abstract initializeRoutes(router: IRouterType): void;
+  abstract initializeRoutes(router: IRouter): void;
 }
