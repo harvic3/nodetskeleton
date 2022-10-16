@@ -2,7 +2,7 @@
 
 ## Introduction 🤖
 
-**NodeTskeleton** is a **Clean Architecture** based **template project** for **NodeJs** using **TypeScript** to implement with any **web server framework** or even any user interface.
+**NodeTskeleton** is a **Clean Architecture** based **OOP Template Project** for **NodeJs** using **TypeScript** to implement with any **web server framework** or even any user interface.
 
 The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
@@ -24,6 +24,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 		1. [Using with KoaJs 🦋](#using-with-koajs)
 		1. [Using with ExpressJs 🐛](#using-with-expressjs)
 		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
+		1. [Create your first use case 🎬](#create-your-first-use-case)
   1. [Workers 🔄](#workers)
   1. [GraphQL ✡](#graphql)
   1. [Infrastructure 🏗️](#infrastructure)
@@ -47,7 +48,7 @@ Applications are generally developed to be used by people, so people should be t
 
 For this reason **user stories** are written, stories that give us information about the type of user, procedures that the user performs in a part of the application **(module)**, important information that serves to **structure the solution** of our application, and in practice, how is this?
 
-The user stories must be in the **src/application** path of our solution, there we create a directory that we will call **modules** and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (product, order, account, sales, ...), and in practice that looks more or less like this: 
+The user stories must be in the **src/application** path of our solution, there we create a directory that we will call **modules** and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (users, sales, products, organizations, purchases, ...), and in practice that looks more or less like this: 
 
 <div style="text-align:center"> <img src="https://i.ibb.co/t2mHGmC/Node-Tskeleton.png" alt="Node-Tskeleton" border="10"> </div>
 
@@ -59,13 +60,15 @@ The user stories must be in the **src/application** path of our solution, there 
 
 ### Observations 👀
 
-- If your application has no **roles**, then there's no mess, it's just **modules**. ;)
+- If your application has no **roles**, then there's no mess, it's just **modules** and it can be something like users, sales, products, organizations, purchases and an amount others according your own needs.
 
 - But taking into consideration that if the roles are not yet defined in your application, **the best option** would be to follow a **dynamic role strategy** based on **permissions** and **each use case within the application (or use case group) would be a specific permission** that would feed the strategy of dynamic roles.
 
-- Note that you can **repeat** modules between **roles**, because a **module can be used by different roles**, because if they are different roles then the use cases should also be different, otherwise those users would have the same role.
+- Note that you can **repeat** modules between **roles**, because a **module can be used by different roles**, because if they are different roles then the use cases behavior should also be different, otherwise those users would have the same role.
 
-- This strategy makes the project easy to **navigate**, easy to **change**, **scale** and **maintain**, which boils down to **good mental health**, besides you will be able to integrate new developers to your projects in a faster way.
+- This strategy makes the project easy to **navigate**, easy to **change**, **scale** and **maintain** (Talking about development), which boils down to **good mental health**, besides you will be able to integrate new developers to your projects in a faster way.
+
+I personally recommend **the permission-based dynamic role strategy** to avoid complications due to roles and permissions in the future because this is what usually happens when developing a product, even if you are convinced that it is very well defined.
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -77,6 +80,29 @@ The user stories must be in the **src/application** path of our solution, there 
 ### Errors 
 
 Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules, example:
+
+```ts
+/*
+** context: it's the context where the error will be launched.
+*/
+export class ApplicationError extends Error {
+  constructor(
+    readonly context: string,
+    readonly message: string,
+    readonly errorCode: number | string,
+    readonly stack?: string,
+  ) {
+    super(message);
+    this.name = `${context.replace(/\s/g, StringUtil.EMPTY)}_${ApplicationError.name}`;
+    this.errorCode = errorCode;
+    this.stack = stack;
+  }
+  // ...
+}
+```
+It is important to note that the name of the context is concatenated with the name of the ApplicationError class in order to better identify the controlled errors.
+
+The straightforward way to use it is as follows:
 
 ```ts
 throw new ApplicationError(
@@ -207,7 +233,7 @@ This tool is now available as an **NPM package**.
 
 ### Result
 
-**result** is a **tool** that helps us control the flow of our **use cases** and allows us to **manage the response**, be it an **object**, an **array** of objects, a **message** or an **error** as follows:
+**Result** is a **tool** that helps us control the flow of our **use cases** and allows us to **manage the response**, be it an **object**, an **array** of objects, a **message** or an **error** as follows:
 
 ```ts
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
@@ -245,7 +271,7 @@ export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{
 }
 ```
 
-The **result** object may or may not have a **type** of **response**, it fits your needs, and the **result instance without type** cannot be assigned **data**.
+The **Result** object may or may not have a **type** of **response**, it fits your needs, and the **Result instance without type** cannot be assigned **data**.
 
 ```ts
 const resultWithType = new Result<ProductDto>();
@@ -253,7 +279,7 @@ const resultWithType = new Result<ProductDto>();
 const resultWithoutType = new Result();
 ```
 
-For clean code you can return validation result and handles the error clean way through **result** visitor pattern method like:
+For clean code you can return validation result and handles the error clean way through **Result** visitor pattern method like:
 
 ```ts
 async execute(args: ActionDto): Promise<IResult> {
@@ -270,7 +296,7 @@ async execute(args: ActionDto): Promise<IResult> {
 }
 ```
 
-The **result** object can help you in unit tests as shown below:
+The **Result** object can help you in unit tests as shown below:
 
 ```ts
 it("should return a 400 error if quantity is null or zero", async () => {
@@ -339,7 +365,7 @@ export abstract class BaseUseCase<T> {
 }
 ```
 
-Type **T** in **BaseUseCase<T>** is a way for the optimal control of the input parameters of your UseCase unit code.
+Type **T** in **BaseUseCase<T>** is a way for the optimal control of the input parameters of your **UseCase unit code**.
 
 So, you can use it like the next examples: 
 
@@ -830,6 +856,148 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 And then, continue with the step **installation**.
 
 **[⬆ back to the past](#table-of-contents)**
+
+## Create your first use case
+
+> Here is where the excitement of development begins, so let's say we need to create a use case to get a user, for example, then what we must do is go to our solution, go to the path **/src/application/modules/** and there look for the module to which our use case belongs, in this case, the user module.
+
+Then once we are in our module, we go to the **useCases directory** and there we create the directory for our use case and in this case we create a **new directory called get**, and inside this we create an index file as follows:
+
+```ts
+// src/application/modules/users/useCases/get/index.ts
+export class GetUserUseCase extends BaseUseCase {
+  
+}
+```
+
+Next step we define the input parameter that the use case will have, and in turn the output parameter. In this case to obtain a user we will most likely use a unique identifier such as their email, their internal identifier within the system or some other parameter that will be a string in most cases, or the one that is required depending on each case. 
+And as output type we will have a User class through the Result object with type T (ResultT).
+
+```ts
+// src/application/modules/users/useCases/get/index.ts
+export class GetUserUseCase extends BaseUseCase<string> {
+  
+  async execute(locale: LocaleTypeEnum, trace: UseCaseTrace, userId: string): Promise<IResultT<User>> {
+    this.setLocale(locale);
+    // Output type result
+    const result = new ResultT<User>();
+
+    return result;
+  }
+}
+```
+
+Once we have the input and output defined, we evaluate which providers (repositories or external services) our use case will need and invoke them in the constructor method based on their abstractions. 
+In this step we also implement the use case base class constructor as it will be shown in the example.
+
+```ts
+// src/application/modules/users/useCases/get/index.ts
+export class GetUserUseCase extends BaseUseCase<string> {
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly userRepository: IUSerRepository,
+  ) {
+    // Use case context and log provider for Use Case Base Class.
+    super(GetUserUseCase.name, logProvider);
+  }
+
+  async execute(locale: LocaleTypeEnum, trace: UseCaseTrace, userId: string): Promise<IResultT<User>> {
+    this.setLocale(locale);
+    const result = new ResultT<User>();
+
+    /* Here your application business logic */
+
+    return result;
+  }
+}
+```
+It goes without saying that you must import the types as you use them to eliminate the errors for lack of importing types and modules.
+
+And here it only remains to implement the logic of our use case, and once this step has been completed, then it is time to implement the component test that is recommended to be in this same directory to avoid confusion and have all the resources in the same directory context, and to implement the test cases you can follow the example in the base template.
+
+You should also keep in mind that when you are implementing your business logic, you will have to create new provider and repository contracts or add more responsibility to your existing contracts, and this should go in the **providerContracts directory of the module in question**.
+
+Now what we have left is to expose the use case in the adapters layer, and for this we go to the controller that handles the context of our use case, in this case the users in the path **/src/adapters/controllers/users/Users.controller.ts**.
+Once there, we create our method and the corresponding path as shown below:
+
+```ts
+// src/adapters/controllers/users/Users.controller.ts
+export class UsersController extends BaseController {
+  constructor(serviceContainer: IServiceContainer) {
+    super(UsersController.name, serviceContainer, ServiceContext.USERS);
+  }
+
+  get: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+
+  };
+
+  initializeRoutes(router: IRouter): void {
+    this.router = router();
+    this.router.post("/v1/users/sign-up", this.singUp);
+    this.router.get("/v1/users/:userId", this.get);
+  }
+}
+```
+
+Once we have the above, then we must go to the container directory located in this same directory and there we register our use case in the dependency injection container to be able to use it inside our controller.
+In this we inject the use case and export the type as shown below:
+
+```ts
+// src/adapters/controllers/users/container/index.ts
+kernel.addScoped(
+  GetUserUseCase.name,
+  () =>
+    new GetUserUseCase(
+      kernel.get<LogProvider>(CONTEXT, LogProvider.name),
+      kernel.get<UserRepository>(CONTEXT, UserRepository.name),
+    ),
+);
+
+export { RegisterUserUseCase, GetUserUseCase };
+export default kernel;
+```
+
+Then we go back to our controller and implement the method we had created previously.
+
+```ts
+// src/adapters/controllers/users/Users.controller.ts
+export class UsersController extends BaseController {
+  constructor(serviceContainer: IServiceContainer) {
+    super(UsersController.name, serviceContainer, ServiceContext.USERS);
+  }
+
+  get: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+    const userId = req.params?.userId;
+
+    return this.handleResult(
+      res,
+      next,
+      this.servicesContainer
+        .get<GetUserUseCase>(this.CONTEXT, RegisterUserUseCase.name)
+        .execute(req.locale, res.trace, userId),
+    );
+  };
+
+  initializeRoutes(router: IRouter): void {
+    this.router = router();
+    this.router.post("/v1/users/sign-up", this.singUp);
+    this.router.get("/v1/users/:userId", this.get);
+  }
+}
+```
+
+And following these steps you can add all the use cases that your application requires, taking into account that you will have to create your contracts and the implementation of these.
+
+**[⬆ back to the past](#table-of-contents)**
+
 
 ## Workers
 
