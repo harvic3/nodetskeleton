@@ -2,6 +2,7 @@ import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } 
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
 import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
+import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
@@ -19,7 +20,7 @@ type ReqArgs = {
 };
 
 export class HttpClient {
-  #SERIALIZED = BooleanUtil.YES;
+  #SERIALIZED = true;
   Methods = {
     GET: "GET",
     POST: "POST",
@@ -101,7 +102,10 @@ export class HttpClient {
   ): void {
     if (BooleanUtil.areEqual(errorResponse[ArrayUtil.INDEX_ONE], this.#SERIALIZED)) {
       result.setErrorMessage(
-        response?.statusText || appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
+        DefaultValue.evaluateAndGet(
+          response?.statusText,
+          appMessages.get(appMessages.keys.UNKNOWN_RESPONSE_STATUS),
+        ),
       );
       result.setErrorResponse(errorResponse[ArrayUtil.FIRST_INDEX] as ErrType);
     } else {

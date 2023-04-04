@@ -1,3 +1,4 @@
+import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import GuidUtil from "../../application/shared/utils/GuidUtil";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { UseCaseTrace } from "../shared/log/UseCaseTrace";
@@ -13,10 +14,10 @@ export class UseCaseTraceMock implements IMockBuilder<UseCaseTrace> {
 
   private initialize(session?: ISession, transactionId?: string): UseCaseTrace {
     const audit = new UseCaseTrace(
-      session || ({} as ISession),
+      DefaultValue.evaluateAndGet(session, {} as ISession),
       new Date(),
       MockConstants.ORIGIN,
-      transactionId || GuidUtil.getV4(),
+      DefaultValue.evaluateAndGet(transactionId, GuidUtil.getV4()),
     );
     audit.setRequest({ params: undefined, query: undefined, body: undefined });
 
