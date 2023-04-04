@@ -82,10 +82,10 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         }),
         this.applicationStatus.INVALID_INPUT,
       );
-      return BooleanUtil.YES;
+      return true;
     }
 
-    return BooleanUtil.NO;
+    return false;
   }
 
   private async buildUser(userDto: UserDto): Promise<User> {
@@ -120,9 +120,9 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
         this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
         this.applicationStatus.INTERNAL_ERROR,
       );
-      return BooleanUtil.FAILED;
+      return false;
     }
 
-    return BooleanUtil.SUCCESS;
+    return true;
   }
 }

@@ -33,20 +33,20 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  private readonly controllersLoadedByConstructor = BooleanUtil.NO;
+  #controllersLoadedByConstructor = false;
   app: Express;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
     this.app = AppServer();
-    this.app.set("trust proxy", BooleanUtil.YES);
+    this.app.set("trust proxy", true);
     this.loadMiddleware();
     console.log(
       `Initializing controllers for ${AppSettings.ServiceContext.toUpperCase()} ServiceContext`,
     );
     if (ArrayUtil.any(controllers)) {
       this.loadControllersByConstructor(controllers as BaseController[]);
-      this.controllersLoadedByConstructor = BooleanUtil.YES;
+      this.#controllersLoadedByConstructor = true;
     }
   }
 
@@ -67,17 +67,17 @@ export default class AppWrapper {
   }
 
   private async loadControllersDynamically(): Promise<void> {
-    if (this.controllersLoadedByConstructor) return Promise.resolve();
+    if (this.#controllersLoadedByConstructor) return Promise.resolve();
 
     const controllerPaths = config.Server.ServiceContext.LoadWithContext
       ? config.Controllers.ContextPaths.map((serviceContext) => {
           return sync(serviceContext, {
-            onlyFiles: BooleanUtil.YES,
+            onlyFiles: true,
             ignore: config.Controllers.Ignore,
           });
         }).flat()
       : sync(config.Controllers.DefaultPath, {
-          onlyFiles: BooleanUtil.YES,
+          onlyFiles: true,
           ignore: config.Controllers.Ignore,
         });
     for (const filePath of controllerPaths) {
@@ -97,7 +97,7 @@ export default class AppWrapper {
     this.app
       .use(helmet())
       .use(bodyParser())
-      .use(urlencoded({ extended: BooleanUtil.YES }))
+      .use(urlencoded({ extended: true }))
       .use(clientInfoMiddleware.handle)
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)

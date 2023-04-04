@@ -7,7 +7,7 @@ const withDockerHost = process.env.WITH_DOCKER_HOST
   ? process.env.WITH_DOCKER_HOST === "true"
   : false;
 
-const GATEWAY_PORT = Number(process.env.PORT || 8080);
+const GATEWAY_PORT = Number(process.env.PORT) || 8080;
 const LOCAL_HOST = "http://localhost";
 const DOCKER_HOST = "http://host.docker.internal";
 const API_PREFIX = "/api";

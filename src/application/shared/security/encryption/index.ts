@@ -1,3 +1,4 @@
+import { DefaultValue } from "../../../../domain/shared/utils/DefaultValue";
 import { AppConstants } from "../../../../domain/shared/AppConstants";
 import { ApplicationError } from "../../errors/ApplicationError";
 import applicationStatus from "../../status/applicationStatus";
@@ -30,7 +31,7 @@ export default class Encryption {
         applicationStatus.INTERNAL_ERROR,
       );
     }
-    const salt = encryptionKey || this.defaultEncryptionKey;
+    const salt = DefaultValue.evaluateAndGet(encryptionKey, this.defaultEncryptionKey);
     return pbkdf2Sync(
       text,
       salt,
