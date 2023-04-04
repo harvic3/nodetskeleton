@@ -1,7 +1,9 @@
 import applicationStatus from "../../../../application/shared/status/applicationStatus";
 import httpStatus from "./httpStatus";
 
-const statusMapping: Record<string, number> = {};
+const statusMapping: Record<string, number> & { default: number } = {
+  default: httpStatus.VARIANT_ALSO_NEGOTIATES,
+};
 
 statusMapping[applicationStatus.SUCCESS] = httpStatus.SUCCESS;
 statusMapping[applicationStatus.CREATED] = httpStatus.CREATED;

@@ -8,7 +8,7 @@ class CorsMiddleware {
   private readonly allowedMethods: string[] = ["GET", "POST", "PUT", "DELETE", "PATCH"];
 
   handle = {
-    origin: this.verifyOrigin,
+    origin: this.verifyOrigin.bind(this),
     allowMethods: this.allowedMethods,
   };
 

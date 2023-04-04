@@ -1,4 +1,5 @@
 import { LocaleTypeEnum } from "../../../application/shared/locals/LocaleType.enum";
+import { DefaultValue } from "../../../domain/shared/utils/DefaultValue";
 import appMessages from "../../../application/shared/locals/messages";
 import ArrayUtil from "../../../domain/shared/utils/ArrayUtil";
 import words from "../../../application/shared/locals/words";
@@ -11,7 +12,7 @@ export class LocalizationMiddleware {
     const requestLanguage = ctx.headers?.acceptLanguage?.length
       ? ctx.headers.acceptLanguage[ArrayUtil.FIRST_INDEX]
       : (ctx.headers?.acceptLanguage as LocaleTypeEnum);
-    const locale = requestLanguage || config.Params.DefaultLanguage;
+    const locale = DefaultValue.evaluateAndGet(requestLanguage ,config.Params.DefaultLanguage);
     ctx.locale = locale;
     appMessages.init(locale);
     words.init(locale);

@@ -1,4 +1,3 @@
-import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import { Context, Next } from "../../../app/core/Modules";
 import { Middleware } from "../../types";
 import config from "../../../config";
@@ -11,13 +10,11 @@ const ROUTE_WHITE_LIST = [
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (ctx: Context, next: Next): Promise<void> => {
-    ctx.isWhiteList = BooleanUtil.NO;
+    ctx.isWhiteList = false;
 
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) => path === ctx.request.path);
 
-    if (existsUnauthorizedPath) {
-      ctx.isWhiteList = BooleanUtil.YES;
-    }
+    if (existsUnauthorizedPath) ctx.isWhiteList = true;
 
     return next();
   };
