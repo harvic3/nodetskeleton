@@ -535,7 +535,7 @@ export { IServiceContainer };
 export default tsKernel;
 ```
 
-And later, you cane use it as follows:
+And later, you can use it as follows:
 
 ```ts
 // In the path src/adapters/controllers/textFeeling there is a folder called container and the index file have the following code lines:

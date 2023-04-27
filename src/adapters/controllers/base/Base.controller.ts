@@ -7,12 +7,12 @@ import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
-import { INextFunction } from "./context/INextFunction";
 import { LogProvider } from "../../providers/container";
+import { INextFunction } from "./context/INextFunction";
 import { IServiceContainer } from "../../shared/kernel";
-import { IRouter } from "./context/IRouter";
 import { IResponse } from "./context/IResponse";
 import { IRequest } from "./context/IRequest";
+import { IRouter } from "./context/IRouter";
 
 type EntryPointHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
 

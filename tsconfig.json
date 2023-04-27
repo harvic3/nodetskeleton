@@ -1,5 +1,5 @@
 {
-  "version": "5.0.3",
+  "version": "5.0.4",
   "compilerOptions": {
     "lib": ["ESNext"],
     "outDir": "dist",
@@ -15,7 +15,7 @@
     "alwaysStrict": true,
     "strict": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
   "compileOnSave": true,
   "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
