@@ -40,10 +40,6 @@ export default {
     Root: DefaultValue.evaluateAndGet(process.env.SERVER_ROOT, "/api"),
     Host: DefaultValue.evaluateAndGet(process.env.SERVER_HOST, "localhost"),
     Port: DefaultValue.evaluateAndGet(Number(process.env.SERVER_PORT), 3003),
-    Origins: DefaultValue.evaluateAndGet(
-      process.env.ORIGINS,
-      "http://localhost:3000,http://localhost:3001,http://localhost:3002",
-    ),
     ServiceName: DefaultValue.evaluateAndGet(process.env.SERVICE_NAME, "NodeTskeleton"),
     ServiceContext: {
       LoadWithContext: !!process.env.SERVICE_CONTEXT,

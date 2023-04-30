@@ -12,10 +12,10 @@ class ClientInfoMiddleware {
       ctx.headers[HttpHeaderEnum.FORWARDED_FOR] as string,
     );
     TypeParser.cast<IContext>(ctx).userAgent = ctx.headers[HttpHeaderEnum.USER_AGENT] as string;
-    TypeParser.cast<IContext>(ctx).origin = DefaultValue.evaluateAndGet(
-      ctx.headers[HttpHeaderEnum.ORIGIN],
-      ctx.headers[HttpHeaderEnum.REFERRER],
-    ) as string;
+    TypeParser.cast<IContext>(ctx).clientIP = DefaultValue.evaluateAndGet(
+      ctx.request.ip,
+      ctx.request.origin,
+    );
 
     return next();
   };

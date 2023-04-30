@@ -14,7 +14,7 @@ class UseCaseTraceMiddleware {
         ? TypeParser.cast<ISession>({})
         : TypeParser.cast<IContext>(ctx).session,
       new Date(),
-      TypeParser.cast<IContext>(ctx).origin,
+      TypeParser.cast<IContext>(ctx).clientIP,
       (ctx.headers[HttpHeaderEnum.TRANSACTION_ID] as string) || GuidUtil.getV4WithoutDashes(),
     )
       .setRequest({

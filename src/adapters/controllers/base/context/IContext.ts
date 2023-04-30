@@ -32,6 +32,6 @@ export interface IContext {
   trace: UseCaseTrace;
   ipAddress: string;
   userAgent: string;
-  origin: string;
+  clientIP: string;
   app: App;
 }

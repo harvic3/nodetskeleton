@@ -15,7 +15,6 @@ import clientInfoMiddleware from "../middleware/clientInfo";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import words from "../../application/shared/locals/words";
 import errorHandlerMiddleware from "../middleware/error";
-import corsMiddleware from "../middleware/cors";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
@@ -92,7 +91,7 @@ export default class AppWrapper {
 
   private loadMiddleware(): void {
     this.app
-      .use(cors(corsMiddleware.handle))
+      .use(cors())
       .use(bodyParser())
       .use(clientInfoMiddleware.handle)
       .use(localizationMiddleware.handle)
