@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: node:16-slim
+    image: node:18-slim
     container_name: tskeleton-app
     restart: unless-stopped
     env_file: .env
