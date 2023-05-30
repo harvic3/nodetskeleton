@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 
 export class DateTimeUtils implements IDateTimeUtil {
   getISONow(): string {
-    return DateTime.local().toISO();
+    return DateTime.local().toISO() as string;
   }
 
   getCurrentDate(): Date {
@@ -11,7 +11,7 @@ export class DateTimeUtils implements IDateTimeUtil {
   }
 
   getCurrentTime(): string {
-    return DateTime.now().toISOTime();
+    return DateTime.now().toISOTime() as string;
   }
 }
 
