@@ -1,11 +1,11 @@
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
+  IRouter,
   IRequest,
   IResponse,
   INextFunction,
   EntryPointHandler,
-  IRouter,
 } from "../base/Base.controller";
 
 export class StatusController extends BaseController {

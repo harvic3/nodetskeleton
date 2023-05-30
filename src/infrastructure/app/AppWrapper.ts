@@ -126,10 +126,10 @@ export default class AppWrapper {
         .then(() => {
           // Initialize database service and other services here. For do it you should add a try catch block.
           // reject if any error with database or other service.
-          resolve();
+          return resolve();
         })
         .catch((error) => {
-          reject(error);
+          return reject(error);
         });
     });
   }
