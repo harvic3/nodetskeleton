@@ -3,7 +3,7 @@ import { LogProvider, WorkerProvider } from "../../../providers/container";
 import { UserRepository } from "../../../repositories/container";
 import kernel from "../../../shared/kernel";
 
-const CONTEXT = `UsersControllerContainer`;
+const CONTEXT = "UsersControllerContainer";
 
 kernel.addScoped(
   RegisterUserUseCase.name,

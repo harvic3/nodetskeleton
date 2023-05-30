@@ -3,7 +3,7 @@ import { PongUseCase } from "../../../../application/modules/status/useCases/pon
 import { LogProvider, HealthProvider } from "../../../providers/container";
 import kernel from "../../../shared/kernel";
 
-const CONTEXT = `HealthControllerContainer`;
+const CONTEXT = "HealthControllerContainer";
 
 kernel.addScoped(
   PongUseCase.name,
