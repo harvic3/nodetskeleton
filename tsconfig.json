@@ -18,6 +18,6 @@
     "forceConsistentCasingInFileNames": true,
   },
   "compileOnSave": true,
-  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts", "./src/infrastructure/tsk-tools/**/*"],
   "include": ["./src/**/*"]
 }

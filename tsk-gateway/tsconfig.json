@@ -16,6 +16,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts", "./src/infrastructure/tsk-tools/**/*"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mock.ts"],
   "include": ["./src/**/*"]
 }

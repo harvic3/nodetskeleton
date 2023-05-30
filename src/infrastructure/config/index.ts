@@ -20,7 +20,7 @@ export default {
   Controllers: {
     ContextPaths: [
       Normalize.pathFromOS(
-        Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"),
+        Normalize.absolutePath(__dirname, "../../adapters/controllers/status/*.controller.??"),
       ),
       Normalize.pathFromOS(
         Normalize.absolutePath(
