@@ -1,4 +1,4 @@
-FROM node:16-slim
+FROM node:18-alpine
 
 WORKDIR /usr/node/tsk-gateway
 

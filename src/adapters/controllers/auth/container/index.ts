@@ -2,7 +2,7 @@ import { LoginUseCase } from "../../../../application/modules/auth/useCases/logi
 import { AuthProvider, LogProvider } from "../../../providers/container";
 import kernel from "../../../shared/kernel";
 
-const CONTEXT = `AuthControllerContainer`;
+const CONTEXT = "AuthControllerContainer";
 
 kernel.addScoped(
   LoginUseCase.name,

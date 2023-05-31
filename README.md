@@ -12,6 +12,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 
 ## Table of contents
 
+  1. [cli function 📟](#create-your-first-use-case)
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
@@ -66,7 +67,7 @@ The user stories must be in the **src/application** path of our solution, there 
 
 - Note that you can **repeat** modules between **roles**, because a **module can be used by different roles**, because if they are different roles then the use cases behavior should also be different, otherwise those users would have the same role.
 
-- This strategy makes the project easy to **navigate**, easy to **change**, **scale** and **maintain** (Talking about development), which boils down to **good mental health**, besides you will be able to integrate new developers to your projects in a faster way.
+- This strategy makes the project easy to **navigate**, easy to **change**, **scale** and **maintain** (Talking about development), which boils down to **good mental status**, besides you will be able to integrate new developers to your projects in a faster way.
 
 I personally recommend **the permission-based dynamic role strategy** to avoid complications due to roles and permissions in the future because this is what usually happens when developing a product, even if you are convinced that it is very well defined.
 
@@ -239,7 +240,7 @@ This tool is now available as an **NPM package**.
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
   constructor(
     readonly logProvider: ILogProvider,
-    private readonly healthProvider: IHealthProvider,
+    private readonly statusProvider: IHealthProvider,
     private readonly productQueryService: IProductQueryService,
   ) {
     super(GetProductUseCase.name, logProvider);
@@ -559,14 +560,14 @@ Another way to export dependencies is to simply create instances of the respecti
 // The same way in src/adapters/providers there is the container folder
 import TextFeelingService from "../../../application/modules/feeling/serviceContracts/textFeeling/TextFeelingService";
 import TextFeelingProvider from "../../providers/feeling/TextFeelingProvider";
-import { HealthProvider } from "../health/HealthProvider";
+import { StatusProvider } from "../status/StatusProvider";
 
 const textFeelingProvider = new TextFeelingProvider();
 const textFeelingService = new TextFeelingService(textFeelingProvider);
 
-const healthProvider = new HealthProvider();
+const statusProvider = new StatusProvider();
 
-export { healthProvider, textFeelingService };
+export { statusProvider, textFeelingService };
 // And your repositories (folder src/adapters/repositories) must have the same strategy
 ```
 
@@ -840,7 +841,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was initialized`);
     });
-  this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
+  this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
   this.loadErrorHandler();
 }
 /*...*/
@@ -858,6 +859,21 @@ And then, continue with the step **installation**.
 **[⬆ back to the past](#table-of-contents)**
 
 ## Create your first use case
+
+> Now CLI function to create use case templates and his dependencies was added, so you can try something like...
+
+With the following command you will create a use case named CreatedOrderUseCase and his controller and containerController. Try it!!
+
+```console
+npm run tsk 'add-use-case api-name=orders use-case=CreateOrder endpoint=/v1/orders/ http-method=POST'
+```
+
+So, now you could add a new use case to the Orders API with the next command. Try it!!
+
+```console
+npm run tsk 'add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orders/ http-method=PUT'
+```
+It's very easy to create repetitive code, right. But if you must know how it works, so continue reading...
 
 > Here is where the excitement of development begins, so let's say we need to create a use case to get a user, for example, then what we must do is go to our solution, go to the path **/src/application/modules/** and there look for the module to which our use case belongs, in this case, the user module.
 
@@ -1270,7 +1286,7 @@ $ npm run dev
 Running in dev mode
 Initializing controllers for NodeTskeleton ServiceContext
 AuthController was loaded
-HealthController was loaded
+StatusController was loaded
 Server NodeTskeleton running on localhost:3003/api
 ```
 
@@ -1357,11 +1373,11 @@ import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
 // Controllers
 import BaseController from "./adapters/controllers/base/Base.controller";
-import healthController from "./adapters/controllers/health/Health.controller";
+import statusController from "./adapters/controllers/status/Status.controller";
 import authController from "./adapters/controllers/auth/Auth.controller";
 // End Controllers
 
-const controllers: BaseController[] = [healthController, authController];
+const controllers: BaseController[] = [statusController, authController];
 
 function startApp(): void {
   const appWrapper = new AppWrapper(controllers);
@@ -1432,11 +1448,11 @@ import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
 // Controllers
 import BaseController from "./adapters/controllers/base/Base.controller";
-import healthController from "./adapters/controllers/health/Health.controller";
+import statusController from "./adapters/controllers/status/Status.controller";
 import authController from "./adapters/controllers/auth/Auth.controller";
 // End Controllers
 
-const controllers: BaseController[] = [healthController, authController];
+const controllers: BaseController[] = [statusController, authController];
 
 const appWrapper = new AppWrapper(controllers);
 const server = new HttpServer(appWrapper);
@@ -1481,9 +1497,9 @@ const serviceContext = process.env.SERVICE_CONTEXT || ServiceContext.NODE_TS_SKE
 ...
 Controllers: {
   ContextPaths: [
-    // Health Controller should always be included, and others by default according to your needs.
+    // Status Controller should always be included, and others by default according to your needs.
     Normalize.pathFromOS(
-      Normalize.absolutePath(__dirname, "../../adapters/controllers/health/*.controller.??"), 
+      Normalize.absolutePath(__dirname, "../../adapters/controllers/status/*.controller.??"), 
     ),
     Normalize.pathFromOS(
       Normalize.absolutePath(
@@ -1511,7 +1527,7 @@ Server: {
 ```
 
 Note that by default all solution **Controllers** are set to the **NodeTskeleton context** which is the default value **DefaultPath**, but you are free to create as many contexts as your solution needs and load your **Controllers** on the context that you set in **SERVICE_CONTEXT** env.
-The **HealthController** must always words for any context **ContextPaths** or for **NodeTskeleton context**, it cannot change because you need a health check point for each exposed service.
+The **HealthController** must always words for any context **ContextPaths** or for **NodeTskeleton context**, it cannot change because you need a status check point for each exposed service.
 
 For example, the application have the SECURITY context and you can get it as follow:
 
@@ -1602,7 +1618,7 @@ docker-compose up --build
 And latter you can use **Postman** or web browser for use the exposed endpoints of two services based in NodeTskeleton project
 
 > Security service
->> Health
+>> Status
 ```console
 curl --location --request GET 'localhost:8080/security/api/ping'
 ```
@@ -1617,7 +1633,7 @@ curl --location --request POST 'localhost:8080/security/api/v1/auth/login' \
 ```
 
 > Users service
->> Health
+>> Status
 ```console
 curl --location --request GET 'localhost:8080/management/api/ping'
 ```

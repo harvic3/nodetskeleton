@@ -6,5 +6,6 @@ export default {
   INVALID_INPUT: "40",
   UNAUTHORIZED: "41",
   NOT_FOUND: "44",
-  WORKER_ERROR: "51",
+  NOT_IMPLEMENTED: "51",
+  WORKER_ERROR: "91",
 };
