@@ -4,8 +4,16 @@ const {
   addLinesBeforePosition,
   addLinesAfterPosition,
   replaceContentLineInPosition,
+  addContentToBeginning,
 } = require("./fileUtils");
-const { capitalize, toCamelCase, replaceAll, addCharToStar, pathToOS } = require("./stringUtils");
+const {
+  capitalize,
+  toCamelCase,
+  replaceAll,
+  addCharToStar,
+  pathToOS,
+  replaceDoubleSpaces,
+} = require("./stringUtils");
 const { writeFileSync, mkdirSync, readFileSync, existsSync } = require("fs");
 const { helpDescription, templates } = require("./templates");
 const { resolve, join } = require("path");
@@ -30,6 +38,7 @@ const controllerStrategy = {
       "{{EndPoint}}": endPoint,
       "{{HttpMethodLower}}": httpMethodLower,
       "{{ApiNameCapitalized}}": apiNameCapitalized,
+      "{{ApiNameUpper}}": apiName.toUpperCase(),
     });
     const controllerContainerTemplate = replaceAll(templates.controllerContainerTemplate, {
       "{{UseCaseName}}": useCaseName,
@@ -45,6 +54,8 @@ const controllerStrategy = {
     containerPath,
     useCaseName,
     useCaseNameCamel,
+    apiName,
+    actionName,
     endPoint,
     httpMethodLower,
   ) => {
@@ -95,15 +106,7 @@ const controllerStrategy = {
       controllerContainerContent,
       settingsFile.containerExportLineToFind,
     );
-    const useCaseContainerTemplate = replaceAll(templates.addUseCaseContainerTemplate, {
-      "{{UseCaseName}}": useCaseName,
-    });
-    controllerContainerContent = addLinesBeforePosition(
-      controllerContainerContent,
-      containerExportLineNumber,
-      useCaseContainerTemplate,
-    );
-    const exportContainerContent = replaceAll(templates.exportContainerTemplate, {
+    const exportContainerContent = replaceAll(templates.exportContainerTemplate + ", ", {
       "{{UseCaseName}}": useCaseName,
     });
     controllerContainerContent = replaceContentLineInPosition(
@@ -111,6 +114,25 @@ const controllerStrategy = {
       containerExportLineNumber,
       settingsFile.containerExportLineToFind,
       exportContainerContent,
+    );
+    const useCaseContainerTemplate = replaceDoubleSpaces(
+      replaceAll(templates.addUseCaseContainerTemplate, {
+        "{{UseCaseName}}": useCaseName,
+      }),
+    );
+    controllerContainerContent = addLinesBeforePosition(
+      controllerContainerContent,
+      containerExportLineNumber,
+      useCaseContainerTemplate,
+    );
+    const importContainerContent = replaceAll(templates.importContainerTemplate, {
+      "{{UseCaseName}}": useCaseName,
+      "{{ApiName}}": apiName,
+      "{{ActionName}}": actionName,
+    });
+    controllerContainerContent = addContentToBeginning(
+      controllerContainerContent,
+      importContainerContent,
     );
 
     return {
@@ -136,6 +158,13 @@ function addUseCase(args, settingsFile) {
 
   if (!apiName || !useCaseName || !endPoint || !httpMethod) {
     console.warn(warningMessage);
+    return;
+  }
+
+  if (!settingsFile.httpMethodsAllowed.includes(httpMethod.toLowerCase())) {
+    console.warn(
+      `Http method ${httpMethod} is not allowed. Please set in into settings.json and IRouter.ts`,
+    );
     return;
   }
 
@@ -165,6 +194,8 @@ function addUseCase(args, settingsFile) {
         controllerContainerPath,
         useCaseName,
         useCaseNameCamel,
+        apiName,
+        actionName,
         endPoint,
         httpMethodLower,
       )
@@ -182,9 +213,12 @@ function addUseCase(args, settingsFile) {
     "{{UseCaseName}}": useCaseName,
   });
 
-  // const testUseCasePath =resolve(
-  //   `./src/application/modules/${apiName}/useCases/${actionName}/${UseCaseName}UseCase.test.ts`,
-  // );
+  const testUseCasePath = resolve(
+    `./src/application/modules/${apiName}/useCases/${actionName}/${useCaseName}UseCase.test.ts`,
+  );
+  const testUseCaseTemplate = replaceAll(templates.testUseCaseTemplate, {
+    "{{UseCaseName}}": useCaseName,
+  });
 
   try {
     if (!existsController) {
@@ -197,6 +231,7 @@ function addUseCase(args, settingsFile) {
 
     mkdirSync(join(useCasePath, ".."), { recursive: true });
     writeFileSync(useCasePath, useCaseTemplate);
+    writeFileSync(testUseCasePath, testUseCaseTemplate);
 
     console.log(
       `${useCaseName}UseCase and its dependencies were created with:\n apiName=${apiName}\n use-case=${useCaseName}\n endPoint=${endPoint}\n httpMethod=${httpMethod}`,

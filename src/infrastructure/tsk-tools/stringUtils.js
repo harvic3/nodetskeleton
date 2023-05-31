@@ -36,10 +36,17 @@ function pathToOS(path) {
   return type() === "Windows_NT" ? path.replace(/\\/g, "/") : path;
 }
 
+function replaceDoubleSpaces(text) {
+  if (!text) return null;
+
+  return text.replace(/\s\s+/g, " ");
+}
+
 module.exports = {
   capitalize,
   toCamelCase,
   replaceAll,
   addCharToStar,
   pathToOS,
+  replaceDoubleSpaces,
 };

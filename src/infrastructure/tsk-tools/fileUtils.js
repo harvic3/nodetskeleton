@@ -33,7 +33,7 @@ function addLinesBeforePosition(text, position, textContentToAdd) {
   const linesToAdd = textContentToAdd.split("\n");
   if (!linesContent?.length || !linesToAdd.length || position > linesContent.length) return null;
 
-  linesContent.splice(position, 0, ...linesToAdd);
+  linesContent.splice(position - 1, 1, ...linesToAdd);
   return linesContent.join("\n");
 }
 
@@ -56,10 +56,20 @@ function replaceContentLineInPosition(text, position, contentToFind, contentToRe
   return linesContent.join("\n");
 }
 
+function addContentToBeginning(text, contentToReplace) {
+  const linesContent = text.split("\n");
+  const linesToAdd = contentToReplace.split("\n");
+  if (!linesContent?.length || !linesToAdd.length) return null;
+
+  linesContent.unshift(...linesToAdd);
+  return linesContent.join("\n");
+}
+
 module.exports = {
   getLinePositionByContent,
   getLinePositionByContentInverse,
   addLinesBeforePosition,
   addLinesAfterPosition,
   replaceContentLineInPosition,
+  addContentToBeginning,
 };

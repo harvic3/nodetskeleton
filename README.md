@@ -12,6 +12,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 
 ## Table of contents
 
+  1. [cli function 📟](#create-your-first-use-case)
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
@@ -858,6 +859,21 @@ And then, continue with the step **installation**.
 **[⬆ back to the past](#table-of-contents)**
 
 ## Create your first use case
+
+> Now CLI function to create use case templates and his dependencies was added, so you can try something like...
+
+With the following command you will create a use case named CreatedOrderUseCase and his controller and containerController. Try it!!
+
+```console
+npm run tsk 'add-use-case api-name=orders use-case=CreateOrder endpoint=/v1/orders/ http-method=POST'
+```
+
+So, now you could add a new use case to the Orders API with the next command. Try it!!
+
+```console
+npm run tsk 'add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orders/ http-method=PUT'
+```
+It's very easy to create repetitive code, right. But if you must know how it works, so continue reading...
 
 > Here is where the excitement of development begins, so let's say we need to create a use case to get a user, for example, then what we must do is go to our solution, go to the path **/src/application/modules/** and there look for the module to which our use case belongs, in this case, the user module.
 
