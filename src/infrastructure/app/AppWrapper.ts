@@ -1,6 +1,6 @@
 import infraContainer from "../container";
 infraContainer.load();
-import healthController from "../../adapters/controllers/health/Health.controller";
+import statusController from "../../adapters/controllers/status/Status.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
@@ -65,7 +65,7 @@ export default class AppWrapper {
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
       });
-    this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
+    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
     this.loadErrorHandler();
   }
 
@@ -90,7 +90,7 @@ export default class AppWrapper {
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);
     }
-    this.app.use(TypeParser.cast<RequestHandler>(healthController.resourceNotFound));
+    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
     this.loadErrorHandler();
 
     return Promise.resolve();
@@ -128,11 +128,11 @@ export default class AppWrapper {
       this.loadControllersDynamically()
         .then(() => {
           this.messagingCore?.initialize();
-          resolve();
+          return resolve();
         })
         .catch((error) => {
           this.messagingCore?.close();
-          reject(error);
+          return reject(error);
         });
     });
   }
