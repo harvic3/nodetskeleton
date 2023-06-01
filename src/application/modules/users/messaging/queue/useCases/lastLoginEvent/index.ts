@@ -23,7 +23,7 @@ export class ManageLastLoginEventUseCase extends BaseUseCase<IEventQueue> {
   ): Promise<IResult> {
     this.setLocale(locale);
     const result = new Result();
-    while (BooleanUtil.YES) {
+    while (true) {
       const message = await eventQueue.pop<EventMessage<LastLoginDto>>(this.channelName);
       if (!message) break;
       console.log(ChannelNameEnum.QUEUE_SECURITY, message);

@@ -250,8 +250,8 @@ describe("when try to register user", () => {
     userRepositoryMock.getByEmail.mockResolvedValueOnce(null);
     userRepositoryMock.register.mockResolvedValueOnce(createdUser);
     workerProviderMock.executeTask.mockResolvedValueOnce("encrypted-password");
-    evenQueueMock.push.mockResolvedValueOnce(BooleanUtil.SUCCESS);
-    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    evenQueueMock.push.mockResolvedValueOnce(true);
+    eventPublisherMock.publish.mockResolvedValueOnce(true);
 
     // Act
     const result = await registerUserUseCase().execute(

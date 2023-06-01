@@ -1,7 +1,6 @@
 import { IEventListener } from "../../../../application/shared/messaging/bus/IEventListener";
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { Listener } from "../../../../infrastructure/messaging/MessageBus";
-import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import messageBusHandler from "../../handlers/bus/MessageBus.handler";
 
 export class EventListener implements IEventListener {
@@ -25,7 +24,7 @@ export class EventListener implements IEventListener {
   }
 
   online(): boolean {
-    return this.#listener?.connected || BooleanUtil.NO;
+    return this.#listener?.connected || false;
   }
 
   initialize(client: Listener): void {
@@ -38,7 +37,7 @@ export class EventListener implements IEventListener {
       console.log(`Listener ${this.serviceName} CONNECTED`);
     });
 
-    this.#listener?.on("error", (error) => {
+    this.#listener?.on("error", (error: any) => {
       console.error(
         `Listener ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,

@@ -82,7 +82,7 @@ export class LoginUseCase extends BaseUseCase<ILoginRequest> {
     credentialsDto: CredentialsDto,
     args: ILoginRequest,
   ): boolean {
-    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return BooleanUtil.NO;
+    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return false;
 
     const validations: Record<string, unknown> = {};
     validations[this.appWords.get(this.appWords.keys.IP_ADDRESS)] = args?.ipAddress;

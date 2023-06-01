@@ -69,9 +69,9 @@ export class MessageQueueHandler implements IMessageQueueHandler {
   private validateRequest(args: QueueArgs): boolean {
     if (!args.queueName && !args.topicName) {
       console.error(MessageQueueHandler.name, "Invalid queue request");
-      return BooleanUtil.NO;
+      return false;
     }
-    return BooleanUtil.YES;
+    return true;
   }
 
   private isChannelReading(channel: ChannelNameEnum): boolean {
