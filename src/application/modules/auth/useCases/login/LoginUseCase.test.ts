@@ -1,7 +1,6 @@
 import { ICacheProvider } from "../../../../shared/cache/providerContracts/ICache.provider";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
-import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
@@ -153,10 +152,10 @@ describe("when try to login", () => {
     const user = new UserMock().withEmail().withFirstName().withGender().build();
     authProviderMock.login.mockResolvedValueOnce(user);
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
-    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
-    eventQueueMock.push.mockResolvedValueOnce(BooleanUtil.SUCCESS);
-    eventPublisherMock.publish.mockResolvedValueOnce(BooleanUtil.SUCCESS);
-    authCacheProviderMock.set.mockResolvedValueOnce(BooleanUtil.SUCCESS);
+    eventPublisherMock.publish.mockResolvedValueOnce(true);
+    eventQueueMock.push.mockResolvedValueOnce(true);
+    eventPublisherMock.publish.mockResolvedValueOnce(true);
+    authCacheProviderMock.set.mockResolvedValueOnce(true);
 
     // Act
     const result = await loginUseCase().execute(

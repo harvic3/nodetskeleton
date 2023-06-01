@@ -1,4 +1,3 @@
-import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
 import { ClientModeEnum } from "../../messaging/ClientMode.enum";
 import { RedisClient, createClient } from "redis";
 
@@ -13,8 +12,8 @@ export type RedisConnectionOptions = {
 };
 
 export abstract class RedisConnection {
-  initialized = BooleanUtil.NO;
-  connected = BooleanUtil.NO;
+  initialized = false;
+  connected = false;
   subscriberListener: RedisClient | undefined;
   publisher: RedisClient | undefined;
 
@@ -41,7 +40,7 @@ export abstract class RedisConnection {
         this.publisher = createClient(this.connectionOptions);
       }
 
-      this.initialized = BooleanUtil.YES;
+      this.initialized = true;
     } catch (error) {
       console.error(
         `Redis ${this.serviceName} client initialization error: ${JSON.stringify(error)}`,

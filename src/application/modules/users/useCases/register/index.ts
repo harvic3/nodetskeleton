@@ -4,9 +4,9 @@ import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUse
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { IEventPublisher } from "../../../../shared/messaging/bus/IEventPublisher";
 import { ChannelNameEnum } from "../../../../shared/messaging/ChannelName.enum";
-import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
 import { IEventQueue } from "../../../../shared/messaging/queue/IEventQueue";
+import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { TopicNameEnum } from "../../../../shared/messaging/TopicName.enum";
 import { IQueueBus } from "../../../../shared/messaging/queueBus/IQueueBus";
 import { IUSerRepository } from "../../providerContracts/IUser.repository";

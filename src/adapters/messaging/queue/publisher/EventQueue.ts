@@ -2,7 +2,6 @@ import { ChannelNameEnum } from "../../../../application/shared/messaging/Channe
 import { IEventQueue } from "../../../../application/shared/messaging/queue/IEventQueue";
 import { EventMessage } from "../../../../application/shared/messaging/EventMessage";
 import { Publisher } from "../../../../infrastructure/messaging/MessageBus";
-import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 
 export class EventQueue implements IEventQueue {
   #publisher: Publisher | undefined;
@@ -10,14 +9,14 @@ export class EventQueue implements IEventQueue {
   constructor(private readonly serviceName: string) {}
 
   async push<T>(message: EventMessage<T>): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
+    if (!this.online()) return Promise.resolve(false);
 
     return new Promise((resolve) => {
-      this.#publisher?.rpush(message.channel, message.toJSON(), (error) => {
+      this.#publisher?.rpush(message.channel, message.toJSON(), (error: any) => {
         if (error) {
-          return resolve(BooleanUtil.NO);
+          return resolve(false);
         }
-        return resolve(BooleanUtil.YES);
+        return resolve(true);
       });
     });
   }
@@ -26,7 +25,7 @@ export class EventQueue implements IEventQueue {
     if (!this.online()) return Promise.resolve(null);
 
     return new Promise((resolve) => {
-      this.#publisher?.lpop(queueName, (error, data) => {
+      this.#publisher?.lpop(queueName, (error: any, data: string) => {
         if (error) {
           return resolve(null);
         }
@@ -36,7 +35,7 @@ export class EventQueue implements IEventQueue {
   }
 
   online(): boolean {
-    return this.#publisher?.connected || BooleanUtil.NO;
+    return this.#publisher?.connected || false;
   }
 
   initialize(client: Publisher): void {
@@ -48,7 +47,7 @@ export class EventQueue implements IEventQueue {
       console.log(`Publisher ${this.serviceName} CONNECTED`);
     });
 
-    this.#publisher?.on("error", (error) => {
+    this.#publisher?.on("error", (error: any) => {
       console.error(
         `Publisher ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,

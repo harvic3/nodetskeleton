@@ -8,7 +8,7 @@ import { CacheProvider } from "../../../providers/cache/Cache.provider";
 import { EventClientEnum } from "../../../messaging/bus/container";
 import kernel from "../../../shared/kernel";
 
-const CONTEXT = `AuthControllerContainer`;
+const CONTEXT = "AuthControllerContainer";
 
 kernel.addScoped(
   LoginUseCase.name,

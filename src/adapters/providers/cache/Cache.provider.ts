@@ -1,7 +1,6 @@
 import { ICacheProvider } from "../../../application/shared/cache/providerContracts/ICache.provider";
 import { CacheMessage } from "../../../application/shared/cache/CacheMessage";
 import { Publisher } from "../../../infrastructure/messaging/MessageBus";
-import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
 import { ICacheClient } from "./ICacheClient";
 
 export class CacheProvider implements ICacheProvider {
@@ -11,7 +10,7 @@ export class CacheProvider implements ICacheProvider {
 
   get<T>(key: string): Promise<T | null> {
     return new Promise((resolve, reject) => {
-      return this.#publisher?.get(key, (error, data) => {
+      return this.#publisher?.get(key, (error: any, data: string | null) => {
         if (error) {
           console.error(`Error while getting key ${key} ${JSON.stringify(error)}`);
           return reject(null);
@@ -23,38 +22,38 @@ export class CacheProvider implements ICacheProvider {
 
   set<T>(key: string, data: T): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      return this.#publisher?.set(key, CacheMessage.toJSON<T>(data), (error) => {
+      return this.#publisher?.set(key, CacheMessage.toJSON<T>(data), (error: any) => {
         if (error) {
           console.error(`Error while setting key ${key} ${JSON.stringify(error)}`);
-          return reject(BooleanUtil.FAILED);
+          return reject(false);
         }
-        return resolve(BooleanUtil.SUCCESS);
+        return resolve(true);
       });
     });
   }
 
   delete(key: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      return this.#publisher?.del(key, (error) => {
+      return this.#publisher?.del(key, (error: any) => {
         if (error) {
           console.error(`Error while deleting key ${key} ${JSON.stringify(error)}`);
-          return reject(BooleanUtil.FAILED);
+          return reject(false);
         }
-        return resolve(BooleanUtil.SUCCESS);
+        return resolve(true);
       });
     });
   }
 
   expireIn(key: string, timeInSeconds: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      return this.#publisher?.expire(key, timeInSeconds, (error) => {
+      return this.#publisher?.expire(key, timeInSeconds, (error: any) => {
         if (error) {
           console.error(
             `Error while expiring key ${key} in ${timeInSeconds} seconds ${JSON.stringify(error)}`,
           );
-          return reject(BooleanUtil.FAILED);
+          return reject(false);
         }
-        return resolve(BooleanUtil.SUCCESS);
+        return resolve(true);
       });
     });
   }
@@ -68,7 +67,7 @@ export class CacheProvider implements ICacheProvider {
       console.log(`Publisher ${this.cacheClient.serviceName} CONNECTED`);
     });
 
-    this.#publisher?.on("error", (error) => {
+    this.#publisher?.on("error", (error: any) => {
       console.error(
         `Publisher ${this.cacheClient.serviceName} service error ${new Date().toISOString()}:`,
         error,

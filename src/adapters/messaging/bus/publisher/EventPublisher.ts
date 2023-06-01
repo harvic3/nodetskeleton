@@ -9,21 +9,21 @@ export class EventPublisher implements IEventPublisher {
   constructor(private readonly serviceName: string) {}
 
   async publish<T>(message: EventMessage<T>): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
+    if (!this.online()) return Promise.resolve(false);
 
     return Promise.resolve(this.#publisher?.publish(message.channel, message.toJSON()))
-      .then(() => BooleanUtil.SUCCESS)
+      .then(() => true)
       .catch((error) => {
         console.error(
           `Error in ${this.serviceName} service publisher ${new Date().toISOString()}:`,
           error,
         );
-        return BooleanUtil.FAILED;
+        return false;
       });
   }
 
   online(): boolean {
-    return this.#publisher?.connected || BooleanUtil.NO;
+    return this.#publisher?.connected || false;
   }
 
   initialize(client: Publisher): void {
@@ -38,7 +38,7 @@ export class EventPublisher implements IEventPublisher {
       console.log(`Publisher ${this.serviceName} CONNECTED`);
     });
 
-    this.#publisher?.on("error", (error) => {
+    this.#publisher?.on("error", (error: any) => {
       console.error(
         `Publisher ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,

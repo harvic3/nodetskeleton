@@ -1,6 +1,5 @@
 import { ChannelNameEnum } from "../../../../application/shared/messaging/ChannelName.enum";
 import { Subscriber } from "../../../../infrastructure/messaging/MessageBus";
-import { BooleanUtil } from "../../../../domain/shared/utils/BooleanUtil";
 import { NumberUtil } from "../../../../domain/shared/utils/NumberUtil";
 import {
   IEventSubscriber,
@@ -17,7 +16,7 @@ export class EventSubscriber implements IEventSubscriber {
   async subscribe(channel: ChannelNameEnum): Promise<boolean> {
     this.addChannel(channel);
 
-    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
+    if (!this.online()) return Promise.resolve(false);
 
     return Promise.resolve(this.#subscriber?.subscribe(channel))
       .then(() => {
@@ -25,16 +24,16 @@ export class EventSubscriber implements IEventSubscriber {
           `${this.serviceName} subscribed to ${channel} channel at ${new Date().toISOString()}.`,
         );
         this.setSubscribed(channel);
-        return BooleanUtil.SUCCESS;
+        return true;
       })
       .catch((error) => {
         console.error(`${this.serviceName} subscribe error: `, error);
-        return BooleanUtil.FAILED;
+        return false;
       });
   }
 
   async unsubscribe(channel: ChannelNameEnum): Promise<boolean> {
-    if (!this.online()) return Promise.resolve(BooleanUtil.NO);
+    if (!this.online()) return Promise.resolve(false);
 
     return Promise.resolve(this.#subscriber?.unsubscribe(channel))
       .then(() => {
@@ -42,16 +41,16 @@ export class EventSubscriber implements IEventSubscriber {
           `${this.serviceName} unsubscribed to ${channel} channel at ${new Date().toISOString()}.`,
         );
         this.removeChannel(channel);
-        return BooleanUtil.SUCCESS;
+        return true;
       })
       .catch((error) => {
         console.error(`${this.serviceName} unsubscribe error: `, error);
-        return BooleanUtil.FAILED;
+        return false;
       });
   }
 
   online(): boolean {
-    return this.#subscriber?.connected || BooleanUtil.NO;
+    return this.#subscriber?.connected || false;
   }
 
   initialize(client: Subscriber): void {
@@ -64,7 +63,7 @@ export class EventSubscriber implements IEventSubscriber {
       this.initializeSubscriptions();
     });
 
-    this.#subscriber?.on("error", (error) => {
+    this.#subscriber?.on("error", (error: any) => {
       console.error(
         `Subscriber ${this.serviceName} service error ${new Date().toISOString()}:`,
         error,
@@ -76,7 +75,7 @@ export class EventSubscriber implements IEventSubscriber {
     const exists = this.subscribedChannels.some((subscription) => subscription.channel === channel);
     if (exists) return;
 
-    this.subscribedChannels.push({ channel, subscribed: BooleanUtil.NO });
+    this.subscribedChannels.push({ channel, subscribed: false });
   }
 
   private removeChannel(channel: ChannelNameEnum): void {
@@ -95,7 +94,7 @@ export class EventSubscriber implements IEventSubscriber {
     );
     if (!subscription) return;
 
-    subscription.subscribed = BooleanUtil.YES;
+    subscription.subscribed = true;
   }
 
   private initializeSubscriptions(): void {
