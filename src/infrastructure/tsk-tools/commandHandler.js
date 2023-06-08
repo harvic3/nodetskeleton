@@ -1,25 +1,35 @@
 const {
-  getLinePositionByContent,
-  getLinePositionByContentInverse,
-  addLinesBeforePosition,
-  addLinesAfterPosition,
-  replaceContentLineInPosition,
   addContentToBeginning,
+  addLinesAfterPosition,
+  addLinesBeforePosition,
+  getLinePositionByContent,
+  replaceContentLineInPosition,
+  getLinePositionByContentInverse,
 } = require("./fileUtils");
 const {
-  capitalize,
-  toCamelCase,
-  replaceAll,
-  addCharToStar,
   pathToOS,
+  capitalize,
+  replaceAll,
+  toCamelCase,
+  addCharToStar,
   replaceDoubleSpaces,
 } = require("./stringUtils");
+const {
+  getArgValue,
+  convertArgsToKeyValueArray,
+  availableAddUseCaseCommandArgs,
+} = require("./argsUtils");
 const { writeFileSync, mkdirSync, readFileSync, existsSync } = require("fs");
 const { helpDescription, templates } = require("./templates");
 const { resolve, join } = require("path");
+
 const EQUAL_CHAR = "=",
   SLASH_CHAR = "/",
   SPACE_CHAR = " ",
+  COMMA_SPACE = ", ",
+  SPACE_COMMA = " ,",
+  COMMA_CHAR = ",",
+  EMPTY_CHAR = "",
   HELP_COMMAND = "help";
 
 const controllerStrategy = {
@@ -106,14 +116,14 @@ const controllerStrategy = {
       controllerContainerContent,
       settingsFile.containerExportLineToFind,
     );
-    const exportContainerContent = replaceAll(templates.exportContainerTemplate + ", ", {
+    const exportContainerContent = replaceAll(templates.exportContainerTemplate + COMMA_SPACE, {
       "{{UseCaseName}}": useCaseName,
     });
     controllerContainerContent = replaceContentLineInPosition(
       controllerContainerContent,
       containerExportLineNumber,
       settingsFile.containerExportLineToFind,
-      exportContainerContent,
+      exportContainerContent.replaceAll(SPACE_COMMA, COMMA_CHAR),
     );
     const useCaseContainerTemplate = replaceDoubleSpaces(
       replaceAll(templates.addUseCaseContainerTemplate, {
@@ -143,23 +153,55 @@ const controllerStrategy = {
 };
 
 function addUseCase(args, settingsFile) {
-  const warningMessage =
-    "Missing parameters. Please provide api-name, use-case, endpoint and http-method";
-  if (args.length !== 4) {
-    console.warn(warningMessage);
+  const API_NAME_ARG = "api-name";
+  const USE_CASE_ARG = "use-case";
+  const ENDPOINT_ARG = "endpoint";
+  const HTTP_METHOD_ARG = "http-method";
+
+  const warningMessage = "Missing parameters. Please provide {{MissingArgs}} or some alias.";
+
+  const keyValueArgsArray = convertArgsToKeyValueArray(args, EQUAL_CHAR);
+  if (!keyValueArgsArray.length) {
+    console.warn(
+      warningMessage.replace(
+        "{{MissingArgs}}",
+        `${API_NAME_ARG}, ${USE_CASE_ARG}, ${ENDPOINT_ARG} and ${HTTP_METHOD_ARG}`,
+      ),
+    );
     return;
   }
 
-  const apiName = args[0].split(EQUAL_CHAR)[1];
-  const apiNameCapitalized = capitalize(apiName);
-  const useCaseName = capitalize(args[1].split(EQUAL_CHAR)[1]);
-  const endPoint = addCharToStar(args[2].split(EQUAL_CHAR)[1].toLowerCase(), SLASH_CHAR);
-  const httpMethod = args[3].split(EQUAL_CHAR)[1].toUpperCase();
+  const apiName = getArgValue(API_NAME_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const useCaseName = getArgValue(USE_CASE_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const endPoint = addCharToStar(
+    getArgValue(ENDPOINT_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs)?.toLowerCase(),
+    SLASH_CHAR,
+  );
+  const httpMethod = getArgValue(
+    HTTP_METHOD_ARG,
+    keyValueArgsArray,
+    availableAddUseCaseCommandArgs,
+  )?.toUpperCase();
 
   if (!apiName || !useCaseName || !endPoint || !httpMethod) {
-    console.warn(warningMessage);
+    console.warn(
+      warningMessage.replace(
+        "{{MissingArgs}}",
+        [
+          { key: API_NAME_ARG, value: apiName },
+          { key: USE_CASE_ARG, value: useCaseName },
+          { key: ENDPOINT_ARG, value: endPoint },
+          { key: HTTP_METHOD_ARG, value: httpMethod },
+        ]
+          .filter((arg) => (!arg.value ? arg.key : EMPTY_CHAR))
+          .map((arg) => arg.key)
+          .join(COMMA_SPACE),
+      ),
+    );
     return;
   }
+
+  const apiNameCapitalized = capitalize(apiName);
 
   if (!settingsFile.httpMethodsAllowed.includes(httpMethod.toLowerCase())) {
     console.warn(
@@ -241,10 +283,33 @@ function addUseCase(args, settingsFile) {
   }
 }
 
+function listAliasesForArg(args) {
+  const warningMessage = "Missing argument name. Please provide arg=<argName>";
+  if (!args?.length) console.warn(warningMessage);
+
+  const argName = args[0].split(EQUAL_CHAR)[1];
+  if (!argName) {
+    console.warn(warningMessage);
+    return;
+  }
+  const elegibleArg = availableAddUseCaseCommandArgs.find(
+    (available) => available.argName === argName.toLowerCase(),
+  );
+  if (!elegibleArg) {
+    console.warn(`Argument ${argName} not found`);
+  } else {
+    console.log(
+      `Argument ${argName} has the following aliases:`,
+      elegibleArg.aliases.join(SPACE_CHAR),
+    );
+  }
+}
+
 const executeCommand = (args) => {
-  if (!args?.length) args = [HELP_COMMAND];
+  if (!args?.length) args = HELP_COMMAND;
   args = args.split(SPACE_CHAR).filter((param) => !!param);
   if (args[0] !== HELP_COMMAND) console.log("Executing command:\n", args.join(SPACE_CHAR));
+
   const command = args.shift().toLowerCase();
 
   switch (command) {
@@ -259,6 +324,9 @@ const executeCommand = (args) => {
       } catch (error) {
         console.error("Error reading settings file", error);
       }
+      break;
+    case "alias":
+      listAliasesForArg(args);
       break;
     default:
       console.warn("Command not found, try with help command");
