@@ -29,6 +29,7 @@ const EQUAL_CHAR = "=",
   COMMA_SPACE = ", ",
   SPACE_COMMA = " ,",
   COMMA_CHAR = ",",
+  EMPTY_CHAR = "",
   HELP_COMMAND = "help";
 
 const controllerStrategy = {
@@ -152,32 +153,55 @@ const controllerStrategy = {
 };
 
 function addUseCase(args, settingsFile) {
-  const warningMessage =
-    "Missing parameters. Please provide api-name, use-case, endpoint and http-method";
+  const API_NAME_ARG = "api-name";
+  const USE_CASE_ARG = "use-case";
+  const ENDPOINT_ARG = "endpoint";
+  const HTTP_METHOD_ARG = "http-method";
+
+  const warningMessage = "Missing parameters. Please provide {{MissingArgs}} or some alias.";
 
   const keyValueArgsArray = convertArgsToKeyValueArray(args, EQUAL_CHAR);
   if (!keyValueArgsArray.length) {
-    console.warn(warningMessage);
+    console.warn(
+      warningMessage.replace(
+        "{{MissingArgs}}",
+        `${API_NAME_ARG}, ${USE_CASE_ARG}, ${ENDPOINT_ARG} and ${HTTP_METHOD_ARG}`,
+      ),
+    );
     return;
   }
 
-  const apiName = getArgValue("api-name", keyValueArgsArray, availableAddUseCaseCommandArgs);
-  const useCaseName = getArgValue("use-case", keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const apiName = getArgValue(API_NAME_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const useCaseName = getArgValue(USE_CASE_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs);
   const endPoint = addCharToStar(
-    getArgValue("endpoint", keyValueArgsArray, availableAddUseCaseCommandArgs).toLowerCase(),
+    getArgValue(ENDPOINT_ARG, keyValueArgsArray, availableAddUseCaseCommandArgs)?.toLowerCase(),
     SLASH_CHAR,
   );
   const httpMethod = getArgValue(
-    "http-method",
+    HTTP_METHOD_ARG,
     keyValueArgsArray,
     availableAddUseCaseCommandArgs,
-  ).toUpperCase();
-  const apiNameCapitalized = capitalize(apiName);
+  )?.toUpperCase();
 
   if (!apiName || !useCaseName || !endPoint || !httpMethod) {
-    console.warn(warningMessage);
+    console.warn(
+      warningMessage.replace(
+        "{{MissingArgs}}",
+        [
+          { key: API_NAME_ARG, value: apiName },
+          { key: USE_CASE_ARG, value: useCaseName },
+          { key: ENDPOINT_ARG, value: endPoint },
+          { key: HTTP_METHOD_ARG, value: httpMethod },
+        ]
+          .filter((arg) => (!arg.value ? arg.key : EMPTY_CHAR))
+          .map((arg) => arg.key)
+          .join(COMMA_SPACE),
+      ),
+    );
     return;
   }
+
+  const apiNameCapitalized = capitalize(apiName);
 
   if (!settingsFile.httpMethodsAllowed.includes(httpMethod.toLowerCase())) {
     console.warn(
