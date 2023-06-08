@@ -1,8 +1,11 @@
 const helpDescription = `Serverless TSK available commands:
-  - help
-  > The next command will create a new function into the project
   - add-use-case 'api-name=<apiName> use-case=<useCaseName> endpoint=<endpoint> http-method=<METHOD>'
-  > Example: npm run tsk 'add-use-case api-name=auth use-case=Logout endpoint=/v1/auth/logout http-method=GET'
+    > The previous command will create a new UseCase into the project. Arguments can be sent in any order.
+    > Example: npm run tsk 'add-use-case api-name=auth use-case=Logout endpoint=/v1/auth/logout http-method=GET'
+
+  - alias 'arg=<argName>'
+    > The previous command will show available aliases for the sended argument name
+    > Example: npm run tsk 'alias arg=api-name'
 `;
 
 const importControllerTemplate = "import container, { {{UseCaseName}}UseCase, ";
@@ -12,7 +15,7 @@ const functionControllerTemplate = `
     res: IResponse,
     next: INextFunction,
   ): Promise<void> => {
-    // Create your request data here
+    // Create your request data from body, query or params here
     const body = req.body;
     return this.handleResultData(
       res,
@@ -70,7 +73,8 @@ const useCaseTemplate = `import { BaseUseCase, IResult, Result } from "../../../
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
-//TODO: Change this input generic type BaseUseCase<unknown>
+
+//TODO: Change this input generic type BaseUseCase<unknown> according input of your use case
 export class {{UseCaseName}}UseCase extends BaseUseCase<unknown> {
   constructor(
     readonly logProvider: ILogProvider,

@@ -1,25 +1,34 @@
 const {
-  getLinePositionByContent,
-  getLinePositionByContentInverse,
-  addLinesBeforePosition,
-  addLinesAfterPosition,
-  replaceContentLineInPosition,
   addContentToBeginning,
+  addLinesAfterPosition,
+  addLinesBeforePosition,
+  getLinePositionByContent,
+  replaceContentLineInPosition,
+  getLinePositionByContentInverse,
 } = require("./fileUtils");
 const {
-  capitalize,
-  toCamelCase,
-  replaceAll,
-  addCharToStar,
   pathToOS,
+  capitalize,
+  replaceAll,
+  toCamelCase,
+  addCharToStar,
   replaceDoubleSpaces,
 } = require("./stringUtils");
+const {
+  getArgValue,
+  convertArgsToKeyValueArray,
+  availableAddUseCaseCommandArgs,
+} = require("./argsUtils");
 const { writeFileSync, mkdirSync, readFileSync, existsSync } = require("fs");
 const { helpDescription, templates } = require("./templates");
 const { resolve, join } = require("path");
+
 const EQUAL_CHAR = "=",
   SLASH_CHAR = "/",
   SPACE_CHAR = " ",
+  COMMA_SPACE = ", ",
+  SPACE_COMMA = " ,",
+  COMMA_CHAR = ",",
   HELP_COMMAND = "help";
 
 const controllerStrategy = {
@@ -106,14 +115,14 @@ const controllerStrategy = {
       controllerContainerContent,
       settingsFile.containerExportLineToFind,
     );
-    const exportContainerContent = replaceAll(templates.exportContainerTemplate + ", ", {
+    const exportContainerContent = replaceAll(templates.exportContainerTemplate + COMMA_SPACE, {
       "{{UseCaseName}}": useCaseName,
     });
     controllerContainerContent = replaceContentLineInPosition(
       controllerContainerContent,
       containerExportLineNumber,
       settingsFile.containerExportLineToFind,
-      exportContainerContent,
+      exportContainerContent.replaceAll(SPACE_COMMA, COMMA_CHAR),
     );
     const useCaseContainerTemplate = replaceDoubleSpaces(
       replaceAll(templates.addUseCaseContainerTemplate, {
@@ -145,16 +154,25 @@ const controllerStrategy = {
 function addUseCase(args, settingsFile) {
   const warningMessage =
     "Missing parameters. Please provide api-name, use-case, endpoint and http-method";
-  if (args.length !== 4) {
+
+  const keyValueArgsArray = convertArgsToKeyValueArray(args, EQUAL_CHAR);
+  if (!keyValueArgsArray.length) {
     console.warn(warningMessage);
     return;
   }
 
-  const apiName = args[0].split(EQUAL_CHAR)[1];
+  const apiName = getArgValue("api-name", keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const useCaseName = getArgValue("use-case", keyValueArgsArray, availableAddUseCaseCommandArgs);
+  const endPoint = addCharToStar(
+    getArgValue("endpoint", keyValueArgsArray, availableAddUseCaseCommandArgs).toLowerCase(),
+    SLASH_CHAR,
+  );
+  const httpMethod = getArgValue(
+    "http-method",
+    keyValueArgsArray,
+    availableAddUseCaseCommandArgs,
+  ).toUpperCase();
   const apiNameCapitalized = capitalize(apiName);
-  const useCaseName = capitalize(args[1].split(EQUAL_CHAR)[1]);
-  const endPoint = addCharToStar(args[2].split(EQUAL_CHAR)[1].toLowerCase(), SLASH_CHAR);
-  const httpMethod = args[3].split(EQUAL_CHAR)[1].toUpperCase();
 
   if (!apiName || !useCaseName || !endPoint || !httpMethod) {
     console.warn(warningMessage);
@@ -241,10 +259,33 @@ function addUseCase(args, settingsFile) {
   }
 }
 
+function listAliasesForArg(args) {
+  const warningMessage = "Missing argument name. Please provide arg=<argName>";
+  if (!args?.length) console.warn(warningMessage);
+
+  const argName = args[0].split(EQUAL_CHAR)[1];
+  if (!argName) {
+    console.warn(warningMessage);
+    return;
+  }
+  const elegibleArg = availableAddUseCaseCommandArgs.find(
+    (available) => available.argName === argName.toLowerCase(),
+  );
+  if (!elegibleArg) {
+    console.warn(`Argument ${argName} not found`);
+  } else {
+    console.log(
+      `Argument ${argName} has the following aliases:`,
+      elegibleArg.aliases.join(SPACE_CHAR),
+    );
+  }
+}
+
 const executeCommand = (args) => {
-  if (!args?.length) args = [HELP_COMMAND];
+  if (!args?.length) args = HELP_COMMAND;
   args = args.split(SPACE_CHAR).filter((param) => !!param);
   if (args[0] !== HELP_COMMAND) console.log("Executing command:\n", args.join(SPACE_CHAR));
+
   const command = args.shift().toLowerCase();
 
   switch (command) {
@@ -259,6 +300,9 @@ const executeCommand = (args) => {
       } catch (error) {
         console.error("Error reading settings file", error);
       }
+      break;
+    case "alias":
+      listAliasesForArg(args);
       break;
     default:
       console.warn("Command not found, try with help command");
