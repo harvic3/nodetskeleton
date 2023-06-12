@@ -875,6 +875,12 @@ npm run tsk 'add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orde
 ```
 It's very easy to create repetitive code, right. But if you must know how it works, so continue reading...
 
+> It's exciting, now command to create use case supports any order and aliases for their args, for example:
+	
+```console
+npm run tsk 'add-use-case u=Logout e=/v1/auth/logout m=get a=auth'
+```
+
 > Here is where the excitement of development begins, so let's say we need to create a use case to get a user, for example, then what we must do is go to our solution, go to the path **/src/application/modules/** and there look for the module to which our use case belongs, in this case, the user module.
 
 Then once we are in our module, we go to the **useCases directory** and there we create the directory for our use case and in this case we create a **new directory called get**, and inside this we create an index file as follows:
