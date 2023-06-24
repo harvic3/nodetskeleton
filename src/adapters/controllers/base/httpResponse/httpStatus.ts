@@ -1,4 +1,5 @@
 export default {
+  CONTINUE: 100,
   SUCCESS: 200,
   CREATED: 201,
   NOT_CONTENT: 204,

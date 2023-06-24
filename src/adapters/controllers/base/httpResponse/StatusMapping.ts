@@ -2,7 +2,7 @@ import applicationStatus from "../../../../application/shared/status/application
 import httpStatus from "./httpStatus";
 
 const statusMapping: Record<string, number> & { default: number } = {
-  default: httpStatus.VARIANT_ALSO_NEGOTIATES,
+  default: httpStatus.CONTINUE,
 };
 
 statusMapping[applicationStatus.SUCCESS] = httpStatus.SUCCESS;

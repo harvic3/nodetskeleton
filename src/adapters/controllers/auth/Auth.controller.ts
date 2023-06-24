@@ -1,6 +1,5 @@
 import { IServiceContainer } from "../../shared/kernel";
 import container, { LoginUseCase } from "./container";
-
 import BaseController, {
   IRequest,
   IResponse,
@@ -8,6 +7,10 @@ import BaseController, {
   EntryPointHandler,
   IRouter,
   ServiceContext,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  applicationStatus,
+  httpStatus,
 } from "../base/Base.controller";
 
 export class AuthController extends BaseController {
@@ -36,8 +39,19 @@ export class AuthController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/auth/login", this.login);
+    this.setRouter(router);
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/auth/login",
+      handlers: [this.login],
+      produces: [
+        {
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: httpStatus.SUCCESS,
+        },
+      ],
+    });
   }
 }
 

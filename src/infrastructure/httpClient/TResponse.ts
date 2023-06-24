@@ -1,6 +1,6 @@
 import { Headers } from "node-fetch";
 
-type Response<T> = T | string | Buffer | ArrayBuffer | PromiseLike<T> | unknown;
+type Response<T> = T | string | Buffer | ArrayBuffer | PromiseLike<T>;
 
 export default class TResponse<R, E> {
   response: Response<R | E> | undefined;

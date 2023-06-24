@@ -1,22 +1,38 @@
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
+import applicationStatus from "../../../application/shared/status/applicationStatus";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
+import { HttpContentTypeEnum } from "./context/HttpContentType.enum";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ServiceContext } from "../../shared/ServiceContext";
+import { HttpMethodEnum } from "./context/HttpMethod.enum";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
+import statusMapping from "./httpResponse/StatusMapping";
 import { LogProvider } from "../../providers/container";
 import { INextFunction } from "./context/INextFunction";
 import { IServiceContainer } from "../../shared/kernel";
+import httpStatus from "./httpResponse/httpStatus";
 import { IResponse } from "./context/IResponse";
 import { IRequest } from "./context/IRequest";
 import { IRouter } from "./context/IRouter";
 
 type EntryPointHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
 
-export { EntryPointHandler, IRequest, IResponse, INextFunction, IRouter, ServiceContext };
+export {
+  EntryPointHandler,
+  IRequest,
+  IResponse,
+  INextFunction,
+  IRouter,
+  ServiceContext,
+  HttpMethodEnum,
+  HttpContentTypeEnum,
+  applicationStatus,
+  httpStatus,
+};
 
 export default abstract class BaseController {
   router?: IRouter;
@@ -35,6 +51,10 @@ export default abstract class BaseController {
       UseCaseTraceRepository.name,
     );
     this.#logProvider = this.servicesContainer.get<LogProvider>(this.CONTEXT, LogProvider.name);
+  }
+
+  setRouter(router: IRouter): void {
+    this.router = router;
   }
 
   private async getResult(res: IResponse, result: IResult): Promise<void> {
@@ -72,6 +92,29 @@ export default abstract class BaseController {
         );
       });
     }
+  }
+
+  private setProducesCode(applicationStatus: string, httpStatus: number): void {
+    if (!statusMapping[applicationStatus]) {
+      statusMapping[applicationStatus] = httpStatus;
+    }
+  }
+
+  addRoute(route: {
+    method: HttpMethodEnum;
+    path: string;
+    handlers: EntryPointHandler[];
+    produces: {
+      applicationStatus: string;
+      httpStatus: number;
+      contentType: HttpContentTypeEnum;
+    }[];
+  }): void {
+    const { method, path, handlers, produces } = route;
+    produces.forEach(({ applicationStatus, httpStatus }) =>
+      this.setProducesCode(applicationStatus, httpStatus),
+    );
+    (this.router as IRouter)[method](path, ...handlers);
   }
 
   async handleResult(

@@ -582,6 +582,10 @@ import BaseController, {
   INextFunction,
   EntryPointHandler,
   IRouter,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  applicationStatus,
+  httpStatus,
 } from "../base/Base.controller";
 import container, {
   GetFeelingTextUseCase,
@@ -605,8 +609,29 @@ export class TextFeelingController extends BaseController {
   /*...*/
 
   initializeRoutes(router: IRouter): void {
+    // Current way to registering routes
     this.router = router();
-    this.router.get("/feelings", this.getFeelingText);
+    this.router.get("/v1/feelings", this.getFeelingText);
+
+    // New proposal to register routes
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/feelings",
+      handlers: [this.getFeelingText],
+      produces: [
+        {
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: httpStatus.SUCCESS,
+        },
+        {
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          applicationStatus: applicationStatus.USER_NOT_FOUND,
+          httpStatus: httpStatus.NOT_FOUND,
+        },
+      ],
+    });
   }
 }
 
@@ -948,6 +973,14 @@ export class UsersController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
     super(UsersController.name, serviceContainer, ServiceContext.USERS);
   }
+
+  singUp: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+
+  };
 
   get: EntryPointHandler = async (
     req: IRequest,
