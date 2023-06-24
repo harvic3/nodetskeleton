@@ -1,5 +1,5 @@
 {
-  "version": "5.0.4",
+  "version": "5.1.3",
   "compilerOptions": {
     "lib": ["ES7"],
     "outDir": "dist",
