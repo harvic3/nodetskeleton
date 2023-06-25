@@ -619,14 +619,13 @@ export class TextFeelingController extends BaseController {
       method: HttpMethodEnum.GET,
       path: "/v1/feelings",
       handlers: [this.getFeelingText],
+      contentType: HttpContentTypeEnum.APPLICATION_JSON,
       produces: [
         {
-          contentType: HttpContentTypeEnum.APPLICATION_JSON,
           applicationStatus: applicationStatus.SUCCESS,
           httpStatus: httpStatus.SUCCESS,
         },
         {
-          contentType: HttpContentTypeEnum.APPLICATION_JSON,
           applicationStatus: applicationStatus.USER_NOT_FOUND,
           httpStatus: httpStatus.NOT_FOUND,
         },
