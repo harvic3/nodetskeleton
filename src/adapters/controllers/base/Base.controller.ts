@@ -140,6 +140,10 @@ export default abstract class BaseController {
     produces.forEach(({ applicationStatus, httpStatus }) =>
       this.setProducesCode(applicationStatus, httpStatus),
     );
+    if (!this.router) {
+      throw new Error("Router not initialized, you should call setRouter method before addRoute.");
+    }
+
     (this.router as IRouter)[method](path, ...handlers);
   }
 
