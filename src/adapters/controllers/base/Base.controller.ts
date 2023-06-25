@@ -7,6 +7,7 @@ import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { HttpContentTypeEnum } from "./context/HttpContentType.enum";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
+import { IBaseResult } from "result-tsk/lib/Result.interface";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { HttpMethodEnum } from "./context/HttpMethod.enum";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
@@ -20,6 +21,7 @@ import { IRequest } from "./context/IRequest";
 import { IRouter } from "./context/IRouter";
 
 type EntryPointHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
+type HeaderType = { [key in HttpHeaderEnum]?: HttpContentTypeEnum | string };
 
 export {
   EntryPointHandler,
@@ -30,6 +32,7 @@ export {
   ServiceContext,
   HttpMethodEnum,
   HttpContentTypeEnum,
+  HttpHeaderEnum,
   applicationStatus,
   httpStatus,
 };
@@ -57,25 +60,46 @@ export default abstract class BaseController {
     this.router = router;
   }
 
-  private async getResult(res: IResponse, result: IResult): Promise<void> {
+  private setTransactionId(res: IResponse): void {
+    res.setHeader(HttpHeaderEnum.TRANSACTION_ID, res.trace.transactionId);
+  }
+
+  private setHeaders(res: IResponse, headersToSet?: HeaderType): void {
+    if (headersToSet) {
+      Object.entries(headersToSet).forEach(([key, value]) => res.setHeader(key, value));
+    }
+  }
+
+  private async getResult(
+    res: IResponse,
+    result: IResult,
+    headersToSet?: HeaderType,
+  ): Promise<void> {
     this.setTransactionId(res);
+    this.setHeaders(res, headersToSet);
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
   }
 
-  private async getResultDto(res: IResponse, result: IResult): Promise<void> {
+  private async getResultDto(
+    res: IResponse,
+    result: IResult,
+    headersToSet?: HeaderType,
+  ): Promise<void> {
     this.setTransactionId(res);
+    this.setHeaders(res, headersToSet);
     res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result.toResultDto());
   }
 
-  private async getResultData(res: IResponse, result: IResult): Promise<void> {
+  private async getResultData(
+    res: IResponse,
+    result: IResult,
+    headersToSet?: HeaderType,
+  ): Promise<void> {
     this.setTransactionId(res);
+    this.setHeaders(res, headersToSet);
     res
       .status(HttpStatusResolver.getCode(result.statusCode.toString()))
       .json(result.message ? result.toResultDto() : result.toResultDto().data);
-  }
-
-  private setTransactionId(res: IResponse): void {
-    res.setHeader(HttpHeaderEnum.TRANSACTION_ID, res.trace.transactionId);
   }
 
   private async manageUseCaseTrace(trace: UseCaseTrace): Promise<void> {
@@ -104,10 +128,12 @@ export default abstract class BaseController {
     method: HttpMethodEnum;
     path: string;
     handlers: EntryPointHandler[];
+    contentType: HttpContentTypeEnum;
     produces: {
       applicationStatus: string;
       httpStatus: number;
-      contentType: HttpContentTypeEnum;
+      response?: IBaseResult;
+      request?: any;
     }[];
   }): void {
     const { method, path, handlers, produces } = route;
@@ -121,9 +147,10 @@ export default abstract class BaseController {
     res: IResponse,
     next: INextFunction,
     useCasePromise: Promise<IResult>,
+    headersToSet?: HeaderType,
   ): Promise<void> {
     try {
-      return await this.getResult(res, await useCasePromise);
+      return await this.getResult(res, await useCasePromise, headersToSet);
     } catch (error) {
       return next(error);
     } finally {
@@ -135,9 +162,10 @@ export default abstract class BaseController {
     res: IResponse,
     next: INextFunction,
     useCasePromise: Promise<IResult>,
+    headersToSet?: HeaderType,
   ): Promise<void> {
     try {
-      return await this.getResultDto(res, await useCasePromise);
+      return await this.getResultDto(res, await useCasePromise, headersToSet);
     } catch (error) {
       return next(error);
     } finally {
@@ -149,9 +177,10 @@ export default abstract class BaseController {
     res: IResponse,
     next: INextFunction,
     useCasePromise: Promise<IResult>,
+    headersToSet?: HeaderType,
   ): Promise<void> {
     try {
-      return await this.getResultData(res, await useCasePromise);
+      return await this.getResultData(res, await useCasePromise, headersToSet);
     } catch (error) {
       return next(error);
     } finally {

@@ -6,6 +6,8 @@ import BaseController, {
   IResponse,
   INextFunction,
   EntryPointHandler,
+  HttpContentTypeEnum,
+  HttpHeaderEnum,
 } from "../base/Base.controller";
 
 export class StatusController extends BaseController {
@@ -22,6 +24,7 @@ export class StatusController extends BaseController {
       res,
       next,
       this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name).execute(req.locale),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
     );
   };
 
@@ -36,6 +39,7 @@ export class StatusController extends BaseController {
       this.servicesContainer
         .get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name)
         .execute(req.locale),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
     );
   };
 

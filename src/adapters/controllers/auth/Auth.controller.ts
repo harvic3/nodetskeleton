@@ -9,6 +9,7 @@ import BaseController, {
   ServiceContext,
   HttpContentTypeEnum,
   HttpMethodEnum,
+  HttpHeaderEnum,
   applicationStatus,
   httpStatus,
 } from "../base/Base.controller";
@@ -35,18 +36,19 @@ export class AuthController extends BaseController {
           email,
           passwordB64,
         }),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.APPLICATION_JSON },
     );
   };
 
   initializeRoutes(router: IRouter): void {
-    this.setRouter(router);
+    this.setRouter(router());
     this.addRoute({
       method: HttpMethodEnum.POST,
       path: "/v1/auth/login",
       handlers: [this.login],
+      contentType: HttpContentTypeEnum.APPLICATION_JSON,
       produces: [
         {
-          contentType: HttpContentTypeEnum.APPLICATION_JSON,
           applicationStatus: applicationStatus.SUCCESS,
           httpStatus: httpStatus.SUCCESS,
         },
