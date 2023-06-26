@@ -1,6 +1,7 @@
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 
 export default class AppSettings {
+  static Environment: string;
   static ServiceContext: string;
   static ServiceName: string;
   static DefaultLanguage: LocaleTypeEnum;
@@ -16,6 +17,7 @@ export default class AppSettings {
   static DefaultHealthRemoteService: string;
 
   static init(config: Record<string, any>): void {
+    this.Environment = config.Environment;
     this.ServiceContext = config.Server.ServiceContext.Context;
     this.ServiceName = config.Server.ServiceName;
     this.DefaultLanguage = config.Params.DefaultLanguage;

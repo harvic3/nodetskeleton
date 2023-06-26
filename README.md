@@ -12,7 +12,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 
 ## Table of contents
 
-  1. [cli function 📟](#create-your-first-use-case)
+  1. [cli functions 📟](#create-your-first-use-case)
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
@@ -20,6 +20,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
  		1. [Mapper](#mapper)
  		1. [UseCase](#usecase)
  		1. [Validator](#validator)
+    1. [API Docs generator](#api-docs-generator)
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
   1. [Using NodeTskeleton 👾](#using-nodetskeleton)
 		1. [Using with KoaJs 🦋](#using-with-koajs)
@@ -482,7 +483,6 @@ function evenNumber(numberName: string, evaluate: number): string {
   });
 }
 
-
 // So, in any use case
 const person = new Person("Carl", "Sagan", 86);
 /*...*/
@@ -510,6 +510,20 @@ This tool is now available as an **NPM package**.
 
 **[⬆ back to the past](#table-of-contents)**
 
+
+## API Docs generator
+
+Now API documentation can already be generated automatically through a strategy in the method where the routes are configured.
+
+Pending documentation. 
+To get an idea of what it is please visit Issue:
+ https://github.com/harvic3/nodetskeleton/issues/22
+
+And explore the Auth driver in the branch:
+ https://github.com/harvic3/nodetskeleton/tree/feature/routing-proposal 
+or if it no longer exists, then the master branch.
+
+**[⬆ back to the past](#table-of-contents)**
 
 ## Dependency injection strategy
 
@@ -619,6 +633,8 @@ export class TextFeelingController extends BaseController {
       method: HttpMethodEnum.GET,
       path: "/v1/feelings",
       handlers: [this.getFeelingText],
+      requireAuth: false,
+      description: "Api to get a text feeling",
       contentType: HttpContentTypeEnum.APPLICATION_JSON,
       produces: [
         {

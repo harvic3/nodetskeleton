@@ -1,5 +1,6 @@
 import infraContainer from "../container";
 infraContainer.load();
+import { ApiDocGenerator } from "../../adapters/controllers/base/context/apiDoc/ApiDocGenerator";
 import statusController from "../../adapters/controllers/status/Status.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
@@ -35,9 +36,11 @@ import {
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
   app: Express;
+  apiDocGenerator: ApiDocGenerator;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
+    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment);
     this.app = AppServer();
     this.app.set("trust proxy", true);
     this.loadMiddleware();
@@ -58,6 +61,7 @@ export default class AppWrapper {
           BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
       )
       .forEach((controller) => {
+        controller.setApiDocGenerator(this.apiDocGenerator);
         controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
@@ -80,9 +84,11 @@ export default class AppWrapper {
           onlyFiles: true,
           ignore: config.Controllers.Ignore,
         });
+
     for (const filePath of controllerPaths) {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
+      controller.setApiDocGenerator(this.apiDocGenerator);
       controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);

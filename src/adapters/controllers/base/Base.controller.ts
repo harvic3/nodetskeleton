@@ -2,12 +2,13 @@ import { ILogProvider } from "../../../application/shared/log/providerContracts/
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
 import applicationStatus from "../../../application/shared/status/applicationStatus";
+import { TypeDescriber, ResultDescriber } from "./context/apiDoc/TypeDescriber";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { HttpContentTypeEnum } from "./context/HttpContentType.enum";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
-import { IBaseResult } from "result-tsk/lib/Result.interface";
+import { ApiDocGenerator } from "./context/apiDoc/ApiDocGenerator";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { HttpMethodEnum } from "./context/HttpMethod.enum";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
@@ -39,6 +40,7 @@ export {
 
 export default abstract class BaseController {
   router?: IRouter;
+  apiDocGenerator?: ApiDocGenerator;
   serviceContext: ServiceContext;
   #logProvider: ILogProvider;
   #useCaseTraceRepository: IUseCaseTraceRepository;
@@ -54,6 +56,10 @@ export default abstract class BaseController {
       UseCaseTraceRepository.name,
     );
     this.#logProvider = this.servicesContainer.get<LogProvider>(this.CONTEXT, LogProvider.name);
+  }
+
+  setApiDocGenerator(apiDocGenerator: ApiDocGenerator): void {
+    this.apiDocGenerator = apiDocGenerator;
   }
 
   setRouter(router: IRouter): void {
@@ -118,7 +124,7 @@ export default abstract class BaseController {
     }
   }
 
-  private setProducesCode(applicationStatus: string, httpStatus: number): void {
+  setProducesCode(applicationStatus: string, httpStatus: number): void {
     if (!statusMapping[applicationStatus]) {
       statusMapping[applicationStatus] = httpStatus;
     }
@@ -129,14 +135,26 @@ export default abstract class BaseController {
     path: string;
     handlers: EntryPointHandler[];
     contentType: HttpContentTypeEnum;
+    requireAuth: boolean;
+    request?: TypeDescriber<any>;
+    response?: ResultDescriber<IResult>;
+    description?: string;
     produces: {
       applicationStatus: string;
       httpStatus: number;
-      response?: IBaseResult;
-      request?: any;
     }[];
   }): void {
-    const { method, path, handlers, produces } = route;
+    const {
+      method,
+      path,
+      handlers,
+      requireAuth,
+      produces,
+      request,
+      response,
+      contentType,
+      description,
+    } = route;
     produces.forEach(({ applicationStatus, httpStatus }) =>
       this.setProducesCode(applicationStatus, httpStatus),
     );
@@ -145,6 +163,20 @@ export default abstract class BaseController {
     }
 
     (this.router as IRouter)[method](path, ...handlers);
+
+    if (this.apiDocGenerator) {
+      this.apiDocGenerator.addRoute({
+        controllerName: this.constructor.name,
+        method,
+        path,
+        requireAuth,
+        contentType,
+        request,
+        response,
+        produces,
+        description,
+      });
+    }
   }
 
   async handleResult(
