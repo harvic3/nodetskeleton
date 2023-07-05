@@ -123,7 +123,7 @@ export default abstract class BaseController {
     }
   }
 
-  setProducesCode(applicationStatus: string, httpStatus: number): void {
+  setProducesCode(applicationStatus: string, httpStatus: HttpStatusEnum): void {
     if (!statusMapping[applicationStatus]) {
       statusMapping[applicationStatus] = httpStatus;
     }

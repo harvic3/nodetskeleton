@@ -4,7 +4,6 @@ import { EntryPointHandler, HttpStatusEnum } from "../../Base.controller";
 import { HttpMethodEnum } from "../HttpMethod.enum";
 
 export type ApiDoc = {
-  description: string;
   contentType: HttpContentTypeEnum;
   requireAuth: boolean;
   // request: TypeDescriber<any>;
@@ -19,7 +18,7 @@ export type RouteType = {
     applicationStatus: string;
     httpStatus: HttpStatusEnum;
   }[];
-  description: string;
+  description?: string;
   apiDoc?: ApiDoc;
 };
 

@@ -105,7 +105,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
   addRoute(route: Omit<RouteType, "handlers">): void {
     if (this.env !== DEV) return;
 
-    const { path, produces, method, apiDoc } = route;
+    const { path, produces, method, description, apiDoc } = route;
     const { contentType, schema } = apiDoc as ApiDoc;
 
     if (!this.apiDoc.paths[path]) {
@@ -113,7 +113,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     }
 
     if (!this.apiDoc.paths[path][method]) {
-      this.apiDoc.paths[path][method] = { description: (apiDoc as ApiDoc).description } as any;
+      this.apiDoc.paths[path][method] = { description: description } as any;
       this.apiDoc.paths[path][method].responses = {};
     }
 

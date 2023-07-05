@@ -78,7 +78,6 @@ export class AuthController extends BaseController {
       ],
       description: "Login user",
       apiDoc: {
-        description: "Login user",
         contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: false,
         schema: new ResultTDescriber<TokenDto>({
