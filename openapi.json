@@ -45,6 +45,60 @@
           }
         }
       }
+    },
+    "/ping": {
+      "get": {
+        "description": "API status endpoint",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/sign-up": {
+      "post": {
+        "description": "Register a new user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -61,6 +115,15 @@
         "data": {
           "$ref": "#/components/schemas/TokenDto"
         }
+      },
+      "string": {
+        "primitive": "string"
+      },
+      "Result": {
+        "message": "string",
+        "statusCode": "string",
+        "error": "string",
+        "success": "boolean"
       }
     }
   }

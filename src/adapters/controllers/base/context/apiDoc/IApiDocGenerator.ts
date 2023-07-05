@@ -1,13 +1,13 @@
 import { ResultDescriber, ResultTDescriber, TypeDescriber } from "./TypeDescriber";
-import { HttpContentTypeEnum } from "../HttpContentType.enum";
 import { EntryPointHandler, HttpStatusEnum } from "../../Base.controller";
+import { HttpContentTypeEnum } from "../HttpContentType.enum";
 import { HttpMethodEnum } from "../HttpMethod.enum";
 
 export type ApiDoc = {
   contentType: HttpContentTypeEnum;
   requireAuth: boolean;
   // request: TypeDescriber<any>;
-  schema: ResultDescriber | ResultTDescriber<any>;
+  schema: ResultDescriber | ResultTDescriber<any> | TypeDescriber<any>;
 };
 
 export type RouteType = {

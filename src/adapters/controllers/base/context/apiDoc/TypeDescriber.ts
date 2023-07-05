@@ -11,6 +11,7 @@ export enum PropTypeEnum {
   DATE = "date",
   NULL = "null",
   UNDEFINED = "undefined",
+  PRIMITIVE = "primitive",
 }
 
 export enum PropFormatEnum {
@@ -155,15 +156,23 @@ export class ResultTDescriber<T> {
   }
 }
 
+type Primitive =
+  | PropTypeEnum.STRING
+  | PropTypeEnum.NUMBER
+  | PropTypeEnum.BOOLEAN
+  | PropTypeEnum.NULL
+  | PropTypeEnum.UNDEFINED;
+type PrimitiveDefinition = { primitive: Primitive };
+
 export class TypeDescriber<T> {
-  readonly type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY;
-  readonly properties: Record<keyof T, ClassProperty | TypeDescriber<any>>;
+  readonly type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY | PropTypeEnum.PRIMITIVE;
+  readonly properties: Record<keyof T, ClassProperty | TypeDescriber<any>> | PrimitiveDefinition;
   readonly schema: { name: string; definition: Record<string, string> | Record<string, string>[] };
 
   constructor(obj: {
     name: string;
-    type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY;
-    props: Record<keyof T, ClassProperty | TypeDescriber<any>>;
+    type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY | PropTypeEnum.PRIMITIVE;
+    props: Record<keyof T, ClassProperty | TypeDescriber<any>> | PrimitiveDefinition;
   }) {
     this.type = obj.type;
     this.properties = obj.props;
@@ -175,25 +184,31 @@ export class TypeDescriber<T> {
       name: obj.name,
       definition: {},
     };
-    if (!Object.keys(props).length) return;
-
-    const schemaType: Record<string, string> = {};
-    Object.keys(props).forEach((key) => {
-      if ((props[key] as ClassProperty).type) {
-        schemaType[key] = (props[key] as ClassProperty).type;
-      }
-    });
-    if (this.type === PropTypeEnum.ARRAY) {
-      this.schema = {
-        name: obj.name,
-        definition: [schemaType],
-      };
+    if (this.type === PropTypeEnum.PRIMITIVE) {
+      this.type = (this.properties as PrimitiveDefinition).primitive as any;
+      this.schema.definition = { primitive: (this.properties as PrimitiveDefinition).primitive };
     } else {
-      this.schema = {
-        name: obj.name,
-        definition: schemaType,
-      };
+      if (!Object.keys(props).length) return;
+
+      const schemaType: Record<string, string> = {};
+      Object.keys(props).forEach((key) => {
+        if (props[key].type) {
+          schemaType[key] = props[key].type;
+        }
+      });
+      if (this.type === PropTypeEnum.ARRAY) {
+        this.schema = {
+          name: obj.name,
+          definition: [schemaType],
+        };
+      } else {
+        this.schema = {
+          name: obj.name,
+          definition: schemaType,
+        };
+      }
     }
+
     SchemasStore.add(this.schema.name, this.schema.definition);
   }
 }

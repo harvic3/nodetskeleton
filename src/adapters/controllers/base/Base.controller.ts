@@ -12,7 +12,7 @@ import { HttpStatusEnum } from "./httpResponse/HttpStatusEnum";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { HttpMethodEnum } from "./context/HttpMethod.enum";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
-import statusMapping from "./httpResponse/StatusMapping";
+import statusMapping from "./httpResponse/statusMapping";
 import { LogProvider } from "../../providers/container";
 import { INextFunction } from "./context/INextFunction";
 import { IServiceContainer } from "../../shared/kernel";

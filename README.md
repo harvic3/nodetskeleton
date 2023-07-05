@@ -627,23 +627,20 @@ export class TextFeelingController extends BaseController {
     this.router = router();
     this.router.get("/v1/feelings", this.getFeelingText);
 
-    // New proposal to register routes
+    // New way to register routes
     this.setRouter(router());
     this.addRoute({
       method: HttpMethodEnum.GET,
       path: "/v1/feelings",
       handlers: [this.getFeelingText],
-      requireAuth: false,
-      description: "Api to get a text feeling",
-      contentType: HttpContentTypeEnum.APPLICATION_JSON,
       produces: [
         {
           applicationStatus: applicationStatus.SUCCESS,
-          httpStatus: httpStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.USER_NOT_FOUND,
-          httpStatus: httpStatus.NOT_FOUND,
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
     });
@@ -805,6 +802,11 @@ import BaseController, {
   EntryPointHandler,
   IRouter,
   ServiceContext,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  HttpHeaderEnum,
+  applicationStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 import container, {
   TextFeelingController,
@@ -858,6 +860,39 @@ initializeRoutes(router: IRouter): void {
   this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
   this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
   /*...*/
+  // Or a new way like following:
+  this.setRouter(router());
+  this.addRoute({
+    method: HttpMethodEnum.POST,
+    path: "/v1/cars",
+    handlers: [authorization(), this.create],
+    produces: [
+      {
+        applicationStatus: applicationStatus.CREATED,
+        httpStatus: HttpStatusEnum.CREATED,
+      },
+      {
+        applicationStatus: applicationStatus.UNAUTHORIZED,
+        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      },
+    ],
+  });
+  this.addRoute({
+    method: HttpMethodEnum.GET,
+    path: "/v1/cars/:idMask",
+    handlers: [authorization(), this.get],
+    produces: [
+      {
+        applicationStatus: applicationStatus.SUCCESS,
+        httpStatus: HttpStatusEnum.SUCCESS,
+      },
+      {
+        applicationStatus: applicationStatus.UNAUTHORIZED,
+        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      },
+    ],
+  });
+  /*...*/
 }
 /*...*/
 ```
@@ -876,6 +911,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
         BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
     )
     .forEach((controller) => {
+      controller.setApiDocGenerator(this.apiDocGenerator);
       controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
       // This is the line and the parameter comes from `config`.
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
@@ -1006,9 +1042,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/users/sign-up", this.singUp);
-    this.router.get("/v1/users/:userId", this.get);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/users/sign-up",
+      handlers: [authorization(), this.singUp],
+      produces: [
+        {
+          applicationStatus: applicationStatus.CREATED,
+          httpStatus: HttpStatusEnum.CREATED,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/users/:userId",
+      handlers: [authorization(), this.get],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   }
 }
 ```
@@ -1057,9 +1121,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/users/sign-up", this.singUp);
-    this.router.get("/v1/users/:userId", this.get);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/users/sign-up",
+      handlers: [authorization(), this.singUp],
+      produces: [
+        {
+          applicationStatus: applicationStatus.CREATED,
+          httpStatus: HttpStatusEnum.CREATED,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/users/:userId",
+      handlers: [authorization(), this.get],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   }
 }
 ```

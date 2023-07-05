@@ -41,8 +41,9 @@ type OpenApiType = {
               string,
               {
                 schema:
-                  | { $ref: string }
-                  | { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items: { $ref: string } };
+                  | { type?: PropTypeEnum }
+                  | { $ref?: string }
+                  | { type?: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items?: { $ref: string } };
               }
             >;
           }
@@ -94,6 +95,8 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   private saveApiDoc(): void {
+    if (!Object.keys(this.apiDoc.paths).length) return;
+
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
   }
@@ -106,7 +109,9 @@ export class ApiDocGenerator implements IApiDocGenerator {
     if (this.env !== DEV) return;
 
     const { path, produces, method, description, apiDoc } = route;
-    const { contentType, schema } = apiDoc as ApiDoc;
+    if (!apiDoc) return;
+
+    const { contentType, schema } = apiDoc;
 
     if (!this.apiDoc.paths[path]) {
       this.apiDoc.paths[path] = {};
@@ -117,18 +122,42 @@ export class ApiDocGenerator implements IApiDocGenerator {
       this.apiDoc.paths[path][method].responses = {};
     }
 
+    const schemaToSet: {
+      type?: PropTypeEnum;
+      items?: { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; $ref: string };
+      $ref?: string;
+    } = { type: PropTypeEnum.OBJECT, items: { type: PropTypeEnum.OBJECT, $ref: "" }, $ref: "" };
+    if (schema.type === PropTypeEnum.ARRAY) {
+      schemaToSet.items = {
+        type: schema.type,
+        $ref: `#/components/schemas/${schema.schema.name}`,
+      };
+      delete schemaToSet.type;
+      delete schemaToSet.$ref;
+    } else if (schema.type === PropTypeEnum.OBJECT) {
+      schemaToSet.$ref = `#/components/schemas/${schema.schema.name}`;
+      delete schemaToSet.type;
+      delete schemaToSet.items;
+    } else {
+      schemaToSet.type = schema.type;
+      delete schemaToSet.items;
+      delete schemaToSet.$ref;
+    }
+
     produces.forEach(({ httpStatus }) => {
       this.apiDoc.paths[path][method].responses[httpStatus.toString()] = {
         description: httpStatusDescriber[httpStatus],
         content: {
           [contentType]: {
-            schema:
-              schema.type === PropTypeEnum.OBJECT
-                ? { $ref: `#/components/schemas/${schema.schema.name}` }
-                : {
-                    type: schema.type,
-                    items: { $ref: `#/components/schemas/${schema.schema.name}` },
-                  },
+            schema: schemaToSet,
+            // schema.type === PropTypeEnum.ARRAY
+            //   ? {
+            //       type: schema.type,
+            //       items: { $ref: `#/components/schemas/${schema.schema.name}` },
+            //     }
+            //   : schema.type === PropTypeEnum.OBJECT
+            //   ? { $ref: `#/components/schemas/${schema.schema.name}` }
+            //   : { type: schema.type },
           },
         },
       };

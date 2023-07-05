@@ -52,20 +52,6 @@ export class AuthController extends BaseController {
       method: HttpMethodEnum.POST,
       path: "/v1/auth/login",
       handlers: [this.login],
-      // request: new TypeDescriber<ICredentials>({
-      //   name: "Credentials",
-      //   type: PropTypeEnum.OBJECT,
-      //   props: {
-      //     email: {
-      //       type: PropTypeEnum.STRING,
-      //       required: true,
-      //     },
-      //     passwordB64: {
-      //       type: PropTypeEnum.STRING,
-      //       required: true,
-      //     },
-      //   },
-      // }),
       produces: [
         {
           applicationStatus: applicationStatus.SUCCESS,
