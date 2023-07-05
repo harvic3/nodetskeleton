@@ -1,8 +1,8 @@
 import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
+import { HttpStatusEnum } from "../../adapters/controllers/base/httpResponse/HttpStatusEnum";
 import { HttpMethodEnum } from "../../adapters/controllers/base/context/HttpMethod.enum";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
-import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
@@ -55,7 +55,7 @@ export class HttpClient {
       result.setStatusCode(response.status);
     } catch (error) {
       result.setErrorMessage((error as Error).message);
-      result.setStatusCode(httpStatus.INTERNAL_SERVER_ERROR);
+      result.setStatusCode(HttpStatusEnum.INTERNAL_SERVER_ERROR);
       result.setError(error as Error);
     }
 
@@ -130,7 +130,7 @@ export class HttpClient {
       throw new ApplicationError(
         HttpClient.name,
         appMessages.get(appMessages.keys.PROCESSING_DATA_CLIENT_ERROR),
-        httpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatusEnum.INTERNAL_SERVER_ERROR,
         JSON.stringify(error),
       );
     }

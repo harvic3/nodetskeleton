@@ -2,13 +2,13 @@ import { ILogProvider } from "../../../application/shared/log/providerContracts/
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
 import applicationStatus from "../../../application/shared/status/applicationStatus";
-import { TypeDescriber, ResultDescriber } from "./context/apiDoc/TypeDescriber";
+import { IApiDocGenerator, RouteType } from "./context/apiDoc/IApiDocGenerator";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { HttpContentTypeEnum } from "./context/HttpContentType.enum";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
-import { ApiDocGenerator } from "./context/apiDoc/ApiDocGenerator";
+import { HttpStatusEnum } from "./httpResponse/HttpStatusEnum";
 import { ServiceContext } from "../../shared/ServiceContext";
 import { HttpMethodEnum } from "./context/HttpMethod.enum";
 import { HttpHeaderEnum } from "./context/HttpHeader.enum";
@@ -16,7 +16,6 @@ import statusMapping from "./httpResponse/StatusMapping";
 import { LogProvider } from "../../providers/container";
 import { INextFunction } from "./context/INextFunction";
 import { IServiceContainer } from "../../shared/kernel";
-import httpStatus from "./httpResponse/httpStatus";
 import { IResponse } from "./context/IResponse";
 import { IRequest } from "./context/IRequest";
 import { IRouter } from "./context/IRouter";
@@ -34,13 +33,13 @@ export {
   HttpMethodEnum,
   HttpContentTypeEnum,
   HttpHeaderEnum,
+  HttpStatusEnum,
   applicationStatus,
-  httpStatus,
 };
 
 export default abstract class BaseController {
   router?: IRouter;
-  apiDocGenerator?: ApiDocGenerator;
+  apiDocGenerator?: IApiDocGenerator;
   serviceContext: ServiceContext;
   #logProvider: ILogProvider;
   #useCaseTraceRepository: IUseCaseTraceRepository;
@@ -58,7 +57,7 @@ export default abstract class BaseController {
     this.#logProvider = this.servicesContainer.get<LogProvider>(this.CONTEXT, LogProvider.name);
   }
 
-  setApiDocGenerator(apiDocGenerator: ApiDocGenerator): void {
+  setApiDocGenerator(apiDocGenerator: IApiDocGenerator): void {
     this.apiDocGenerator = apiDocGenerator;
   }
 
@@ -130,31 +129,8 @@ export default abstract class BaseController {
     }
   }
 
-  addRoute(route: {
-    method: HttpMethodEnum;
-    path: string;
-    handlers: EntryPointHandler[];
-    contentType: HttpContentTypeEnum;
-    requireAuth: boolean;
-    request?: TypeDescriber<any>;
-    response?: ResultDescriber<IResult>;
-    description?: string;
-    produces: {
-      applicationStatus: string;
-      httpStatus: number;
-    }[];
-  }): void {
-    const {
-      method,
-      path,
-      handlers,
-      requireAuth,
-      produces,
-      request,
-      response,
-      contentType,
-      description,
-    } = route;
+  addRoute(route: RouteType): void {
+    const { method, path, handlers, produces, description, apiDoc } = route;
     produces.forEach(({ applicationStatus, httpStatus }) =>
       this.setProducesCode(applicationStatus, httpStatus),
     );
@@ -162,19 +138,15 @@ export default abstract class BaseController {
       throw new Error("Router not initialized, you should call setRouter method before addRoute.");
     }
 
-    (this.router as IRouter)[method](path, ...handlers);
+    this.router[method](path, ...handlers);
 
     if (this.apiDocGenerator) {
       this.apiDocGenerator.addRoute({
-        controllerName: this.constructor.name,
         method,
         path,
-        requireAuth,
-        contentType,
-        request,
-        response,
         produces,
         description,
+        apiDoc,
       });
     }
   }

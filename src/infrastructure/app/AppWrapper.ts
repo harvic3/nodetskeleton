@@ -1,6 +1,6 @@
 import infraContainer from "../container";
 infraContainer.load();
-import { ApiDocGenerator } from "../../adapters/controllers/base/context/apiDoc/ApiDocGenerator";
+import { ApiDocGenerator } from "./docs/ApiDocGenerator";
 import statusController from "../../adapters/controllers/status/Status.controller";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";

@@ -1,9 +1,11 @@
-import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
-import { TypeDescriber, ResultDescriber } from "../base/context/apiDoc/TypeDescriber";
 import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
 import { IServiceContainer } from "../../shared/kernel";
 import container, { LoginUseCase } from "./container";
-import { IResult } from "result-tsk";
+import {
+  TypeDescriber,
+  ResultTDescriber,
+  PropTypeEnum,
+} from "../base/context/apiDoc/TypeDescriber";
 import BaseController, {
   IRequest,
   IResponse,
@@ -15,7 +17,7 @@ import BaseController, {
   HttpMethodEnum,
   HttpHeaderEnum,
   applicationStatus,
-  httpStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 
 export class AuthController extends BaseController {
@@ -50,68 +52,66 @@ export class AuthController extends BaseController {
       method: HttpMethodEnum.POST,
       path: "/v1/auth/login",
       handlers: [this.login],
-      requireAuth: false,
-      contentType: HttpContentTypeEnum.APPLICATION_JSON,
-      description: "Login user",
-      request: new TypeDescriber<ICredentials>({
-        type: "object",
-        props: {
-          email: {
-            propType: "string",
-            description: "User email",
-            required: true,
-          },
-          passwordB64: {
-            propType: "string",
-            description: "User password encoded in base64",
-            required: true,
-          },
-        },
-      }),
-      response: new ResultDescriber<IResult>({
-        type: "object",
-        props: {
-          data: new TypeDescriber<TokenDto>({
-            type: "object",
-            props: {
-              token: {
-                propType: "string",
-                description: "Jwt to use as authorization header in requests",
-              },
-              expiresIn: {
-                propType: "number",
-                description: "Jwt expiration time in seconds",
-              },
-            },
-          }),
-          error: {
-            propType: "string",
-            description: "Error message if any",
-          },
-          message: {
-            propType: "string",
-            description: "Application message if any",
-          },
-          statusCode: {
-            propType: "string",
-            description: "Application status code",
-          },
-          success: {
-            propType: "boolean",
-            description: "Indicates if the request was successful",
-          },
-        },
-      }),
+      // request: new TypeDescriber<ICredentials>({
+      //   name: "Credentials",
+      //   type: PropTypeEnum.OBJECT,
+      //   props: {
+      //     email: {
+      //       type: PropTypeEnum.STRING,
+      //       required: true,
+      //     },
+      //     passwordB64: {
+      //       type: PropTypeEnum.STRING,
+      //       required: true,
+      //     },
+      //   },
+      // }),
       produces: [
         {
           applicationStatus: applicationStatus.SUCCESS,
-          httpStatus: httpStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
           applicationStatus: applicationStatus.UNAUTHORIZED,
-          httpStatus: httpStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
+      description: "Login user",
+      apiDoc: {
+        description: "Login user",
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        requireAuth: false,
+        schema: new ResultTDescriber<TokenDto>({
+          name: TokenDto.name,
+          type: PropTypeEnum.OBJECT,
+          props: {
+            data: new TypeDescriber<TokenDto>({
+              name: TokenDto.name,
+              type: PropTypeEnum.OBJECT,
+              props: {
+                token: {
+                  type: PropTypeEnum.STRING,
+                },
+                expiresIn: {
+                  type: PropTypeEnum.NUMBER,
+                },
+              },
+            }),
+            error: {
+              type: PropTypeEnum.STRING,
+            },
+            message: {
+              type: PropTypeEnum.STRING,
+            },
+            statusCode: {
+              type: PropTypeEnum.STRING,
+            },
+            success: {
+              type: PropTypeEnum.BOOLEAN,
+            },
+          },
+        }),
+      },
     });
   }
 }
