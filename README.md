@@ -1860,6 +1860,7 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 ## Future tasks
 - Update documentation about many issues
+- Implementation of the description of the request models for API Docs
 
 
 ## Acknowledgments
