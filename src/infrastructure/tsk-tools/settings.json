@@ -8,6 +8,6 @@
   ],
   "controllerImportLineToFind": "import container, { ",
   "controllerFunctionLineToFind": "initializeRoutes(router: IRouter)",
-  "controllerRouterLineToFind": "this.router = router();",
+  "controllerRouterLineToFind": "this.setRouter(router());",
   "containerExportLineToFind": "export { "
 }
