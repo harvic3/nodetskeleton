@@ -95,8 +95,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   private saveApiDoc(): void {
-    if (!Object.keys(this.apiDoc.paths).length) return;
-
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
   }
@@ -150,14 +148,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
         content: {
           [contentType]: {
             schema: schemaToSet,
-            // schema.type === PropTypeEnum.ARRAY
-            //   ? {
-            //       type: schema.type,
-            //       items: { $ref: `#/components/schemas/${schema.schema.name}` },
-            //     }
-            //   : schema.type === PropTypeEnum.OBJECT
-            //   ? { $ref: `#/components/schemas/${schema.schema.name}` }
-            //   : { type: schema.type },
           },
         },
       };
@@ -165,7 +155,10 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   setServer(url: string, description: "Local server"): void {
-    if (this.env !== DEV) return;
+    if (this.env !== DEV || !Object.keys(this.apiDoc.paths).length) {
+      SchemasStore.dispose();
+      return;
+    }
 
     this.apiDoc.servers.push({
       url,

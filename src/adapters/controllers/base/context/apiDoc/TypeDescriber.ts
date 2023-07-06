@@ -1,6 +1,6 @@
 import { Nulldefined } from "../../../../../domain/shared/types/Nulldefined.type";
-import { IResult, IResultT } from "result-tsk";
 import { SchemasStore } from "./SchemasStore";
+import { IResult } from "result-tsk";
 
 export enum PropTypeEnum {
   STRING = "string",
@@ -37,7 +37,6 @@ type ClassProperty = {
 };
 
 type ResultWrapper = Pick<IResult, "success" | "message" | "statusCode" | "error">;
-type ResultTWrapper<T> = Pick<IResultT<T>, "success" | "message" | "statusCode" | "error" | "data">;
 
 export class ResultDescriber {
   readonly name: string = "Result";
@@ -184,29 +183,33 @@ export class TypeDescriber<T> {
       name: obj.name,
       definition: {},
     };
+
     if (this.type === PropTypeEnum.PRIMITIVE) {
       this.type = (this.properties as PrimitiveDefinition).primitive as any;
       this.schema.definition = { primitive: (this.properties as PrimitiveDefinition).primitive };
-    } else {
-      if (!Object.keys(props).length) return;
+      SchemasStore.add(this.schema.name, this.schema.definition);
+      return;
+    }
 
-      const schemaType: Record<string, string> = {};
-      Object.keys(props).forEach((key) => {
-        if (props[key].type) {
-          schemaType[key] = props[key].type;
-        }
-      });
-      if (this.type === PropTypeEnum.ARRAY) {
-        this.schema = {
-          name: obj.name,
-          definition: [schemaType],
-        };
-      } else {
-        this.schema = {
-          name: obj.name,
-          definition: schemaType,
-        };
+    if (!Object.keys(props).length) return;
+
+    const schemaType: Record<string, string> = {};
+    Object.keys(props).forEach((key) => {
+      if (props[key].type) {
+        schemaType[key] = props[key].type;
       }
+    });
+
+    if (this.type === PropTypeEnum.ARRAY) {
+      this.schema = {
+        name: obj.name,
+        definition: [schemaType],
+      };
+    } else {
+      this.schema = {
+        name: obj.name,
+        definition: schemaType,
+      };
     }
 
     SchemasStore.add(this.schema.name, this.schema.definition);
