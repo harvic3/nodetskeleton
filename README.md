@@ -6,12 +6,12 @@
 
 
 > ### Important notice for companies
-> I have this WorkFlow built in C# for .Net (NetCore) so if you have interest in it, you can communicate directly with me.
+> I have this Workflow built in C# for .Net (NetCore) so if you have interest in it, you can communicate directly with me.
 
 
 The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
-The design of **NodeTskeleton** is based in **Clean Architecture**, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of **database**, **providers**or **services**, the **framework**, **libraries** or any other dependencies.
+The design of **NodeTskeleton** is based in **Clean Architecture**, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of **database**, **providers** or **services**, the **framework**, **libraries** or any other dependencies.
 
 **NodeTskeleton** has the minimum **tools** necessary for you to develop the **business logic** of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
