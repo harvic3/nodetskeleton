@@ -1,65 +1,24 @@
-import fetch, { BodyInit as BodyType, Headers, Request, RequestInit, Response } from "node-fetch";
 import { HttpStatusEnum } from "../../adapters/controllers/base/httpResponse/HttpStatusEnum";
+import { BaseHttpClient, ReqArgs } from "../../adapters/shared/httpClient/BaseHttpClient";
+import fetch, { BodyInit as BodyType, Request, RequestInit, Response } from "node-fetch";
 import { HttpMethodEnum } from "../../adapters/controllers/base/context/HttpMethod.enum";
+import { SerializationType } from "../../adapters/shared/httpClient/SerializationType";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
+import { Headers } from "../../adapters/shared/httpClient/ITResponse";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
-import { SerializationType } from "./SerializationType";
-import TResponse from "./TResponse";
+import { TResponse } from "./TResponse";
 
-type HttpResponseType<RT> = RT | string | ArrayBuffer | Buffer;
+type HttpResponseType<ResType> = ResType | string | ArrayBuffer | unknown;
 
-type ReqArgs = {
-  method: HttpMethodEnum;
-  serializationMethod: SerializationType;
-  body?: BodyType;
-  headers?: Headers;
-  options?: RequestInit;
-};
-
-export class HttpClient {
+export class HttpClient extends BaseHttpClient {
   #SERIALIZED = true;
-  Methods = HttpMethodEnum;
-  SerializationMethod = SerializationType;
 
-  async send<ResType, ErrType>(
-    url: string,
-    reqArgs: ReqArgs = {
-      method: HttpMethodEnum.GET,
-      body: undefined,
-      headers: undefined,
-      options: undefined,
-      serializationMethod: SerializationType.JSON,
-    },
-  ): Promise<TResponse<ResType, ErrType>> {
-    const request = this.buildRequest(
-      url,
-      reqArgs?.method,
-      reqArgs.body,
-      reqArgs.headers,
-      reqArgs.options,
-    );
-    const result = new TResponse<ResType, ErrType>();
-    try {
-      const response = await fetch(url, request);
-      if (response.ok) {
-        const data = await this.processResponseData<ResType>(response, reqArgs.serializationMethod);
-        result.setResponse(data);
-      } else {
-        const errorResponse = await this.processClientErrorResponse<ErrType>(response);
-        this.processErrorResponse<ResType, ErrType>(errorResponse, result, response);
-      }
-      result.setStatusCode(response.status);
-    } catch (error) {
-      result.setErrorMessage((error as Error).message);
-      result.setStatusCode(HttpStatusEnum.INTERNAL_SERVER_ERROR);
-      result.setError(error as Error);
-    }
-
-    return result;
+  constructor() {
+    super();
   }
 
   private buildRequest(
@@ -135,6 +94,41 @@ export class HttpClient {
       );
     }
   }
-}
 
-export default new HttpClient();
+  async send<ResType, ErrType>(
+    url: string,
+    reqArgs: ReqArgs = {
+      method: HttpMethodEnum.GET,
+      body: undefined,
+      headers: undefined,
+      options: undefined,
+      serializationMethod: SerializationType.JSON,
+    },
+  ): Promise<TResponse<ResType, ErrType>> {
+    const request = this.buildRequest(
+      url,
+      reqArgs?.method,
+      reqArgs.body,
+      reqArgs.headers,
+      reqArgs.options,
+    );
+    const result = new TResponse<ResType, ErrType>();
+    try {
+      const response = await fetch(url, request);
+      if (response.ok) {
+        const data = await this.processResponseData<ResType>(response, reqArgs.serializationMethod);
+        result.setResponse(data);
+      } else {
+        const errorResponse = await this.processClientErrorResponse<ErrType>(response);
+        this.processErrorResponse<ResType, ErrType>(errorResponse, result, response);
+      }
+      result.setStatusCode(response.status);
+    } catch (error) {
+      result.setErrorMessage((error as Error).message);
+      result.setStatusCode(HttpStatusEnum.INTERNAL_SERVER_ERROR);
+      result.setError(error as Error);
+    }
+
+    return result;
+  }
+}

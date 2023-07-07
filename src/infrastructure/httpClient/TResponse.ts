@@ -1,8 +1,6 @@
-import { Headers } from "node-fetch";
+import { Headers, ITResponse, Response } from "../../adapters/shared/httpClient/ITResponse";
 
-type Response<T> = T | string | Buffer | ArrayBuffer | PromiseLike<T>;
-
-export default class TResponse<R, E> {
+export class TResponse<R, E> implements ITResponse<R, E> {
   response: Response<R | E> | undefined;
   success = true;
   statusCode: number | undefined;
