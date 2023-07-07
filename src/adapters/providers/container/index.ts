@@ -1,4 +1,5 @@
 import { UserRepository } from "../../repositories/user/User.repository";
+import { BaseHttpClient } from "../../shared/httpClient/BaseHttpClient";
 import { IUserModel } from "../../repositories/user/IUser.model";
 import { HealthProvider } from "../health/Health.provider";
 import { WorkerProvider } from "../worker/Worker.provider";
@@ -20,7 +21,10 @@ kernel.addSingleton(
     kernel.get<IUserModel>(CONTEXT, kernel.classToInterfaceName(UserRepository.name)),
   ),
 );
-kernel.addSingleton(HealthProvider.name, new HealthProvider());
+kernel.addSingleton(
+  HealthProvider.name,
+  new HealthProvider(kernel.get<BaseHttpClient>(CONTEXT, BaseHttpClient.name)),
+);
 kernel.addSingleton(
   WorkerProvider.name,
   new WorkerProvider(kernel.get<LogProvider>(CONTEXT, LogProvider.name)),
