@@ -215,3 +215,34 @@ export class TypeDescriber<T> {
     SchemasStore.add(this.schema.name, this.schema.definition);
   }
 }
+
+export class RefTypeDescriber {
+  readonly type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY;
+  readonly schema: {
+    name: string;
+    definition: { $ref?: string } | { type: PropTypeEnum.ARRAY; items?: { $ref: string } };
+  };
+
+  constructor(obj: { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; name: string }) {
+    this.type = obj.type;
+    this.schema = {
+      name: obj.name,
+      definition: {},
+    };
+
+    if (this.type === PropTypeEnum.ARRAY) {
+      this.schema = {
+        name: obj.name,
+        definition: {
+          type: PropTypeEnum.ARRAY,
+          items: { $ref: "#/components/schemas/" + obj.name },
+        },
+      };
+    } else {
+      this.schema = {
+        name: obj.name,
+        definition: { $ref: "#/components/schemas/" + obj.name },
+      };
+    }
+  }
+}

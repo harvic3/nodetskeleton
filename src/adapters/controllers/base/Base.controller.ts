@@ -141,7 +141,7 @@ export default abstract class BaseController {
     this.router[method](path, ...handlers);
 
     if (this.apiDocGenerator) {
-      this.apiDocGenerator.addRoute({
+      this.apiDocGenerator.createRouteDoc({
         method,
         path,
         produces,

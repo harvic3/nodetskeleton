@@ -1,8 +1,11 @@
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
+import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
 import {
   ApiDoc,
   IApiDocGenerator,
+  ParameterDescriber,
+  ParameterIn,
   RouteType,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
 import { join, resolve } from "path";
@@ -11,6 +14,16 @@ import {
   PropFormatEnum,
   PropTypeEnum,
 } from "../../../adapters/controllers/base/context/apiDoc/TypeDescriber";
+
+type SchemaType =
+  | { type?: PropTypeEnum }
+  | { $ref?: string }
+  | { type?: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items?: { $ref: string } };
+
+type RequestBodyType = {
+  description: string;
+  content: Record<HttpContentTypeEnum, { schema: { $ref: string } }>;
+};
 
 type OpenApiType = {
   openapi: string;
@@ -40,14 +53,13 @@ type OpenApiType = {
             content: Record<
               string,
               {
-                schema:
-                  | { type?: PropTypeEnum }
-                  | { $ref?: string }
-                  | { type?: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items?: { $ref: string } };
+                schema: SchemaType;
               }
             >;
           }
         >;
+        requestBody: RequestBodyType | {};
+        parameters: ParameterDescriber[] | [];
       }
     >
   >;
@@ -103,28 +115,38 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.components.schemas = schemas;
   }
 
-  addRoute(route: Omit<RouteType, "handlers">): void {
-    if (this.env !== DEV) return;
+  private buildParameters(
+    path: string,
+    parameters: ParameterDescriber[],
+  ): ParameterDescriber[] | [] {
+    if (!parameters.length) return [];
 
-    const { path, produces, method, description, apiDoc } = route;
-    if (!apiDoc) return;
-
-    const { contentType, schema } = apiDoc;
-
-    if (!this.apiDoc.paths[path]) {
-      this.apiDoc.paths[path] = {};
+    const parameterNamesInPath = path.match(/(?<=\/:)\w+/g);
+    if (parameterNamesInPath?.length) {
+      const everyParameterInPathIsInParameters = parameterNamesInPath.every((parameterName) =>
+        parameters.find((parameter) => parameter.name === parameterName),
+      );
+      if (!everyParameterInPathIsInParameters) {
+        console.warn(
+          `Path ${path} has parameters in path that are not defined in parameters array.`,
+        );
+      }
     }
 
-    if (!this.apiDoc.paths[path][method]) {
-      this.apiDoc.paths[path][method] = { description: description } as any;
-      this.apiDoc.paths[path][method].responses = {};
-    }
+    return parameters;
+  }
 
+  private buildSchema(schema: ApiDoc["schema"]): SchemaType {
     const schemaToSet: {
       type?: PropTypeEnum;
       items?: { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; $ref: string };
       $ref?: string;
-    } = { type: PropTypeEnum.OBJECT, items: { type: PropTypeEnum.OBJECT, $ref: "" }, $ref: "" };
+    } = {
+      type: PropTypeEnum.OBJECT,
+      items: { type: PropTypeEnum.OBJECT, $ref: "" },
+      $ref: "",
+    };
+
     if (schema.type === PropTypeEnum.ARRAY) {
       schemaToSet.items = {
         type: schema.type,
@@ -142,15 +164,56 @@ export class ApiDocGenerator implements IApiDocGenerator {
       delete schemaToSet.$ref;
     }
 
+    return schemaToSet;
+  }
+
+  private buildRequestBody(requestBody: ApiDoc["requestBody"]): RequestBodyType | {} {
+    if (!requestBody) return {};
+
+    return {
+      description: requestBody?.description,
+      content: {
+        [requestBody?.contentType]: {
+          schema: { $ref: `#/components/schemas/${requestBody?.schema.schema.name}` },
+        },
+      },
+    };
+  }
+
+  createRouteDoc(route: Omit<RouteType, "handlers">): void {
+    if (this.env !== DEV) return;
+
+    const { path, produces, method, description, apiDoc } = route;
+    if (!apiDoc) return;
+
+    const { contentType, schema, requestBody, parameters } = apiDoc;
+
+    if (!this.apiDoc.paths[path]) {
+      this.apiDoc.paths[path] = {};
+    }
+
+    if (!this.apiDoc.paths[path][method]) {
+      this.apiDoc.paths[path][method] = { description: description } as any;
+      this.apiDoc.paths[path][method].responses = {};
+      this.apiDoc.paths[path][method].requestBody = {};
+      this.apiDoc.paths[path][method].parameters = [];
+    }
+
     produces.forEach(({ httpStatus }) => {
       this.apiDoc.paths[path][method].responses[httpStatus.toString()] = {
         description: httpStatusDescriber[httpStatus],
         content: {
           [contentType]: {
-            schema: schemaToSet,
+            schema: this.buildSchema(schema),
           },
         },
       };
+      if (requestBody) {
+        this.apiDoc.paths[path][method].requestBody = this.buildRequestBody(requestBody);
+      }
+      if (parameters) {
+        this.apiDoc.paths[path][method].parameters = this.buildParameters(path, parameters);
+      }
     });
   }
 

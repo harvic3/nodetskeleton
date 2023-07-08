@@ -1,3 +1,4 @@
+import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
 import { IServiceContainer } from "../../shared/kernel";
 import container, { LoginUseCase } from "./container";
@@ -96,6 +97,24 @@ export class AuthController extends BaseController {
             },
           },
         }),
+        requestBody: {
+          description: "Credentials for login",
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          schema: new TypeDescriber<ICredentials>({
+            name: "Credentials",
+            type: PropTypeEnum.OBJECT,
+            props: {
+              email: {
+                type: PropTypeEnum.STRING,
+                required: true,
+              },
+              passwordB64: {
+                type: PropTypeEnum.STRING,
+                required: true,
+              },
+            },
+          }),
+        },
       },
     });
   }

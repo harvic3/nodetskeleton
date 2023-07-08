@@ -43,7 +43,18 @@
               }
             }
           }
-        }
+        },
+        "requestBody": {
+          "description": "Credentials for login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "parameters": []
       }
     },
     "/ping": {
@@ -60,7 +71,9 @@
               }
             }
           }
-        }
+        },
+        "requestBody": {},
+        "parameters": []
       }
     },
     "/v1/users/sign-up": {
@@ -97,7 +110,9 @@
               }
             }
           }
-        }
+        },
+        "requestBody": {},
+        "parameters": []
       }
     }
   },
@@ -115,6 +130,10 @@
         "data": {
           "$ref": "#/components/schemas/TokenDto"
         }
+      },
+      "Credentials": {
+        "email": "string",
+        "passwordB64": "string"
       },
       "string": {
         "primitive": "string"
