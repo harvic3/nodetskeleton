@@ -1,0 +1,149 @@
+{
+  "openapi": "3.1.0",
+  "title": "NodeTSkeleton API",
+  "version": "1.0.0",
+  "description": "Api documentation for NodeTSkeleton project",
+  "contact": {
+    "name": "TSK Support",
+    "url": "https://github.com/harvic3/nodetskeleton",
+    "email": "harvic3@protonmail.com"
+  },
+  "license": {
+    "name": "MIT",
+    "identifier": "MIT"
+  },
+  "servers": [
+    {
+      "url": "localhost:3003",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "description": "Login user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Credentials for login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/ping": {
+      "get": {
+        "description": "API status endpoint",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {},
+        "parameters": []
+      }
+    },
+    "/v1/users/sign-up": {
+      "post": {
+        "description": "Register a new user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {},
+        "parameters": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TokenDto": {
+        "token": "string",
+        "expiresIn": "number"
+      },
+      "ResultT<TokenDto>": {
+        "message": "string",
+        "statusCode": "string",
+        "error": "string",
+        "success": "boolean",
+        "data": {
+          "$ref": "#/components/schemas/TokenDto"
+        }
+      },
+      "Credentials": {
+        "email": "string",
+        "passwordB64": "string"
+      },
+      "string": {
+        "primitive": "string"
+      },
+      "Result": {
+        "message": "string",
+        "statusCode": "string",
+        "error": "string",
+        "success": "boolean"
+      }
+    }
+  }
+}

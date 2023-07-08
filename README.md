@@ -17,7 +17,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 
 ## Table of contents
 
-  1. [cli function 📟](#create-your-first-use-case)
+  1. [cli functions 📟](#create-your-first-use-case)
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
 		1. [Errors](#errors)
@@ -25,6 +25,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
  		1. [Mapper](#mapper)
  		1. [UseCase](#usecase)
  		1. [Validator](#validator)
+ 		1. [API Docs generator](#api-docs-generator)
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
   1. [Using NodeTskeleton 👾](#using-nodetskeleton)
 		1. [Using with KoaJs 🦋](#using-with-koajs)
@@ -487,7 +488,6 @@ function evenNumber(numberName: string, evaluate: number): string {
   });
 }
 
-
 // So, in any use case
 const person = new Person("Carl", "Sagan", 86);
 /*...*/
@@ -512,6 +512,441 @@ if (!validator.isValidEntry(result, {
 This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/validator-tsk" target="_blank" >See in NPM</a>
+
+**[⬆ back to the past](#table-of-contents)**
+
+
+## API Docs generator
+
+Now API documentation can already be generated automatically through a strategy in the method where the routes are configured.
+
+The API documentation is done in the initializeRoutes method of each controller as shown below:
+
+```ts
+  initializeRoutes(router: IRouter): void {
+    // Default way to registering routes (This still works)
+    this.router = router();
+    this.router.get("/v1/feelings", this.getFeelingText);
+
+    // New proposal to register routes
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/feelings",
+      handlers: [this.getFeelingText],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.USER_NOT_FOUND,
+          httpStatus: HttpStatusEnum.NOT_FOUND,
+        },
+      ],
+    });
+  }
+```
+
+Then once you have added your route, the same method is used to configure a property called apiDoc, and in this one you can have the following ways to configure your data models (Request, Response, Parameters) through the following Descriptor Objects:
+
+```ts
+// To describe a ResultT type (ResultTDescriber and TypeDescriber helps us to do it)
+apiDoc: {
+  contentType: HttpContentTypeEnum.APPLICATION_JSON,
+  requireAuth: false,
+  schema: new ResultTDescriber<TokenDto>({
+    name: TokenDto.name,
+    type: PropTypeEnum.OBJECT,
+    props: {
+      data: new TypeDescriber<TokenDto>({
+        name: TokenDto.name,
+        type: PropTypeEnum.OBJECT,
+        props: {
+          token: {
+            type: PropTypeEnum.STRING,
+          },
+          expiresIn: {
+            type: PropTypeEnum.NUMBER,
+          },
+        },
+      }),
+      error: {
+        type: PropTypeEnum.STRING,
+      },
+      message: {
+        type: PropTypeEnum.STRING,
+      },
+      statusCode: {
+        type: PropTypeEnum.STRING,
+      },
+      success: {
+        type: PropTypeEnum.BOOLEAN,
+      },
+    },
+  }),
+},
+
+// To describe a simple Result type (ResultDescriber helps us to do it)
+apiDoc: {
+  contentType: HttpContentTypeEnum.APPLICATION_JSON,
+  requireAuth: false,
+  schema: new ResultDescriber({
+    type: PropTypeEnum.OBJECT,
+    props: {
+      error: {
+        type: PropTypeEnum.STRING,
+      },
+      message: {
+        type: PropTypeEnum.STRING,
+      },
+      statusCode: {
+        type: PropTypeEnum.STRING,
+      },
+      success: {
+        type: PropTypeEnum.BOOLEAN,
+      },
+    },
+  }),
+},
+
+// To describe any object (TypeDescriber helps us to do it)
+apiDoc: {
+  contentType: HttpContentTypeEnum.TEXT_PLAIN,
+  requireAuth: false,
+  schema: new TypeDescriber<string>({
+    name: PropTypeEnum.STRING,
+    type: PropTypeEnum.PRIMITIVE,
+    props: {
+      primitive: PropTypeEnum.STRING,
+    },
+  }),
+},
+```
+
+To get an overall idea, here an example:
+
+```ts
+  initializeRoutes(router: IRouter): void {
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/auth/login",
+      handlers: [this.login],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+      description: "Login user",
+      apiDoc: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        requireAuth: false,
+        schema: new ResultTDescriber<TokenDto>({
+          name: TokenDto.name,
+          type: PropTypeEnum.OBJECT,
+          props: {
+            data: new TypeDescriber<TokenDto>({
+              name: TokenDto.name,
+              type: PropTypeEnum.OBJECT,
+              props: {
+                token: {
+                  type: PropTypeEnum.STRING,
+                },
+                expiresIn: {
+                  type: PropTypeEnum.NUMBER,
+                },
+              },
+            }),
+            error: {
+              type: PropTypeEnum.STRING,
+            },
+            message: {
+              type: PropTypeEnum.STRING,
+            },
+            statusCode: {
+              type: PropTypeEnum.STRING,
+            },
+            success: {
+              type: PropTypeEnum.BOOLEAN,
+            },
+          },
+        }),
+        requestBody: {
+          description: "Credentials for login",
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          schema: new TypeDescriber<ICredentials>({
+            name: "Credentials",
+            type: PropTypeEnum.OBJECT,
+            props: {
+              email: {
+                type: PropTypeEnum.STRING,
+                required: true,
+              },
+              passwordB64: {
+                type: PropTypeEnum.STRING,
+                required: true,
+              },
+            },
+          }),
+        },
+      },
+    });
+  }
+```
+
+Yes, I know what you're thinking, but no, I thought of that too. 
+When you have already registered (described) a model, it is not necessary to describe it again, simply use the `RefTypeDescriber` class and with this the system will simply map internally the reference to the described model if it exists, otherwise, you will have an error in the generated file when it is going to be rendered. 
+
+```ts
+  this.addRoute({
+    method: HttpMethodEnum.GET,
+    path: "/v1/users/:userId",
+    handlers: [this.get],
+    produces: [
+      {
+        applicationStatus: applicationStatus.INVALID_INPUT,
+        httpStatus: HttpStatusEnum.BAD_REQUEST,
+      },
+      {
+        applicationStatus: applicationStatus.SUCCESS,
+        httpStatus: HttpStatusEnum.SUCCESS,
+      },
+      {
+        applicationStatus: applicationStatus.UNAUTHORIZED,
+        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      },
+    ],
+    description: "Get a user",
+    apiDoc: {
+      contentType: HttpContentTypeEnum.APPLICATION_JSON,
+      requireAuth: true,
+      schema: new RefTypeDescriber({
+        type: PropTypeEnum.OBJECT,
+        name: "Result",
+      }),
+      parameters: [
+        {
+          name: "userId",
+          in: ParameterIn.PATH,
+          description: "User id",
+          required: true,
+          deprecated: false,
+          allowEmptyValue: false,
+        },
+      ],
+    },
+  });
+```
+
+Once you run the application in DEV mode then the system will generate the file corresponding to the configuration you injected in the API. 
+The file is created in the root of the project with the name `openapi.json` and it would look something like this:
+
+```json
+{
+  "openapi": "3.1.0",
+  "title": "NodeTSkeleton API",
+  "version": "1.0.0",
+  "description": "Api documentation for NodeTSkeleton project",
+  "contact": {
+    "name": "TSK Support",
+    "url": "https://github.com/harvic3/nodetskeleton",
+    "email": "harvic3@protonmail.com"
+  },
+  "license": {
+    "name": "MIT",
+    "identifier": "MIT"
+  },
+  "servers": [
+    {
+      "url": "localhost:3003",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "description": "Login user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Credentials for login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/ping": {
+      "get": {
+        "description": "API status endpoint",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {},
+        "parameters": []
+      }
+    },
+    "/v1/users/sign-up": {
+      "post": {
+        "description": "Register a new user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {},
+        "parameters": []
+      }
+    },
+    "/v1/users/:userId": {
+      "get": {
+        "description": "Get a user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {},
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User id",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TokenDto": {
+        "token": "string",
+        "expiresIn": "number"
+      },
+      "ResultT<TokenDto>": {
+        "message": "string",
+        "statusCode": "string",
+        "error": "string",
+        "success": "boolean",
+        "data": {
+          "$ref": "#/components/schemas/TokenDto"
+        }
+      },
+      "Credentials": {
+        "email": "string",
+        "passwordB64": "string"
+      },
+      "string": {
+        "primitive": "string"
+      },
+      "Result": {
+        "message": "string",
+        "statusCode": "string",
+        "error": "string",
+        "success": "boolean"
+      }
+    }
+  }
+}
+```
+
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -587,6 +1022,10 @@ import BaseController, {
   INextFunction,
   EntryPointHandler,
   IRouter,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  applicationStatus,
+  httpStatus,
 } from "../base/Base.controller";
 import container, {
   GetFeelingTextUseCase,
@@ -610,8 +1049,27 @@ export class TextFeelingController extends BaseController {
   /*...*/
 
   initializeRoutes(router: IRouter): void {
+    // Current way to registering routes
     this.router = router();
-    this.router.get("/feelings", this.getFeelingText);
+    this.router.get("/v1/feelings", this.getFeelingText);
+
+    // New way to register routes
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/feelings",
+      handlers: [this.getFeelingText],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   }
 }
 
@@ -770,6 +1228,11 @@ import BaseController, {
   EntryPointHandler,
   IRouter,
   ServiceContext,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  HttpHeaderEnum,
+  applicationStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 import container, {
   TextFeelingController,
@@ -823,6 +1286,39 @@ initializeRoutes(router: IRouter): void {
   this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
   this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
   /*...*/
+  // Or a new way like following:
+  this.setRouter(router());
+  this.addRoute({
+    method: HttpMethodEnum.POST,
+    path: "/v1/cars",
+    handlers: [authorization(), this.create],
+    produces: [
+      {
+        applicationStatus: applicationStatus.CREATED,
+        httpStatus: HttpStatusEnum.CREATED,
+      },
+      {
+        applicationStatus: applicationStatus.UNAUTHORIZED,
+        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      },
+    ],
+  });
+  this.addRoute({
+    method: HttpMethodEnum.GET,
+    path: "/v1/cars/:idMask",
+    handlers: [authorization(), this.get],
+    produces: [
+      {
+        applicationStatus: applicationStatus.SUCCESS,
+        httpStatus: HttpStatusEnum.SUCCESS,
+      },
+      {
+        applicationStatus: applicationStatus.UNAUTHORIZED,
+        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      },
+    ],
+  });
+  /*...*/
 }
 /*...*/
 ```
@@ -841,6 +1337,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
         BooleanUtil.areEqual(controller.serviceContext, ServiceContext.NODE_TS_SKELETON),
     )
     .forEach((controller) => {
+      controller.setApiDocGenerator(this.apiDocGenerator);
       controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
       // This is the line and the parameter comes from `config`.
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
@@ -954,6 +1451,14 @@ export class UsersController extends BaseController {
     super(UsersController.name, serviceContainer, ServiceContext.USERS);
   }
 
+  singUp: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+
+  };
+
   get: EntryPointHandler = async (
     req: IRequest,
     res: IResponse,
@@ -963,9 +1468,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/users/sign-up", this.singUp);
-    this.router.get("/v1/users/:userId", this.get);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/users/sign-up",
+      handlers: [authorization(), this.singUp],
+      produces: [
+        {
+          applicationStatus: applicationStatus.CREATED,
+          httpStatus: HttpStatusEnum.CREATED,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/users/:userId",
+      handlers: [authorization(), this.get],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   }
 }
 ```
@@ -1014,9 +1547,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/users/sign-up", this.singUp);
-    this.router.get("/v1/users/:userId", this.get);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/users/sign-up",
+      handlers: [authorization(), this.singUp],
+      produces: [
+        {
+          applicationStatus: applicationStatus.CREATED,
+          httpStatus: HttpStatusEnum.CREATED,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/users/:userId",
+      handlers: [authorization(), this.get],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   }
 }
 ```
@@ -1370,7 +1931,7 @@ So, for Cluster de App, replace **src/index.ts** code for the next code example.
 
 
 ### Observation 👀
-For some reason that I don't understand yet, the dynamic loading of modules presents problems with Node in Cluster Mode, so if you plan to use cluster mode, you must inject the controllers to the **AppWrapper** class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the **AppWrapper** internal class method.
+If you plan to use cluster mode, you must inject the controllers to the **AppWrapper** class instance as shown in the following code sample, otherwise if you are not going to use the cluster mode then you can skip the import of the controllers and let the loading be done dynamically by the **AppWrapper** internal class method.
 
 ```ts
 // Node App in Cluster mode
@@ -1663,17 +2224,6 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
 }'
 ```
 
-### Considerations and recommendations
-
-  1. Database tables or collection names
-    It is recommended to use **prefixes** in the table or collection names because in microservice context you need to replicate data and you may have collisions in the local environment, for example, for the SECURITY service context you can use sec_users for the users table or collection and in the same way for the USERS service context you can use usr_users. 
-    The idea is that you use an abbreviation of the service context as a prefix to the name of your tables or collections.
-
-  1. Database connections 
-    In release and production environments you can use the same database connection configuration section of the config file to connect to your different databases in each of the service contexts even under the same technology (NoSQL, SQL or another one) and this can be achieved through the ENVs configuration of each service. 
-    But at local level (development) you can use the same database according to the technology because by using prefixes in the tables and collections you will not have collisions and you can simplify and facilitate the development and the use of resources. 
-    You must take into account that you cannot create relationships between tables or collections that are in different service contexts because this will not work in a productive environment since the databases will be different.
-
 
 ### Observation
 If you are not going to use this functionality you can delete the **tsk-gateway** directory.
@@ -1691,12 +2241,12 @@ If you are not going to use this functionality you can delete the **tsk-gateway*
 
 - Clean architecture is basically based on the famous and well-known five **SOLID principles** that we had not mentioned until this moment and that we very little internalized.
 
-- If you liked it and you learned something, give me my star in the project that is the way you can thank me, don't be a damn selfish person who doesn't recognize the effort of others.
+- If you liked it and you learned or use something from this project, give this project a star, that's the way you can thank me, don't be a damn selfish person who doesn't recognize the effort of others.
 
 
 ### Observation 👀
 
-"The world is selfish" because I am surprised by the number of people who visit this project and browse through all its modules and files, but it seems that it is nothing new because they do not leave their star, good for them.
+"The world is selfish" because I am surprised by the number of people who visit this project to use it and browse through all its modules and files, but they don't even leave a star.
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -1724,7 +2274,8 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 
 ## Future tasks
-- Update documentation about many issues
+- Update documentation about many topics and features of the project.
+- Implement other necessary OpenApi data schema models for service documentation. 
 
 
 ## Acknowledgments

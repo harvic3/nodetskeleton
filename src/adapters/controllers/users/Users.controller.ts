@@ -1,3 +1,4 @@
+import { PropTypeEnum, ResultDescriber } from "../base/context/apiDoc/TypeDescriber";
 import { IUserDto } from "../../../application/modules/users/dtos/User.dto";
 import container, { RegisterUserUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
@@ -8,6 +9,10 @@ import BaseController, {
   EntryPointHandler,
   IRouter,
   ServiceContext,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  applicationStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 
 export class UsersController extends BaseController {
@@ -32,8 +37,48 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.post("/v1/users/sign-up", this.singUp);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/users/sign-up",
+      handlers: [this.singUp],
+      produces: [
+        {
+          applicationStatus: applicationStatus.INVALID_INPUT,
+          httpStatus: HttpStatusEnum.BAD_REQUEST,
+        },
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+      description: "Register a new user",
+      apiDoc: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        requireAuth: false,
+        schema: new ResultDescriber({
+          type: PropTypeEnum.OBJECT,
+          props: {
+            error: {
+              type: PropTypeEnum.STRING,
+            },
+            message: {
+              type: PropTypeEnum.STRING,
+            },
+            statusCode: {
+              type: PropTypeEnum.STRING,
+            },
+            success: {
+              type: PropTypeEnum.BOOLEAN,
+            },
+          },
+        }),
+      },
+    });
   }
 }
 

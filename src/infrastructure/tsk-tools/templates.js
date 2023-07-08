@@ -24,7 +24,21 @@ const functionControllerTemplate = `
     );
   };
 `;
-const routerControllerTemplate = `    this.router.{{HttpMethodLower}}("{{EndPoint}}", this.{{UseCaseNameCamel}});`;
+const routeControllerTemplate = `    this.addRoute({
+      method: HttpMethodEnum.{{HttpMethodUpper}},
+      path: "{{EndPoint}}",
+      handlers: [this.{{UseCaseNameCamel}}],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });`;
 const controllerTemplate = `${importControllerTemplate} } from "./container/index";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
@@ -34,6 +48,11 @@ import BaseController, {
   INextFunction,
   ServiceContext,
   EntryPointHandler,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  HttpHeaderEnum,
+  applicationStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 
 export class {{ApiNameCapitalized}}Controller extends BaseController {
@@ -42,8 +61,8 @@ export class {{ApiNameCapitalized}}Controller extends BaseController {
   }
   ${functionControllerTemplate}
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-${routerControllerTemplate}
+    this.setRouter(router());
+${routeControllerTemplate}
   }
 }
 
@@ -147,7 +166,7 @@ const templates = {
   addUseCaseContainerTemplate,
   importContainerTemplate,
   exportContainerTemplate,
-  routerControllerTemplate,
+  routeControllerTemplate,
   functionControllerTemplate,
   importControllerTemplate,
   testUseCaseTemplate,

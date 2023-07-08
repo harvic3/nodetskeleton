@@ -1,9 +1,10 @@
+import { HttpStatusEnum } from "../../adapters/controllers/base/httpResponse/HttpStatusEnum";
 import { BaseHttpClient, ReqArgs } from "../../adapters/shared/httpClient/BaseHttpClient";
 import fetch, { BodyInit as BodyType, Request, RequestInit, Response } from "node-fetch";
+import { HttpMethodEnum } from "../../adapters/controllers/base/context/HttpMethod.enum";
 import { SerializationType } from "../../adapters/shared/httpClient/SerializationType";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
-import httpStatus from "../../adapters/controllers/base/httpResponse/httpStatus";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import { Headers } from "../../adapters/shared/httpClient/ITResponse";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
@@ -67,10 +68,10 @@ export class HttpClient extends BaseHttpClient {
     }
   }
 
-  private async processResponseData<ResType>(
+  private async processResponseData<RT>(
     response: Response,
     serializationMethod: SerializationType,
-  ): Promise<HttpResponseType<ResType>> {
+  ): Promise<HttpResponseType<RT>> {
     try {
       switch (serializationMethod) {
         case SerializationType.BUFFER:
@@ -80,7 +81,7 @@ export class HttpClient extends BaseHttpClient {
         case SerializationType.TEXT:
           return await response.text();
         case SerializationType.BLOB:
-          return await response.blob();
+          return (await response.blob()).text();
         default:
           return await response.json();
       }
@@ -88,7 +89,7 @@ export class HttpClient extends BaseHttpClient {
       throw new ApplicationError(
         HttpClient.name,
         appMessages.get(appMessages.keys.PROCESSING_DATA_CLIENT_ERROR),
-        httpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatusEnum.INTERNAL_SERVER_ERROR,
         JSON.stringify(error),
       );
     }
@@ -97,7 +98,7 @@ export class HttpClient extends BaseHttpClient {
   async send<ResType, ErrType>(
     url: string,
     reqArgs: ReqArgs = {
-      method: this.Methods.GET,
+      method: HttpMethodEnum.GET,
       body: undefined,
       headers: undefined,
       options: undefined,
@@ -115,9 +116,8 @@ export class HttpClient extends BaseHttpClient {
     try {
       const response = await fetch(url, request);
       if (response.ok) {
-        result.setResponse(
-          await this.processResponseData<ResType>(response, reqArgs.serializationMethod),
-        );
+        const data = await this.processResponseData<ResType>(response, reqArgs.serializationMethod);
+        result.setResponse(data);
       } else {
         const errorResponse = await this.processClientErrorResponse<ErrType>(response);
         this.processErrorResponse<ResType, ErrType>(errorResponse, result, response);
@@ -125,7 +125,7 @@ export class HttpClient extends BaseHttpClient {
       result.setStatusCode(response.status);
     } catch (error) {
       result.setErrorMessage((error as Error).message);
-      result.setStatusCode(httpStatus.INTERNAL_SERVER_ERROR);
+      result.setStatusCode(HttpStatusEnum.INTERNAL_SERVER_ERROR);
       result.setError(error as Error);
     }
 

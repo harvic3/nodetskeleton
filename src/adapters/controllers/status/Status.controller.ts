@@ -1,11 +1,17 @@
+import { PropTypeEnum, TypeDescriber } from "../base/context/apiDoc/TypeDescriber";
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
-  IRouter,
   IRequest,
   IResponse,
   INextFunction,
   EntryPointHandler,
+  IRouter,
+  HttpContentTypeEnum,
+  HttpMethodEnum,
+  HttpHeaderEnum,
+  applicationStatus,
+  HttpStatusEnum,
 } from "../base/Base.controller";
 
 export class StatusController extends BaseController {
@@ -22,6 +28,7 @@ export class StatusController extends BaseController {
       res,
       next,
       this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name).execute(req.locale),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
     );
   };
 
@@ -36,12 +43,35 @@ export class StatusController extends BaseController {
       this.servicesContainer
         .get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name)
         .execute(req.locale),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
     );
   };
 
   initializeRoutes(router: IRouter): void {
-    this.router = router();
-    this.router.get("/ping", this.pong);
+    this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/ping",
+      handlers: [this.pong],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+      ],
+      description: "API status endpoint",
+      apiDoc: {
+        contentType: HttpContentTypeEnum.TEXT_PLAIN,
+        requireAuth: false,
+        schema: new TypeDescriber<string>({
+          name: PropTypeEnum.STRING,
+          type: PropTypeEnum.PRIMITIVE,
+          props: {
+            primitive: PropTypeEnum.STRING,
+          },
+        }),
+      },
+    });
   }
 }
 

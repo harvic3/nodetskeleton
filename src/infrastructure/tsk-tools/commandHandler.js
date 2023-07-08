@@ -40,13 +40,15 @@ const controllerStrategy = {
     apiNameCapitalized,
     actionName,
     endPoint,
-    httpMethodLower,
+    httpMethod,
   ) => {
+    const httpMethodLower = httpMethod.toLowerCase();
     const controllerTemplate = replaceAll(templates.controllerTemplate, {
       "{{UseCaseName}}": useCaseName,
       "{{UseCaseNameCamel}}": useCaseNameCamel,
       "{{EndPoint}}": endPoint,
       "{{HttpMethodLower}}": httpMethodLower,
+      "{{HttpMethodUpper}}": httpMethod,
       "{{ApiNameCapitalized}}": apiNameCapitalized,
       "{{ApiNameUpper}}": apiName.toUpperCase(),
     });
@@ -67,8 +69,9 @@ const controllerStrategy = {
     apiName,
     actionName,
     endPoint,
-    httpMethodLower,
+    httpMethod,
   ) => {
+    const httpMethodLower = httpMethod.toLowerCase();
     let controllerContent = readFileSync(controllerPath, "utf8");
     const importLineNumber = getLinePositionByContent(
       controllerContent,
@@ -100,8 +103,9 @@ const controllerStrategy = {
       controllerContent,
       settingsFile.controllerRouterLineToFind,
     );
-    const routerContextTemplate = replaceAll(templates.routerControllerTemplate, {
+    const routerContextTemplate = replaceAll(templates.routeControllerTemplate, {
       "{{HttpMethodLower}}": httpMethodLower,
+      "{{HttpMethodUpper}}": httpMethod,
       "{{EndPoint}}": endPoint,
       "{{UseCaseNameCamel}}": useCaseNameCamel,
     });
@@ -239,7 +243,7 @@ function addUseCase(args, settingsFile) {
         apiName,
         actionName,
         endPoint,
-        httpMethodLower,
+        httpMethod,
       )
     : controllerStrategy.newController(
         useCaseName,
@@ -248,7 +252,7 @@ function addUseCase(args, settingsFile) {
         apiNameCapitalized,
         actionName,
         endPoint,
-        httpMethodLower,
+        httpMethod,
       );
 
   const useCaseTemplate = replaceAll(templates.useCaseTemplate, {

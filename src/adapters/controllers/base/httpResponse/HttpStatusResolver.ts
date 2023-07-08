@@ -1,8 +1,9 @@
 import { DefaultValue } from "../../../../domain/shared/utils/DefaultValue";
-import StatusMapping from "./StatusMapping";
+import { HttpStatusEnum } from "./HttpStatusEnum";
+import statusMapping from "./statusMapping";
 
 export class HttpStatusResolver {
-  static getCode(applicationStatusCode: string): number {
-    return DefaultValue.evaluateAndGet(StatusMapping[applicationStatusCode], StatusMapping.default);
+  static getCode(applicationStatusCode: string): HttpStatusEnum {
+    return DefaultValue.evaluateAndGet(statusMapping[applicationStatusCode], statusMapping.default);
   }
 }
