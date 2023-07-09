@@ -5,7 +5,6 @@ import {
   ApiDoc,
   IApiDocGenerator,
   ParameterDescriber,
-  ParameterIn,
   RouteType,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
 import { join, resolve } from "path";
@@ -22,22 +21,23 @@ type SchemaType =
 
 type RequestBodyType = {
   description: string;
-  content: Record<HttpContentTypeEnum, { schema: { $ref: string } }>;
+  content: Record<string, { schema: { $ref: string } }>;
 };
 
 type OpenApiType = {
   openapi: string;
-  title: string;
-  version: string;
-  description: string;
-  contact: {
-    name: string;
-    url: string;
-    email: string;
-  };
-  license: {
-    name: string;
-    identifier: string;
+  info: {
+    title: string;
+    version: string;
+    description: string;
+    contact: {
+      name: string;
+      url: string;
+      email: string;
+    };
+    license: {
+      name: string;
+    };
   };
   servers: { url: string; description: string }[];
   paths: Record<
@@ -58,8 +58,8 @@ type OpenApiType = {
             >;
           }
         >;
-        requestBody: RequestBodyType | {};
-        parameters: ParameterDescriber[] | [];
+        requestBody: RequestBodyType;
+        parameters: ParameterDescriber[];
       }
     >
   >;
@@ -75,18 +75,19 @@ const DEV = "development";
 
 export class ApiDocGenerator implements IApiDocGenerator {
   apiDoc: OpenApiType = {
-    openapi: "3.1.0",
-    title: "",
-    version: "",
-    description: "",
-    contact: {
-      name: "TSK Support",
-      url: "https://github.com/harvic3/nodetskeleton",
-      email: "harvic3@protonmail.com",
-    },
-    license: {
-      name: "MIT",
-      identifier: "MIT",
+    openapi: "3.0.3",
+    info: {
+      title: "",
+      version: "",
+      description: "",
+      contact: {
+        name: "",
+        url: "",
+        email: "",
+      },
+      license: {
+        name: "MIT",
+      },
     },
     servers: [],
     paths: {},
@@ -97,13 +98,25 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
   constructor(
     readonly env: string,
-    title = "NodeTSkeleton API",
-    version = "1.0.0",
-    description = "Api documentation for NodeTSkeleton project",
+    info: {
+      title: string;
+      version: string;
+      description: string;
+      contact: {
+        name: string;
+        url: string;
+        email: string;
+      };
+      license: {
+        name: string;
+      };
+    },
   ) {
-    this.apiDoc.title = title;
-    this.apiDoc.version = version;
-    this.apiDoc.description = description;
+    this.apiDoc.info.title = info.title;
+    this.apiDoc.info.version = info.version;
+    this.apiDoc.info.description = info.description;
+    this.apiDoc.info.contact = info.contact;
+    this.apiDoc.info.license = info.license;
   }
 
   private saveApiDoc(): void {
@@ -167,13 +180,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
     return schemaToSet;
   }
 
-  private buildRequestBody(requestBody: ApiDoc["requestBody"]): RequestBodyType | {} {
-    if (!requestBody) return {};
-
+  private buildRequestBody(requestBody: ApiDoc["requestBody"]): RequestBodyType {
     return {
-      description: requestBody?.description,
+      description: requestBody?.description as string,
       content: {
-        [requestBody?.contentType]: {
+        [requestBody?.contentType as HttpContentTypeEnum]: {
           schema: { $ref: `#/components/schemas/${requestBody?.schema.schema.name}` },
         },
       },
@@ -195,8 +206,8 @@ export class ApiDocGenerator implements IApiDocGenerator {
     if (!this.apiDoc.paths[path][method]) {
       this.apiDoc.paths[path][method] = { description: description } as any;
       this.apiDoc.paths[path][method].responses = {};
-      this.apiDoc.paths[path][method].requestBody = {};
-      this.apiDoc.paths[path][method].parameters = [];
+      if (requestBody) this.apiDoc.paths[path][method].requestBody = {} as any;
+      if (parameters) this.apiDoc.paths[path][method].parameters = [];
     }
 
     produces.forEach(({ httpStatus }) => {

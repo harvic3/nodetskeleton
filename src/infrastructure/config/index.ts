@@ -83,5 +83,18 @@ export default {
       process.env.REMOTE_HEALTH_SERVICE,
       "https://google.com",
     ),
+    ApiDocsInfo: {
+      title: "NodeTSkeleton API",
+      version: "1.0.0",
+      description: "Api documentation for NodeTSkeleton project",
+      contact: {
+        name: "TSK Support",
+        url: "https://github.com/harvic3/nodetskeleton",
+        email: "harvic3@protonmail.com",
+      },
+      license: {
+        name: "MIT",
+      },
+    },
   },
 };
