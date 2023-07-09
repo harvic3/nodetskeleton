@@ -6,8 +6,14 @@
 
 
 > ### Important notice for companies
-> I have this Workflow built in C# for .Net (NetCore) so if you have interest in it, you can communicate directly with me.
-
+>
+>> I have this Workflow built in C# for .Net (NetCore).
+>
+>> I have this workflow for Serverless development with NodeJS
+>
+>> I'm open to employment proposals.
+>
+> Write to: <harvic3@protonmail.com>
 
 The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
 
@@ -749,22 +755,23 @@ The file is created in the root of the project with the name `openapi.json` and 
 
 ```json
 {
-  "openapi": "3.1.0",
-  "title": "NodeTSkeleton API",
-  "version": "1.0.0",
-  "description": "Api documentation for NodeTSkeleton project",
-  "contact": {
-    "name": "TSK Support",
-    "url": "https://github.com/harvic3/nodetskeleton",
-    "email": "harvic3@protonmail.com"
-  },
-  "license": {
-    "name": "MIT",
-    "identifier": "MIT"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NodeTSkeleton API",
+    "version": "1.0.0",
+    "description": "Api documentation for NodeTSkeleton project",
+    "contact": {
+      "name": "TSK Support",
+      "url": "https://github.com/harvic3/nodetskeleton",
+      "email": "harvic3@protonmail.com"
+    },
+    "license": {
+      "name": "MIT"
+    }
   },
   "servers": [
     {
-      "url": "localhost:3003",
+      "url": "localhost:3003/api",
       "description": "Local server"
     }
   ],
