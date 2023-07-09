@@ -947,12 +947,11 @@ The file is created in the root of the project with the name `openapi.json` and 
         "properties": {
           "email": {
             "type": "string",
-            "required": true
           },
           "passwordB64": {
             "type": "string",
-            "required": true
-          }
+          },
+          "required": ["email", "passwordB64"]
         }
       },
       "Result": {
