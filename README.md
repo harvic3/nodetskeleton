@@ -778,7 +778,7 @@ The file is created in the root of the project with the name `openapi.json` and 
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                  "$ref": "#/components/schemas/ResultTTokenDto"
                 }
               }
             }
@@ -788,7 +788,7 @@ The file is created in the root of the project with the name `openapi.json` and 
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                  "$ref": "#/components/schemas/ResultTTokenDto"
                 }
               }
             }
@@ -822,8 +822,6 @@ The file is created in the root of the project with the name `openapi.json` and 
             }
           }
         },
-        "requestBody": {},
-        "parameters": []
       }
     },
     "/v1/users/sign-up": {
@@ -861,8 +859,6 @@ The file is created in the root of the project with the name `openapi.json` and 
             }
           }
         },
-        "requestBody": {},
-        "parameters": []
       }
     },
     "/v1/users/:userId": {
@@ -900,7 +896,6 @@ The file is created in the root of the project with the name `openapi.json` and 
             }
           }
         },
-        "requestBody": {},
         "parameters": [
           {
             "name": "userId",
@@ -917,36 +912,70 @@ The file is created in the root of the project with the name `openapi.json` and 
   "components": {
     "schemas": {
       "TokenDto": {
-        "token": "string",
-        "expiresIn": "number"
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "number"
+          }
+        }
       },
-      "ResultT<TokenDto>": {
-        "message": "string",
-        "statusCode": "string",
-        "error": "string",
-        "success": "boolean",
-        "data": {
-          "$ref": "#/components/schemas/TokenDto"
+      "ResultTTokenDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenDto"
+          }
         }
       },
       "Credentials": {
-        "email": "string",
-        "passwordB64": "string"
-      },
-      "string": {
-        "primitive": "string"
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "required": true
+          },
+          "passwordB64": {
+            "type": "string",
+            "required": true
+          }
+        }
       },
       "Result": {
-        "message": "string",
-        "statusCode": "string",
-        "error": "string",
-        "success": "boolean"
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }
 }
 ```
-
 
 **[⬆ back to the past](#table-of-contents)**
 

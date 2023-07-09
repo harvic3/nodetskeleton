@@ -25,6 +25,7 @@ export enum PropFormatEnum {
   URI = "uri",
   UUID = "uuid",
   PASSWORD = "password",
+  TEXT = "text",
 }
 
 export type ClassProperty = {
@@ -45,21 +46,25 @@ export class ResultDescriber {
   readonly properties: Record<keyof ResultWrapper, ClassProperty> = {
     message: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     error: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     statusCode: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     success: {
       type: PropTypeEnum.BOOLEAN,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
@@ -83,18 +88,10 @@ export class ResultDescriber {
       name: "Result",
       type: PropTypeEnum.OBJECT,
       properties: {
-        message: {
-          type: PropTypeEnum.STRING,
-        },
-        statusCode: {
-          type: PropTypeEnum.STRING,
-        },
-        error: {
-          type: PropTypeEnum.STRING,
-        },
-        success: {
-          type: PropTypeEnum.BOOLEAN,
-        },
+        message: this.properties.message,
+        statusCode: this.properties.statusCode,
+        error: this.properties.error,
+        success: this.properties.success,
       },
     };
     SchemasStore.add(this.schema.name, {
@@ -112,21 +109,25 @@ export class ResultTDescriber<T> {
   } = {
     message: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     error: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     statusCode: {
       type: PropTypeEnum.STRING,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
     success: {
       type: PropTypeEnum.BOOLEAN,
+      format: PropFormatEnum.TEXT,
       nullable: false,
       readonly: true,
     },
@@ -163,18 +164,10 @@ export class ResultTDescriber<T> {
           : `ResultT${this.name}`,
       type: PropTypeEnum.OBJECT,
       properties: {
-        message: {
-          type: PropTypeEnum.STRING,
-        },
-        statusCode: {
-          type: PropTypeEnum.STRING,
-        },
-        error: {
-          type: PropTypeEnum.STRING,
-        },
-        success: {
-          type: PropTypeEnum.BOOLEAN,
-        },
+        message: this.properties.message,
+        statusCode: this.properties.statusCode,
+        error: this.properties.error,
+        success: this.properties.success,
         data:
           obj.props.data.type === PropTypeEnum.ARRAY
             ? { type: PropTypeEnum.ARRAY, items: { $ref: reference } }
@@ -235,6 +228,9 @@ export class TypeDescriber<T> {
         schemaType[key] = {
           type: props[key].type,
           format: props[key].format,
+          nullable: props[key].nullable,
+          readonly: props[key].readonly,
+          required: props[key].required,
         };
       }
     });

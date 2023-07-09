@@ -149,10 +149,12 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "required": true
           },
           "passwordB64": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         }
       },
