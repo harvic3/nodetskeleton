@@ -149,14 +149,16 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string",
-            "required": true
+            "type": "string"
           },
           "passwordB64": {
-            "type": "string",
-            "required": true
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "email",
+          "passwordB64"
+        ]
       },
       "Result": {
         "type": "object",

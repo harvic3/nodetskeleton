@@ -8,8 +8,10 @@ export class SchemasStore {
     schema: {
       type: PropTypeEnum;
       properties: any;
+      required?: string[];
     },
   ): void {
+    if (!schema.required?.length) delete schema.required;
     this.#store.schemas[key] = schema;
   }
 

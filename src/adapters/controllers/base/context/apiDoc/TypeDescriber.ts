@@ -195,6 +195,7 @@ export class TypeDescriber<T> {
   readonly schema: {
     name: string;
     type: PropTypeEnum;
+    required?: string[];
     properties: Record<string, ClassProperty> | { type: PropTypeEnum };
   };
 
@@ -212,6 +213,7 @@ export class TypeDescriber<T> {
     this.schema = {
       name: obj.name,
       type: obj.type,
+      required: [],
       properties: {},
     };
 
@@ -230,20 +232,19 @@ export class TypeDescriber<T> {
           format: props[key].format,
           nullable: props[key].nullable,
           readonly: props[key].readonly,
-          required: props[key].required,
         };
+        if (props[key].required) {
+          this.schema.required?.push(key);
+        }
       }
     });
 
-    this.schema = {
-      name: obj.name,
-      type: PropTypeEnum.OBJECT,
-      properties: schemaType,
-    };
+    this.schema.properties = schemaType;
 
     SchemasStore.add(this.schema.name, {
       type: this.schema.type,
       properties: this.schema.properties,
+      required: this.schema.required,
     });
   }
 }
