@@ -27,8 +27,9 @@ export enum PropFormatEnum {
   PASSWORD = "password",
 }
 
-type ClassProperty = {
+export type ClassProperty = {
   type: PropTypeEnum;
+  format?: PropFormatEnum;
   nullable?: boolean;
   readonly?: boolean;
   required?: boolean;
@@ -63,7 +64,11 @@ export class ResultDescriber {
       readonly: true,
     },
   };
-  readonly schema: { name: string; definition: Record<keyof ResultWrapper, PropTypeEnum> };
+  readonly schema: {
+    name: string;
+    type: PropTypeEnum;
+    properties: Record<keyof ResultWrapper, ClassProperty>;
+  };
 
   constructor(obj: {
     type: PropTypeEnum.OBJECT;
@@ -76,14 +81,26 @@ export class ResultDescriber {
     if (obj.props?.success) this.properties.success = obj.props.success;
     this.schema = {
       name: "Result",
-      definition: {
-        message: PropTypeEnum.STRING,
-        statusCode: PropTypeEnum.STRING,
-        error: PropTypeEnum.STRING,
-        success: PropTypeEnum.BOOLEAN,
+      type: PropTypeEnum.OBJECT,
+      properties: {
+        message: {
+          type: PropTypeEnum.STRING,
+        },
+        statusCode: {
+          type: PropTypeEnum.STRING,
+        },
+        error: {
+          type: PropTypeEnum.STRING,
+        },
+        success: {
+          type: PropTypeEnum.BOOLEAN,
+        },
       },
     };
-    SchemasStore.add(this.schema.name, this.schema.definition);
+    SchemasStore.add(this.schema.name, {
+      type: this.schema.type,
+      properties: this.schema.properties,
+    });
   }
 }
 
@@ -117,7 +134,8 @@ export class ResultTDescriber<T> {
   };
   readonly schema: {
     name: string;
-    definition: Record<keyof ResultWrapper, PropTypeEnum> & {
+    type: PropTypeEnum;
+    properties: Record<keyof ResultWrapper, ClassProperty> & {
       data:
         | { $ref: string }
         | { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items: { $ref: string } };
@@ -139,19 +157,34 @@ export class ResultTDescriber<T> {
     if (obj.props?.success) this.properties.success = obj.props.success;
     const reference = "#/components/schemas/" + obj.props.data.schema.name;
     this.schema = {
-      name: `ResultT<${this.name}>`,
-      definition: {
-        message: PropTypeEnum.STRING,
-        statusCode: PropTypeEnum.STRING,
-        error: PropTypeEnum.STRING,
-        success: PropTypeEnum.BOOLEAN,
+      name:
+        obj.props.data.type === PropTypeEnum.ARRAY
+          ? `ResultT${this.name}Array`
+          : `ResultT${this.name}`,
+      type: PropTypeEnum.OBJECT,
+      properties: {
+        message: {
+          type: PropTypeEnum.STRING,
+        },
+        statusCode: {
+          type: PropTypeEnum.STRING,
+        },
+        error: {
+          type: PropTypeEnum.STRING,
+        },
+        success: {
+          type: PropTypeEnum.BOOLEAN,
+        },
         data:
           obj.props.data.type === PropTypeEnum.ARRAY
             ? { type: PropTypeEnum.ARRAY, items: { $ref: reference } }
             : { $ref: reference },
       },
     };
-    SchemasStore.add(this.schema.name, this.schema.definition);
+    SchemasStore.add(this.schema.name, {
+      type: this.schema.type,
+      properties: this.schema.properties,
+    });
   }
 }
 
@@ -161,12 +194,16 @@ type Primitive =
   | PropTypeEnum.BOOLEAN
   | PropTypeEnum.NULL
   | PropTypeEnum.UNDEFINED;
-type PrimitiveDefinition = { primitive: Primitive };
+type PrimitiveDefinition = { primitive: Primitive; format?: PropFormatEnum };
 
 export class TypeDescriber<T> {
   readonly type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY | PropTypeEnum.PRIMITIVE;
   readonly properties: Record<keyof T, ClassProperty | TypeDescriber<any>> | PrimitiveDefinition;
-  readonly schema: { name: string; definition: Record<string, string> | Record<string, string>[] };
+  readonly schema: {
+    name: string;
+    type: PropTypeEnum;
+    properties: Record<string, ClassProperty> | { type: PropTypeEnum };
+  };
 
   constructor(obj: {
     name: string;
@@ -181,38 +218,37 @@ export class TypeDescriber<T> {
     });
     this.schema = {
       name: obj.name,
-      definition: {},
+      type: obj.type,
+      properties: {},
     };
 
     if (this.type === PropTypeEnum.PRIMITIVE) {
       this.type = (this.properties as PrimitiveDefinition).primitive as any;
-      this.schema.definition = { primitive: (this.properties as PrimitiveDefinition).primitive };
-      SchemasStore.add(this.schema.name, this.schema.definition);
       return;
     }
 
     if (!Object.keys(props).length) return;
 
-    const schemaType: Record<string, string> = {};
+    const schemaType: Record<string, ClassProperty> = {};
     Object.keys(props).forEach((key) => {
       if (props[key].type) {
-        schemaType[key] = props[key].type;
+        schemaType[key] = {
+          type: props[key].type,
+          format: props[key].format,
+        };
       }
     });
 
-    if (this.type === PropTypeEnum.ARRAY) {
-      this.schema = {
-        name: obj.name,
-        definition: [schemaType],
-      };
-    } else {
-      this.schema = {
-        name: obj.name,
-        definition: schemaType,
-      };
-    }
+    this.schema = {
+      name: obj.name,
+      type: PropTypeEnum.OBJECT,
+      properties: schemaType,
+    };
 
-    SchemasStore.add(this.schema.name, this.schema.definition);
+    SchemasStore.add(this.schema.name, {
+      type: this.schema.type,
+      properties: this.schema.properties,
+    });
   }
 }
 

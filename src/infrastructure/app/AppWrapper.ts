@@ -40,7 +40,7 @@ export default class AppWrapper {
 
   constructor(controllers?: BaseController[]) {
     this.setup();
-    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment);
+    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
     this.app = AppServer();
     this.app.set("trust proxy", true);
     this.loadMiddleware();

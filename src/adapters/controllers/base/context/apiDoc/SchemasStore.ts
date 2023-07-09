@@ -1,7 +1,15 @@
+import { PropTypeEnum } from "./TypeDescriber";
+
 export class SchemasStore {
   static #store: { schemas: Record<string, any> } = { schemas: {} };
 
-  static add(key: string, schema: any): void {
+  static add(
+    key: string,
+    schema: {
+      type: PropTypeEnum;
+      properties: any;
+    },
+  ): void {
     this.#store.schemas[key] = schema;
   }
 

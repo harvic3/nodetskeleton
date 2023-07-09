@@ -1,20 +1,21 @@
 {
-  "openapi": "3.1.0",
-  "title": "NodeTSkeleton API",
-  "version": "1.0.0",
-  "description": "Api documentation for NodeTSkeleton project",
-  "contact": {
-    "name": "TSK Support",
-    "url": "https://github.com/harvic3/nodetskeleton",
-    "email": "harvic3@protonmail.com"
-  },
-  "license": {
-    "name": "MIT",
-    "identifier": "MIT"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NodeTSkeleton API",
+    "version": "1.0.0",
+    "description": "Api documentation for NodeTSkeleton project",
+    "contact": {
+      "name": "TSK Support",
+      "url": "https://github.com/harvic3/nodetskeleton",
+      "email": "harvic3@protonmail.com"
+    },
+    "license": {
+      "name": "MIT"
+    }
   },
   "servers": [
     {
-      "url": "localhost:3003",
+      "url": "localhost:3003/api",
       "description": "Local server"
     }
   ],
@@ -28,7 +29,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                  "$ref": "#/components/schemas/ResultTTokenDto"
                 }
               }
             }
@@ -38,7 +39,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultT<TokenDto>"
+                  "$ref": "#/components/schemas/ResultTTokenDto"
                 }
               }
             }
@@ -53,8 +54,7 @@
               }
             }
           }
-        },
-        "parameters": []
+        }
       }
     },
     "/ping": {
@@ -71,9 +71,7 @@
               }
             }
           }
-        },
-        "requestBody": {},
-        "parameters": []
+        }
       }
     },
     "/v1/users/sign-up": {
@@ -110,39 +108,70 @@
               }
             }
           }
-        },
-        "requestBody": {},
-        "parameters": []
+        }
       }
     }
   },
   "components": {
     "schemas": {
       "TokenDto": {
-        "token": "string",
-        "expiresIn": "number"
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "number"
+          }
+        }
       },
-      "ResultT<TokenDto>": {
-        "message": "string",
-        "statusCode": "string",
-        "error": "string",
-        "success": "boolean",
-        "data": {
-          "$ref": "#/components/schemas/TokenDto"
+      "ResultTTokenDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenDto"
+          }
         }
       },
       "Credentials": {
-        "email": "string",
-        "passwordB64": "string"
-      },
-      "string": {
-        "primitive": "string"
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "passwordB64": {
+            "type": "string"
+          }
+        }
       },
       "Result": {
-        "message": "string",
-        "statusCode": "string",
-        "error": "string",
-        "success": "boolean"
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }
