@@ -1,5 +1,6 @@
+import AppSettings from "../../settings/AppSettings";
 import { LocaleTypeEnum } from "../LocaleType.enum";
-import { Resources } from "resources-tsk";
+import { Resources } from "../../types";
 import esLocal from "./es.local";
 import enLocal from "./en.local";
 import localKeys from "./keys";
@@ -11,5 +12,5 @@ const locals = {
   [LocaleTypeEnum.EN_US]: enLocal,
 };
 
-export { Resources, localKeys, locals };
-export default new Resources(locals, localKeys, LocaleTypeEnum.EN);
+export { Resources, localKeys };
+export default new Resources(locals, localKeys, AppSettings.DefaultLanguage);

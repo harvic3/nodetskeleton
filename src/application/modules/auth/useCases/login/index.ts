@@ -28,7 +28,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     this.initializeUseCaseTrace(trace, args, ["passwordB64"]);
 
     const credentialsDto = CredentialsDto.fromJSON(args);
-    if (!credentialsDto.isValid(result, this.appWords, this.validator)) return result;
+    if (!credentialsDto.isValid(result)) return result;
 
     const authenticatedResult = await this.userLogin(
       result,

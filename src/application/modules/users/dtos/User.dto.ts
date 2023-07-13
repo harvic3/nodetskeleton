@@ -1,6 +1,6 @@
-import { IResult, Resources, Validator } from "../../../shared/useCase/BaseUseCase";
 import { Gender } from "../../../../domain/user/genre/Gender.enum";
 import { CredentialsDto } from "../../auth/dtos/Credentials.dto";
+import { BaseDto, IResult } from "../../../shared/dto/BaseDto";
 import { User } from "../../../../domain/user/User";
 
 export type IUserDto = {
@@ -11,7 +11,7 @@ export type IUserDto = {
   gender: Gender | undefined;
 };
 
-export class UserDto {
+export class UserDto extends BaseDto {
   uid: string | undefined;
   maskedUid: string | undefined;
   email: string | undefined;
@@ -33,15 +33,15 @@ export class UserDto {
     return userDto;
   }
 
-  isValid(result: IResult, appWords: Resources, validator: Validator): boolean {
+  isValid(result: IResult): boolean {
     const validations: Record<string, unknown> = {};
-    validations[appWords.get(appWords.keys.FIRST_NAME)] = this.firstName;
-    validations[appWords.get(appWords.keys.LAST_NAME)] = this.lastName;
-    validations[appWords.get(appWords.keys.EMAIL)] = this.email;
-    validations[appWords.get(appWords.keys.PASSWORD)] = this.password;
-    validations[appWords.get(appWords.keys.GENDER)] = this.gender;
+    validations[this.appWords.get(this.appWords.keys.FIRST_NAME)] = this.firstName;
+    validations[this.appWords.get(this.appWords.keys.LAST_NAME)] = this.lastName;
+    validations[this.appWords.get(this.appWords.keys.EMAIL)] = this.email;
+    validations[this.appWords.get(this.appWords.keys.PASSWORD)] = this.password;
+    validations[this.appWords.get(this.appWords.keys.GENDER)] = this.gender;
 
-    return validator.isValidEntry(result, validations);
+    return this.validator.isValidEntry(result, validations);
   }
 
   toDomain(uid: string | undefined, maskedUid: string, createdAt: string, verified: boolean): User {
