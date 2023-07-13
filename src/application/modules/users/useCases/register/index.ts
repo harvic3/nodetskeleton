@@ -31,7 +31,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const result = new Result();
 
     const userDto = UserDto.fromJSON(args);
-    if (!userDto.isValid(result, this.appWords, this.validator)) return result;
+    if (!userDto.isValid(result)) return result;
     this.initializeUseCaseTrace(trace, args, ["password"]);
 
     const user = await this.buildUser(userDto);

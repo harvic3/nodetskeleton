@@ -1,37 +1,23 @@
-import {
-  Resources,
-  localKeys as messageKeys,
-  locals as messageLocals,
-} from "../locals/messages/index";
-import { localKeys as wordKeys, locals as wordLocals } from "../locals/words/index";
 import { ILogProvider } from "../log/providerContracts/ILogProvider";
-export { IResult, Result, IResultT, ResultT } from "result-tsk";
+export { IResult, Result, IResultT, ResultT } from "../types";
 import applicationStatus from "../status/applicationStatus";
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
+import messages, { Resources } from "../locals/messages";
 import { UseCaseTrace } from "../log/UseCaseTrace";
-import AppSettings from "../settings/AppSettings";
-import { Validator } from "validator-tsk";
-import mapper, { IMap } from "mapper-tsk";
 import { Throw } from "../errors/Throw";
 import { IResult } from "result-tsk";
-export { Validator, Resources };
+import words from "../locals/words";
+
+export { Resources };
 
 export abstract class BaseUseCase<T> {
-  mapper: IMap;
-  validator: Validator;
   appMessages: Resources;
   appWords: Resources;
   applicationStatus = applicationStatus;
 
   constructor(public readonly CONTEXT: string, public readonly logProvider: ILogProvider) {
-    this.mapper = mapper;
-    this.appMessages = new Resources(messageLocals, messageKeys, AppSettings.DefaultLanguage);
-    this.appWords = new Resources(wordLocals, wordKeys, AppSettings.DefaultLanguage);
-    this.validator = new Validator(
-      this.appMessages,
-      this.appMessages.keys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatus.INVALID_INPUT,
-    );
+    this.appMessages = messages;
+    this.appWords = words;
   }
 
   setLocale(locale: LocaleTypeEnum): void {

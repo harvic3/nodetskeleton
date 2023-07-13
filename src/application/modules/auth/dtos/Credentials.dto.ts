@@ -1,10 +1,10 @@
-import { IResult, Resources, Validator } from "../../../shared/useCase/BaseUseCase";
 import { PasswordBuilder } from "../../../../domain/user/PasswordBuilder";
+import { BaseDto, IResult } from "../../../shared/dto/BaseDto";
 import { Email } from "../../../../domain/user/Email";
 
 export type ICredentials = { email: string | undefined; passwordB64: string | undefined };
 
-export class CredentialsDto {
+export class CredentialsDto extends BaseDto {
   email: Email | undefined;
   passwordBuilder: PasswordBuilder | undefined;
 
@@ -19,11 +19,12 @@ export class CredentialsDto {
     return credentialsDto;
   }
 
-  isValid(result: IResult, appWords: Resources, validator: Validator): boolean {
+  isValid(result: IResult): boolean {
     const validations: Record<string, unknown> = {};
-    validations[appWords.get(appWords.keys.EMAIL)] = !!this.email?.value;
-    validations[appWords.get(appWords.keys.PASSWORD)] = !!this.passwordBuilder?.passwordBase64;
+    validations[this.appWords.get(this.appWords.keys.EMAIL)] = !!this.email?.value;
+    validations[this.appWords.get(this.appWords.keys.PASSWORD)] =
+      !!this.passwordBuilder?.passwordBase64;
 
-    return validator.isValidEntry(result, validations);
+    return this.validator.isValidEntry(result, validations);
   }
 }
