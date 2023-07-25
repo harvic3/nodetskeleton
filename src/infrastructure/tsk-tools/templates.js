@@ -17,7 +17,7 @@ const functionControllerTemplate = `
   ): Promise<void> => {
     // Create your request data from body, query or params here
     const body = req.body;
-    return this.handleResultData(
+    return this.handleResult(
       res,
       next,
       this.servicesContainer.get<{{UseCaseName}}UseCase>(this.CONTEXT, {{UseCaseName}}UseCase.name).execute(req.locale, res.trace, body),
