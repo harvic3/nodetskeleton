@@ -418,7 +418,7 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
 
 The **Iterator** is a feature supported in a **base class** to **extend** in flows where you must orchestrate **more than one use case** in a transaction.
 
-You should note that this feature is only for **synchronous flows** where there is an initial input corresponding to that of the first use case, but **but the response of this one will be the input of the following use case** and so on until the last use case is solved and this will finally be the response of the iterator.
+You should note that this feature is only for **synchronous flows** where there is an initial input corresponding to the first UseCase, but **the response of this one will be the input of the following use case** and so on until the last UseCase is solved and this will finally be the response of the Iterator.
 
 We must be clear that **if any use case fails**, then the **flow will be automatically interrupted** and the answer delivered by the failed use case will be returned. 
 
