@@ -3,7 +3,7 @@ import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 import { UseCaseTrace } from "../log/UseCaseTrace";
 
 export abstract class BaseIterator<InputType, OutputType> {
-  #taskIterator: Generator<BaseUseCase<any>>;
+  readonly #taskIterator: Generator<BaseUseCase<any>>;
 
   constructor(useCases: BaseUseCase<any>[]) {
     this.#taskIterator = this.createTaskIterator(useCases);
@@ -30,15 +30,14 @@ export abstract class BaseIterator<InputType, OutputType> {
     trace: UseCaseTrace,
     args?: InputType,
   ): Promise<ResultT<OutputType>> {
-    let result = new ResultT<any>();
-
     let task = this.#taskIterator.next();
-    result = (await task.value.execute(locale, trace, args)) as ResultT<any>;
+    let result = (await task.value.execute(locale, trace, args)) as ResultT<any>;
+
     for (task = this.#taskIterator.next(); !task.done; task = this.#taskIterator.next()) {
+      if (!result.success) break;
       // You should use the result data of the previous task as the input of the next task
       result = (await task.value.execute(locale, trace, result?.data)) as ResultT<any>;
       // If you need to change the input for each use case, so contact me to get support ;)
-      if (!result.success) break;
     }
 
     return Promise.resolve(result);
