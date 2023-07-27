@@ -37,4 +37,8 @@ export default class ArrayUtil {
   static any(list: any[] | Nulldefined): boolean {
     return !!list?.length;
   }
+
+  static fromObject<T>(object: any): T[] {
+    return Object.keys(object).map((key) => object[key]);
+  }
 }

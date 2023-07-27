@@ -7,11 +7,11 @@
 
 > ### Important notice for companies
 >
->> I have this Workflow built in C# for .Net (NetCore).
+>> I have this workflow built in C# for .Net (NetCore).
 >
->> I have this workflow for Serverless development with NodeJS
+>> I have this workflow for Serverless development with NodeJS and AWS.
 >
->> I'm open to employment proposals.
+>> I'm open for company proposals.
 >
 > Write to: <harvic3@protonmail.com>
 
@@ -30,6 +30,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 		1. [Locals](#locals)
  		1. [Mapper](#mapper)
  		1. [UseCase](#usecase)
+ 		1. [UseCases Iterator](#usecases-iterator)
  		1. [Validator](#validator)
  		1. [API Docs generator](#api-docs-generator)
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
@@ -410,6 +411,150 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
   }
 }
 ```
+
+**[⬆ back to the past](#table-of-contents)**
+
+### UseCases Iterator
+
+The **Iterator** is a feature supported in a **base class** to **extend** in flows where you must orchestrate **more than one use case** in a transaction.
+
+You should note that this feature is only for **synchronous flows** where there is an initial input corresponding to that of the first use case, but **but the response of this one will be the input of the following use case** and so on until the last use case is solved and this will finally be the response of the iterator.
+
+We must be clear that **if any use case fails**, then the **flow will be automatically interrupted** and the answer delivered by the failed use case will be returned. 
+
+The base class to manage our UseCases flows is **BaseIterator**
+```ts
+export abstract class BaseIterator<InputType, OutputType> {
+  #taskIterator: Generator<BaseUseCase<any>>;
+
+  constructor(useCases: BaseUseCase<any>[]) {
+    this.#taskIterator = this.createTaskIterator(useCases);
+  }
+
+  private *createTaskIterator(tasks: BaseUseCase<any>[]): Generator<BaseUseCase<any>> {
+    for (const task of tasks) {
+      yield task;
+    }
+  }
+
+  async iterate(
+    locale: LocaleTypeEnum,
+    trace: UseCaseTrace,
+    args?: InputType,
+  ): Promise<ResultT<OutputType>> {
+    let result = new ResultT<any>();
+
+    let task = this.#taskIterator.next();
+    result = (await task.value.execute(locale, trace, args)) as ResultT<any>;
+    for (task = this.#taskIterator.next(); !task.done; task = this.#taskIterator.next()) {
+      // You should use the result data of the previous task as the input of the next task
+      result = (await task.value.execute(locale, trace, result?.data)) as ResultT<any>;
+      // If you need to change the input for each use case, so contact me to get support ;)
+      if (!result.success) break;
+    }
+
+    return Promise.resolve(result);
+  }
+}
+```
+So, to use it, is important to take into account the following considerations:
+
+1. The iterator is an abstract class because the idea is that there is a concrete class that extends it and that its name indicates exactly what it does, as in a use case.
+1. The iterator has the InputType and OutputType. InputType is the generic Type for the first UseCase, and OutputType must be the generic Type of the last UseCase.
+1. You can create Iterators with as many use cases as your flow requires.
+1. It's recommended to use numbers in letters as keys to be able to take care of the order of them (one, two, three, four, five, six... n). Believe me!!
+
+For example, We will create a modification of the Status UseCase (PongUseCase) to address such a flow for demonstration purposes.
+**Note**: `it's valid to clarify that this is an example, that's why I use the same UseCase (AnotherPongUseCase), because due to time issues I cannot create a flow of a real solution, so this is just an illustration of how this feature works.` :)
+
+```ts
+// Modified PongUseCase
+export class AnotherPongUseCase extends BaseUseCase<{ counter: number }> {
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly healthProvider: IStatusProvider,
+  ) {
+    super(PongUseCase.name, logProvider);
+  }
+
+  async execute(
+    locale: LocaleTypeEnum,
+    trace: UseCaseTrace,
+    args: { counter: number },
+  ): Promise<IResultT<{ message: string; counter: number }>> {
+    this.setLocale(locale);
+    const result = new ResultT<{ message: string; counter: number }>();
+
+    const message = await this.healthProvider.get(
+      AppSettings.ServiceContext,
+      DateTimeUtils.getISONow(),
+    );
+    result.setData({ message, counter: args.counter + 1 }, this.applicationStatus.SUCCESS);
+
+    return result;
+  }
+}
+```
+Now, let's create the respective Iterator to iterate several times that same use case (It's an illustrative example).
+
+```ts
+export class VerifyStatusIterator extends BaseIterator<
+  // Counter is the input for our modified PongUseCase
+  { counter: number },
+  {
+    message: string;
+    counter: number;
+  }
+> {
+  constructor(useCases: {
+    one: AnotherPongUseCase;
+    two: AnotherPongUseCase;
+    three: AnotherPongUseCase;
+    four: AnotherPongUseCase;
+  }) {
+    super(ArrayUtil.fromObject<BaseUseCase<any>>(useCases));
+  }
+}
+```
+And is important to know that in StatusController we have the Iterator as following:
+
+```ts
+  verifyStatusIteration: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+    return this.handleResult(
+      res,
+      next,
+      this.servicesContainer.get<VerifyStatusIterator>({
+        // It is important to be careful with this order, otherwise you will have unexpected surprises 
+        one: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        two: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        three: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        four: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        // Look here for the type of input that corresponds to the type of the first use case
+      }).iterate(req.locale, res.trace, { counter: 0 }),
+    );
+  };
+```
+So, the result for the Iterator of this example is something like:
+
+```json
+{
+    "data": {
+        "message": "<div><h2>TSkeleton NodeTskeleton service context online at 1963-01-02T00:00:00.060-05:00</h2></div>",
+        "counter": 4
+    },
+    "statusCode": "00",
+    "success": true
+}
+```
+We use the same use case to increase the counter value by one unit for each use case, magic!
+
+I hope you make good use of this new functionality and do not abuse it too much.
+
+It is important to mention that the implementation was done this way because the idea is that your Iterators are concrete classes with a given context, and also have their unit tests as a use case.
 
 **[⬆ back to the past](#table-of-contents)**
 
