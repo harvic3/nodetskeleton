@@ -30,7 +30,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 		1. [Locals](#locals)
  		1. [Mapper](#mapper)
  		1. [UseCase](#usecase)
- 		1. [UseCaseIterator](#usecase-iterator)
+ 		1. [UseCases Iterator](#usecases-iterator)
  		1. [Validator](#validator)
  		1. [API Docs generator](#api-docs-generator)
   1. [Dependency injection strategy 📦](#dependency-injection-strategy)
