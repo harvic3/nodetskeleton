@@ -508,7 +508,7 @@ export class VerifyStatusIterator extends BaseIterator<
   }
 }
 ```
-And is important to know that in StatusController we have the Iterator as following:
+And is important to know that in `StatusController` we have the respective Iterator class `VerifyStatusIterator` as following:
 
 ```ts
   verifyStatusIteration: EntryPointHandler = async (
@@ -530,7 +530,7 @@ And is important to know that in StatusController we have the Iterator as follow
     );
   };
 ```
-So, the result for the Iterator of this example is something like:
+Then, the Iterator result for this example is something like:
 
 ```json
 {
@@ -542,9 +542,9 @@ So, the result for the Iterator of this example is something like:
     "success": true
 }
 ```
-We use the same use case to increase the counter value by one unit for each use case, magic!
+We use the same UseCase to increase the counter value by one unit for each use case, magic!! 😜
 
-I hope you make good use of this new functionality and do not abuse it too much.
+I hope you make good use of this new functionality and do not abuse it too much. 🫣
 
 It is important to mention that the implementation was done this way because the idea is that your Iterators are concrete classes with a given context, and also have their unit tests as a use case.
 
