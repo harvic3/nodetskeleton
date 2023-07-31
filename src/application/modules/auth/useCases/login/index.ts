@@ -14,7 +14,10 @@ import { User } from "../../../../../domain/user/User";
 import { TokenDto } from "../../dtos/TokenDto";
 
 export class LoginUseCase extends BaseUseCase<ICredentials> {
-  constructor(readonly logProvider: ILogProvider, private readonly authProvider: IAuthProvider) {
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly authProvider: IAuthProvider,
+  ) {
     super(LoginUseCase.name, logProvider);
   }
 
