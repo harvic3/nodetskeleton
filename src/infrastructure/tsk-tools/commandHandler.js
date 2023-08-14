@@ -156,6 +156,32 @@ const controllerStrategy = {
   },
 };
 
+function ensureServiceContext(settingsFile, serviceContextFilePath, apiName) {
+  if (!existsSync(serviceContextFilePath)) return;
+
+  const serviceContextContent = readFileSync(serviceContextFilePath, "utf8");
+  const hasApiServiceContext = getLinePositionByContent(
+    serviceContextContent,
+    apiName.toUpperCase(),
+  );
+  if (hasApiServiceContext) return;
+
+  const fileEndPosition = getLinePositionByContent(
+    serviceContextContent,
+    settingsFile.serviceContextLineToFind,
+  );
+  const serviceContextContentToAdd = replaceAll(templates.serviceContextNewLine, {
+    "{{ApiNameUpper}}": apiName.toUpperCase(),
+    "{{ApiName}}": apiName,
+  });
+  const newServiceContextContent = addLinesAfterPosition(
+    serviceContextContent,
+    fileEndPosition - 1,
+    serviceContextContentToAdd,
+  );
+  writeFileSync(serviceContextFilePath, newServiceContextContent);
+}
+
 function addUseCase(args, settingsFile) {
   const API_NAME_ARG = "api-name";
   const USE_CASE_ARG = "use-case";
@@ -224,7 +250,6 @@ function addUseCase(args, settingsFile) {
     return;
   }
 
-  const httpMethodLower = httpMethod.toLowerCase();
   const controllerPath = resolve(
     `./src/adapters/controllers/${apiName}/${apiNameCapitalized}.controller.ts`,
   );
@@ -265,6 +290,7 @@ function addUseCase(args, settingsFile) {
   const testUseCaseTemplate = replaceAll(templates.testUseCaseTemplate, {
     "{{UseCaseName}}": useCaseName,
   });
+  const serviceContextFilePath = resolve("./src/adapters/shared/ServiceContext.ts");
 
   try {
     if (!existsController) {
@@ -278,6 +304,8 @@ function addUseCase(args, settingsFile) {
     mkdirSync(join(useCasePath, ".."), { recursive: true });
     writeFileSync(useCasePath, useCaseTemplate);
     writeFileSync(testUseCasePath, testUseCaseTemplate);
+
+    ensureServiceContext(settingsFile, serviceContextFilePath, apiName);
 
     console.log(
       `${useCaseName}UseCase and its dependencies were created with:\n apiName=${apiName}\n use-case=${useCaseName}\n endPoint=${endPoint}\n httpMethod=${httpMethod}`,

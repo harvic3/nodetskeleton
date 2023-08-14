@@ -4,7 +4,6 @@
 
 **NodeTskeleton** is a **Clean Architecture** based **OOP Template Project** for **NodeJs** using **TypeScript** to implement with any **web server framework** or even any user interface.
 
-
 > ### Important notice for companies
 >
 >> I have this workflow built in C# for .Net (NetCore).

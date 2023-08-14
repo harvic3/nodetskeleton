@@ -158,6 +158,7 @@ describe("Here your description test", () => {
   });
 });
 `;
+const serviceContextNewLine = `  {{ApiNameUpper}} = "{{ApiName}}",`;
 
 const templates = {
   controllerTemplate,
@@ -170,6 +171,7 @@ const templates = {
   functionControllerTemplate,
   importControllerTemplate,
   testUseCaseTemplate,
+  serviceContextNewLine,
 };
 
 module.exports = {
