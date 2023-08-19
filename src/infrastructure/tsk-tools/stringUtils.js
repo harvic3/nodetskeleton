@@ -1,5 +1,13 @@
 const { type } = require("os");
 
+const EQUAL_CHAR = "=",
+  SLASH_CHAR = "/",
+  SPACE_CHAR = " ",
+  COMMA_SPACE = ", ",
+  SPACE_COMMA = " ,",
+  COMMA_CHAR = ",",
+  EMPTY_CHAR = "";
+
 function capitalize(text) {
   if (!text) return null;
 
@@ -43,6 +51,13 @@ function replaceDoubleSpaces(text) {
 }
 
 module.exports = {
+  EQUAL_CHAR,
+  SLASH_CHAR,
+  SPACE_CHAR,
+  COMMA_SPACE,
+  SPACE_COMMA,
+  COMMA_CHAR,
+  EMPTY_CHAR,
   capitalize,
   toCamelCase,
   replaceAll,

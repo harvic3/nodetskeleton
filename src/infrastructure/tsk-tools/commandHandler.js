@@ -1,186 +1,31 @@
+const { ensureExistingController, ensureNewController } = require("./builders/controllerBuilder");
+const { ensureServiceContext } = require("./builders/serviceContextBuilder");
+const { ensureUseCase } = require("./builders/useCaseBuilder");
 const {
-  addContentToBeginning,
-  addLinesAfterPosition,
-  addLinesBeforePosition,
-  getLinePositionByContent,
-  replaceContentLineInPosition,
-  getLinePositionByContentInverse,
-} = require("./fileUtils");
+  ensureExistingContainer,
+  ensureNewContainer,
+} = require("./builders/controllerContainerBuilder");
+const { helpDescription } = require("./templates");
+const { readFileSync, existsSync } = require("fs");
+const { resolve } = require("path");
 const {
+  EQUAL_CHAR,
+  SLASH_CHAR,
+  SPACE_CHAR,
+  COMMA_SPACE,
+  EMPTY_CHAR,
   pathToOS,
   capitalize,
-  replaceAll,
   toCamelCase,
   addCharToStar,
-  replaceDoubleSpaces,
 } = require("./stringUtils");
 const {
   getArgValue,
   convertArgsToKeyValueArray,
   availableAddUseCaseCommandArgs,
 } = require("./argsUtils");
-const { writeFileSync, mkdirSync, readFileSync, existsSync } = require("fs");
-const { helpDescription, templates } = require("./templates");
-const { resolve, join } = require("path");
 
-const EQUAL_CHAR = "=",
-  SLASH_CHAR = "/",
-  SPACE_CHAR = " ",
-  COMMA_SPACE = ", ",
-  SPACE_COMMA = " ,",
-  COMMA_CHAR = ",",
-  EMPTY_CHAR = "",
-  HELP_COMMAND = "help";
-
-const controllerStrategy = {
-  newController: (
-    useCaseName,
-    useCaseNameCamel,
-    apiName,
-    apiNameCapitalized,
-    actionName,
-    endPoint,
-    httpMethod,
-  ) => {
-    const httpMethodLower = httpMethod.toLowerCase();
-    const controllerTemplate = replaceAll(templates.controllerTemplate, {
-      "{{UseCaseName}}": useCaseName,
-      "{{UseCaseNameCamel}}": useCaseNameCamel,
-      "{{EndPoint}}": endPoint,
-      "{{HttpMethodLower}}": httpMethodLower,
-      "{{HttpMethodUpper}}": httpMethod,
-      "{{ApiNameCapitalized}}": apiNameCapitalized,
-      "{{ApiNameUpper}}": apiName.toUpperCase(),
-    });
-    const controllerContainerTemplate = replaceAll(templates.controllerContainerTemplate, {
-      "{{UseCaseName}}": useCaseName,
-      "{{ApiName}}": apiName,
-      "{{ActionName}}": actionName,
-    });
-
-    return { controllerTemplate, controllerContainerTemplate };
-  },
-  existingController: (
-    settingsFile,
-    controllerPath,
-    containerPath,
-    useCaseName,
-    useCaseNameCamel,
-    apiName,
-    actionName,
-    endPoint,
-    httpMethod,
-  ) => {
-    const httpMethodLower = httpMethod.toLowerCase();
-    let controllerContent = readFileSync(controllerPath, "utf8");
-    const importLineNumber = getLinePositionByContent(
-      controllerContent,
-      settingsFile.controllerImportLineToFind,
-    );
-    const importControllerContent = replaceAll(templates.importControllerTemplate, {
-      "{{UseCaseName}}": useCaseName,
-    });
-    controllerContent = replaceContentLineInPosition(
-      controllerContent,
-      importLineNumber,
-      settingsFile.controllerImportLineToFind,
-      importControllerContent,
-    );
-    const functionLineNumber = getLinePositionByContent(
-      controllerContent,
-      settingsFile.controllerFunctionLineToFind,
-    );
-    const functionContextTemplate = replaceAll(templates.functionControllerTemplate, {
-      "{{UseCaseNameCamel}}": useCaseNameCamel,
-      "{{UseCaseName}}": useCaseName,
-    });
-    controllerContent = addLinesBeforePosition(
-      controllerContent,
-      functionLineNumber,
-      functionContextTemplate,
-    );
-    const routerLineNumber = getLinePositionByContent(
-      controllerContent,
-      settingsFile.controllerRouterLineToFind,
-    );
-    const routerContextTemplate = replaceAll(templates.routeControllerTemplate, {
-      "{{HttpMethodLower}}": httpMethodLower,
-      "{{HttpMethodUpper}}": httpMethod,
-      "{{EndPoint}}": endPoint,
-      "{{UseCaseNameCamel}}": useCaseNameCamel,
-    });
-    controllerContent = addLinesAfterPosition(
-      controllerContent,
-      routerLineNumber,
-      routerContextTemplate,
-    );
-
-    let controllerContainerContent = readFileSync(containerPath, "utf8");
-    const containerExportLineNumber = getLinePositionByContentInverse(
-      controllerContainerContent,
-      settingsFile.containerExportLineToFind,
-    );
-    const exportContainerContent = replaceAll(templates.exportContainerTemplate + COMMA_SPACE, {
-      "{{UseCaseName}}": useCaseName,
-    });
-    controllerContainerContent = replaceContentLineInPosition(
-      controllerContainerContent,
-      containerExportLineNumber,
-      settingsFile.containerExportLineToFind,
-      exportContainerContent.replaceAll(SPACE_COMMA, COMMA_CHAR),
-    );
-    const useCaseContainerTemplate = replaceDoubleSpaces(
-      replaceAll(templates.addUseCaseContainerTemplate, {
-        "{{UseCaseName}}": useCaseName,
-      }),
-    );
-    controllerContainerContent = addLinesBeforePosition(
-      controllerContainerContent,
-      containerExportLineNumber,
-      useCaseContainerTemplate,
-    );
-    const importContainerContent = replaceAll(templates.importContainerTemplate, {
-      "{{UseCaseName}}": useCaseName,
-      "{{ApiName}}": apiName,
-      "{{ActionName}}": actionName,
-    });
-    controllerContainerContent = addContentToBeginning(
-      controllerContainerContent,
-      importContainerContent,
-    );
-
-    return {
-      controllerTemplate: controllerContent,
-      controllerContainerTemplate: controllerContainerContent,
-    };
-  },
-};
-
-function ensureServiceContext(settingsFile, serviceContextFilePath, apiName) {
-  if (!existsSync(serviceContextFilePath)) return;
-
-  const serviceContextContent = readFileSync(serviceContextFilePath, "utf8");
-  const hasApiServiceContext = getLinePositionByContent(
-    serviceContextContent,
-    apiName.toUpperCase(),
-  );
-  if (hasApiServiceContext) return;
-
-  const fileEndPosition = getLinePositionByContent(
-    serviceContextContent,
-    settingsFile.serviceContextLineToFind,
-  );
-  const serviceContextContentToAdd = replaceAll(templates.serviceContextNewLine, {
-    "{{ApiNameUpper}}": apiName.toUpperCase(),
-    "{{ApiName}}": apiName,
-  });
-  const newServiceContextContent = addLinesAfterPosition(
-    serviceContextContent,
-    fileEndPosition - 1,
-    serviceContextContentToAdd,
-  );
-  writeFileSync(serviceContextFilePath, newServiceContextContent);
-}
+const HELP_COMMAND = "help";
 
 function addUseCase(args, settingsFile) {
   const API_NAME_ARG = "api-name";
@@ -258,52 +103,42 @@ function addUseCase(args, settingsFile) {
     `./src/adapters/controllers/${apiName}/container/index.ts`,
   );
 
-  const { controllerTemplate, controllerContainerTemplate } = existsController
-    ? controllerStrategy.existingController(
+  const testUseCasePath = resolve(
+    `./src/application/modules/${apiName}/useCases/${actionName}/${useCaseName}UseCase.test.ts`,
+  );
+  const serviceContextFilePath = resolve("./src/adapters/shared/ServiceContext.ts");
+
+  try {
+    if (existsController) {
+      ensureExistingController(
         settingsFile,
         controllerPath,
-        controllerContainerPath,
         useCaseName,
         useCaseNameCamel,
-        apiName,
-        actionName,
         endPoint,
         httpMethod,
-      )
-    : controllerStrategy.newController(
+      );
+      ensureExistingContainer(
+        settingsFile,
+        controllerContainerPath,
+        useCaseName,
+        apiName,
+        actionName,
+      );
+    } else {
+      ensureNewController(
+        controllerPath,
         useCaseName,
         useCaseNameCamel,
         apiName,
         apiNameCapitalized,
-        actionName,
         endPoint,
         httpMethod,
       );
-
-  const useCaseTemplate = replaceAll(templates.useCaseTemplate, {
-    "{{UseCaseName}}": useCaseName,
-  });
-
-  const testUseCasePath = resolve(
-    `./src/application/modules/${apiName}/useCases/${actionName}/${useCaseName}UseCase.test.ts`,
-  );
-  const testUseCaseTemplate = replaceAll(templates.testUseCaseTemplate, {
-    "{{UseCaseName}}": useCaseName,
-  });
-  const serviceContextFilePath = resolve("./src/adapters/shared/ServiceContext.ts");
-
-  try {
-    if (!existsController) {
-      mkdirSync(join(controllerPath, ".."), { recursive: true });
-      mkdirSync(join(controllerContainerPath, ".."), { recursive: true });
+      ensureNewContainer(controllerContainerPath, useCaseName, apiName, actionName);
     }
-    writeFileSync(controllerPath, controllerTemplate);
 
-    writeFileSync(controllerContainerPath, controllerContainerTemplate);
-
-    mkdirSync(join(useCasePath, ".."), { recursive: true });
-    writeFileSync(useCasePath, useCaseTemplate);
-    writeFileSync(testUseCasePath, testUseCaseTemplate);
+    ensureUseCase(useCasePath, testUseCasePath, useCaseName);
 
     ensureServiceContext(settingsFile, serviceContextFilePath, apiName);
 
