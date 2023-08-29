@@ -3,7 +3,6 @@ const { replaceAll } = require("../stringUtils");
 const { templates } = require("../templates");
 const { join } = require("path");
 
-
 function ensureUseCase(useCasePath, testUseCasePath, useCaseName) {
   const useCaseTemplate = replaceAll(templates.useCaseTemplate, {
     "{{UseCaseName}}": useCaseName,
