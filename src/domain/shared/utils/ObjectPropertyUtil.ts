@@ -12,7 +12,7 @@ export class ObjectPropertyUtil {
   }
 
   static remove<T>(target: T, propsToRemove: string[]): void {
-    if (!propsToRemove.length || !target) return;
+    if (!propsToRemove?.length || !target) return;
 
     propsToRemove.forEach((propertyName) => {
       if (Reflect.has(TypeParser.cast<object>(target), propertyName)) {

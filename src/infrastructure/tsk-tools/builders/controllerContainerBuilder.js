@@ -1,4 +1,4 @@
-const { COMMA_SPACE, SPACE_COMMA, COMMA_CHAR } = require("../stringUtils");
+const { COMMA_SPACE, SPACE_COMMA, COMMA_CHAR, capitalize } = require("../stringUtils");
 const { replaceAll, replaceDoubleSpaces } = require("../stringUtils");
 const { writeFileSync, mkdirSync, readFileSync } = require("fs");
 const { templates } = require("../templates");
@@ -50,6 +50,7 @@ function ensureExistingContainer(settingsFile, containerPath, useCaseName, apiNa
 
 function ensureNewContainer(containerPath, useCaseName, apiName, actionName) {
   const controllerContainerTemplate = replaceAll(templates.controllerContainerTemplate, {
+    "{{ApiNameCapitalized}}": capitalize(apiName),
     "{{UseCaseName}}": useCaseName,
     "{{ApiName}}": apiName,
     "{{ActionName}}": actionName,
