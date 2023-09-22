@@ -40,7 +40,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 		1. [Create your first use case 🎬](#create-your-first-use-case)
   1. [Workers 🔄](#workers)
   1. [GraphQL ✡](#graphql)
-  1. [Sockets ✡](#sockets)
+  1. [Sockets 🕳](#sockets)
   1. [Infrastructure 🏗️](#infrastructure)
   1. [Installation 🔥](#installation)
   1. [Run Test 🧪](#run-test)
@@ -1822,7 +1822,7 @@ Coming soon ;)
 
 ## Sockets
 
-This project template support this functionality, so if you need, ask me ;)
+This project template support this functionality, so if you need it, ask me ;)
 
 **[⬆ back to the past](#table-of-contents)**
 
