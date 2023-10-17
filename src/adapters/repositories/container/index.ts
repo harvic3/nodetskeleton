@@ -4,12 +4,14 @@ import kernel from "../../shared/kernel";
 
 const CONTEXT = "RepositoryContainer";
 
-kernel.addSingleton(
-  UserRepository.name,
-  new UserRepository(
-    kernel.get<IUserModel>(CONTEXT, kernel.classToInterfaceName(UserRepository.name)),
-  ),
-);
+function loadRepositories() {
+  kernel.addSingleton(
+    UserRepository.name,
+    new UserRepository(
+      kernel.get<IUserModel>(CONTEXT, kernel.classToInterfaceName(UserRepository.name)),
+    ),
+  );
+}
 
-export { UserRepository };
+export { loadRepositories, UserRepository };
 export default kernel;

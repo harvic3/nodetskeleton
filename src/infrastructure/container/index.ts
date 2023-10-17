@@ -1,8 +1,10 @@
 import { UseCaseTraceRepository } from "../../adapters/repositories/trace/UseCaseTrace.repository";
 import { UserRepository } from "../../adapters/repositories/user/User.repository";
 import { BaseHttpClient } from "../../adapters/shared/httpClient/BaseHttpClient";
+import { loadRepositories } from "../../adapters/repositories/container";
 import kernel, { IServiceContainer } from "../../adapters/shared/kernel";
 import { LogProvider } from "../../adapters/providers/log/Log.provider";
+import { loadProviders } from "../../adapters/providers/container";
 import { UserModel } from "../dataBases/nodeTsKeleton/User.model";
 import { HttpClient } from "../httpClient/HttpClient";
 import { Logger } from "../logger/Logger";
@@ -23,6 +25,12 @@ class InfrastructureServiceContainer {
       this.tsKernel.classToInterfaceName(UserRepository.name),
       new UserModel(),
     );
+
+    // load providers to kernel
+    loadProviders();
+
+    // Load repositories to kernel
+    loadRepositories();
   }
 }
 
