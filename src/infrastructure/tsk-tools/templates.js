@@ -1,9 +1,10 @@
-const helpDescription = `Serverless TSK available commands:
-  - add-use-case 'api-name=<apiName> use-case=<useCaseName> endpoint=<endpoint> http-method=<METHOD>'
+const helpDescription = `NodeTSKeleton available commands:
+  - 'add-use-case api-name=<apiName> use-case=<useCaseName> endpoint=<endpoint> http-method=<METHOD>'
     > The previous command will create a new UseCase into the project. Arguments can be sent in any order.
     > Example: npm run tsk 'add-use-case api-name=auth use-case=Logout endpoint=/v1/auth/logout http-method=GET'
+    Aliases: add-uc
 
-  - alias 'arg=<argName>'
+  - 'alias arg=<argName>'
     > The previous command will show available aliases for the sended argument name
     > Example: npm run tsk 'alias arg=api-name'
 `;

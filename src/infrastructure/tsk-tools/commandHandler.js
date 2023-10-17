@@ -183,6 +183,7 @@ const executeCommand = (args) => {
     case HELP_COMMAND:
       console.log(helpDescription);
       break;
+    case "add-uc":
     case "add-use-case":
       const abSolutePathSettingsFile = resolve(__dirname, "./settings.json");
       try {
@@ -196,7 +197,7 @@ const executeCommand = (args) => {
       listAliasesForArg(args);
       break;
     default:
-      console.warn("Command not found, try with help command");
+      console.warn("Command not found, try with help command > npm run tsk help");
   }
 };
 
