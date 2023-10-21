@@ -4,7 +4,7 @@ import kernel from "../../shared/kernel";
 
 const CONTEXT = "RepositoryContainer";
 
-function loadRepositories() {
+export function loadRepositories() {
   kernel.addSingleton(
     UserRepository.name,
     new UserRepository(
@@ -13,5 +13,5 @@ function loadRepositories() {
   );
 }
 
-export { loadRepositories, UserRepository };
+export { UserRepository };
 export default kernel;

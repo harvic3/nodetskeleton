@@ -1,11 +1,10 @@
 import { UseCaseTraceRepository } from "../../adapters/repositories/trace/UseCaseTrace.repository";
-import { UserRepository } from "../../adapters/repositories/user/User.repository";
 import { BaseHttpClient } from "../../adapters/shared/httpClient/BaseHttpClient";
 import { loadRepositories } from "../../adapters/repositories/container";
 import kernel, { IServiceContainer } from "../../adapters/shared/kernel";
 import { LogProvider } from "../../adapters/providers/log/Log.provider";
 import { loadProviders } from "../../adapters/providers/container";
-import { UserModel } from "../dataBases/nodeTsKeleton/User.model";
+import { LoadTSKDBModels } from "../dataBases/container";
 import { HttpClient } from "../httpClient/HttpClient";
 import { Logger } from "../logger/Logger";
 
@@ -13,20 +12,17 @@ class InfrastructureServiceContainer {
   constructor(readonly tsKernel: IServiceContainer) {}
 
   load(): void {
-    // Load Providers to kernel
+    // Load essential Providers to kernel
     this.tsKernel.addSingleton(this.tsKernel.classToInterfaceName(LogProvider.name), new Logger());
     this.tsKernel.addSingleton(UseCaseTraceRepository.name, new UseCaseTraceRepository());
 
-    // Load HttpClient to kernel
+    // Load essential services to kernel
     this.tsKernel.addSingleton(BaseHttpClient.name, new HttpClient());
 
-    // Load Model Repositories to kernel
-    this.tsKernel.addSingleton(
-      this.tsKernel.classToInterfaceName(UserRepository.name),
-      new UserModel(),
-    );
+    // Load Repository Models to kernel
+    LoadTSKDBModels();
 
-    // load providers to kernel
+    // Load providers to kernel
     loadProviders();
 
     // Load repositories to kernel

@@ -4,9 +4,9 @@ import { Headers, ITResponse } from "./ITResponse";
 
 type BodyType = ArrayBuffer | ArrayBufferView | NodeJS.ReadableStream | string | URLSearchParams;
 type RequestInit = {
-  body?: BodyType | undefined;
-  headers?: Headers | undefined;
-  method?: string | undefined;
+  body: BodyType | undefined;
+  headers: Headers | undefined;
+  method: string | undefined;
 };
 
 export type ReqArgs = {

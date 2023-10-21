@@ -10,7 +10,7 @@ import { ILogger } from "../log/ILogger";
 
 const CONTEXT = "ProviderContainer";
 
-function loadProviders() {
+export function loadProviders() {
   kernel.addSingleton(
     LogProvider.name,
     new LogProvider(kernel.get<ILogger>(CONTEXT, kernel.classToInterfaceName(LogProvider.name))),
@@ -32,5 +32,5 @@ function loadProviders() {
   );
 }
 
-export { loadProviders, LogProvider, AuthProvider, HealthProvider, WorkerProvider };
+export { LogProvider, AuthProvider, HealthProvider, WorkerProvider };
 export default kernel;

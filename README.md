@@ -6,11 +6,11 @@
 
 > ### Important notice for companies
 >
->> I have this workflow built in C# for .Net (NetCore).
+>> I have this workflow built in C# for .Net & .Net Core.
 >
->> I have this workflow for Serverless development with NodeJS and AWS.
+>> I have this workflow for AWS Serverless development with NodeJS.
 >
->> I'm open for company proposals.
+>> I'm open for company or business proposals about thees workflows.
 >
 > Write to: <harvic3@protonmail.com>
 
@@ -39,7 +39,6 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 		1. [Using with another web server framework 👽](#using-with-another-web-server-framework)
 		1. [Create your first use case 🎬](#create-your-first-use-case)
   1. [Workers 🔄](#workers)
-  1. [GraphQL ✡](#graphql)
   1. [Sockets 🕳](#sockets)
   1. [Infrastructure 🏗️](#infrastructure)
   1. [Installation 🔥](#installation)
@@ -1534,7 +1533,7 @@ And then, continue with the step **installation**.
 
 ## Create your first use case
 
-> Now CLI function to create use case templates and his dependencies was added, so you can try something like...
+> Now CLI function to create our UseCase common templates and its dependencies was added, so you can try something like...
 
 With the following command you will create a use case named CreatedOrderUseCase and his controller and containerController. Try it!!
 
@@ -1551,10 +1550,15 @@ npm run tsk 'add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orde
 > It's exciting, now command to create use case supports any order and aliases for their args, for example:
 	
 ```console
-npm run tsk 'add-use-case u=Logout e=/v1/auth/logout m=get a=auth'
+npm run tsk 'add-uc u=Logout e=/v1/auth/logout m=get a=auth'
+```
+or 
+```console
+npm run tsk 'add-uc u=Create e=/v1/products m=post a=products'
+npm run tsk 'add-uc u=Update e=/v1/products m=put a=products'
 ```
 
-It's very easy to create repetitive code, right. But you must know how it works, so continue reading...
+It's very easy to create repetitive code to focus in the important things, application and domain logic, right. But you must know how it works, so continue reading...
 
 Here is where the excitement of development begins, so let's say we need to create a use case to get a user, for example, then what we must do is go to our solution, go to the path **/src/application/modules/** and there look for the module to which our use case belongs, in this case, the user module.
 
@@ -1809,13 +1813,6 @@ const worker = new Worker(TaskDictionary[task.taskEnum], {
 ```
 
 This way we can create scripts for heavy computational tasks according to our own needs avoiding blocking the main execution thread of our application.
-
-**[⬆ back to the past](#table-of-contents)**
-
-
-## GraphQL
-
-Coming soon ;)
 
 **[⬆ back to the past](#table-of-contents)**
 
