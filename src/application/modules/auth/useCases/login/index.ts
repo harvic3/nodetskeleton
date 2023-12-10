@@ -1,4 +1,9 @@
-import { BaseUseCase, IResult, IResultT, ResultT } from "../../../../shared/useCase/BaseUseCase";
+import {
+  BaseUseCase,
+  IResultT,
+  ResultExecutionPromise,
+  ResultT,
+} from "../../../../shared/useCase/BaseUseCase";
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
@@ -33,14 +38,15 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     const credentialsDto = CredentialsDto.fromJSON(args);
     if (!credentialsDto.isValid(result)) return result;
 
-    const authenticatedResult = await this.userLogin(
-      result,
-      credentialsDto.email?.value as string,
-      credentialsDto?.passwordBuilder as PasswordBuilder,
+    const { value: authenticatedResult } = await result.execute(
+      this.userLogin(
+        credentialsDto.email?.value as string,
+        credentialsDto?.passwordBuilder as PasswordBuilder,
+      ),
     );
-    if (!authenticatedResult.success) return result;
+    if (result.hasError()) return result;
 
-    const tokenDto: TokenDto = await this.createSession(authenticatedResult.value as User);
+    const tokenDto: TokenDto = await this.createSession(authenticatedResult?.value as User);
 
     result.setData(tokenDto, this.applicationStatus.SUCCESS);
     trace.setSuccessful();
@@ -49,23 +55,25 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
   }
 
   private async userLogin(
-    result: IResult,
     email: string,
     passwordBuilder: PasswordBuilder,
-  ): Promise<TryResult<User>> {
+  ): ResultExecutionPromise<TryResult<User>> {
     const encryptedPassword = Encryption.encrypt(passwordBuilder.value);
     const authenticatedResult = await TryWrapper.syncExec(
       this.authProvider.login(email, encryptedPassword),
     );
 
     if (!authenticatedResult.success) {
-      result.setError(
-        this.appMessages.get(this.appMessages.keys.INVALID_USER_OR_PASSWORD),
-        this.applicationStatus.INVALID_INPUT,
-      );
+      return {
+        error: this.appMessages.get(this.appMessages.keys.INVALID_USER_OR_PASSWORD),
+        statusCode: this.applicationStatus.INVALID_INPUT,
+        value: null,
+      };
     }
 
-    return authenticatedResult;
+    return {
+      value: authenticatedResult,
+    };
   }
 
   private async createSession(authenticatedUser: User): Promise<TokenDto> {
