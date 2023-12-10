@@ -1,6 +1,11 @@
+import {
+  BaseUseCase,
+  IResult,
+  Result,
+  ResultExecutionPromise,
+} from "../../../../shared/useCase/BaseUseCase";
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDictionary.enum";
-import { BaseUseCase, IResult, Result } from "../../../../shared/useCase/BaseUseCase";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
@@ -40,10 +45,12 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
 
     this.validatePassword(userDto.getCredentialsDto().passwordBuilder as PasswordBuilder);
 
-    const userExists = await this.userExists(result, user.email?.value as string);
+    const { value: userExists } = await result.execute(
+      this.userExists(user.email?.value as string),
+    );
     if (userExists) return result;
 
-    const userRegistered = await this.registerUser(result, user);
+    const { value: userRegistered } = await result.execute(this.registerUser(user));
     if (!userRegistered) return result;
 
     result.setMessage(
@@ -73,19 +80,24 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     );
   }
 
-  private async userExists(result: IResult, email: string): Promise<boolean> {
+  private async userExists(email: string): ResultExecutionPromise<boolean> {
     const userExists = await this.userRepository.getByEmail(email);
     if (userExists) {
-      result.setError(
-        this.appMessages.getWithParams(this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS, {
-          email,
-        }),
-        this.applicationStatus.INVALID_INPUT,
-      );
-      return true;
+      return {
+        error: this.appMessages.getWithParams(
+          this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS,
+          {
+            email,
+          },
+        ),
+        statusCode: this.applicationStatus.INVALID_INPUT,
+        value: true,
+      };
     }
 
-    return false;
+    return {
+      value: false,
+    };
   }
 
   private async buildUser(userDto: UserDto): Promise<User> {
@@ -112,17 +124,19 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     return Promise.resolve(workerResult);
   }
 
-  private async registerUser(result: IResult, user: IUser): Promise<boolean> {
+  private async registerUser(user: IUser): ResultExecutionPromise<boolean> {
     const registeredUser = await this.userRepository.register(user);
 
     if (!registeredUser) {
-      result.setError(
-        this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
-        this.applicationStatus.INTERNAL_ERROR,
-      );
-      return false;
+      return {
+        error: this.appMessages.get(this.appMessages.keys.ERROR_CREATING_USER),
+        statusCode: this.applicationStatus.INTERNAL_ERROR,
+        value: false,
+      };
     }
 
-    return true;
+    return {
+      value: true,
+    };
   }
 }

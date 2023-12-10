@@ -1,5 +1,5 @@
+export { IResult, Result, IResultT, ResultT, ResultExecutionPromise } from "../types";
 import { ILogProvider } from "../log/providerContracts/ILogProvider";
-export { IResult, Result, IResultT, ResultT } from "../types";
 import applicationStatus from "../status/applicationStatus";
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 import messages, { Resources } from "../locals/messages";
@@ -15,7 +15,10 @@ export abstract class BaseUseCase<T> {
   appWords: Resources;
   applicationStatus = applicationStatus;
 
-  constructor(public readonly CONTEXT: string, public readonly logProvider: ILogProvider) {
+  constructor(
+    public readonly CONTEXT: string,
+    public readonly logProvider: ILogProvider,
+  ) {
     this.appMessages = messages;
     this.appWords = words;
   }
