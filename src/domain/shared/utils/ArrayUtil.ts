@@ -1,9 +1,9 @@
 import { Nulldefined } from "../types/Nulldefined.type";
 
 export default class ArrayUtil {
-  static NOT_FOUND_INDEX = -1;
-  static FIRST_INDEX = 0;
-  static INDEX_ONE = 1;
+  static readonly NOT_FOUND_INDEX = -1;
+  static readonly FIRST_INDEX = 0;
+  static readonly INDEX_ONE = 1;
 
   static first<T>(list: T[]): T | null {
     if (!list?.length) {

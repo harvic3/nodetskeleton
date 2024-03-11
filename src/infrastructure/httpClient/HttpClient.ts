@@ -1,6 +1,5 @@
+import { BaseHttpClient, BodyType, ReqArgs } from "../../adapters/shared/httpClient/BaseHttpClient";
 import { HttpStatusEnum } from "../../adapters/controllers/base/httpResponse/HttpStatusEnum";
-import { BaseHttpClient, ReqArgs } from "../../adapters/shared/httpClient/BaseHttpClient";
-import fetch, { BodyInit as BodyType, Request, RequestInit, Response } from "node-fetch";
 import { HttpMethodEnum } from "../../adapters/controllers/base/context/HttpMethod.enum";
 import { SerializationType } from "../../adapters/shared/httpClient/SerializationType";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
@@ -16,10 +15,6 @@ type HttpResponseType<ResType> = ResType | string | ArrayBuffer | unknown;
 
 export class HttpClient extends BaseHttpClient {
   #SERIALIZED = true;
-
-  constructor() {
-    super();
-  }
 
   private buildRequest(
     url: string,
@@ -74,8 +69,6 @@ export class HttpClient extends BaseHttpClient {
   ): Promise<HttpResponseType<RT>> {
     try {
       switch (serializationMethod) {
-        case SerializationType.BUFFER:
-          return await response.buffer();
         case SerializationType.ARRAY_BUFFER:
           return await response.arrayBuffer();
         case SerializationType.TEXT:
@@ -114,7 +107,7 @@ export class HttpClient extends BaseHttpClient {
     );
     const result = new TResponse<ResType, ErrType>();
     try {
-      const response = await fetch(url, request);
+      const response = await fetch(request);
       if (response.ok) {
         const data = await this.processResponseData<ResType>(response, reqArgs.serializationMethod);
         result.setResponse(data);

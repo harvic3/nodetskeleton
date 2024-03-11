@@ -59,7 +59,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     passwordBuilder: PasswordBuilder,
   ): ResultExecutionPromise<TryResult<User>> {
     const encryptedPassword = Encryption.encrypt(passwordBuilder.value);
-    const authenticatedResult = await TryWrapper.syncExec(
+    const authenticatedResult = await TryWrapper.asyncExec(
       this.authProvider.login(email, encryptedPassword),
     );
 

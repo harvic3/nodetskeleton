@@ -1,7 +1,6 @@
 export class SerializationType {
-  static JSON: "json";
-  static TEXT: "string";
-  static ARRAY_BUFFER: "arrayBuffer";
-  static BUFFER: "buffer";
-  static BLOB: "blob";
+  static readonly JSON: "json";
+  static readonly TEXT: "string";
+  static readonly ARRAY_BUFFER: "arrayBuffer";
+  static readonly BLOB: "blob";
 }

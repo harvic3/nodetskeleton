@@ -2,13 +2,12 @@ import { HttpMethodEnum } from "../../controllers/base/context/HttpMethod.enum";
 import { SerializationType } from "./SerializationType";
 import { Headers, ITResponse } from "./ITResponse";
 
-type BodyType = ArrayBuffer | ArrayBufferView | NodeJS.ReadableStream | string | URLSearchParams;
-type RequestInit = {
-  body: BodyType | undefined;
-  headers: Headers | undefined;
-  method: string | undefined;
-};
-
+export type BodyType =
+  | ArrayBuffer
+  | ArrayBufferView
+  | NodeJS.ReadableStream
+  | string
+  | URLSearchParams;
 export type ReqArgs = {
   method: string;
   serializationMethod: string;

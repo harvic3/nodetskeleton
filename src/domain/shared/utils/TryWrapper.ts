@@ -16,7 +16,7 @@ export class TryWrapper {
     }
   }
 
-  static async syncExec<T>(promise: Promise<T>): Promise<TryResult<T>> {
+  static async asyncExec<T>(promise: Promise<T>): Promise<TryResult<T>> {
     try {
       const value = await promise;
       return { value, success: true, error: undefined };
