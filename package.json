@@ -39,8 +39,8 @@
   "license": "MIT",
   "homepage": "https://github.com/harvic3/nodetskeleton/blob/master/README.md",
   "engines": {
-    "node": ">=18",
-    "npm": ">=8.19.0"
+    "node": ">=20",
+    "npm": ">=10"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
