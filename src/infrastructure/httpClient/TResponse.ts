@@ -1,14 +1,14 @@
-import { Headers, ITResponse, Response } from "../../adapters/shared/httpClient/ITResponse";
+import { Headers, ITResponse, HttpResponseType } from "../../adapters/shared/httpClient/ITResponse";
 
 export class TResponse<R, E> implements ITResponse<R, E> {
-  response: Response<R | E> | undefined;
-  success = true;
+  response: HttpResponseType<R | E> | undefined;
+  success = false;
   statusCode: number | undefined;
   message: string | undefined;
   error: Error | undefined;
   headers: Headers | undefined;
 
-  setResponse(data: Response<R>): void {
+  setResponse(data: HttpResponseType<R>): void {
     this.response = data;
   }
 
