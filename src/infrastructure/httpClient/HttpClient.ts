@@ -1,17 +1,15 @@
 import { BaseHttpClient, BodyType, ReqArgs } from "../../adapters/shared/httpClient/BaseHttpClient";
 import { HttpStatusEnum } from "../../adapters/controllers/base/httpResponse/HttpStatusEnum";
 import { HttpMethodEnum } from "../../adapters/controllers/base/context/HttpMethod.enum";
+import { Headers, HttpResponseType } from "../../adapters/shared/httpClient/ITResponse";
 import { SerializationType } from "../../adapters/shared/httpClient/SerializationType";
 import { ApplicationError } from "../../application/shared/errors/ApplicationError";
 import { ObjectPropertyUtil } from "../../domain/shared/utils/ObjectPropertyUtil";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
-import { Headers } from "../../adapters/shared/httpClient/ITResponse";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import appMessages from "../../application/shared/locals/messages";
 import ArrayUtil from "../../domain/shared/utils/ArrayUtil";
 import { TResponse } from "./TResponse";
-
-type HttpResponseType<ResType> = ResType | string | ArrayBuffer | unknown;
 
 export class HttpClient extends BaseHttpClient {
   #SERIALIZED = true;
@@ -40,7 +38,7 @@ export class HttpClient extends BaseHttpClient {
       result = await response.text();
       return [JSON.parse(result), this.#SERIALIZED];
     } catch (error) {
-      return [result as ErrType | string, !this.#SERIALIZED];
+      return [error as ErrType | string, !this.#SERIALIZED];
     }
   }
 
@@ -74,9 +72,11 @@ export class HttpClient extends BaseHttpClient {
         case SerializationType.TEXT:
           return await response.text();
         case SerializationType.BLOB:
-          return (await response.blob()).text();
+          return await response.blob();
+        case SerializationType.FORM_DATA:
+          return await response.formData();
         default:
-          return await response.json();
+          return (await response.json()) as RT;
       }
     } catch (error) {
       throw new ApplicationError(
