@@ -488,10 +488,10 @@ export class VerifyStatusIterator extends BaseIterator<
   }
 > {
   constructor(useCases: {
-    one: AnotherPongUseCase;
-    two: AnotherPongUseCase;
-    three: AnotherPongUseCase;
-    four: AnotherPongUseCase;
+    stepOne: AnotherPongUseCase;
+    stepTwo: AnotherPongUseCase;
+    stepThree: AnotherPongUseCase;
+    stepFour: AnotherPongUseCase;
   }) {
     super(ArrayUtil.fromObject<BaseUseCase<any>>(useCases));
   }
@@ -510,10 +510,10 @@ And is important to know that in `StatusController` we have the respective Itera
       next,
       this.servicesContainer.get<VerifyStatusIterator>({
         // It is important to be careful with this order, otherwise you will have unexpected surprises 
-        one: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
-        two: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
-        three: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
-        four: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        stepOne: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        stepTwo: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        stepThree: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
+        stepFour: this.servicesContainer.get<AnotherPongUseCase>(this.CONTEXT, AnotherPongUseCase.name),
         // Look here for the type of input that corresponds to the type of the first use case
       }).iterate(req.locale, res.trace, { counter: 0 }),
     );
@@ -650,7 +650,7 @@ This tool is now available as an **NPM package**.
 
 ## API Docs generator
 
-Now API documentation can already be generated automatically through a strategy in the method where the routes are configured.
+Now standardized API documentation can already be generated automatically through a strategy in the method where the routes are configured using Open API.
 
 The API documentation is done in the initializeRoutes method of each controller as shown below:
 

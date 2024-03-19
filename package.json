@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "tsk": "npx run-func src/infrastructure/tsk-tools/commandHandler.js executeCommand",
-    "dev": "ts-node-dev --respawn -- src/index.ts",
+    "dev": "ts-node-dev --env-file=.env --respawn -- src/index.ts",
     "test": "npm run build && jest --no-cache --detectOpenHandles --forceExit --coverage",
     "test:watch": "npm run build && jest --forceExit --detectOpenHandles --watchAll",
     "build": "rm -rf dist/* && tsc --sourceMap false",
@@ -15,7 +15,7 @@
     "pretty-quick": "pretty-quick",
     "pretty-check": "pretty-quick --check",
     "pre-commit": "npm run lint && npm run pretty-quick --staged && npm run test",
-    "start": "node dist/index"
+    "start": "node --env-file=.env dist/index"
   },
   "repository": {
     "type": "git",
@@ -66,7 +66,6 @@
   },
   "dependencies": {
     "dic-tsk": "^1.0.4",
-    "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "express-async-errors": "^3.1.1",
     "fast-glob": "^3.3.2",

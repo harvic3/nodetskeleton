@@ -3,7 +3,6 @@ import { ServiceContext } from "../../adapters/shared/ServiceContext";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { Normalize } from "./Normalize";
-import "dotenv/config";
 
 const DEV = "development";
 
