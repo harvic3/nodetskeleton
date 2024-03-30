@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: node:18-slim
+    image: node:20-slim
     container_name: tskeleton-app
     restart: unless-stopped
     env_file: .env
@@ -19,7 +19,8 @@ services:
       - ENCRYPTION_KEY=$ENCRYPTION_KEY
       - JWT_SECRET_KEY=$JWT_SECRET_KEY
     ports:
-      - "3003:3003"
+      - 3003:3003
+      - 9229:9229
     volumes:
       - .:/usr/node/app
       - /usr/node/app/dist

@@ -1852,29 +1852,44 @@ JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
 
 ### Local
 
+Is very important if you are using `npm` or `pnpm`, use it correctly.
+
 > First, we must install the dependencies, run: 
 
 ```console
 npm install
+// or 
+pnpm install
 ```
 
 > Second, we must update the dependencies, run: 
 
 ```console
 npm update
+// or
+pnpm update
 ```
 
 > Third, run project in hot reload mode (Without debug, for it go to [Debug instructions](#application-debugger))
 
 ```console
 npm run dev
+// Or 
+pnpm run dev
 ```
 
-or 
+or to execute directly,
 
+With NPM
 ```console
 npm run build
-node dist/index
+npm run start
+```
+
+With PNPM
+```console
+pnpm run build
+pnpm run start
 ```
 
 > Finally, in any web browser go to:
