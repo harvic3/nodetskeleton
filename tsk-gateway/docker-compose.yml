@@ -14,7 +14,7 @@ services:
       - /usr/node/app/envs
       - /usr/node/app/node_modules
     networks:
-      - tskeleton-net
+      - tsk-net
     # depends_on:
     #   - redis-db
     command: >
@@ -33,7 +33,7 @@ services:
       - /usr/node/app/envs
       - /usr/node/app/node_modules
     networks:
-      - tskeleton-net
+      - tsk-net
     # depends_on:
     #   - redis-db
     command: >
@@ -51,7 +51,7 @@ services:
       - /usr/node/tsk-gateway/dist
       - /usr/node/tsk-gateway/node_modules
     networks:
-      - tskeleton-net
+      - tsk-net
     depends_on:
       - security-service
       - users-service
@@ -65,5 +65,5 @@ services:
   #     - 6379:6379
 
 networks:
-  tskeleton-net:
+  tsk-net:
     driver: bridge

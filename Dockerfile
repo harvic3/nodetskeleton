@@ -1,12 +1,12 @@
 FROM node:20-slim
 
-WORKDIR /usr/node/app
+WORKDIR /usr/node/tsk
 
 COPY package*.json ./
 
 RUN npm ci
 
-ADD . /usr/node/app
+ADD . /usr/node/tsk
 
 RUN npm run build
 

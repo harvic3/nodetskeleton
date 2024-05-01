@@ -2349,7 +2349,12 @@ WITH_DOCKER_HOST=true
 PORT=8080
 ```
 
-> So, first, open your console a go to the root directory of NodeTskeleton project.
+> So, first, open your console a go to the root directory of NodeTskeleton project and install packages to create lock json file.
+```console
+npm install
+cd tsk-gateway
+npm install
+```
 
 > Second, execute the next sequence of commands:
 
@@ -2366,7 +2371,7 @@ docker build . -t tsk-gateway-image
 
 >> Run docker-compose for launch our solution
 ```console
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 And latter you can use **Postman** or web browser for use the exposed endpoints of two services based in NodeTskeleton project

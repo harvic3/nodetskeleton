@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: node:20-slim
+    image: tsk:node20-slim
     container_name: tskeleton-app
     restart: unless-stopped
     env_file: .env
@@ -22,14 +22,14 @@ services:
       - 3003:3003
       - 9229:9229
     volumes:
-      - .:/usr/node/app
-      - /usr/node/app/dist
-      - /usr/node/app/node_modules
+      - .:/usr/node/tsk
+      - /usr/node/tsk/dist
+      - /usr/node/tsk/node_modules
     networks:
-      - nodetskeleton-net
+      - tsk-net
     command: >
       npm run start
 
 networks:
-  nodetskeleton-net:
+  tsk-net:
     driver: bridge
