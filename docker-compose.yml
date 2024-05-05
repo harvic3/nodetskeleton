@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      no_cache: true
     image: tsk:node20-slim
     container_name: tskeleton-app
     restart: unless-stopped

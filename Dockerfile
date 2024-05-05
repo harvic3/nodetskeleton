@@ -4,9 +4,9 @@ WORKDIR /usr/node/tsk
 
 COPY package*.json ./
 
-RUN npm ci
-
 ADD . /usr/node/tsk
+
+RUN npm ci
 
 RUN npm run build
 
