@@ -19,13 +19,13 @@ export class HttpClient extends BaseHttpClient {
     method: string,
     body?: BodyType,
     headers?: Headers,
-    options?: RequestInit,
+    options: RequestInit = {},
   ): Request {
     const origin = { method, body, headers };
-    if (!options) options = {};
-    ObjectPropertyUtil.assign(options, origin, "method");
-    ObjectPropertyUtil.assign(options, origin, "body");
-    ObjectPropertyUtil.assign(options, origin, "headers");
+
+    ObjectPropertyUtil.assign(origin, options, "method");
+    ObjectPropertyUtil.assign(origin, options, "body");
+    ObjectPropertyUtil.assign(origin, options, "headers");
 
     return new Request(url, options);
   }
