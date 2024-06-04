@@ -92,7 +92,7 @@ export default {
         email: "harvic3@protonmail.com",
       },
       license: {
-        name: "MIT",
+        name: "BSD 3-Clause",
       },
     },
   },

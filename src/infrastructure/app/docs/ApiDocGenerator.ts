@@ -86,7 +86,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
         email: "",
       },
       license: {
-        name: "MIT",
+        name: "BSD 3-Clause",
       },
     },
     servers: [],

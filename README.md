@@ -892,7 +892,7 @@ The file is created in the root of the project with the name `openapi.json` and 
       "email": "harvic3@protonmail.com"
     },
     "license": {
-      "name": "MIT"
+      "name": "BSD 3-Clause"
     }
   },
   "servers": [

@@ -1,5 +1,4 @@
 {
-  "version": "5.4.3",
   "compilerOptions": {
     "lib": ["ESNext"],
     "outDir": "dist",
