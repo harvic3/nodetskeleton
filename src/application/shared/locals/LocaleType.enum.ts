@@ -3,4 +3,5 @@ export enum LocaleTypeEnum {
   EN = "en",
   ES_CO = "es-CO",
   EN_US = "en-US",
+  PT_BR = "pt-BR",
 }
