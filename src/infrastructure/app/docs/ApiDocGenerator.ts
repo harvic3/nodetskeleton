@@ -119,9 +119,12 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.info.license = info.license;
   }
 
-  private saveApiDoc(): void {
-    const filePath = resolve(join(__dirname, "../../../../openapi.json"));
-    writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
+  saveApiDoc(): void {
+    const isGenerateJson = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length)
+    if (isGenerateJson) {
+      const filePath = resolve(join(__dirname, "../../../../openapi.json"));
+      writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
+    }
   }
 
   private setSchemas(schemas: Record<string, any>): void {
@@ -229,10 +232,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   setServer(url: string, description: "Local server"): void {
-    if (this.env !== DEV || !Object.keys(this.apiDoc.paths).length) {
-      SchemasStore.dispose();
-      return;
-    }
 
     this.apiDoc.servers.push({
       url,
@@ -240,7 +239,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
 
     this.setSchemas(SchemasStore.get());
-    this.saveApiDoc();
     SchemasStore.dispose();
+
   }
 }

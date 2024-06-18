@@ -40,8 +40,12 @@ export default class AppWrapper {
 
   constructor(controllers?: BaseController[]) {
     this.setup();
-    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
     this.app = AppServer();
+    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
+    this.apiDocGenerator.setServer(
+      `http://${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
+      "Local server",
+    );
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     console.log(
@@ -66,8 +70,7 @@ export default class AppWrapper {
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
       });
-    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
-    this.loadErrorHandler();
+    this.loadHandlersLast();
   }
 
   private async loadControllersDynamically(): Promise<void> {
@@ -93,8 +96,7 @@ export default class AppWrapper {
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);
     }
-    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
-    this.loadErrorHandler();
+    this.loadHandlersLast();
 
     return Promise.resolve();
   }
@@ -111,9 +113,6 @@ export default class AppWrapper {
       .use(useCaseTraceMiddleware.handle);
   }
 
-  private loadErrorHandler(): void {
-    this.app.use(errorHandlerMiddleware.handle);
-  }
 
   private setup(): void {
     AppSettings.init(config);
@@ -139,4 +138,11 @@ export default class AppWrapper {
         });
     });
   }
+
+  private loadHandlersLast(): void {
+    this.app
+      .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
+      .use(errorHandlerMiddleware.handle);
+  }
+
 }
