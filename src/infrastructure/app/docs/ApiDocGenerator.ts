@@ -71,7 +71,7 @@ type OpenApiType = {
       string,
       { type: string; properties: { type: PropTypeEnum; format: PropFormatEnum } }
     >;
-    securitySchemes?: Record<string, SecuritySchemes>
+    securitySchemes?: Record<string, SecuritySchemes>;
   };
 };
 
@@ -124,7 +124,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   saveApiDoc(): void {
-    const isGenerateJson = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length)
+    const isGenerateJson = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
     if (isGenerateJson) {
       const filePath = resolve(join(__dirname, "../../../../openapi.json"));
       writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
@@ -239,13 +239,12 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
 
     if (securitySchemes) {
-      const securitys = Object.keys(securitySchemes)
-      this.apiDoc.paths[path][method].security = securitys.map( key => ({ [key]: []}));
+      const securitys = Object.keys(securitySchemes);
+      this.apiDoc.paths[path][method].security = securitys.map((key) => ({ [key]: [] }));
     }
   }
 
   setServer(url: string, description: "Local server"): void {
-
     this.apiDoc.servers.push({
       url,
       description,
@@ -253,12 +252,10 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
     this.setSchemas(SchemasStore.get());
     this.setSchemasSecurity(SchemasSecurityStore.get());
-
   }
 
   finish() {
     const securityKeys = Object.keys(this.apiDoc.components.securitySchemes as any);
-    if (securityKeys.length === 0)
-      delete this.apiDoc.components.securitySchemes;
+    if (securityKeys.length === 0) delete this.apiDoc.components.securitySchemes;
   }
 }

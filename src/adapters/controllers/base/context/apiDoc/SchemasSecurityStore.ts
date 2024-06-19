@@ -3,10 +3,7 @@ import { SecuritySchemes } from "./IApiDocGenerator";
 export class SchemasSecurityStore {
   static #store: { securitySchemes: Record<string, SecuritySchemes> } = { securitySchemes: {} };
 
-  static add(
-    key: string,
-    schema: SecuritySchemes,
-  ): void {
+  static add(key: string, schema: SecuritySchemes): void {
     this.#store.securitySchemes[key] = schema;
   }
 

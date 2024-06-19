@@ -113,7 +113,6 @@ export default class AppWrapper {
       .use(useCaseTraceMiddleware.handle);
   }
 
-
   private setup(): void {
     AppSettings.init(config);
     resources.setDefaultLanguage(AppSettings.DefaultLanguage);
@@ -144,7 +143,6 @@ export default class AppWrapper {
       .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
       .use(errorHandlerMiddleware.handle);
 
-      this.apiDocGenerator.finish();
+    this.apiDocGenerator.finish();
   }
-
 }
