@@ -22,7 +22,10 @@ export class HttpServer {
       });
 
     this.server.on("listening", () => {
-      this.#appWrapper.apiDocGenerator.saveApiDoc();
+      this.#appWrapper.apiDocGenerator
+        .setServer(`http://${AppSettings.getServerUrl()}`, "Local server")
+        .saveApiDoc()
+        .dispose();
       console.log(
         `Server ${AppSettings.ServiceName} running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
       );
