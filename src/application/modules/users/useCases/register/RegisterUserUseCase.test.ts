@@ -253,4 +253,37 @@ describe("when try to register user", () => {
     expect(result.statusCode).toBe(applicationStatus.SUCCESS);
     expect(result.message).toBe(appMessages.get(appMessages.keys.USER_WAS_CREATED));
   });
+
+  it("should return an Error because the user was not registered", async () => {
+    // Arrange
+    Encryption.init(
+      AppSettings.EncryptionKey,
+      AppSettings.EncryptionIterations,
+      AppSettings.EncryptionKeySize,
+    );
+    const userDto = userDtoBuilder()
+      .withFirstName()
+      .withLastName()
+      .withEmail()
+      .withGender()
+      .withPassword()
+      .build();
+
+    const userNull: any = null;
+
+    userRepositoryMock.register.mockResolvedValueOnce(userNull);
+
+    // Act
+    const result = await registerUserUseCase().execute(
+      LocaleTypeEnum.EN,
+      useCaseTraceBuilder().byDefault(sessionBuilder().byDefault().build()).build(),
+
+      userDto,
+    );
+
+    // Assert
+    expect(result.success).toBeFalsy();
+    expect(result.statusCode).toBe(applicationStatus.INTERNAL_ERROR);
+    expect(result.error).toBe(appMessages.get(appMessages.keys.ERROR_CREATING_USER));
+  });
 });
