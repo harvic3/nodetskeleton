@@ -28,7 +28,7 @@ export type SecuritySchemes = {
   type: string;
   scheme: string;
   bearerFormat: string;
-}
+};
 
 export type ApiDoc = {
   contentType: HttpContentTypeEnum;
@@ -40,7 +40,7 @@ export type ApiDoc = {
     schema: TypeDescriber<any> | RefTypeDescriber;
   };
   parameters?: ParameterDescriber[];
-  securitySchemes?: Record<string, SecuritySchemes>
+  securitySchemes?: Record<string, SecuritySchemes>;
 };
 
 export type RouteType = {
@@ -53,7 +53,7 @@ export type RouteType = {
   }[];
   description?: string;
   apiDoc?: ApiDoc;
-  security?:  Record<string, any[]>
+  security?: Record<string, any[]>;
 };
 
 export interface IApiDocGenerator {
