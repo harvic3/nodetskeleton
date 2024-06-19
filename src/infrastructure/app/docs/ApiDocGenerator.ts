@@ -124,11 +124,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   saveApiDoc(): void {
-    const isGenerateJson = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
-    if (isGenerateJson) {
-      const filePath = resolve(join(__dirname, "../../../../openapi.json"));
-      writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
-    }
+    const wasDocGenerated = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
+    if (!wasDocGenerated) return;
+
+    const filePath = resolve(join(__dirname, "../../../../openapi.json"));
+    writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
   }
 
   private setSchemas(schemas: Record<string, any>): void {

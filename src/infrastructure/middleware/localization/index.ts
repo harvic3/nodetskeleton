@@ -7,8 +7,6 @@ import appWords from "../../../application/shared/locals/words";
 import { Middleware } from "../types";
 import config from "../../config";
 
-
-
 export class LocalizationMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction) => {
     const locale = LocalizationMiddleware.getLanguage(req);
@@ -19,7 +17,6 @@ export class LocalizationMiddleware {
   };
 
   private static getLanguage(req: Request): LocaleTypeEnum {
-
     try {
       const locals = appMessages["values"];
       const language = req.headers["accept-language"] || "";
@@ -33,10 +30,10 @@ export class LocalizationMiddleware {
           }
         }
       }
-    } catch { }
+    } catch {}
 
     return config.Params.DefaultLanguage;
-  };
+  }
 }
 
 export default new LocalizationMiddleware();
