@@ -32,4 +32,8 @@ export default class AppSettings {
     this.JWTExpirationTime = config.Params.Security.JWT.ExpireInSeconds;
     this.DefaultHealthRemoteService = config.Params.DefaultHealthRemoteService;
   }
+
+  static getServerUrl(): string {
+    return `${this.ServerHost}:${this.ServerPort}${this.ServerRoot}`;
+  }
 }

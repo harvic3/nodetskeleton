@@ -121,17 +121,20 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.info.description = info.description;
     this.apiDoc.info.contact = info.contact;
     this.apiDoc.info.license = info.license;
+
+    this.setSchemas(SchemasStore.get());
+    this.setSchemasSecurity(SchemasSecurityStore.get());
   }
 
-  saveApiDoc(): void {
+  saveApiDoc(): this {
     const wasDocGenerated = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
-    if (!wasDocGenerated) return;
+    if (!wasDocGenerated) return this;
 
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
 
-    SchemasStore.dispose();
-    SchemasSecurityStore.dispose();
+    return this;
+
   }
 
   private setSchemas(schemas: Record<string, any>): void {
@@ -247,18 +250,22 @@ export class ApiDocGenerator implements IApiDocGenerator {
     }
   }
 
-  setServer(url: string, description: "Local server"): void {
+  setServer(url: string, description: "Local server"): this {
     this.apiDoc.servers.push({
       url,
       description,
     });
 
-    this.setSchemas(SchemasStore.get());
-    this.setSchemasSecurity(SchemasSecurityStore.get());
+    return this;
   }
 
   finish() {
     const securityKeys = Object.keys(this.apiDoc.components.securitySchemes as any);
     if (securityKeys.length === 0) delete this.apiDoc.components.securitySchemes;
+  }
+
+  dispose() {
+    SchemasStore.dispose();
+    SchemasSecurityStore.dispose();
   }
 }
