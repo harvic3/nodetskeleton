@@ -26,9 +26,7 @@ export class HttpServer {
         .setServer(AppSettings.getServerUrl(), "Local server")
         .saveApiDoc()
         .dispose();
-      console.log(
-        `Server ${AppSettings.ServiceName} running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
-      );
+      console.log(`Server ${AppSettings.ServiceName} running on ${AppSettings.getServerUrl()}`);
     });
   }
 }
