@@ -23,7 +23,7 @@ export class HttpServer {
 
     this.server.on("listening", () => {
       this.#appWrapper.apiDocGenerator
-        .setServer(`http://${AppSettings.getServerUrl()}`, "Local server")
+        .setServer(AppSettings.getServerUrl(), "Local server")
         .saveApiDoc()
         .dispose();
       console.log(
