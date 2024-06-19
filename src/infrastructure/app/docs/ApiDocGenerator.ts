@@ -239,7 +239,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
 
     this.setSchemas(SchemasStore.get());
-    SchemasStore.dispose();
 
   }
 }
