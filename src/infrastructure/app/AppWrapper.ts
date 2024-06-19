@@ -143,6 +143,8 @@ export default class AppWrapper {
     this.app
       .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
       .use(errorHandlerMiddleware.handle);
+
+      this.apiDocGenerator.finish();
   }
 
 }

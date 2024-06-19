@@ -1,4 +1,6 @@
 import { Nulldefined } from "../../../../../domain/shared/types/Nulldefined.type";
+import { SecuritySchemes } from "./IApiDocGenerator";
+import { SchemasSecurityStore } from "./SchemasSecurityStore";
 import { SchemasStore } from "./SchemasStore";
 import { IResult } from "result-tsk";
 
@@ -277,5 +279,14 @@ export class RefTypeDescriber {
         definition: { $ref: "#/components/schemas/" + obj.name },
       };
     }
+  }
+}
+
+export class SecuritySchemesDescriber {
+  [key: string]: SecuritySchemes;
+
+  constructor(key: string, securitySchemes: SecuritySchemes) {
+    this[key] = securitySchemes;
+    SchemasSecurityStore.add(key, securitySchemes);
   }
 }
