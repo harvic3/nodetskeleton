@@ -1,11 +1,13 @@
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
+import { SchemasSecurityStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasSecurityStore";
 import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
 import {
   ApiDoc,
   IApiDocGenerator,
   ParameterDescriber,
   RouteType,
+  SecuritySchemes,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
 import { join, resolve } from "path";
 import { writeFileSync } from "fs";
@@ -60,6 +62,7 @@ type OpenApiType = {
         >;
         requestBody: RequestBodyType;
         parameters: ParameterDescriber[];
+        security: Record<string, any[]>[];
       }
     >
   >;
@@ -68,6 +71,7 @@ type OpenApiType = {
       string,
       { type: string; properties: { type: PropTypeEnum; format: PropFormatEnum } }
     >;
+    securitySchemes?: Record<string, SecuritySchemes>
   };
 };
 
@@ -129,6 +133,10 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
   private setSchemas(schemas: Record<string, any>): void {
     this.apiDoc.components.schemas = schemas;
+  }
+
+  private setSchemasSecurity(securitySchemes: Record<string, SecuritySchemes>): void {
+    this.apiDoc.components.securitySchemes = securitySchemes;
   }
 
   private buildParameters(
@@ -200,7 +208,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     const { path, produces, method, description, apiDoc } = route;
     if (!apiDoc) return;
 
-    const { contentType, schema, requestBody, parameters } = apiDoc;
+    const { contentType, schema, requestBody, parameters, securitySchemes } = apiDoc;
 
     if (!this.apiDoc.paths[path]) {
       this.apiDoc.paths[path] = {};
@@ -229,6 +237,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
         this.apiDoc.paths[path][method].parameters = this.buildParameters(path, parameters);
       }
     });
+
+    if (securitySchemes) {
+      const securitys = Object.keys(securitySchemes)
+      this.apiDoc.paths[path][method].security = securitys.map( key => ({ [key]: []}));
+    }
   }
 
   setServer(url: string, description: "Local server"): void {
@@ -239,6 +252,13 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
 
     this.setSchemas(SchemasStore.get());
+    this.setSchemasSecurity(SchemasSecurityStore.get());
 
+  }
+
+  finish() {
+    const securityKeys = Object.keys(this.apiDoc.components.securitySchemes as any);
+    if (securityKeys.length === 0)
+      delete this.apiDoc.components.securitySchemes;
   }
 }
