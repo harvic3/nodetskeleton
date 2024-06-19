@@ -129,6 +129,9 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
+
+    SchemasStore.dispose();
+    SchemasSecurityStore.dispose();
   }
 
   private setSchemas(schemas: Record<string, any>): void {
