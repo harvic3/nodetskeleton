@@ -134,7 +134,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
 
     return this;
-
   }
 
   private setSchemas(schemas: Record<string, any>): void {

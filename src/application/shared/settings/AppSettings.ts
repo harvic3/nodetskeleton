@@ -34,6 +34,6 @@ export default class AppSettings {
   }
 
   static getServerUrl(): string {
-    return `${this.ServerHost}:${this.ServerPort}${this.ServerRoot}`;
+    return `http://${this.ServerHost}:${this.ServerPort}${this.ServerRoot}`;
   }
 }

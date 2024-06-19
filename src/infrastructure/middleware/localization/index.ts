@@ -6,6 +6,7 @@ import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import appWords from "../../../application/shared/locals/words";
 import { Middleware } from "../types";
 import config from "../../config";
+import { StringUtil } from "../../../domain/shared/utils/StringUtil";
 
 export class LocalizationMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction) => {
@@ -19,12 +20,12 @@ export class LocalizationMiddleware {
   private static getLanguage(req: Request): LocaleTypeEnum {
     try {
       const locals = appMessages["values"];
-      const language = req.headers["accept-language"] || "";
-      const languages = language.split(",");
+      const language = req.headers["accept-language"] || StringUtil.EMPTY;
+      const languages = language.split(StringUtil.COMMA);
       for (const key in languages) {
         if (Object.hasOwn(languages, key)) {
           const element = languages[key];
-          const lang = element.replace(/;.+/, "");
+          const lang = element.replace(/;.+/, StringUtil.EMPTY);
           if (locals[lang]) {
             return lang as LocaleTypeEnum;
           }
