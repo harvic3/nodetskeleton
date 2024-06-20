@@ -58,5 +58,4 @@ export type RouteType = {
 
 export interface IApiDocGenerator {
   createRouteDoc(route: Omit<RouteType, "handlers">): void;
-  setServer(url: string, description: "Local server"): void;
 }

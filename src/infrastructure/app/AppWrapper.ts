@@ -33,6 +33,8 @@ import {
   RequestHandler,
 } from "./core/Modules";
 
+import * as swaggerUi from "swagger-ui-express";
+
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
   app: Express;
@@ -136,6 +138,7 @@ export default class AppWrapper {
 
   private loadHandlersLast(): void {
     this.app
+      .use("/docs", swaggerUi.serve, swaggerUi.setup(this.apiDocGenerator.apiDoc))
       .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
       .use(errorHandlerMiddleware.handle);
 

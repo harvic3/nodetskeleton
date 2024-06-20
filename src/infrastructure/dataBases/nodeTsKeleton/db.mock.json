@@ -7,9 +7,15 @@
       "lastName": "Higuita",
       "email": "nodetskeleton@email.com",
       "gender": "Male",
-      "password": "PIq/guktlcg0s2iG3YKOKaGd74Jzb4a0+0tA9U6X4/qqCn6XZORHkZlosziso8w7a6ErstJBg5cQ6bbp6opcmAv1KJvpstwUrCPS7AYjC0DSVtySlMoJXp3PVXeUgsvJ+lm65qbUcJJjueprWSq8xQRbYvuVAOqpVzzE+c+jIwg=",
+      "password": "cQjXDT65oTdh+wPVl+t4yMym6OF3ZnSPbdrd9Op7ZiTihRh4Bn1wi3QyVQxnBD7xF3Qm/DrLrazsrdBh+suOgC1HyfDGS4VAInsXPDhsLOmST4SWxiwSoEl3xFiRLWFKjby9ypWGZ13obduCQdivtn5V7ov2gM61Theq8USam80=",
       "createdAt": "1856-06-10T18:30:51.876-05:00",
       "verified": true
+    }
+  ],
+  "logoff": [
+    { 
+      "sessionId": "",
+      "expireAt": 1718916435
     }
   ]
 }

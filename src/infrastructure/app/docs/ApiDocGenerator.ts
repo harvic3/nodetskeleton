@@ -15,6 +15,7 @@ import {
   PropFormatEnum,
   PropTypeEnum,
 } from "../../../adapters/controllers/base/context/apiDoc/TypeDescriber";
+import AppSettings from "../../../application/shared/settings/AppSettings";
 
 type SchemaType =
   | { type?: PropTypeEnum }
@@ -124,6 +125,8 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
     this.setSchemas(SchemasStore.get());
     this.setSchemasSecurity(SchemasSecurityStore.get());
+
+    this.setServer(AppSettings.getServerUrl(), "Local server");
   }
 
   saveApiDoc(): this {
@@ -249,13 +252,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
     }
   }
 
-  setServer(url: string, description: "Local server"): this {
+  private setServer(url: string, description: "Local server"): void {
     this.apiDoc.servers.push({
       url,
       description,
     });
-
-    return this;
   }
 
   finish() {

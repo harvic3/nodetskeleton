@@ -1964,7 +1964,7 @@ curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
-    "password": "Tm9kZVRza2VsZXRvbg=="
+    "password": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 

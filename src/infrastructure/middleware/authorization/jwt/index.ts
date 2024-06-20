@@ -14,27 +14,29 @@ const TOKEN_PARTS = 2;
 const TOKEN_POSITION_VALUE = 1;
 
 class AuthorizationMiddleware {
-  handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
+  handle: Middleware = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     if (TypeParser.cast<IRequest>(req).isWhiteList) return next();
 
     const auth = req.headers.authorization;
 
-    if (!auth)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    if (!auth) return this.authorizationInvalid(next);
 
     const jwtParts = ArrayUtil.allOrDefault(auth.split(/\s+/));
-    if (jwtParts.length !== TOKEN_PARTS)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    if (jwtParts.length !== TOKEN_PARTS) return this.authorizationInvalid(next);
+
+    const authProvider = kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name);
 
     const token = ArrayUtil.getWithIndex(jwtParts, TOKEN_POSITION_VALUE);
-    const sessionResult = TryWrapper.exec(
-      kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
-      [token],
-    );
-    if (!sessionResult.success)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    const sessionResult = TryWrapper.exec(authProvider.verifyJwt, [token]);
+    if (!sessionResult.success) return this.authorizationInvalid(next);
 
-    TypeParser.cast<IRequest>(req).session = TypeParser.cast<ISession>(sessionResult.value);
+    const session = TypeParser.cast<ISession>(sessionResult.value);
+    const logoffResult = await TryWrapper.asyncExec(
+      authProvider.hasSessionInvalid(session.sessionId),
+    );
+    if (!!logoffResult.value) return this.authorizationInvalid(next);
+
+    TypeParser.cast<IRequest>(req).session = session;
 
     return next();
   };
@@ -45,6 +47,10 @@ class AuthorizationMiddleware {
       message,
       applicationStatus.UNAUTHORIZED,
     );
+  }
+
+  private authorizationInvalid(next: NextFunction): void {
+    return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
   }
 }
 

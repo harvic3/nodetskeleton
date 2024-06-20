@@ -6,6 +6,8 @@ import { IUser } from "../../../domain/user/IUser";
 import { User } from "../../../domain/user/User";
 import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
+import { ISession } from "../../../domain/session/ISession";
+import DateTimeUtils from "../../../application/shared/utils/DateTimeUtil";
 
 export class UserModel implements IUserModel {
   async getByEmail(email: string | Nulldefined): Promise<User | null> {
@@ -39,6 +41,39 @@ export class UserModel implements IUserModel {
     return new Promise((resolve) => {
       dbData.users.push(user as any);
       return resolve(user as User);
+    });
+  }
+
+  private removeSessionLogout(sessionId: string) {
+    const index = dbData.logoff.findIndex((session) =>
+      BooleanUtil.areEqual(session.sessionId, sessionId),
+    );
+    if (index > -1) {
+      dbData.logoff.splice(index, 1);
+    }
+  }
+
+  async registerLogout(session: ISession): Promise<Boolean> {
+    return new Promise((resolve) => {
+      const { exp, sessionId } = session;
+      const expireAt = DateTimeUtils.toDateTMZ(exp);
+      const timeout = expireAt.getTime() - new Date().getTime();
+      setTimeout(() => this.removeSessionLogout(sessionId), timeout);
+      dbData.logoff.push({ expireAt, sessionId } as any);
+      return resolve(true);
+    });
+  }
+
+  async getBySessionId(sessionId: string): Promise<ISession> {
+    return new Promise((resolve, reject) => {
+      const founded = dbData.logoff.find((session) =>
+        BooleanUtil.areEqual(session.sessionId, sessionId),
+      );
+      if (!founded) {
+        return reject(null);
+      }
+      const domainSession: ISession = { ...founded } as any;
+      return resolve(domainSession);
     });
   }
 }

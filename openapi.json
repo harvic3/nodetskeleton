@@ -15,11 +15,39 @@
   },
   "servers": [
     {
-      "url": "localhost:3003/api",
+      "url": "http://localhost:3003/api",
       "description": "Local server"
     }
   ],
   "paths": {
+    "/v1/auth/logout": {
+      "delete": {
+        "description": "Logout user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "description": "Login user",
@@ -114,6 +142,23 @@
   },
   "components": {
     "schemas": {
+      "Result": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
       "TokenDto": {
         "type": "object",
         "properties": {
@@ -159,23 +204,13 @@
           "email",
           "passwordB64"
         ]
-      },
-      "Result": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "statusCode": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "success": {
-            "type": "boolean"
-          }
-        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "bearer"
       }
     }
   }

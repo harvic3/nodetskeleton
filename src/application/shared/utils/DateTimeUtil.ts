@@ -13,6 +13,10 @@ export class DateTimeUtils implements IDateTimeUtil {
   getCurrentTime(): string {
     return DateTime.now().toISOTime() as string;
   }
+
+  toDateTMZ(timeStamp: number): Date {
+    return new Date(timeStamp * 1000);
+  }
 }
 
 export default new DateTimeUtils();

@@ -5,4 +5,7 @@ export default {
   LAST_NAME: "Sobrenome",
   GENDER: "Gênero",
   ENCRYPTION: "Criptografia",
+  SESSION: "Sessão",
+  SESSION_ID: "Session Id",
+  SESSION_EXP: "Session Expires",
 };

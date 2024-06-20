@@ -39,4 +39,17 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
 
     return Promise.resolve(founded);
   }
+
+  async registerLogout(session: ISession): Promise<Boolean> {
+    return this.userModel.registerLogout(session);
+  }
+
+  async hasSessionInvalid(sessionId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      this.userModel
+        .getBySessionId(sessionId)
+        .then(() => resolve(true))
+        .catch(() => resolve(false));
+    });
+  }
 }
