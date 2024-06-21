@@ -1,7 +1,7 @@
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
 import { IServiceContainer } from "../../shared/kernel";
-import container, { LogoutUseCase, LoginUseCase } from "./container";
+import container, { LoginUseCase, LogoutUseCase } from "./container";
 import {
   TypeDescriber,
   ResultTDescriber,

@@ -6,7 +6,7 @@ import { StringUtil } from "../shared/utils/StringUtil";
 
 describe("Domain PasswordBuilder - describe", () => {
   it("must instantiate an invalid PasswordBuilder", () => {
-    const email = "";
+    const email = StringUtil.EMPTY;
     const passwordBase64 = StringUtil.EMPTY;
 
     const passwordBuilder = new PasswordBuilder(email, passwordBase64);

@@ -11,7 +11,7 @@ export class HttpServer {
     this.server = createServer(this.#appWrapper.app);
   }
 
-  start(start: Date): void {
+  start(startAt: Date): void {
     this.#appWrapper
       .initializeServices()
       .then(() => {
@@ -25,7 +25,7 @@ export class HttpServer {
       this.#appWrapper.apiDocGenerator.saveApiDoc().dispose();
       console.log(`Server ${AppSettings.ServiceName} running on ${AppSettings.getServerUrl()}`);
 
-      const seconds = ((new Date().valueOf() - start.valueOf()) / 1000).toFixed(3);
+      const seconds = ((new Date().valueOf() - startAt.valueOf()) / 1000).toFixed(3);
       console.log(
         `Started Application in ${process.uptime().toFixed(3)} seconds (${AppSettings.ServiceName} running for ${seconds})`,
       );

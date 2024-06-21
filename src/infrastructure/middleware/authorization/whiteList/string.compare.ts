@@ -1,4 +1,4 @@
-import { EntriesUtils } from "./entriesUtils";
+import { EntriesUtil } from "./entriesUtil";
 import { ICompare } from "./iCompare";
 import { PathEvaluation } from "./pathEvaluation";
 
@@ -6,8 +6,9 @@ export class StringCompare implements ICompare {
   private entries: Array<string>;
 
   constructor(entry: string) {
-    this.entries = EntriesUtils.toEntries(entry);
+    this.entries = EntriesUtil.toEntries(entry);
   }
+
   allowed(pathEvaluation: PathEvaluation): boolean {
     const limit = Math.min(this.entries.length, pathEvaluation.pathEntries.length);
     if (limit === 0) return false;

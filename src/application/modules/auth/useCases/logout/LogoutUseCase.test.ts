@@ -23,7 +23,7 @@ const sessionBuilder = () => new SessionMock();
 // Constants
 const useCase = () => new LogoutUseCase(logProviderMock, authProviderMock);
 
-describe("Here your description test", () => {
+describe("when try to logout", () => {
   beforeAll(() => {
     appMessages.setDefaultLanguage(LocaleTypeEnum.EN);
     appWords.setDefaultLanguage(LocaleTypeEnum.EN);

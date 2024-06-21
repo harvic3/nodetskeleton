@@ -6,6 +6,7 @@ import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
+import sessionMiddleware from "../middleware/authorization/session";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
@@ -108,6 +109,7 @@ export default class AppWrapper {
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)
       .use(authorizationMiddleware.handle)
+      .use(sessionMiddleware.handle)
       .use(useCaseTraceMiddleware.handle);
   }
 
