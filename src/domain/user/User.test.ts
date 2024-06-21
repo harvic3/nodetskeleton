@@ -5,6 +5,7 @@ import { User } from "./User";
 
 describe("Domain User - describe", () => {
   it("must instantiate a User and validate that the data is the same as informed and valid", () => {
+    // Arrange
     const uid = "uid";
     const maskedUid = "maskedUid";
     const firstName = "joao";
@@ -13,6 +14,8 @@ describe("Domain User - describe", () => {
     const gender: Gender = Gender.MALE;
     const verified = true;
     const createdAt = "createdAt";
+
+    // Act
     const user = new User({
       uid,
       maskedUid,
@@ -24,6 +27,7 @@ describe("Domain User - describe", () => {
       createdAt,
     });
 
+    // Assert
     expect(user.uid).toEqual(uid);
     expect(user.maskedUid).toEqual(maskedUid);
     expect(user.firstName).toEqual(firstName);
@@ -36,8 +40,12 @@ describe("Domain User - describe", () => {
   });
 
   it("must instantiate an invalid User and test the integrity of the object", () => {
+    // Arrange
     const user = new User({} as any);
 
+    // Act
+
+    // Assert
     expect(user.uid).toBeUndefined();
     expect(user.maskedUid).toBeUndefined();
     expect(user.firstName).toBeUndefined();

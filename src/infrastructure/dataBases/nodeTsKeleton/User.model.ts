@@ -72,7 +72,8 @@ export class UserModel implements IUserModel {
       if (!founded) {
         return reject(null);
       }
-      const domainSession: ISession = { ...founded } as any;
+      // @ts-ignore
+      const domainSession: ISession = { ...founded };
       return resolve(domainSession);
     });
   }
