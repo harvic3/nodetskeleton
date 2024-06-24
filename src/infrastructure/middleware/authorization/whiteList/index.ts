@@ -16,7 +16,6 @@ class RouteWhiteListMiddleware {
   constructor() {}
 
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    console.log("RouteWhiteListMiddleware", req.path);
     const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((route) =>
       route.rule === "equal"
         ? BooleanUtil.areEqual(route.value, req.path)
