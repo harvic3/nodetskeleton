@@ -6,5 +6,5 @@ export interface IAuthProvider {
   getJwt(session: ISession): Promise<string>;
   verifyJwt(jwt: string): ISession;
   registerLogout(session: ISession): Promise<Boolean>;
-  hasSessionInvalid(sessionId: string): Promise<boolean>;
+  hasSessionBeenRevoked(sessionId: string): Promise<boolean>;
 }

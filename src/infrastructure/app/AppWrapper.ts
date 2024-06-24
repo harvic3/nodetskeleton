@@ -140,7 +140,11 @@ export default class AppWrapper {
 
   private loadHandlersLast(): void {
     this.app
-      .use("/docs", swaggerUi.serve, swaggerUi.setup(this.apiDocGenerator.apiDoc))
+      .use(
+        `${config.Server.Root}/docs`,
+        swaggerUi.serve,
+        swaggerUi.setup(this.apiDocGenerator.apiDoc),
+      )
       .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
       .use(errorHandlerMiddleware.handle);
 

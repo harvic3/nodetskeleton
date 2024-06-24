@@ -19,7 +19,7 @@ class SessionMiddleware {
     const logoffResult = await TryWrapper.asyncExec(
       kernel
         .get<AuthProvider>(SessionMiddleware.name, AuthProvider.name)
-        .hasSessionInvalid(session.sessionId),
+        .hasSessionBeenRevoked(session.sessionId),
     );
     if (!!logoffResult.value) return this.authorizationInvalid(next);
 
