@@ -1,12 +1,12 @@
-import { BaseUseCase, IResult } from "../../../../shared/useCase/BaseUseCase";
+import { IResultT, ResultExecutionPromise, ResultT, Validator } from "../../../../shared/types";
+import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
+import { BaseUseCase, IResult } from "../../../../shared/useCase/BaseUseCase";
+import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
 import { ISession } from "../../../../../domain/session/ISession";
-import { ResultExecutionPromise, ResultT, Validator } from "../../../../shared/types";
-import applicationStatus from "../../../../shared/status/applicationStatus";
-import { IAuthProvider } from "../../providerContracts/IAuth.provider";
-import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 
 export class LogoutUseCase extends BaseUseCase<{ session: ISession }> {
   readonly validator: Validator;
@@ -28,16 +28,17 @@ export class LogoutUseCase extends BaseUseCase<{ session: ISession }> {
     locale: LocaleTypeEnum,
     trace: UseCaseTrace,
     args: { session: ISession },
-  ): Promise<IResult> {
+  ): Promise<IResultT<{ closed: boolean }>> {
     this.setLocale(locale);
     this.initializeUseCaseTrace(trace, args);
-    const result = new ResultT<Boolean>();
+    const result = new ResultT<{ closed: boolean }>();
 
     if (!this.isValid(result, args.session)) return result;
 
     await result.execute(this.sessionLogoff(args.session));
+    if (result.hasError()) return result;
 
-    result.setData(!result.hasError(), this.applicationStatus.SUCCESS);
+    result.setData({ closed: true }, this.applicationStatus.SUCCESS);
 
     return result;
   }
@@ -51,7 +52,7 @@ export class LogoutUseCase extends BaseUseCase<{ session: ISession }> {
     return this.validator.isValidEntry(result, validations);
   }
 
-  private async sessionLogoff(session: ISession): ResultExecutionPromise<TryResult<Boolean>> {
+  private async sessionLogoff(session: ISession): ResultExecutionPromise<TryResult<boolean>> {
     const logoffResult = await TryWrapper.asyncExec(this.authProvider.registerLogout(session));
 
     return {

@@ -1,5 +1,5 @@
-import { PropTypeEnum, ResultDescriber } from "../base/context/apiDoc/TypeDescriber";
-import { IUserDto } from "../../../application/modules/users/dtos/User.dto";
+import { PropTypeEnum, ResultDescriber, TypeDescriber } from "../base/context/apiDoc/TypeDescriber";
+import { IUserDto, UserDto } from "../../../application/modules/users/dtos/User.dto";
 import container, { RegisterUserUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
@@ -77,6 +77,31 @@ export class UsersController extends BaseController {
             },
           },
         }),
+        requestBody: {
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          description: "User data",
+          schema: new TypeDescriber<IUserDto>({
+            name: UserDto.name,
+            type: PropTypeEnum.OBJECT,
+            props: {
+              email: {
+                type: PropTypeEnum.STRING,
+              },
+              firstName: {
+                type: PropTypeEnum.STRING,
+              },
+              lastName: {
+                type: PropTypeEnum.STRING,
+              },
+              passwordB64: {
+                type: PropTypeEnum.STRING,
+              },
+              gender: {
+                type: PropTypeEnum.STRING,
+              },
+            },
+          }),
+        },
       },
     });
   }

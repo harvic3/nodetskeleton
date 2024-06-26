@@ -32,15 +32,15 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
   }
 
   async login(email: string, encryptedPassword: string): Promise<User> {
-    const founded = await this.userModel.getByAuthentication(email, encryptedPassword);
-    if (!founded) return Promise.reject();
+    const userFound = await this.userModel.getByAuthentication(email, encryptedPassword);
+    if (!userFound) return Promise.reject(new Error("User not found"));
 
-    founded.email = new Email(TypeParser.cast<string>(founded.email));
+    userFound.email = new Email(TypeParser.cast<string>(userFound.email));
 
-    return Promise.resolve(founded);
+    return Promise.resolve(userFound);
   }
 
-  async registerLogout(session: ISession): Promise<Boolean> {
+  async registerLogout(session: ISession): Promise<boolean> {
     return this.userModel.registerLogout(session);
   }
 
@@ -48,8 +48,8 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
     return new Promise<boolean>((resolve) => {
       this.userModel
         .getBySessionId(sessionId)
-        .then(() => resolve(true))
-        .catch(() => resolve(false));
+        .then((session) => resolve(!!session))
+        .catch(() => resolve(true));
     });
   }
 }

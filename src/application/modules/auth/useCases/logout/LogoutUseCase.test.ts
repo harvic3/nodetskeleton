@@ -3,13 +3,13 @@ import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
+import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { ISession } from "../../../../../domain/session/ISession";
 import { SessionMock } from "../../../../mocks/Session.mock";
 import appMessages from "../../../../shared/locals/messages";
 import appWords from "../../../../shared/locals/words";
-import { LogoutUseCase } from "./index";
 import { mock } from "jest-mock-extended";
-import { ISession } from "../../../../../domain/session/ISession";
-import { IAuthProvider } from "../../providerContracts/IAuth.provider";
+import { LogoutUseCase } from "./index";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();

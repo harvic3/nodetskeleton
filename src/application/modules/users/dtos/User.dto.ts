@@ -7,7 +7,7 @@ export type IUserDto = {
   firstName: string | undefined;
   lastName: string | undefined;
   email: string | undefined;
-  password?: string;
+  passwordB64?: string;
   gender: Gender | undefined;
 };
 
@@ -25,7 +25,7 @@ export class UserDto extends BaseDto {
   static fromJSON(json: IUserDto): UserDto {
     const userDto = new UserDto();
     userDto.email = json?.email?.toLowerCase();
-    userDto.password = json.password;
+    userDto.password = json.passwordB64;
     userDto.firstName = json.firstName;
     userDto.lastName = json.lastName;
     userDto.gender = json.gender;
