@@ -22,7 +22,7 @@ export class HttpServer {
       });
 
     this.server.on("listening", () => {
-      this.#appWrapper.apiDocGenerator.saveApiDoc().dispose();
+      this.#appWrapper.apiDocGenerator.saveApiDoc().finish();
       console.log(`Server ${AppSettings.ServiceName} running on ${AppSettings.getServerUrl()}`);
 
       const seconds = ((new Date().valueOf() - startAt.valueOf()) / 1000).toFixed(3);

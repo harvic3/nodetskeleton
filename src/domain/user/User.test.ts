@@ -1,5 +1,3 @@
-import { describe, expect, it } from "@jest/globals";
-
 import { Gender } from "./genre/Gender.enum";
 import { User } from "./User";
 

@@ -19,25 +19,25 @@ class AuthorizationMiddleware {
 
     const auth = req.headers.authorization;
 
-    if (!auth) return this.authorizationInvalid(next);
+    if (!auth) return AuthorizationMiddleware.noValidAuthorization(next);
 
     const jwtParts = ArrayUtil.allOrDefault(auth.split(/\s+/));
     if (jwtParts.length !== AuthorizationMiddleware.TOKEN_PARTS)
-      return this.authorizationInvalid(next);
+      return AuthorizationMiddleware.noValidAuthorization(next);
 
     const token = ArrayUtil.getWithIndex(jwtParts, AuthorizationMiddleware.TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(
       kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
       [token],
     );
-    if (!sessionResult.success) return this.authorizationInvalid(next);
+    if (!sessionResult.success) return AuthorizationMiddleware.noValidAuthorization(next);
 
     TypeParser.cast<IRequest>(req).session = TypeParser.cast<ISession>(sessionResult.value);
 
     return next();
   };
 
-  private getUnauthorized(message: string): ApplicationError {
+  private static getUnauthorized(message: string): ApplicationError {
     return new ApplicationError(
       AuthorizationMiddleware.name,
       message,
@@ -45,7 +45,7 @@ class AuthorizationMiddleware {
     );
   }
 
-  private authorizationInvalid(next: NextFunction): void {
+  private static noValidAuthorization(next: NextFunction): void {
     return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
   }
 }

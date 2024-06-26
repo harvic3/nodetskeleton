@@ -1,7 +1,8 @@
+import { SchemasSecurityStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasSecurityStore";
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
-import { SchemasSecurityStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasSecurityStore";
 import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
+import AppSettings from "../../../application/shared/settings/AppSettings";
 import {
   ApiDoc,
   IApiDocGenerator,
@@ -15,7 +16,6 @@ import {
   PropFormatEnum,
   PropTypeEnum,
 } from "../../../adapters/controllers/base/context/apiDoc/TypeDescriber";
-import AppSettings from "../../../application/shared/settings/AppSettings";
 
 type SchemaType =
   | { type?: PropTypeEnum }
@@ -259,12 +259,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
   }
 
-  finish() {
-    const securityKeys = Object.keys(this.apiDoc.components.securitySchemes as any);
-    if (securityKeys.length === 0) delete this.apiDoc.components.securitySchemes;
-  }
-
-  dispose() {
+  finish(): void {
     SchemasStore.dispose();
     SchemasSecurityStore.dispose();
   }

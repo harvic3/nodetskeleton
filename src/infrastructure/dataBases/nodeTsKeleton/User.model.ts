@@ -1,13 +1,13 @@
-import { IUserModel as IUserModel } from "../../../adapters/repositories/user/IUser.model";
+import { IUserModel } from "../../../adapters/repositories/user/IUser.model";
 import { Nulldefined } from "../../../domain/shared/types/Nulldefined.type";
+import DateTimeUtils from "../../../application/shared/utils/DateTimeUtil";
 import { BooleanUtil } from "../../../domain/shared/utils/BooleanUtil";
 import GuidUtils from "../../../application/shared/utils/GuidUtil";
+import { ISession } from "../../../domain/session/ISession";
 import { IUser } from "../../../domain/user/IUser";
 import { User } from "../../../domain/user/User";
 import * as dbData from "./db.mock.json";
 import mapper from "mapper-tsk";
-import { ISession } from "../../../domain/session/ISession";
-import DateTimeUtils from "../../../application/shared/utils/DateTimeUtil";
 
 export class UserModel implements IUserModel {
   async getByEmail(email: string | Nulldefined): Promise<User | null> {
@@ -21,15 +21,15 @@ export class UserModel implements IUserModel {
     });
   }
 
-  async getByAuthentication(email: string, encryptedPassword: string | null): Promise<User> {
-    return new Promise((resolve, reject) => {
+  async getByAuthentication(email: string, encryptedPassword: string | null): Promise<User | null> {
+    return new Promise((resolve) => {
       const founded = dbData.users.find(
         (user) =>
           BooleanUtil.areEqual(user.email, email) &&
           BooleanUtil.areEqual(user.password, encryptedPassword),
       );
       if (!founded) {
-        return reject(null);
+        return resolve(null);
       }
       const domainUser = mapper.mapObject(founded, new User());
       return resolve(domainUser);
@@ -53,7 +53,7 @@ export class UserModel implements IUserModel {
     }
   }
 
-  async registerLogout(session: ISession): Promise<Boolean> {
+  async registerLogout(session: ISession): Promise<boolean> {
     return new Promise((resolve) => {
       const { exp, sessionId } = session;
       const expireAt = DateTimeUtils.toDateTMZ(exp);
@@ -64,17 +64,12 @@ export class UserModel implements IUserModel {
     });
   }
 
-  async getBySessionId(sessionId: string): Promise<ISession> {
-    return new Promise((resolve, reject) => {
-      const founded = dbData.logoff.find((session) =>
+  async getBySessionId(sessionId: string): Promise<Partial<ISession> | undefined> {
+    return new Promise((resolve) => {
+      const sessionFound = dbData.logoff.find((session) =>
         BooleanUtil.areEqual(session.sessionId, sessionId),
       );
-      if (!founded) {
-        return reject(null);
-      }
-      // @ts-ignore
-      const domainSession: ISession = { ...founded };
-      return resolve(domainSession);
+      return resolve(sessionFound);
     });
   }
 }

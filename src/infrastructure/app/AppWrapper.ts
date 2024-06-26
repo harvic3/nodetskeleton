@@ -20,6 +20,7 @@ import BaseController, {
   IRouter,
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
+import { serve, setup } from "swagger-ui-express";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
@@ -33,8 +34,6 @@ import {
   Application,
   RequestHandler,
 } from "./core/Modules";
-
-import * as swaggerUi from "swagger-ui-express";
 
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
@@ -69,7 +68,7 @@ export default class AppWrapper {
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
       });
-    this.loadHandlersLast();
+    this.loadLastHandlers();
   }
 
   private async loadControllersDynamically(): Promise<void> {
@@ -95,7 +94,7 @@ export default class AppWrapper {
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);
     }
-    this.loadHandlersLast();
+    this.loadLastHandlers();
 
     return Promise.resolve();
   }
@@ -133,21 +132,15 @@ export default class AppWrapper {
           return resolve();
         })
         .catch((error) => {
-          return reject(error);
+          return reject(new Error(error));
         });
     });
   }
 
-  private loadHandlersLast(): void {
+  private loadLastHandlers(): void {
     this.app
-      .use(
-        `${config.Server.Root}/docs`,
-        swaggerUi.serve,
-        swaggerUi.setup(this.apiDocGenerator.apiDoc),
-      )
+      .use(`${config.Server.Root}/docs`, serve, setup(this.apiDocGenerator.apiDoc))
       .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
       .use(errorHandlerMiddleware.handle);
-
-    this.apiDocGenerator.finish();
   }
 }

@@ -14,24 +14,26 @@ class SessionMiddleware {
 
     const session = TypeParser.cast<IRequest>(req).session;
 
-    if (!session) return this.authorizationInvalid(next);
+    if (!session) return SessionMiddleware.authorizationInvalid(next);
 
     const logoffResult = await TryWrapper.asyncExec(
       kernel
         .get<AuthProvider>(SessionMiddleware.name, AuthProvider.name)
         .hasSessionBeenRevoked(session.sessionId),
     );
-    if (!!logoffResult.value) return this.authorizationInvalid(next);
+    if (logoffResult?.value) return SessionMiddleware.authorizationInvalid(next);
 
     return next();
   };
 
-  private getUnauthorized(message: string): ApplicationError {
+  private static getUnauthorized(message: string): ApplicationError {
     return new ApplicationError(SessionMiddleware.name, message, applicationStatus.UNAUTHORIZED);
   }
 
-  private authorizationInvalid(next: NextFunction): void {
-    return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+  private static authorizationInvalid(next: NextFunction): void {
+    return next(
+      SessionMiddleware.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)),
+    );
   }
 }
 

@@ -940,7 +940,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         "parameters": []
       }
     },
-    "/ping": {
+    "/status": {
       "get": {
         "description": "API status endpoint",
         "responses": {
@@ -1894,7 +1894,7 @@ pnpm run start
 
 > Finally, in any web browser go to:
 
-**localhost:3003/api/ping**
+**localhost:3003/api/status**
 
 > And you can use **PostMan** as follow:
 
@@ -1905,11 +1905,11 @@ curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nodetskeleton@email.com",
-    "password": "Tm9kZVRza2VsZXRvbio4"
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
-The password is equivalent for "NodeTskeleton*8" in Base64 format.
+The passwordB64 is equivalent for "NodeTskeleton*8" in Base64 format.
 
 >> Register a new user
 ```console
@@ -1921,7 +1921,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```
@@ -1952,7 +1952,7 @@ docker-compose up -d --build
 
 > Finally, in any internet explorer go to:
 
-**localhost:3003/api/ping**
+**localhost:3003/api/status**
 
 > And you can use PostMan too:
 
@@ -1964,11 +1964,11 @@ curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
-    "password": "Tm9kZVRza2VsZXRvbio4"
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
-The password is equivalent for "NodeTskeleton" in Base64 format.
+The passwordB64 is equivalent for "NodeTskeleton" in Base64 format.
 
 >> Register a new user
 ```console
@@ -1980,7 +1980,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```
@@ -2379,7 +2379,7 @@ And latter you can use **Postman** or web browser for use the exposed endpoints 
 > Security service
 >> Status
 ```console
-curl --location --request GET 'localhost:8080/security/api/ping'
+curl --location --request GET 'localhost:8080/security/api/status'
 ```
 >> Login
 ```console
@@ -2387,14 +2387,14 @@ curl --location --request POST 'localhost:8080/security/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nodetskeleton@email.com",
-    "password": "Tm9kZVRza2VsZXRvbio4"
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
 > Users service
 >> Status
 ```console
-curl --location --request GET 'localhost:8080/management/api/ping'
+curl --location --request GET 'localhost:8080/management/api/status'
 ```
 >> Register a new user
 ```console
@@ -2406,7 +2406,7 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```

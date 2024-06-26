@@ -1,7 +1,7 @@
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
-import { IServiceContainer } from "../../shared/kernel";
 import container, { LoginUseCase, LogoutUseCase } from "./container";
+import { IServiceContainer } from "../../shared/kernel";
 import {
   TypeDescriber,
   ResultTDescriber,
@@ -22,7 +22,6 @@ import BaseController, {
   applicationStatus,
   HttpStatusEnum,
 } from "../base/Base.controller";
-import { ISession } from "../../../domain/session/ISession";
 
 export class AuthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
@@ -55,13 +54,14 @@ export class AuthController extends BaseController {
     res: IResponse,
     next: INextFunction,
   ): Promise<void> => {
-    const session = req.session as ISession;
+    const session = req.session;
     return this.handleResult(
       res,
       next,
       this.servicesContainer
         .get<LogoutUseCase>(this.CONTEXT, LogoutUseCase.name)
         .execute(req.locale, res.trace, { session }),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.APPLICATION_JSON },
     );
   };
 
@@ -85,7 +85,33 @@ export class AuthController extends BaseController {
       apiDoc: {
         contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: true,
-        schema: new ResultDescriber({} as any),
+        schema: new ResultTDescriber<{ closed: boolean }>({
+          name: "CloseSession",
+          type: PropTypeEnum.OBJECT,
+          props: {
+            data: new TypeDescriber<{ closed: boolean }>({
+              name: "Object",
+              type: PropTypeEnum.OBJECT,
+              props: {
+                closed: {
+                  type: PropTypeEnum.BOOLEAN,
+                },
+              },
+            }),
+            error: {
+              type: PropTypeEnum.STRING,
+            },
+            message: {
+              type: PropTypeEnum.STRING,
+            },
+            statusCode: {
+              type: PropTypeEnum.STRING,
+            },
+            success: {
+              type: PropTypeEnum.BOOLEAN,
+            },
+          },
+        }),
         securitySchemes: new SecuritySchemesDescriber("bearerAuth", {
           type: "http",
           scheme: "bearer",

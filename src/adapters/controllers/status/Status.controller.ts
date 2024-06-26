@@ -51,7 +51,7 @@ export class StatusController extends BaseController {
     this.setRouter(router());
     this.addRoute({
       method: HttpMethodEnum.GET,
-      path: "/ping",
+      path: "/status",
       handlers: [this.pong],
       produces: [
         {

@@ -28,7 +28,9 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTCloseSession"
+                }
               }
             }
           },
@@ -36,7 +38,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTCloseSession"
+                }
               }
             }
           }
@@ -85,7 +89,7 @@
         }
       }
     },
-    "/ping": {
+    "/status": {
       "get": {
         "description": "API status endpoint",
         "responses": {
@@ -136,13 +140,31 @@
               }
             }
           }
+        },
+        "requestBody": {
+          "description": "User data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDto"
+              }
+            }
+          }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "Result": {
+      "Object": {
+        "type": "object",
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResultTCloseSession": {
         "type": "object",
         "properties": {
           "message": {
@@ -156,6 +178,9 @@
           },
           "success": {
             "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Object"
           }
         }
       },
@@ -204,6 +229,43 @@
           "email",
           "passwordB64"
         ]
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "passwordB64": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          }
+        }
       }
     },
     "securitySchemes": {

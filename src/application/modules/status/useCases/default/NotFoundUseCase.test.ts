@@ -1,13 +1,13 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import applicationStatus from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
+import { IStatusProvider } from "../../providerContracts/IStatus.provider";
 import AppSettings from "../../../../shared/settings/AppSettings";
 import Encryption from "../../../../shared/security/encryption";
 import appMessages from "../../../../shared/locals/messages";
 import appWords from "../../../../shared/locals/words";
 import { mock } from "jest-mock-extended";
 import { NotFoundUseCase } from "./index";
-import { IStatusProvider } from "../../providerContracts/IStatus.provider";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();
@@ -17,7 +17,7 @@ const statusProviderMock = mock<IStatusProvider>();
 const notFoundUseCase = () => new NotFoundUseCase(logProviderMock, statusProviderMock);
 const tokenExpirationTime = 3600;
 
-describe("when try to login", () => {
+describe("when try to get a non existing use case", () => {
   beforeAll(() => {
     appMessages.setDefaultLanguage(LocaleTypeEnum.EN);
     appWords.setDefaultLanguage(LocaleTypeEnum.EN);
@@ -35,7 +35,7 @@ describe("when try to login", () => {
     statusProviderMock.get.mockReset();
   });
 
-  it("should return a 400 error if email and password are null", async () => {
+  it("should return a 404 error if the use case doesn't exists", async () => {
     // Act
     const result = await notFoundUseCase().execute(LocaleTypeEnum.EN);
 
