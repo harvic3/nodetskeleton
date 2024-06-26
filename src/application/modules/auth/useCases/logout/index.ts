@@ -55,6 +55,14 @@ export class LogoutUseCase extends BaseUseCase<{ session: ISession }> {
   private async sessionLogoff(session: ISession): ResultExecutionPromise<TryResult<boolean>> {
     const logoffResult = await TryWrapper.asyncExec(this.authProvider.registerLogout(session));
 
+    if (!logoffResult.success) {
+      return {
+        error: this.appMessages.get(this.appMessages.keys.INVALID_SESSION),
+        statusCode: this.applicationStatus.INVALID_INPUT,
+        value: null,
+      };
+    }
+
     return {
       value: logoffResult,
     };

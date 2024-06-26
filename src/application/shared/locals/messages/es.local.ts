@@ -13,4 +13,5 @@ export default {
   USER_WITH_EMAIL_ALREADY_EXISTS: "Un usuario ya ha sido registrado con el email: {{email}}",
   INVALID_EMAIL: "El correo electrónico es inválido.",
   INVALID_PASSWORD: "La contraseña es inválida.",
+  INVALID_SESSION: "La sesión es inválida.",
 };
