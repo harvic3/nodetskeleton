@@ -9,7 +9,7 @@ import { TaskDictionaryEnum } from "../../../../shared/worker/models/TaskDiction
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { BooleanUtil } from "../../../../../domain/shared/utils/BooleanUtil";
 import { PasswordBuilder } from "../../../../../domain/user/PasswordBuilder";
-import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { IUserRepository } from "../../providerContracts/IUser.repository";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
@@ -25,7 +25,7 @@ import { User } from "../../../../../domain/user/User";
 export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
   constructor(
     readonly logProvider: ILogProvider,
-    private readonly userRepository: IUSerRepository,
+    private readonly userRepository: IUserRepository,
     private readonly workerProvider: IWorkerProvider,
   ) {
     super(RegisterUserUseCase.name, logProvider);

@@ -1586,7 +1586,7 @@ In this step we also implement the use case base class constructor as it will be
 export class GetUserUseCase extends BaseUseCase<string> {
   constructor(
     readonly logProvider: ILogProvider,
-    private readonly userRepository: IUSerRepository,
+    private readonly userRepository: IUserRepository,
   ) {
     // Use case context and log provider for Use Case Base Class.
     super(GetUserUseCase.name, logProvider);
