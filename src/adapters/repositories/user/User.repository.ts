@@ -1,4 +1,4 @@
-import { IUSerRepository } from "../../../application/modules/users/providerContracts/IUser.repository";
+import { IUserRepository } from "../../../application/modules/users/providerContracts/IUser.repository";
 import { Nulldefined } from "../../../domain/shared/types/Nulldefined.type";
 import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import { BaseRepository } from "../base/Base.repository";
@@ -7,7 +7,7 @@ import { Email } from "../../../domain/user/Email";
 import { User } from "../../../domain/user/User";
 import { IUserModel } from "./IUser.model";
 
-export class UserRepository extends BaseRepository implements IUSerRepository {
+export class UserRepository extends BaseRepository implements IUserRepository {
   constructor(private readonly userModel: IUserModel) {
     super();
   }

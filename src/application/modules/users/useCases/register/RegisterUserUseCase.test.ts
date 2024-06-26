@@ -2,7 +2,7 @@ import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWo
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
 import applicationStatus from "../../../../shared/status/applicationStatus";
-import { IUSerRepository } from "../../providerContracts/IUser.repository";
+import { IUserRepository } from "../../providerContracts/IUser.repository";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
@@ -19,7 +19,7 @@ import { mock } from "jest-mock-extended";
 
 // Mocks
 const logProviderMock = mock<ILogProvider>();
-const userRepositoryMock = mock<IUSerRepository>();
+const userRepositoryMock = mock<IUserRepository>();
 const workerProviderMock = mock<IWorkerProvider>();
 
 // Builders
