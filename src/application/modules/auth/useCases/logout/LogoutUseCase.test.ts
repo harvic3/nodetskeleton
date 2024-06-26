@@ -94,5 +94,4 @@ describe("when try to logout", () => {
     expect(result.success).toBeFalsy();
     expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
   });
-
 });
