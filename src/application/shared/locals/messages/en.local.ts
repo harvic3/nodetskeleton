@@ -13,4 +13,5 @@ export default {
   USER_WITH_EMAIL_ALREADY_EXISTS: "A user has already registered with the email address: {{email}}",
   INVALID_EMAIL: "Invalid email.",
   INVALID_PASSWORD: "Invalid password.",
+  INVALID_SESSION: "Invalid session.",
 };
