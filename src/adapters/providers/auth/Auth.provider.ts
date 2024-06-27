@@ -49,7 +49,7 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
       this.userModel
         .getBySessionId(sessionId)
         .then((session) => resolve(!!session))
-        .catch(() => resolve(true));
+        .catch((err) => resolve(!!err));
     });
   }
 }
