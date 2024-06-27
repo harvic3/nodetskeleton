@@ -34,6 +34,7 @@ import {
   Application,
   RequestHandler,
 } from "./core/Modules";
+import * as cors from "cors";
 
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
@@ -100,7 +101,12 @@ export default class AppWrapper {
   }
 
   private loadMiddleware(): void {
+    const options: cors.CorsOptions = {
+      origin: AppSettings.ServerOrigins.split(","),
+    };
+
     this.app
+      .use(cors(options))
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: true }))
