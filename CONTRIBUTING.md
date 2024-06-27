@@ -51,4 +51,4 @@ By following these guidelines, you will help ensure a clean, readable, and maint
 ## Maintainers
 
 - [Vick](https://github.com/harvic3)
-- [Ramiro](https://github.com/retamiro)
+- [Retamiro](https://github.com/retamiro)
