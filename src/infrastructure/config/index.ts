@@ -38,7 +38,7 @@ export default {
   Server: {
     Root: DefaultValue.evaluateAndGet(process.env.SERVER_ROOT, "/api"),
     Host: DefaultValue.evaluateAndGet(process.env.SERVER_HOST, "localhost"),
-    Port: DefaultValue.evaluateAndGet(Number(process.env.SERVER_PORT), 3003),
+    Port: DefaultValue.evaluateAndGet(Number(process.env.SERVER_PORT), 3003, [0]),
     Origins: DefaultValue.evaluateAndGet(
       process.env.ORIGINS,
       "http://localhost:3000,http://localhost:3001,http://localhost:3002",
@@ -64,7 +64,7 @@ export default {
       JWT: {
         SecretKey: process.env.JWT_SECRET_KEY,
         ExpireInSeconds: DefaultValue.evaluateAndGet(
-          Number(process.env.EXPIRE_IN_SECONDS),
+          Number(process.env.JWT_EXPIRE_IN_SECONDS),
           3600,
         ),
       },
