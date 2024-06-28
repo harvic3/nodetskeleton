@@ -63,7 +63,10 @@ export default {
     Security: {
       JWT: {
         SecretKey: process.env.JWT_SECRET_KEY,
-        ExpireInSeconds: 3600,
+        ExpireInSeconds: DefaultValue.evaluateAndGet(
+          Number(process.env.EXPIRE_IN_SECONDS),
+          3600,
+        ),
       },
       CRYPTO: {
         EncryptionKey: process.env.ENCRYPTION_KEY,
