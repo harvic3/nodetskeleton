@@ -1,4 +1,5 @@
 import { Nulldefined } from "../types/Nulldefined.type";
+import { StringUtil } from "./StringUtil";
 
 export class DefaultValue {
   static evaluateAndGet<T>(
@@ -10,7 +11,7 @@ export class DefaultValue {
       !valuesIgnore.includes(value) &&
       value !== null &&
       value !== undefined &&
-      value !== "" &&
+      value !== StringUtil.EMPTY &&
       !Number.isNaN(value);
     return (isValue ? value : defaultValue) as T;
   }
