@@ -4,7 +4,7 @@
   "description": "A skeleton based to clean architecture for use typescript with NodeJs",
   "main": "./dist/index.js",
   "scripts": {
-    "tsk": "npx run-func src/infrastructure/tsk-tools/commandHandler.js executeCommand",
+    "tsk": "echo 'Use run-tsk package, so please install it globally typing > npm i -g run-tsk'",
     "dev": "ts-node-dev --env-file=.env --respawn -- src/index.ts",
     "test": "npm run build && jest --no-cache --detectOpenHandles --forceExit --coverage",
     "test:watch": "npm run build && jest --forceExit --detectOpenHandles --watchAll",
