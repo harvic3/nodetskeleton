@@ -55,7 +55,7 @@ export class ErrorHandlerMiddleware {
       typeof exception !== "object"
         ? { message: exception?.toString(), stack: undefined, name: undefined }
         : TypeParser.cast<Error>(exception ?? {});
-    console.log(`Node ${exceptionType}:`, { message, stack, name });
+    console.error(`Node ${exceptionType}:`, { message, stack, name });
   }
 }
 
