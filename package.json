@@ -77,10 +77,10 @@
     "luxon": "^3.4.4",
     "mapper-tsk": "^2.0.4",
     "resources-tsk": "^2.1.5",
-    "result-tsk": "^2.1.7",
+    "result-tsk": "^2.1.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0",
-    "validator-tsk": "^2.0.5"
+    "validator-tsk": "^2.0.6"
   },
   "husky": {
     "hooks": {
