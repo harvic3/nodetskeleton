@@ -5,7 +5,7 @@ export default {
   UNKNOWN_RESPONSE_STATUS: "Status da resposta do servidor desconhecido.",
   TOOL_HAS_NOT_BEEN_INITIALIZED: "A ferramenta {{toolName}} não foi inicializada.",
   PROCESSING_DATA_CLIENT_ERROR: "Erro ao processar dados do cliente http.",
-  DEPENDENCY_NOT_FOUNT: "{{className}} não encontrado no contêiner de dependências.",
+  DEPENDENCY_NOT_FOUND: "{{className}} não encontrado no contêiner de dependências.",
   AUTHORIZATION_REQUIRED: "Autorização necessária.",
   INVALID_USER_OR_PASSWORD: "Usuário ou senha inválidos.",
   ERROR_CREATING_USER: "Erro ao criar usuário.",
