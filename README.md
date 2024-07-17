@@ -892,7 +892,7 @@ The file is created in the root of the project with the name `openapi.json` and 
       "email": "harvic3@protonmail.com"
     },
     "license": {
-      "name": "MIT"
+      "name": "BSD 3-Clause"
     }
   },
   "servers": [
@@ -940,7 +940,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         "parameters": []
       }
     },
-    "/ping": {
+    "/status": {
       "get": {
         "description": "API status endpoint",
         "responses": {
@@ -1523,29 +1523,49 @@ And then, continue with the step **installation**.
 
 ## Create your first use case
 
-> Now CLI function to create our UseCase common templates and its dependencies was added, so you can try something like...
+> This project has a CLI tool to install, initialize and interact with it. 
+Is important keep in mind that some commands only work in a root directory of TSK project.
+
+### To install and initialize the project
+- Run it using NPX and replace `my-awesome-project` for your own project name
+```console
+> npx run-tsk setup project-name=my-awesome-project
+```
+Or with PNPX
+```console
+> pnpx run-tsk setup project-name=my-awesome-project
+```
+
+### Using help command
+To see the available commands you can type the following:
+```console
+> npx run-tsk help
+```
+
+### To add a new use case
+> With the CLI functions we can create our UseCase common templates and its dependencies, so you can try something like...
 
 With the following command you will create a use case named CreatedOrderUseCase and his controller and containerController. Try it!!
 
 ```console
-npm run tsk 'add-use-case api-name=orders use-case=CreateOrder endpoint=/v1/orders/ http-method=POST'
+> run-tsk add-use-case api-name=orders use-case=CreateOrder endpoint=/v1/orders/ http-method=POST
 ```
 
 So, now you could add a new use case to the Orders API with the next command. Try it!!
 
 ```console
-npm run tsk 'add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orders/ http-method=PUT'
+> run-tsk add-use-case api-name=orders use-case=UpdateOrder endpoint=/v1/orders/ http-method=PUT
 ```
 
 > It's exciting, now command to create use case supports any order and aliases for their args, for example:
 	
 ```console
-npm run tsk 'add-uc u=Logout e=/v1/auth/logout m=get a=auth'
+> run-tsk add-uc u=Logout e=/v1/auth/logout m=get a=auth
 ```
 or 
 ```console
-npm run tsk 'add-uc u=Create e=/v1/products m=post a=products'
-npm run tsk 'add-uc u=Update e=/v1/products m=put a=products'
+> run-tsk add-uc u=Create e=/v1/products m=post a=products
+> run-tsk add-uc u=Update e=/v1/products m=put a=products
 ```
 
 It's very easy to create repetitive code to focus in the important things, application and domain logic, right. But you must know how it works, so continue reading...
@@ -1586,7 +1606,7 @@ In this step we also implement the use case base class constructor as it will be
 export class GetUserUseCase extends BaseUseCase<string> {
   constructor(
     readonly logProvider: ILogProvider,
-    private readonly userRepository: IUSerRepository,
+    private readonly userRepository: IUserRepository,
   ) {
     // Use case context and log provider for Use Case Base Class.
     super(GetUserUseCase.name, logProvider);
@@ -1846,6 +1866,7 @@ ENCRYPTION_KEY=JUS9192ZliRlDBWm0BmmJoZO1PbNkZt3kiXNlaGLkIT49uEdgGe79TPCbr0D
 ENCRYPTION_ITERATIONS=4e4
 ENCRYPTION_KEY_SIZE=128
 JWT_SECRET_KEY=2NtC29d33z1AF1HdPSpn
+JWT_EXPIRE_IN_SECONDS=3600
 ```
 
 **SERVICE_CONTEXT** env can be empty or delete it if you don't pretend use multi service feature.
@@ -1894,7 +1915,7 @@ pnpm run start
 
 > Finally, in any web browser go to:
 
-**localhost:3003/api/ping**
+**localhost:3003/api/status**
 
 > And you can use **PostMan** as follow:
 
@@ -1905,11 +1926,11 @@ curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nodetskeleton@email.com",
-    "password": "Tm9kZVRza2VsZXRvbio4"
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
-The password is equivalent for "NodeTskeleton*8" in Base64 format.
+The passwordB64 is equivalent for "NodeTskeleton*8" in Base64 format.
 
 >> Register a new user
 ```console
@@ -1921,7 +1942,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```
@@ -1952,7 +1973,7 @@ docker-compose up -d --build
 
 > Finally, in any internet explorer go to:
 
-**localhost:3003/api/ping**
+**localhost:3003/api/status**
 
 > And you can use PostMan too:
 
@@ -1964,11 +1985,11 @@ curl --location --request POST 'localhost:3003/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "harvic3@protonmail.com",
-    "password": "Tm9kZVRza2VsZXRvbg=="
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
-The password is equivalent for "NodeTskeleton" in Base64 format.
+The passwordB64 is equivalent for "NodeTskeleton" in Base64 format.
 
 >> Register a new user
 ```console
@@ -1980,7 +2001,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```
@@ -2379,7 +2400,7 @@ And latter you can use **Postman** or web browser for use the exposed endpoints 
 > Security service
 >> Status
 ```console
-curl --location --request GET 'localhost:8080/security/api/ping'
+curl --location --request GET 'localhost:8080/security/api/status'
 ```
 >> Login
 ```console
@@ -2387,14 +2408,14 @@ curl --location --request POST 'localhost:8080/security/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "nodetskeleton@email.com",
-    "password": "Tm9kZVRza2VsZXRvbio4"
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4"
 }'
 ```
 
 > Users service
 >> Status
 ```console
-curl --location --request GET 'localhost:8080/management/api/ping'
+curl --location --request GET 'localhost:8080/management/api/status'
 ```
 >> Register a new user
 ```console
@@ -2406,7 +2427,7 @@ curl --location --request POST 'localhost:8080/management/api/v1/users/sign-up' 
     "firstName": "Nikola",
     "lastName": "Tesla",
     "gender": "Male",
-    "password": "Tm9kZVRza2VsZXRvbio4",
+    "passwordB64": "Tm9kZVRza2VsZXRvbio4",
     "email": "nodetskeleton@conemail.com"
 }'
 ```

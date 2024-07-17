@@ -24,6 +24,12 @@ export type ParameterDescriber = {
   allowEmptyValue: boolean;
 };
 
+export type SecuritySchemes = {
+  type: string;
+  scheme: string;
+  bearerFormat: string;
+};
+
 export type ApiDoc = {
   contentType: HttpContentTypeEnum;
   requireAuth: boolean;
@@ -34,6 +40,7 @@ export type ApiDoc = {
     schema: TypeDescriber<any> | RefTypeDescriber;
   };
   parameters?: ParameterDescriber[];
+  securitySchemes?: Record<string, SecuritySchemes>;
 };
 
 export type RouteType = {
@@ -46,9 +53,9 @@ export type RouteType = {
   }[];
   description?: string;
   apiDoc?: ApiDoc;
+  security?: Record<string, any[]>;
 };
 
 export interface IApiDocGenerator {
   createRouteDoc(route: Omit<RouteType, "handlers">): void;
-  setServer(url: string, description: "Local server"): void;
 }

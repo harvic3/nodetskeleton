@@ -12,7 +12,7 @@ export class UserDtoMock implements IMockBuilder<IUserDto> {
       firstName: undefined,
       lastName: undefined,
       email: undefined,
-      password: undefined,
+      passwordB64: undefined,
       gender: undefined,
     };
   }
@@ -22,7 +22,7 @@ export class UserDtoMock implements IMockBuilder<IUserDto> {
       firstName: undefined,
       lastName: undefined,
       email: undefined,
-      password: undefined,
+      passwordB64: undefined,
       gender: undefined,
     };
     return this.userDto;
@@ -47,7 +47,7 @@ export class UserDtoMock implements IMockBuilder<IUserDto> {
     return this;
   }
   withPassword(password = MockConstants.EXAMPLE_PASSWORD): UserDtoMock {
-    this.userDto.password = StringUtil.encodeBase64(password) as string;
+    this.userDto.passwordB64 = StringUtil.encodeBase64(password) as string;
     return this;
   }
 }

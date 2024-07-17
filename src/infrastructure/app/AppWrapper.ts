@@ -6,6 +6,7 @@ import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
 import authorizationMiddleware from "../middleware/authorization/jwt";
+import sessionMiddleware from "../middleware/authorization/session";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { TypeParser } from "../../domain/shared/utils/TypeParser";
 import resources from "../../application/shared/locals/messages";
@@ -19,6 +20,7 @@ import BaseController, {
   IRouter,
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
+import { serve, setup } from "swagger-ui-express";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
@@ -32,6 +34,7 @@ import {
   Application,
   RequestHandler,
 } from "./core/Modules";
+import * as cors from "cors";
 
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
@@ -40,8 +43,8 @@ export default class AppWrapper {
 
   constructor(controllers?: BaseController[]) {
     this.setup();
-    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
     this.app = AppServer();
+    this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     console.log(
@@ -66,8 +69,7 @@ export default class AppWrapper {
         this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
         console.log(`${controller?.constructor?.name} was initialized`);
       });
-    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
-    this.loadErrorHandler();
+    this.loadLastHandlers();
   }
 
   private async loadControllersDynamically(): Promise<void> {
@@ -93,14 +95,18 @@ export default class AppWrapper {
       this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
       console.log(`${controller?.constructor?.name} was loaded`);
     }
-    this.app.use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound));
-    this.loadErrorHandler();
+    this.loadLastHandlers();
 
     return Promise.resolve();
   }
 
   private loadMiddleware(): void {
+    const options: cors.CorsOptions = {
+      origin: AppSettings.ServerOrigins.split(","),
+    };
+
     this.app
+      .use(cors(options))
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: true }))
@@ -108,11 +114,8 @@ export default class AppWrapper {
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)
       .use(authorizationMiddleware.handle)
+      .use(sessionMiddleware.handle)
       .use(useCaseTraceMiddleware.handle);
-  }
-
-  private loadErrorHandler(): void {
-    this.app.use(errorHandlerMiddleware.handle);
   }
 
   private setup(): void {
@@ -135,8 +138,15 @@ export default class AppWrapper {
           return resolve();
         })
         .catch((error) => {
-          return reject(error);
+          return reject(new Error(error));
         });
     });
+  }
+
+  private loadLastHandlers(): void {
+    this.app
+      .use(`${config.Server.Root}/docs`, serve, setup(this.apiDocGenerator.apiDoc))
+      .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
+      .use(errorHandlerMiddleware.handle);
   }
 }

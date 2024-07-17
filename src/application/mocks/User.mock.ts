@@ -1,4 +1,3 @@
-import { StringUtil } from "../../domain/shared/utils/StringUtil";
 import { Gender } from "../../domain/user/genre/Gender.enum";
 import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { MockConstants } from "./MockConstants";

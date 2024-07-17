@@ -5,7 +5,7 @@ import errorHandlerMiddleware from "./infrastructure/middleware/error";
 
 const appWrapper = new AppWrapper();
 const server = new HttpServer(appWrapper);
-server.start();
+server.start(new Date());
 
 process.on("uncaughtException", (error: NodeJS.UncaughtExceptionListener) => {
   errorHandlerMiddleware.manageNodeException("UncaughtException", error);

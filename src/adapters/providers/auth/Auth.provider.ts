@@ -11,7 +11,10 @@ import { User } from "../../../domain/user/User";
 import { sign, verify } from "jsonwebtoken";
 
 export class AuthProvider extends BaseProvider implements IAuthProvider {
-  constructor(readonly logProvider: ILogProvider, private readonly userModel: IUserModel) {
+  constructor(
+    readonly logProvider: ILogProvider,
+    private readonly userModel: IUserModel,
+  ) {
     super(logProvider);
   }
 
@@ -29,11 +32,24 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
   }
 
   async login(email: string, encryptedPassword: string): Promise<User> {
-    const founded = await this.userModel.getByAuthentication(email, encryptedPassword);
-    if (!founded) return Promise.reject();
+    const userFound = await this.userModel.getByAuthentication(email, encryptedPassword);
+    if (!userFound) return Promise.reject(new Error("User not found"));
 
-    founded.email = new Email(TypeParser.cast<string>(founded.email));
+    userFound.email = new Email(TypeParser.cast<string>(userFound.email));
 
-    return Promise.resolve(founded);
+    return Promise.resolve(userFound);
+  }
+
+  async registerLogout(session: ISession): Promise<boolean> {
+    return this.userModel.registerLogout(session);
+  }
+
+  async hasSessionBeenRevoked(sessionId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      this.userModel
+        .getBySessionId(sessionId)
+        .then((session) => resolve(!!session))
+        .catch((err) => resolve(!!err));
+    });
   }
 }

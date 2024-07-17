@@ -1,11 +1,13 @@
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
+import container, { LoginUseCase, LogoutUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
-import container, { LoginUseCase } from "./container";
 import {
   TypeDescriber,
   ResultTDescriber,
   PropTypeEnum,
+  SecuritySchemesDescriber,
+  ResultDescriber,
 } from "../base/context/apiDoc/TypeDescriber";
 import BaseController, {
   IRequest,
@@ -23,7 +25,7 @@ import BaseController, {
 
 export class AuthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
-    super(AuthController.name, serviceContainer, ServiceContext.SECURITY);
+    super(AuthController.name, serviceContainer, ServiceContext.AUTH);
   }
 
   login: EntryPointHandler = async (
@@ -32,7 +34,7 @@ export class AuthController extends BaseController {
     next: INextFunction,
   ): Promise<void> => {
     const email = req.body?.email as string;
-    const passwordB64 = req.body?.password as string;
+    const passwordB64 = req.body?.passwordB64 as string;
 
     return this.handleResult(
       res,
@@ -47,8 +49,76 @@ export class AuthController extends BaseController {
     );
   };
 
+  logout: EntryPointHandler = async (
+    req: IRequest,
+    res: IResponse,
+    next: INextFunction,
+  ): Promise<void> => {
+    const session = req.session;
+    return this.handleResult(
+      res,
+      next,
+      this.servicesContainer
+        .get<LogoutUseCase>(this.CONTEXT, LogoutUseCase.name)
+        .execute(req.locale, res.trace, { session }),
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.APPLICATION_JSON },
+    );
+  };
+
   initializeRoutes(router: IRouter): void {
     this.setRouter(router());
+    this.addRoute({
+      method: HttpMethodEnum.DELETE,
+      path: "/v1/auth/logout",
+      handlers: [this.logout],
+      produces: [
+        {
+          applicationStatus: applicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: applicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+      description: "Logout user",
+      apiDoc: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        requireAuth: true,
+        schema: new ResultTDescriber<{ closed: boolean }>({
+          name: "CloseSession",
+          type: PropTypeEnum.OBJECT,
+          props: {
+            data: new TypeDescriber<{ closed: boolean }>({
+              name: "Object",
+              type: PropTypeEnum.OBJECT,
+              props: {
+                closed: {
+                  type: PropTypeEnum.BOOLEAN,
+                },
+              },
+            }),
+            error: {
+              type: PropTypeEnum.STRING,
+            },
+            message: {
+              type: PropTypeEnum.STRING,
+            },
+            statusCode: {
+              type: PropTypeEnum.STRING,
+            },
+            success: {
+              type: PropTypeEnum.BOOLEAN,
+            },
+          },
+        }),
+        securitySchemes: new SecuritySchemesDescriber("bearerAuth", {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "bearer",
+        }),
+      },
+    });
     this.addRoute({
       method: HttpMethodEnum.POST,
       path: "/v1/auth/login",

@@ -10,41 +10,43 @@ import ArrayUtil from "../../../../domain/shared/utils/ArrayUtil";
 import { ISession } from "../../../../domain/session/ISession";
 import { Middleware } from "../../types";
 
-const TOKEN_PARTS = 2;
-const TOKEN_POSITION_VALUE = 1;
-
 class AuthorizationMiddleware {
-  handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
+  private static TOKEN_PARTS = 2;
+  private static TOKEN_POSITION_VALUE = 1;
+
+  handle: Middleware = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     if (TypeParser.cast<IRequest>(req).isWhiteList) return next();
 
     const auth = req.headers.authorization;
 
-    if (!auth)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    if (!auth) return AuthorizationMiddleware.noValidAuthorization(next);
 
     const jwtParts = ArrayUtil.allOrDefault(auth.split(/\s+/));
-    if (jwtParts.length !== TOKEN_PARTS)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    if (jwtParts.length !== AuthorizationMiddleware.TOKEN_PARTS)
+      return AuthorizationMiddleware.noValidAuthorization(next);
 
-    const token = ArrayUtil.getWithIndex(jwtParts, TOKEN_POSITION_VALUE);
+    const token = ArrayUtil.getWithIndex(jwtParts, AuthorizationMiddleware.TOKEN_POSITION_VALUE);
     const sessionResult = TryWrapper.exec(
       kernel.get<AuthProvider>(AuthorizationMiddleware.name, AuthProvider.name).verifyJwt,
       [token],
     );
-    if (!sessionResult.success)
-      return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
+    if (!sessionResult.success) return AuthorizationMiddleware.noValidAuthorization(next);
 
     TypeParser.cast<IRequest>(req).session = TypeParser.cast<ISession>(sessionResult.value);
 
     return next();
   };
 
-  private getUnauthorized(message: string): ApplicationError {
+  private static getUnauthorized(message: string): ApplicationError {
     return new ApplicationError(
       AuthorizationMiddleware.name,
       message,
       applicationStatus.UNAUTHORIZED,
     );
+  }
+
+  private static noValidAuthorization(next: NextFunction): void {
+    return next(this.getUnauthorized(appMessages.get(appMessages.keys.AUTHORIZATION_REQUIRED)));
   }
 }
 

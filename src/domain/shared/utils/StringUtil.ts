@@ -6,6 +6,8 @@ export class StringUtil {
   static EMPTY = "";
   static WHITE_SPACE = " ";
   static COMMA_SPACE_SEPARATOR = ", ";
+  static COMMA = ",";
+  static SLASH = "/";
 
   static decodeBase64(base64: string | Nulldefined): string | Nulldefined {
     if (!base64) return null;

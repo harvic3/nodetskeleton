@@ -5,23 +5,22 @@ import { TypeParser } from "../../../../domain/shared/utils/TypeParser";
 import { Middleware } from "../../types";
 import config from "../../../config";
 
-const ROUTE_WHITE_LIST = [
-  `${config.Server.Root}/ping`,
-  `${config.Server.Root}/v1/auth/login`,
-  `${config.Server.Root}/v1/users/sign-up`,
+const ROUTE_WHITE_LIST: { rule: "starts-with" | "equal"; value: string }[] = [
+  { rule: "equal", value: `${config.Server.Root}/status` },
+  { rule: "equal", value: `${config.Server.Root}/v1/auth/login` },
+  { rule: "equal", value: `${config.Server.Root}/v1/users/sign-up` },
+  { rule: "starts-with", value: `${config.Server.Root}/docs` },
 ];
 
 class RouteWhiteListMiddleware {
   handle: Middleware = (req: Request, _res: Response, next: NextFunction): void => {
-    TypeParser.cast<IRequest>(req).isWhiteList = false;
-
-    const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((path) =>
-      BooleanUtil.areEqual(path, req.path),
+    const existsUnauthorizedPath = ROUTE_WHITE_LIST.some((route) =>
+      route.rule === "equal"
+        ? BooleanUtil.areEqual(route.value, req.path)
+        : req.path.startsWith(route.value),
     );
 
-    if (existsUnauthorizedPath) {
-      TypeParser.cast<IRequest>(req).isWhiteList = true;
-    }
+    TypeParser.cast<IRequest>(req).isWhiteList = existsUnauthorizedPath;
 
     return next();
   };

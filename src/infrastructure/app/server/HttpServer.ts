@@ -11,7 +11,7 @@ export class HttpServer {
     this.server = createServer(this.#appWrapper.app);
   }
 
-  start(): void {
+  start(startAt: Date): void {
     this.#appWrapper
       .initializeServices()
       .then(() => {
@@ -22,12 +22,12 @@ export class HttpServer {
       });
 
     this.server.on("listening", () => {
-      this.#appWrapper.apiDocGenerator.setServer(
-        `${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
-        "Local server",
-      );
+      this.#appWrapper.apiDocGenerator.saveApiDoc().finish();
+      console.log(`Server ${AppSettings.ServiceName} running on ${AppSettings.getServerUrl()}`);
+
+      const seconds = ((new Date().valueOf() - startAt.valueOf()) / 1000).toFixed(3);
       console.log(
-        `Server ${AppSettings.ServiceName} running on ${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`,
+        `Started Application in ${process.uptime().toFixed(3)} seconds (${AppSettings.ServiceName} running for ${seconds})`,
       );
     });
   }

@@ -10,16 +10,48 @@
       "email": "harvic3@protonmail.com"
     },
     "license": {
-      "name": "MIT"
+      "name": "BSD 3-Clause"
     }
   },
   "servers": [
     {
-      "url": "localhost:3003/api",
+      "url": "http://localhost:3003/api",
       "description": "Local server"
     }
   ],
   "paths": {
+    "/v1/auth/logout": {
+      "delete": {
+        "description": "Logout user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTCloseSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTCloseSession"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "description": "Login user",
@@ -57,7 +89,7 @@
         }
       }
     },
-    "/ping": {
+    "/status": {
       "get": {
         "description": "API status endpoint",
         "responses": {
@@ -108,12 +140,50 @@
               }
             }
           }
+        },
+        "requestBody": {
+          "description": "User data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDto"
+              }
+            }
+          }
         }
       }
     }
   },
   "components": {
     "schemas": {
+      "Object": {
+        "type": "object",
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResultTCloseSession": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Object"
+          }
+        }
+      },
       "TokenDto": {
         "type": "object",
         "properties": {
@@ -176,6 +246,33 @@
             "type": "boolean"
           }
         }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "passwordB64": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "bearer"
       }
     }
   }

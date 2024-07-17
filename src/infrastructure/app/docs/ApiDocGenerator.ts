@@ -1,11 +1,14 @@
+import { SchemasSecurityStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasSecurityStore";
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
 import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
+import AppSettings from "../../../application/shared/settings/AppSettings";
 import {
   ApiDoc,
   IApiDocGenerator,
   ParameterDescriber,
   RouteType,
+  SecuritySchemes,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
 import { join, resolve } from "path";
 import { writeFileSync } from "fs";
@@ -60,6 +63,7 @@ type OpenApiType = {
         >;
         requestBody: RequestBodyType;
         parameters: ParameterDescriber[];
+        security: Record<string, any[]>[];
       }
     >
   >;
@@ -68,6 +72,7 @@ type OpenApiType = {
       string,
       { type: string; properties: { type: PropTypeEnum; format: PropFormatEnum } }
     >;
+    securitySchemes?: Record<string, SecuritySchemes>;
   };
 };
 
@@ -86,7 +91,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
         email: "",
       },
       license: {
-        name: "MIT",
+        name: "BSD 3-Clause",
       },
     },
     servers: [],
@@ -117,15 +122,29 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.info.description = info.description;
     this.apiDoc.info.contact = info.contact;
     this.apiDoc.info.license = info.license;
+
+    this.setSchemas(SchemasStore.get());
+    this.setSchemasSecurity(SchemasSecurityStore.get());
+
+    this.setServer(AppSettings.getServerUrl(), "Local server");
   }
 
-  private saveApiDoc(): void {
+  saveApiDoc(): this {
+    const wasDocGenerated = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
+    if (!wasDocGenerated) return this;
+
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
     writeFileSync(filePath, JSON.stringify(this.apiDoc, null, 2), "utf8");
+
+    return this;
   }
 
   private setSchemas(schemas: Record<string, any>): void {
     this.apiDoc.components.schemas = schemas;
+  }
+
+  private setSchemasSecurity(securitySchemes: Record<string, SecuritySchemes>): void {
+    this.apiDoc.components.securitySchemes = securitySchemes;
   }
 
   private buildParameters(
@@ -197,7 +216,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     const { path, produces, method, description, apiDoc } = route;
     if (!apiDoc) return;
 
-    const { contentType, schema, requestBody, parameters } = apiDoc;
+    const { contentType, schema, requestBody, parameters, securitySchemes } = apiDoc;
 
     if (!this.apiDoc.paths[path]) {
       this.apiDoc.paths[path] = {};
@@ -226,21 +245,22 @@ export class ApiDocGenerator implements IApiDocGenerator {
         this.apiDoc.paths[path][method].parameters = this.buildParameters(path, parameters);
       }
     });
+
+    if (securitySchemes) {
+      const securitys = Object.keys(securitySchemes);
+      this.apiDoc.paths[path][method].security = securitys.map((key) => ({ [key]: [] }));
+    }
   }
 
-  setServer(url: string, description: "Local server"): void {
-    if (this.env !== DEV || !Object.keys(this.apiDoc.paths).length) {
-      SchemasStore.dispose();
-      return;
-    }
-
+  private setServer(url: string, description: "Local server"): void {
     this.apiDoc.servers.push({
       url,
       description,
     });
+  }
 
-    this.setSchemas(SchemasStore.get());
-    this.saveApiDoc();
+  finish(): void {
     SchemasStore.dispose();
+    SchemasSecurityStore.dispose();
   }
 }

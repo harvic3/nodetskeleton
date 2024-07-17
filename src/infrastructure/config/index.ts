@@ -38,7 +38,7 @@ export default {
   Server: {
     Root: DefaultValue.evaluateAndGet(process.env.SERVER_ROOT, "/api"),
     Host: DefaultValue.evaluateAndGet(process.env.SERVER_HOST, "localhost"),
-    Port: DefaultValue.evaluateAndGet(Number(process.env.SERVER_PORT), 3003),
+    Port: DefaultValue.evaluateAndGet(Number(process.env.SERVER_PORT), 3003, [0]),
     Origins: DefaultValue.evaluateAndGet(
       process.env.ORIGINS,
       "http://localhost:3000,http://localhost:3001,http://localhost:3002",
@@ -63,7 +63,10 @@ export default {
     Security: {
       JWT: {
         SecretKey: process.env.JWT_SECRET_KEY,
-        ExpireInSeconds: 3600,
+        ExpireInSeconds: DefaultValue.evaluateAndGet(
+          Number(process.env.JWT_EXPIRE_IN_SECONDS),
+          3600,
+        ),
       },
       CRYPTO: {
         EncryptionKey: process.env.ENCRYPTION_KEY,
@@ -92,7 +95,7 @@ export default {
         email: "harvic3@protonmail.com",
       },
       license: {
-        name: "MIT",
+        name: "BSD 3-Clause",
       },
     },
   },
