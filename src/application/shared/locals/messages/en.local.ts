@@ -5,7 +5,7 @@ export default {
   UNKNOWN_RESPONSE_STATUS: "Response status from server unknown.",
   TOOL_HAS_NOT_BEEN_INITIALIZED: "The {{toolName}} tool has not been initialized.",
   PROCESSING_DATA_CLIENT_ERROR: "Error processing http client data.",
-  DEPENDENCY_NOT_FOUNT: "{{className}} not found in dependencies container.",
+  DEPENDENCY_NOT_FOUND: "{{className}} not found in dependencies container.",
   AUTHORIZATION_REQUIRED: "Authorization is required.",
   INVALID_USER_OR_PASSWORD: "Invalid user or password.",
   ERROR_CREATING_USER: "Create user error.",

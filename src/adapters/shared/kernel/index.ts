@@ -5,7 +5,7 @@ import tsKernel, { IServiceContainer } from "dic-tsk";
 tsKernel.init({
   internalErrorCode: applicationStatus.INTERNAL_ERROR,
   appMessages,
-  appErrorMessageKey: localKeys.DEPENDENCY_NOT_FOUNT,
+  appErrorMessageKey: localKeys.DEPENDENCY_NOT_FOUND,
   applicationStatus,
   applicationStatusCodeKey: "INTERNAL_ERROR",
 });
