@@ -41,6 +41,7 @@ dist/**/*
 */**/dist
 
 # ignore yarn.lock
+# For production environment, you have to make changes according to your package manager
 yarn.lock
 package-lock.json
 pnpm-lock.yaml
