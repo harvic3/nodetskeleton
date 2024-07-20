@@ -13,4 +13,4 @@ RUN npm run build
 EXPOSE 3003/tcp
 
 # CMD [ "node", "dist/index" ]
-# Observation: remove # and this line if you dont work with docker-compose
+# Observation: remove the previous # char and this line if you aren't working with docker-compose

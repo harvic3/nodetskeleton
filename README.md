@@ -15,7 +15,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
   1. [cli functions 📟](#create-your-first-use-case)
   1. [Philosophy 🧘🏽](#philosophy)
   1. [Included tools 🧰](#included-tools)
-		1. [Errors](#errors)
+		1. [Errors Flow](#errors-flow)
 		1. [Locals](#locals)
  		1. [Mapper](#mapper)
  		1. [UseCase](#usecase)
@@ -80,7 +80,7 @@ I personally recommend **the permission-based dynamic role strategy** to avoid c
 
 **NodeTskeleton** includes some tools in the **src/application/shared** path which are described below:
 
-### Errors 
+### Errors Flow
 
 Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules, example:
 
@@ -103,28 +103,80 @@ export class ApplicationError extends Error {
   // ...
 }
 ```
-It is important to note that the name of the context is concatenated with the name of the ApplicationError class in order to better identify the controlled errors.
+Is important to note that the name of the CONTEXT is concatenated with the name of the `ApplicationError class` in order to better identification of the controlled errors.
+It's very useful for observability tools in order to filter out real errors from those we are controlling.
 
 The straightforward way to use it is as follows:
 
 ```ts
 throw new ApplicationError(
   this.CONTEXT,
-  resources.get(resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
-  error.code || applicationStatusCode.INTERNAL_SERVER_ERROR,
+  resources.get(resourceKeys.ERROR_TO_CREATE_SOMETHING),
+  applicationStatusCode.BAD_REQUEST,
   JSON.stringify(error),
 );
 ```
 
-Or if the pointer of your program is in the scope of your UseCase you can use the error control function of the BaseUseCase class:
+Or if the pointer of your program is in the scope of your UseCase, you can use the error control function in the BaseUseCase class:
 
+> The dirty way:
 ```ts
 if (!someCondition) { // Or any validation result
   result.setError(
     this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
     this.applicationStatus.INTERNAL_SERVER_ERROR,
-  )
+  );
   this.handleResultError(result);
+}
+```
+
+> The clean way one:
+```ts
+// In the UseCase context in Execute method
+const user = await this.getUser(result, userId);
+if (result.hasError()) return result;
+
+// In the UseCase context in out of Execute method
+private async getUser(result: IResult, userId: string): Promise<User> {
+  const user = await this.userRepository.getById(userId):
+  if (!user) {
+    result.setError(
+      this.resources.get(this.resourceKeys.USER_CAN_NOT_BE_CREATED),
+      this.applicationStatus.INTERNAL_CONFLICT,
+    );
+  }
+
+  return user;
+}
+```
+
+> The clean way two:
+```ts
+// In the UseCase context in Execute method
+const { value: userExists } = await result.execute(
+  this.userExists(user.email?.value as string),
+);
+if (userExists) return result;
+
+// In the UseCase context in out of Execute method
+private async userExists(email: string): ResultExecutionPromise<boolean> {
+  const userExists = await this.userRepository.getByEmail(email);
+  if (userExists) {
+    return {
+      error: this.appMessages.getWithParams(
+        this.appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS,
+        {
+          email,
+        },
+      ),
+      statusCode: this.applicationStatus.INVALID_INPUT,
+      value: true,
+    };
+  }
+
+  return {
+    value: false,
+  };
 }
 ```
 
@@ -145,6 +197,13 @@ The function of this **class** will be reflected in your **error handler** as it
   }
 };
 ```
+
+Which use? Feel free, it's about colors and flavours, in fact you can developed your own strategy, but if you are going to prefer to use the `The clean way one` keep present the next recommendations: 
+
+- **Never, but never**, use setData or setMessage methods of the result inside functions `out of the UseCase Execute method context`, only here (Inside the UseCase Execute method) this functions can be call.
+- **You only must use methods to manage errors in result objects outside of the UseCase Execute method context.**
+
+Why?, it´s related to side effects, I normally use the `The clean way one` and I have never had a problem related to that, because I have been careful about that.
 
 **[⬆ back to the past](#table-of-contents)**
 
@@ -652,7 +711,17 @@ This tool is now available as an **NPM package**.
 
 Now standardized API documentation can already be generated automatically through a strategy in the method where the routes are configured using Open API.
 
-The API documentation is done in the initializeRoutes method of each controller as shown below:
+You can see the API documentation about your project going to the next url once you have setup your project:
+```text
+localhost:3003/api/docs
+```
+But first, you have to setup the project, so if you want, you can do it very fast executing this command on your computer:
+- Run it using NPX and replace `my-awesome-project` for your own project name
+```console
+npx run-tsk setup project-name=my-awesome-project
+```
+
+> The API documentation is done in the initializeRoutes method of each controller as shown below:
 
 ```ts
   initializeRoutes(router: IRouter): void {
