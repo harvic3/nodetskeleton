@@ -4,11 +4,11 @@
 
 **NodeTskeleton** is a **Clean Architecture** based **OOP Template Project** for **NodeJs** using **TypeScript** to implement with any **web server framework** or even any user interface.
 
-The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of the framework you use, therefore your code should NOT BE COUPLED to a specific framework or library, it should work in any framework.
+The main philosophy of **NodeTskeleton** is that your solution (**domain** and **application**, **“business logic”**) should be independent of framework you use, therefore your code SHOULD NOT BE COUPLED to a specific framework or library, it should works in any framework.
 
-The design of **NodeTskeleton** is based in **Clean Architecture**, an architecture that allows you to decouple the dependencies of your solution, even without the need to think about the type of **database**, **providers** or **services**, the **framework**, **libraries** or any other dependencies.
+The design of **NodeTskeleton** is based in **Clean Architecture**, an architecture that allow us to decouple the dependencies of our solutions, even without the need to think about the type of **database**, **providers** or **services**, **frameworks**, **libraries** or any other dependency.
 
-**NodeTskeleton** has the minimum **tools** necessary for you to develop the **business logic** of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
+**NodeTskeleton** has the minimum and necessary **tools** for you to develop the **business logic** of your application, you can even decide not to use its included tools (you can remove them), and use the libraries or packages of your choice.
 
 ## Table of contents
 
@@ -49,7 +49,7 @@ The design of **NodeTskeleton** is based in **Clean Architecture**, an architect
 
 Applications are generally developed to be used by people, so people should be the focus of them.
 
-For this reason **user stories** are written, stories that give us information about the type of user, procedures that the user performs in a part of the application **(module)**, important information that serves to **structure the solution** of our application, and in practice, how is this?
+For this reason **user stories** are written, stories that give us information about the type of user, procedures that the user performs in one or some parts of the application **(modules)**, important information that serves to **structure the solution** of our applications, and in practice, how is that?
 
 The user stories must be in the **src/application** path of our solution, there we create a directory that we will call **modules** and inside this, we create a directory for the task role, for example (customer, operator, seller, admin, ...) and inside the role we create a directory of the corresponding use case module, for example (users, sales, products, organizations, purchases, ...), and in practice that looks more or less like this: 
 
@@ -65,7 +65,7 @@ The user stories must be in the **src/application** path of our solution, there 
 
 - If your application has no **roles**, then there's no mess, it's just **modules** and it can be something like users, sales, products, organizations, purchases and an amount others according your own needs.
 
-- But taking into consideration that if the roles are not yet defined in your application, **the best option** would be to follow a **dynamic role strategy** based on **permissions** and **each use case within the application (or use case group) would be a specific permission** that would feed the strategy of dynamic roles.
+- But taking into consideration that if the roles are not yet defined in your application, **the best option** would be to follow a **dynamic role strategy** based on **permissions** and **each use case within the application (or use case group) would be a specific permission** that would feed the strategy of dynamic roles like **ACL**.
 
 - Note that you can **repeat** modules between **roles**, because a **module can be used by different roles**, because if they are different roles then the use cases behavior should also be different, otherwise those users would have the same role.
 
@@ -82,7 +82,8 @@ I personally recommend **the permission-based dynamic role strategy** to avoid c
 
 ### Errors Flow
 
-Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules, example:
+Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules. 
+This is important because the main idea when developing applications is to try as much as possible to predict the behavior of these, that's why controlled errors are useful and we need and strategy to allow us to identify them, for example:
 
 ```ts
 /*
@@ -103,7 +104,7 @@ export class ApplicationError extends Error {
   // ...
 }
 ```
-Is important to note that the name of the CONTEXT is concatenated with the name of the `ApplicationError class` in order to better identification of the controlled errors.
+Is important to note that the name of the execution `CONTEXT` is concatenated with the name of the `ApplicationError class` in order to better identification of the controlled errors.
 It's very useful for observability tools in order to filter out real errors from those we are controlling.
 
 The straightforward way to use it is as follows:
@@ -209,7 +210,7 @@ Why?, it´s related to side effects, I normally use the `The clean way one` and 
 
 ### Locals
 
-It is a basic **internationalization** tool that will allow you to manage and administer the local messages of your application, even with enriched messages, for example:
+It is a basic **internationalization** tool that will allow you to manage and implement the local messages of your application, even with enriched messages, for example:
 
 ```ts
 import resources from "../locals/index";
@@ -267,7 +268,7 @@ This tool is now available as an **NPM package**.
 
 ### Mapper
 
-The mapper is a tool that will allow us to change the entities to the DTOs within our application, including entity changes between the data model and the domain and vice versa.
+The mapper is a tool that will allow us to change the entities to the DTO (Data transfer object) within our application, including entity changes between the data model and the domain and vice versa.
 
 This tool maps objects or arrays of objects, for example:
 
@@ -295,7 +296,7 @@ This tool is now available as an **NPM package**.
 
 ### Result
 
-**Result** is a **tool** that helps us control the flow of our **use cases** and allows us to **manage the response**, be it an **object**, an **array** of objects, a **message** or an **error** as follows:
+**Result** is a **tool** that helps us to control the flow of our **use cases** and allows us to **manage the response**, be it an **object**, an **array** of objects, a **message** or an **error** as follows:
 
 ```ts
 export class GetProductUseCase extends BaseUseCase<string> { // Or BaseUseCase<{ idMask: string}>
@@ -341,7 +342,7 @@ const resultWithType = new Result<ProductDto>();
 const resultWithoutType = new Result();
 ```
 
-For clean code you can return validation result and handles the error clean way through **Result** visitor pattern method like:
+For clean code you can return validation result and handles the error in a clean way through **Result** visitor pattern method like:
 
 ```ts
 async execute(args: ActionDto): Promise<IResult> {
