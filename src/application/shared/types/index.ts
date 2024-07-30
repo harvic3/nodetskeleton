@@ -7,4 +7,4 @@ export {
   ResultExecutionPromise,
 } from "result-tsk";
 export { Validator } from "validator-tsk";
-export { Resources } from "resources-tsk";
+export { Resources, IResources } from "resources-tsk";
