@@ -1,12 +1,16 @@
 import AppSettings from "../../settings/AppSettings";
 import { LocaleTypeEnum } from "../LocaleType.enum";
+import { WordKeysDictionaryEnum } from "./keys";
 import { Resources } from "../../types";
+import ptBrLocal from "./pt-br.local";
 import esLocal from "./es.local";
 import enLocal from "./en.local";
-import ptBrLocal from "./pt-br.local";
-import localKeys from "./keys";
 
-const locals = {
+type LocalesType = {
+  [K in LocaleTypeEnum]: { [key in keyof typeof WordKeysDictionaryEnum]: string };
+};
+
+const locales: LocalesType = {
   [LocaleTypeEnum.ES]: esLocal,
   [LocaleTypeEnum.EN]: enLocal,
   [LocaleTypeEnum.ES_CO]: esLocal,
@@ -14,5 +18,4 @@ const locals = {
   [LocaleTypeEnum.PT_BR]: ptBrLocal,
 };
 
-export { Resources, localKeys };
-export default new Resources(locals, localKeys, AppSettings.DefaultLanguage);
+export default new Resources(locales, WordKeysDictionaryEnum, AppSettings.DefaultLanguage);

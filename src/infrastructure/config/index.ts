@@ -1,3 +1,4 @@
+import { MessageKeysDictionaryEnum } from "../../application/shared/locals/messages/keys";
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
 import { ServiceContext } from "../../adapters/shared/ServiceContext";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
@@ -43,7 +44,7 @@ export default {
       process.env.ORIGINS,
       "http://localhost:3000,http://localhost:3001,http://localhost:3002",
     ),
-    ServiceName: DefaultValue.evaluateAndGet(process.env.SERVICE_NAME, "NodeTskeleton"),
+    ServiceName: DefaultValue.evaluateAndGet(process.env.SERVICE_NAME, "NodeTSkeleton"),
     ServiceContext: {
       LoadWithContext: !!process.env.SERVICE_CONTEXT,
       Context: serviceContext,
@@ -58,7 +59,7 @@ export default {
     },
     DefaultApplicationError: {
       Code: "500",
-      MessageKey: "SOMETHING_WENT_WRONG",
+      MessageKey: MessageKeysDictionaryEnum.SOMETHING_WENT_WRONG,
     },
     Security: {
       JWT: {
