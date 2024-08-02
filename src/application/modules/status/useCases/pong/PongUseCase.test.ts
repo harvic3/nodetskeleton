@@ -1,5 +1,5 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
-import applicationStatus from "../../../../shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { IStatusProvider } from "../../providerContracts/IStatus.provider";
 import AppSettings from "../../../../shared/settings/AppSettings";
@@ -40,7 +40,7 @@ describe("when try to get the api status", () => {
     const result = await pongUseCase().execute(LocaleTypeEnum.EN);
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
+    expect(result.statusCode).toBe(ApplicationStatus.SUCCESS);
     expect(result.success).toBeTruthy();
   });
 });

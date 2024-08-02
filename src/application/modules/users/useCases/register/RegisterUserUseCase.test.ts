@@ -1,7 +1,7 @@
 import { IWorkerProvider } from "../../../../shared/worker/providerContracts/IWorkerProvider";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { ApplicationErrorMock } from "../../../../mocks/ApplicationError.mock";
-import applicationStatus from "../../../../shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../shared/status/applicationStatus";
 import { IUserRepository } from "../../providerContracts/IUser.repository";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
@@ -60,7 +60,7 @@ describe("when try to register user", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: [
@@ -91,7 +91,7 @@ describe("when try to register user", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: appWords.get(appWords.keys.PASSWORD),
@@ -119,7 +119,7 @@ describe("when try to register user", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       appMessages.getWithParams(appMessages.keys.USER_WITH_EMAIL_ALREADY_EXISTS, {
         email: userDto?.email as string,
@@ -140,7 +140,7 @@ describe("when try to register user", () => {
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
       appMessages.get(appMessages.keys.INVALID_EMAIL),
-      applicationStatus.INVALID_INPUT,
+      ApplicationStatus.INVALID_INPUT,
     );
 
     // Act
@@ -167,7 +167,7 @@ describe("when try to register user", () => {
     applicationErrorBuilder.initialize(
       useCase.CONTEXT,
       appMessages.get(appMessages.keys.INVALID_PASSWORD),
-      applicationStatus.INVALID_INPUT,
+      ApplicationStatus.INVALID_INPUT,
     );
 
     // Act
@@ -200,7 +200,7 @@ describe("when try to register user", () => {
       appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: "text, encryptionKey, iterations",
       }),
-      applicationStatus.INTERNAL_ERROR,
+      ApplicationStatus.INTERNAL_ERROR,
     );
     workerProviderMock.executeTask.mockRejectedValueOnce(applicationErrorBuilder.build());
 
@@ -250,7 +250,7 @@ describe("when try to register user", () => {
 
     // Assert
     expect(result.success).toBeTruthy();
-    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
+    expect(result.statusCode).toBe(ApplicationStatus.SUCCESS);
     expect(result.message).toBe(appMessages.get(appMessages.keys.USER_WAS_CREATED));
   });
 
@@ -283,7 +283,7 @@ describe("when try to register user", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INTERNAL_ERROR);
+    expect(result.statusCode).toBe(ApplicationStatus.INTERNAL_ERROR);
     expect(result.error).toBe(appMessages.get(appMessages.keys.ERROR_CREATING_USER));
   });
 });

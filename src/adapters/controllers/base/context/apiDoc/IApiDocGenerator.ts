@@ -1,4 +1,4 @@
-import { EntryPointHandler, HttpStatusEnum } from "../../Base.controller";
+import { RequestHandler, HttpStatusEnum } from "../../Base.controller";
 import { HttpContentTypeEnum } from "../HttpContentType.enum";
 import { HttpMethodEnum } from "../HttpMethod.enum";
 import {
@@ -46,7 +46,7 @@ export type ApiDoc = {
 export type RouteType = {
   method: HttpMethodEnum;
   path: string;
-  handlers: EntryPointHandler[];
+  handlers: RequestHandler[];
   produces: {
     applicationStatus: string;
     httpStatus: HttpStatusEnum;

@@ -1,7 +1,7 @@
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
-import applicationStatus from "../../../application/shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
 import { IApiDocGenerator, RouteType } from "./context/apiDoc/IApiDocGenerator";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
@@ -20,11 +20,11 @@ import { IResponse } from "./context/IResponse";
 import { IRequest } from "./context/IRequest";
 import { IRouter } from "./context/IRouter";
 
-type EntryPointHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
+type RequestHandler = (req: IRequest, res: IResponse, next: INextFunction) => Promise<void>;
 type HeaderType = { [key in HttpHeaderEnum]?: HttpContentTypeEnum | string };
 
 export {
-  EntryPointHandler,
+  RequestHandler,
   IRequest,
   IResponse,
   INextFunction,
@@ -34,7 +34,7 @@ export {
   HttpContentTypeEnum,
   HttpHeaderEnum,
   HttpStatusEnum,
-  applicationStatus,
+  ApplicationStatus,
 };
 
 export default abstract class BaseController {
@@ -82,7 +82,9 @@ export default abstract class BaseController {
   ): Promise<void> {
     this.setTransactionId(res);
     this.setHeaders(res, headersToSet);
-    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result);
+    res
+      .status(HttpStatusResolver.getCode(result.statusCode.toString() as ApplicationStatus))
+      .json(result);
   }
 
   private async getResultDto(
@@ -92,7 +94,9 @@ export default abstract class BaseController {
   ): Promise<void> {
     this.setTransactionId(res);
     this.setHeaders(res, headersToSet);
-    res.status(HttpStatusResolver.getCode(result.statusCode.toString())).json(result.toResultDto());
+    res
+      .status(HttpStatusResolver.getCode(result.statusCode.toString() as ApplicationStatus))
+      .json(result.toResultDto());
   }
 
   private async getResultData(
@@ -103,7 +107,7 @@ export default abstract class BaseController {
     this.setTransactionId(res);
     this.setHeaders(res, headersToSet);
     res
-      .status(HttpStatusResolver.getCode(result.statusCode.toString()))
+      .status(HttpStatusResolver.getCode(result.statusCode.toString() as ApplicationStatus))
       .json(result.message ? result.toResultDto() : result.toResultDto().data);
   }
 
@@ -123,7 +127,7 @@ export default abstract class BaseController {
     }
   }
 
-  setProducesCode(applicationStatus: string, httpStatus: HttpStatusEnum): void {
+  private setProducesCode(applicationStatus: string, httpStatus: HttpStatusEnum): void {
     if (!statusMapping[applicationStatus]) {
       statusMapping[applicationStatus] = httpStatus;
     }

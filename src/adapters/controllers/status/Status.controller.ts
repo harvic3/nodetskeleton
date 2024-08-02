@@ -2,16 +2,16 @@ import { PropTypeEnum, TypeDescriber } from "../base/context/apiDoc/TypeDescribe
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
-  IRequest,
-  IResponse,
-  INextFunction,
-  EntryPointHandler,
-  IRouter,
   HttpContentTypeEnum,
+  ApplicationStatus,
+  RequestHandler,
   HttpMethodEnum,
   HttpHeaderEnum,
-  applicationStatus,
   HttpStatusEnum,
+  INextFunction,
+  IResponse,
+  IRequest,
+  IRouter,
 } from "../base/Base.controller";
 
 export class StatusController extends BaseController {
@@ -19,7 +19,7 @@ export class StatusController extends BaseController {
     super(StatusController.name, serviceContainer);
   }
 
-  pong: EntryPointHandler = async (
+  pong: RequestHandler = async (
     req: IRequest,
     res: IResponse,
     next: INextFunction,
@@ -32,7 +32,7 @@ export class StatusController extends BaseController {
     );
   };
 
-  resourceNotFound: EntryPointHandler = async (
+  resourceNotFound: RequestHandler = async (
     req: IRequest,
     res: IResponse,
     next: INextFunction,
@@ -55,7 +55,7 @@ export class StatusController extends BaseController {
       handlers: [this.pong],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
       ],

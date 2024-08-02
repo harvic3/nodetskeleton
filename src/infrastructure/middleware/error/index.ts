@@ -1,5 +1,6 @@
 import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
+import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import kernel, { LogProvider } from "../../../adapters/providers/container";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
@@ -43,7 +44,9 @@ export class ErrorHandlerMiddleware {
       return next(result);
     }
 
-    return res.status(HttpStatusResolver.getCode(result.statusCode.toString())).send(result);
+    return res
+      .status(HttpStatusResolver.getCode(result.statusCode.toString() as ApplicationStatus))
+      .send(result);
   };
 
   manageNodeException(

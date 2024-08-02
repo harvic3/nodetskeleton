@@ -1,7 +1,7 @@
 import { DefaultValue } from "../../../../domain/shared/utils/DefaultValue";
 import { AppConstants } from "../../../../domain/shared/AppConstants";
 import { ApplicationError } from "../../errors/ApplicationError";
-import applicationStatus from "../../status/applicationStatus";
+import { ApplicationStatus } from "../../status/applicationStatus";
 import appMessages from "../../locals/messages";
 import appWords from "../../locals/words";
 import { pbkdf2Sync } from "crypto";
@@ -28,7 +28,7 @@ export default class Encryption {
         appMessages.getWithParams(appMessages.keys.TOOL_HAS_NOT_BEEN_INITIALIZED, {
           toolName: appWords.get(appWords.keys.ENCRYPTION),
         }),
-        applicationStatus.INTERNAL_ERROR,
+        ApplicationStatus.INTERNAL_ERROR,
       );
     }
     const salt = DefaultValue.evaluateAndGet(encryptionKey, this.defaultEncryptionKey);

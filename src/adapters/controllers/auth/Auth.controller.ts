@@ -13,13 +13,13 @@ import BaseController, {
   IRequest,
   IResponse,
   INextFunction,
-  EntryPointHandler,
+  RequestHandler,
   IRouter,
   ServiceContext,
   HttpContentTypeEnum,
   HttpMethodEnum,
   HttpHeaderEnum,
-  applicationStatus,
+  ApplicationStatus,
   HttpStatusEnum,
 } from "../base/Base.controller";
 
@@ -28,7 +28,7 @@ export class AuthController extends BaseController {
     super(AuthController.name, serviceContainer, ServiceContext.AUTH);
   }
 
-  login: EntryPointHandler = async (
+  login: RequestHandler = async (
     req: IRequest,
     res: IResponse,
     next: INextFunction,
@@ -49,7 +49,7 @@ export class AuthController extends BaseController {
     );
   };
 
-  logout: EntryPointHandler = async (
+  logout: RequestHandler = async (
     req: IRequest,
     res: IResponse,
     next: INextFunction,
@@ -73,11 +73,11 @@ export class AuthController extends BaseController {
       handlers: [this.logout],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -125,11 +125,11 @@ export class AuthController extends BaseController {
       handlers: [this.login],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],

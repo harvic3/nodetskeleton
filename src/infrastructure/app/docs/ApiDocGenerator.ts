@@ -247,8 +247,8 @@ export class ApiDocGenerator implements IApiDocGenerator {
     });
 
     if (securitySchemes) {
-      const securitys = Object.keys(securitySchemes);
-      this.apiDoc.paths[path][method].security = securitys.map((key) => ({ [key]: [] }));
+      const securityKeys = Object.keys(securitySchemes);
+      this.apiDoc.paths[path][method].security = securityKeys.map((key) => ({ [key]: [] }));
     }
   }
 
