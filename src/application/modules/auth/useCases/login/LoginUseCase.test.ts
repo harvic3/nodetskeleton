@@ -1,5 +1,5 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
-import applicationStatus from "../../../../shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { StringUtil } from "../../../../../domain/shared/utils/StringUtil";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
@@ -58,7 +58,7 @@ describe("when try to login", () => {
     );
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: `${appWords.get(appWords.keys.EMAIL)}, ${appWords.get(
@@ -80,7 +80,7 @@ describe("when try to login", () => {
     );
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(
       appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
         missingParams: appWords.get(appWords.keys.PASSWORD),
@@ -103,7 +103,7 @@ describe("when try to login", () => {
     );
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(appMessages.get(appMessages.keys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
@@ -122,7 +122,7 @@ describe("when try to login", () => {
     );
 
     // Assert
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
     expect(result.error).toBe(appMessages.get(appMessages.keys.INVALID_USER_OR_PASSWORD));
     expect(result.success).toBeFalsy();
   });
@@ -144,7 +144,7 @@ describe("when try to login", () => {
 
     // Assert
     const data = result.data as TokenDto;
-    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
+    expect(result.statusCode).toBe(ApplicationStatus.SUCCESS);
     expect(result.success).toBeTruthy();
     expect(data.expiresIn).toBe(tokenExpirationTime);
   });

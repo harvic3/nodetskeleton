@@ -393,7 +393,7 @@ The tools extended by this class are: the **mapper**, the **validator**, the **m
 import messageResources, { Resources } from "../locals/messages/index";
 import { ILogProvider } from "../log/providerContracts/ILogProvider";
 export { IResult, Result, IResultT, ResultT } from "result-tsk";
-import applicationStatus from "../status/applicationStatus";
+import { ApplicationStatus } from "../status/applicationStatus";
 import wordResources from "../locals/words/index";
 import { Validator } from "validator-tsk";
 import mapper, { IMap } from "mapper-tsk";
@@ -415,7 +415,7 @@ export abstract class BaseUseCase<T> {
     this.validator = new Validator(
       messageResources,
       messageResources.keys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatus.INVALID_INPUT,
+      ApplicationStatus.INVALID_INPUT,
     );
   }
 
@@ -738,11 +738,11 @@ npx run-tsk setup project-name=my-awesome-project
       handlers: [this.getFeelingText],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.USER_NOT_FOUND,
+          applicationStatus: ApplicationStatus.USER_NOT_FOUND,
           httpStatus: HttpStatusEnum.NOT_FOUND,
         },
       ],
@@ -837,11 +837,11 @@ To get an overall idea, here an example:
       handlers: [this.login],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -912,15 +912,15 @@ When you have already registered (described) a model, it is not necessary to des
     handlers: [this.get],
     produces: [
       {
-        applicationStatus: applicationStatus.INVALID_INPUT,
+        applicationStatus: ApplicationStatus.INVALID_INPUT,
         httpStatus: HttpStatusEnum.BAD_REQUEST,
       },
       {
-        applicationStatus: applicationStatus.SUCCESS,
+        applicationStatus: ApplicationStatus.SUCCESS,
         httpStatus: HttpStatusEnum.SUCCESS,
       },
       {
-        applicationStatus: applicationStatus.UNAUTHORIZED,
+        applicationStatus: ApplicationStatus.UNAUTHORIZED,
         httpStatus: HttpStatusEnum.UNAUTHORIZED,
       },
     ],
@@ -1191,12 +1191,12 @@ This strategy is only needed in the **adapter layer** dependencies for **control
 First, all **dic strategy** starts from our **kernel index file** allocated into **adapters layer** as follows:
 ```ts
 // adapters/shared/kernel/index
-import applicationStatus from "../../../application/shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
 import appMessages, { localKeys } from "../../../application/shared/locals/messages";
 import tsKernel, { IServiceContainer } from "dic-tsk";
 
 tsKernel.init({
-  internalErrorCode: applicationStatus.INTERNAL_ERROR,
+  internalErrorCode: ApplicationStatus.INTERNAL_ERROR,
   appMessages,
   appErrorMessageKey: localKeys.DEPENDENCY_NOT_FOUND,
   applicationStatus,
@@ -1292,11 +1292,11 @@ export class TextFeelingController extends BaseController {
       handlers: [this.getFeelingText],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -1525,11 +1525,11 @@ initializeRoutes(router: IRouter): void {
     handlers: [authorization(), this.create],
     produces: [
       {
-        applicationStatus: applicationStatus.CREATED,
+        applicationStatus: ApplicationStatus.CREATED,
         httpStatus: HttpStatusEnum.CREATED,
       },
       {
-        applicationStatus: applicationStatus.UNAUTHORIZED,
+        applicationStatus: ApplicationStatus.UNAUTHORIZED,
         httpStatus: HttpStatusEnum.UNAUTHORIZED,
       },
     ],
@@ -1540,11 +1540,11 @@ initializeRoutes(router: IRouter): void {
     handlers: [authorization(), this.get],
     produces: [
       {
-        applicationStatus: applicationStatus.SUCCESS,
+        applicationStatus: ApplicationStatus.SUCCESS,
         httpStatus: HttpStatusEnum.SUCCESS,
       },
       {
-        applicationStatus: applicationStatus.UNAUTHORIZED,
+        applicationStatus: ApplicationStatus.UNAUTHORIZED,
         httpStatus: HttpStatusEnum.UNAUTHORIZED,
       },
     ],
@@ -1732,11 +1732,11 @@ export class UsersController extends BaseController {
       handlers: [authorization(), this.singUp],
       produces: [
         {
-          applicationStatus: applicationStatus.CREATED,
+          applicationStatus: ApplicationStatus.CREATED,
           httpStatus: HttpStatusEnum.CREATED,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -1747,11 +1747,11 @@ export class UsersController extends BaseController {
       handlers: [authorization(), this.get],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -1811,11 +1811,11 @@ export class UsersController extends BaseController {
       handlers: [authorization(), this.singUp],
       produces: [
         {
-          applicationStatus: applicationStatus.CREATED,
+          applicationStatus: ApplicationStatus.CREATED,
           httpStatus: HttpStatusEnum.CREATED,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
@@ -1826,11 +1826,11 @@ export class UsersController extends BaseController {
       handlers: [authorization(), this.get],
       produces: [
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],

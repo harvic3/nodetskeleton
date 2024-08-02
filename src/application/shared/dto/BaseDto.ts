@@ -1,4 +1,4 @@
-import applicationStatus from "../status/applicationStatus";
+import { ApplicationStatus } from "../status/applicationStatus";
 import messages, { Resources } from "../locals/messages";
 import mapper, { IMap } from "../mapper/index";
 import { Validator } from "../types";
@@ -19,7 +19,7 @@ export abstract class BaseDto {
     this.validator = new Validator(
       this.appMessages,
       this.appMessages.keys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatus.INVALID_INPUT,
+      ApplicationStatus.INVALID_INPUT,
     );
   }
 }

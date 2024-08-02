@@ -2,7 +2,7 @@ import { IResultT, ResultExecutionPromise, ResultT, Validator } from "../../../.
 import { TryResult, TryWrapper } from "../../../../../domain/shared/utils/TryWrapper";
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
 import { BaseUseCase, IResult } from "../../../../shared/useCase/BaseUseCase";
-import applicationStatus from "../../../../shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
 import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
@@ -20,7 +20,7 @@ export class LogoutUseCase extends BaseUseCase<{ session: ISession }> {
     this.validator = new Validator(
       this.appMessages,
       this.appMessages.keys.SOME_PARAMETERS_ARE_MISSING,
-      applicationStatus.INVALID_INPUT,
+      ApplicationStatus.INVALID_INPUT,
     );
   }
 

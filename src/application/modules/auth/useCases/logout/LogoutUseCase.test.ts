@@ -1,5 +1,5 @@
 import { ILogProvider } from "../../../../shared/log/providerContracts/ILogProvider";
-import applicationStatus from "../../../../shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../shared/status/applicationStatus";
 import { LocaleTypeEnum } from "../../../../shared/locals/LocaleType.enum";
 import { UseCaseTraceMock } from "../../../../mocks/UseCaseTrace.mock";
 import { IAuthProvider } from "../../providerContracts/IAuth.provider";
@@ -43,7 +43,7 @@ describe("when try to logout", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
   });
 
   it("should return a 400 error if the session is null", async () => {
@@ -59,7 +59,7 @@ describe("when try to logout", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
   });
 
   it("should return a 200 error if the session is valid", async () => {
@@ -75,7 +75,7 @@ describe("when try to logout", () => {
 
     // Assert
     expect(result.success).toBeTruthy();
-    expect(result.statusCode).toBe(applicationStatus.SUCCESS);
+    expect(result.statusCode).toBe(ApplicationStatus.SUCCESS);
   });
 
   it("should return a 400 error if the user in session is invalid", async () => {
@@ -92,6 +92,6 @@ describe("when try to logout", () => {
 
     // Assert
     expect(result.success).toBeFalsy();
-    expect(result.statusCode).toBe(applicationStatus.INVALID_INPUT);
+    expect(result.statusCode).toBe(ApplicationStatus.INVALID_INPUT);
   });
 });

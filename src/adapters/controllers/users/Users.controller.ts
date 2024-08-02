@@ -6,12 +6,12 @@ import BaseController, {
   IRequest,
   IResponse,
   INextFunction,
-  EntryPointHandler,
+  RequestHandler,
   IRouter,
   ServiceContext,
   HttpContentTypeEnum,
   HttpMethodEnum,
-  applicationStatus,
+  ApplicationStatus,
   HttpStatusEnum,
 } from "../base/Base.controller";
 
@@ -20,7 +20,7 @@ export class UsersController extends BaseController {
     super(UsersController.name, serviceContainer, ServiceContext.USERS);
   }
 
-  singUp: EntryPointHandler = async (
+  singUp: RequestHandler = async (
     req: IRequest,
     res: IResponse,
     next: INextFunction,
@@ -44,15 +44,15 @@ export class UsersController extends BaseController {
       handlers: [this.singUp],
       produces: [
         {
-          applicationStatus: applicationStatus.INVALID_INPUT,
+          applicationStatus: ApplicationStatus.INVALID_INPUT,
           httpStatus: HttpStatusEnum.BAD_REQUEST,
         },
         {
-          applicationStatus: applicationStatus.SUCCESS,
+          applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
         },
         {
-          applicationStatus: applicationStatus.UNAUTHORIZED,
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],

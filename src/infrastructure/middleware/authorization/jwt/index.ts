@@ -1,5 +1,5 @@
 import { ApplicationError } from "../../../../application/shared/errors/ApplicationError";
-import applicationStatus from "../../../../application/shared/status/applicationStatus";
+import { ApplicationStatus } from "../../../../application/shared/status/applicationStatus";
 import { IRequest } from "../../../../adapters/controllers/base/context/IRequest";
 import kernel, { AuthProvider } from "../../../../adapters/providers/container";
 import { NextFunction, Request, Response } from "../../../app/core/Modules";
@@ -41,7 +41,7 @@ class AuthorizationMiddleware {
     return new ApplicationError(
       AuthorizationMiddleware.name,
       message,
-      applicationStatus.UNAUTHORIZED,
+      ApplicationStatus.UNAUTHORIZED,
     );
   }
 

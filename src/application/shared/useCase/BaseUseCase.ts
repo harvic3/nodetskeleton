@@ -1,6 +1,6 @@
 export { IResult, Result, IResultT, ResultT, ResultExecutionPromise } from "../types";
 import { ILogProvider } from "../log/providerContracts/ILogProvider";
-import applicationStatus from "../status/applicationStatus";
+import { ApplicationStatus } from "../status/applicationStatus";
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 import messages, { Resources } from "../locals/messages";
 import { UseCaseTrace } from "../log/UseCaseTrace";
@@ -13,7 +13,7 @@ export { Resources };
 export abstract class BaseUseCase<T> {
   appMessages: Resources;
   appWords: Resources;
-  applicationStatus = applicationStatus;
+  applicationStatus = ApplicationStatus;
 
   constructor(
     public readonly CONTEXT: string,
