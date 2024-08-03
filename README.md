@@ -55,7 +55,7 @@ The user stories must be in the **src/application** path of our solution, there 
 
 <div style="text-align:center"> <img src="https://i.ibb.co/t2mHGmC/Node-Tskeleton.png" alt="Node-Tskeleton" border="10"> </div>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/vickodev)
@@ -73,7 +73,7 @@ The user stories must be in the **src/application** path of our solution, there 
 
 I personally recommend **the permission-based dynamic role strategy** to avoid complications due to roles and permissions in the future because this is what usually happens when developing a product, even if you are convinced that it is very well defined.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Included tools
@@ -112,8 +112,8 @@ The straightforward way to use it is as follows:
 ```ts
 throw new ApplicationError(
   this.CONTEXT,
-  resources.get(resourceKeys.ERROR_TO_CREATE_SOMETHING),
-  applicationStatusCode.BAD_REQUEST,
+  appMessages.get(appMessages.keys.ERROR_TO_CREATE_SOMETHING),
+  ApplicationStatus.BAD_REQUEST,
   JSON.stringify(error),
 );
 ```
@@ -124,7 +124,7 @@ Or if the pointer of your program is in the scope of your UseCase, you can use t
 ```ts
 if (!someCondition) { // Or any validation result
   result.setError(
-    this.resources.get(this.resourceKeys.PROCESSING_DATA_CLIENT_ERROR),
+    this.appMessages.get(this.appMessages.keys.PROCESSING_DATA_CLIENT_ERROR),
     this.applicationStatus.INTERNAL_SERVER_ERROR,
   );
   this.handleResultError(result);
@@ -142,7 +142,7 @@ private async getUser(result: IResult, userId: string): Promise<User> {
   const user = await this.userRepository.getById(userId):
   if (!user) {
     result.setError(
-      this.resources.get(this.resourceKeys.USER_CAN_NOT_BE_CREATED),
+      this.appMessages.get(this.appMessages.keys.USER_CAN_NOT_BE_CREATED),
       this.applicationStatus.INTERNAL_CONFLICT,
     );
   }
@@ -206,18 +206,18 @@ Which use? Feel free, it's about colors and flavours, in fact you can developed 
 
 Why?, it´s related to side effects, I normally use the `The clean way one` and I have never had a problem related to that, because I have been careful about that.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### Locals
 
 It is a basic **internationalization** tool that will allow you to manage and implement the local messages of your application, even with enriched messages, for example:
 
 ```ts
-import resources from "../locals/index";
+import appMessages from "../locals/index";
 
-const simpleMessage = resources.get(resources.keys.ITEM_PRODUCT_DOES_NOT_EXIST);
+const simpleMessage = appMessages.get(appMessages.keys.ITEM_PRODUCT_DOES_NOT_EXIST);
 
-const enrichedMessage = resources.getWithParams(resources.keys.SOME_PARAMETERS_ARE_MISSING, {
+const enrichedMessage = appMessages.getWithParams(appMessages.keys.SOME_PARAMETERS_ARE_MISSING, {
   missingParams: keysNotFound.join(StringUtil.COMMA_SPACE_SEPARATOR),
 });
 
@@ -243,17 +243,17 @@ export default {
 */
 
 // You can add enriched messages according to your own needs, for example:
-const yourEnrichedMessage = resources.getWithParams(resources.keys.YOUR_OWN_NEED, {
+const yourEnrichedMessage = this.appMessages.getWithParams(this.appMessages.keys.YOUR_OWN_NEED, {
   name: firstName, lastName, age: userAge
 });
 //
 ```
 
-For use it in any UseCase you can do something like: 
+To use it in any UseCase you can do something like:
 
 ```ts
 result.setError(
-  this.resources.get(this.resources.keys.PROCESSING_DATA_CLIENT_ERROR), // Or this.resources.getWithParams(...)...
+  this.appMessages.get(this.appMessages.keys.PROCESSING_DATA_CLIENT_ERROR), // Or this.appMessages.getWithParams(...)...
   this.applicationStatus.INTERNAL_SERVER_ERROR,
 );
 ```
@@ -264,7 +264,7 @@ This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/resources-tsk" target="_blank" >See in NPM</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### Mapper
 
@@ -292,7 +292,7 @@ This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/mapper-tsk" target="_blank" >See in NPM</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### Result
 
@@ -379,7 +379,7 @@ This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/result-tsk" target="_blank" >See in NPM</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### UseCase
 
@@ -437,8 +437,8 @@ So, you can use it like the next examples:
 export class LoginUseCase
   extends BaseUseCase<{ email: string; passwordB64: string }>
 {
-  constructor(private readonly authProvider: IAuthProvider) {
-    super();
+  constructor(logProvider: ILogProvider, private readonly authProvider: IAuthProvider) {
+    super(LoginUseCase.name, logProvider);
   }
 
   async execute(locale: LocaleTypeEnum, args: { email: string; passwordB64: string }): Promise<IResultT<TokenDto>> {
@@ -450,8 +450,8 @@ export class LoginUseCase
 // UseCase without input params
 export class ListUsersUseCase extends BaseUseCase<undefined>
 {
-  constructor(private readonly userProvider: IUserProvider) {
-    super();
+  constructor(logProvider: ILogProvider, private readonly userProvider: IUserProvider) {
+    super(ListUsersUseCase.name, logProvider);
   }
 
   async execute(locale: LocaleTypeEnum): Promise<IResultT<User[]>> {
@@ -461,7 +461,7 @@ export class ListUsersUseCase extends BaseUseCase<undefined>
 }
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### UseCases Iterator
 
@@ -597,7 +597,7 @@ I hope you make good use of this new functionality and do not abuse it too much.
 
 It is important to mention that the implementation was done this way because the idea is that your Iterators are concrete classes with a given context, and also have their unit tests as a use case.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### Validator
 
@@ -705,7 +705,7 @@ This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/validator-tsk" target="_blank" >See in NPM</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## API Docs generator
@@ -1179,7 +1179,7 @@ The file is created in the root of the project with the name `openapi.json` and 
 }
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Dependency injection strategy
@@ -1317,14 +1317,14 @@ This tool is now available as an **NPM package**.
 
 <a href="https://www.npmjs.com/package/dic-tsk" target="_blank" >See in NPM</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Using NodeTskeleton
 
 In this **template** is included the example code base for **KoaJs** and **ExpressJs**, but if you have a **web framework of your preference** you must configure those described below according to the framework.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Using with KoaJs
@@ -1436,7 +1436,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 /*...*/
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Using with ExpressJs
@@ -1580,7 +1580,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 /*...*/
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Using with another web server framework
@@ -1589,7 +1589,7 @@ private loadControllersByConstructor(controllers: BaseController[]): void {
 
 And then, continue with the step **installation**.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ## Create your first use case
 
@@ -1841,7 +1841,7 @@ export class UsersController extends BaseController {
 
 And following these steps you can add all the use cases that your application requires, taking into account that you will have to create your contracts and the implementation of these.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Workers
@@ -1894,14 +1894,14 @@ const worker = new Worker(TaskDictionary[task.taskEnum], {
 
 This way we can create scripts for heavy computational tasks according to our own needs avoiding blocking the main execution thread of our application.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Sockets
 
 This project template support this functionality, so if you need it, ask me ;)
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Infrastructure
@@ -1916,7 +1916,7 @@ import infraContainer from "../container";
 infraContainer.load();
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Installation
@@ -2017,7 +2017,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
 }'
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 ### Docker Compose
 
@@ -2075,7 +2075,7 @@ curl --location --request POST 'localhost:3003/api/v1/users/sign-up' \
     "email": "nodetskeleton@conemail.com"
 }'
 ```
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Run Test
@@ -2096,7 +2096,7 @@ or
 npm run test
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Application debugger
@@ -2139,7 +2139,7 @@ To stop the debug just press **Ctrl C** and close the console that was opened to
 
 This method will allow you to develop and have the solution be attentive to your changes (hot reload) without the need to restart the service, VS Code does it for you automatically.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Build for production
@@ -2176,7 +2176,7 @@ Something important is to know if we really did the job of building our clean ar
 
 5. Most importantly, no **domain entity** can make use of an **application service** and less of a **provider service** (repository or provider), the **application services use the entities**, the flow goes from the **most external part** of the application **to the most internal part** of it.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Coupling
@@ -2193,7 +2193,7 @@ import infraContainer from "./infrastructure/container";
 infraContainer.load();
 ```
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Clustering the App (Node Cluster)
@@ -2317,7 +2317,7 @@ process.on(
   },
 );
 ```
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Strict mode
@@ -2526,7 +2526,7 @@ If you are not going to use this functionality you can delete the **tsk-gateway*
 
 "The world is selfish" because I am surprised by the number of people who visit this project to use it and browse through all its modules and files, but they don't even leave a star.
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Code of Conduct
@@ -2535,7 +2535,7 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 - <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md" target="_blank" >Go to Code of Conduct</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Warning
@@ -2548,7 +2548,7 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 - 📫 <a href="mailto:harvic3@protonmail.com" target="_blank" >Write to him</a>
 
-**[⬆ back to the past](#table-of-contents)**
+**[⬆ go to the future](#table-of-contents)**
 
 
 ## Future tasks
