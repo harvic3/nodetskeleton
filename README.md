@@ -83,7 +83,7 @@ I personally recommend **the permission-based dynamic role strategy** to avoid c
 ### Errors Flow
 
 Is a tool for separating **controlled** from **uncontrolled errors** and allows you to launch application errors according to your business rules. 
-This is important because the main idea when developing applications is to try as much as possible to predict the behavior of these, that's why controlled errors are useful and we need and strategy to allow us to identify them, for example:
+This is important because the main idea when developing applications is to try as much as possible to predict the behavior of these, that's why controlled errors are useful and we need a strategy to allow us to identify them, for example:
 
 ```ts
 /*
@@ -1184,7 +1184,7 @@ The file is created in the root of the project with the name `openapi.json` and 
 
 ## Dependency injection strategy
 
-For **dependency injection**, no complex external libraries are used. Instead, a **container dictionary strategy** is used in which instances and their dependencies are created and then resolved from container class using our own kernel through **dic-tsk**, a powerful and simple package.
+For **dependency injection**, no complex external libraries were used. Instead, a **container dictionary strategy** is used in which instances and their dependencies are created and then resolved from container class using our own kernel through **dic-tsk**, a powerful and simple package.
 
 This strategy is only needed in the **adapter layer** dependencies for **controllers** like **services** and **providers**, and also for the some services from **infrastructure layer**, for example:
 
@@ -2038,7 +2038,7 @@ npm update
 > Third, build the app with the following command:
 
 ```console
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 > Finally, in any internet explorer go to:
@@ -2460,9 +2460,9 @@ cd tsk-gateway
 docker build . -t tsk-gateway-image
 ```
 
->> Run docker-compose for launch our solution
+>> Run docker compose for launch our solution
 ```console
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 And latter you can use **Postman** or web browser for use the exposed endpoints of two services based in NodeTskeleton project
