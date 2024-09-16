@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   security-service:
     image: tskeleton-image

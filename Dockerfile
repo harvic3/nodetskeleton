@@ -23,5 +23,4 @@ COPY --from=build /usr/node/tsk/dist ./dist
 
 EXPOSE 3003
 
-# CMD [ "node", "dist/index" ]
-# Observation: remove the previous # char and this line if you aren't working with docker-compose
+CMD [ "node", "dist/index" ]
