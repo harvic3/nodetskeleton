@@ -1,7 +1,7 @@
 import { Nulldefined } from "../../../../../domain/shared/types/Nulldefined.type";
 import { SchemasSecurityStore } from "./SchemasSecurityStore";
 import { SecuritySchemes } from "./IApiDocGenerator";
-import { MetadataClass } from "./metadataClass";
+import { MetadataClass } from "./MetadataClass";
 import { SchemasStore } from "./SchemasStore";
 import { IResult } from "result-tsk";
 import "reflect-metadata";
@@ -329,13 +329,13 @@ export class RefTypeDescriber {
         name: obj.name,
         definition: {
           type: PropTypeEnum.ARRAY,
-          items: { $ref: "#/components/schemas/" + obj.name },
+          items: { $ref: "#/components/schemas/".concat(obj.name) },
         },
       };
     } else {
       this.schema = {
         name: obj.name,
-        definition: { $ref: "#/components/schemas/" + obj.name },
+        definition: { $ref: "#/components/schemas/".concat(obj.name) },
       };
     }
   }

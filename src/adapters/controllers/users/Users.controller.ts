@@ -56,7 +56,7 @@ export class UsersController extends BaseController {
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
         },
       ],
-      description: "Register a new user",
+      description: "Self register user",
       apiDoc: {
         contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: false,

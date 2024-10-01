@@ -192,20 +192,6 @@
           },
           "expiresIn": {
             "type": "number"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/Owner"
-          }
-        }
-      },
-      "Owner": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "sessionId": {
-            "type": "string"
           }
         }
       },
