@@ -29,7 +29,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTCloseSession"
+                  "$ref": "#/components/schemas/ResultTClosedSession"
                 }
               }
             }
@@ -39,7 +39,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTCloseSession"
+                  "$ref": "#/components/schemas/ResultTClosedSession"
                 }
               }
             }
@@ -164,7 +164,7 @@
           }
         }
       },
-      "ResultTCloseSession": {
+      "ResultTClosedSession": {
         "type": "object",
         "properties": {
           "message": {
@@ -192,6 +192,20 @@
           },
           "expiresIn": {
             "type": "number"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Owner"
+          }
+        }
+      },
+      "Owner": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
           }
         }
       },
@@ -250,19 +264,19 @@
       "UserDto": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string"
-          },
           "firstName": {
             "type": "string"
           },
           "lastName": {
             "type": "string"
           },
-          "passwordB64": {
+          "gender": {
             "type": "string"
           },
-          "gender": {
+          "email": {
+            "type": "string"
+          },
+          "passwordB64": {
             "type": "string"
           }
         }

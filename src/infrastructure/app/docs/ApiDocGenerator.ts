@@ -2,7 +2,6 @@ import { SchemasSecurityStore } from "../../../adapters/controllers/base/context
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
 import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
-import AppSettings from "../../../application/shared/settings/AppSettings";
 import {
   ApiDoc,
   IApiDocGenerator,
@@ -10,12 +9,13 @@ import {
   RouteType,
   SecuritySchemes,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
-import { join, resolve } from "path";
-import { writeFileSync } from "fs";
+import AppSettings from "../../../application/shared/settings/AppSettings";
 import {
   PropFormatEnum,
   PropTypeEnum,
 } from "../../../adapters/controllers/base/context/apiDoc/TypeDescriber";
+import { join, resolve } from "path";
+import { writeFileSync } from "fs";
 
 type SchemaType =
   | { type?: PropTypeEnum }
@@ -213,11 +213,13 @@ export class ApiDocGenerator implements IApiDocGenerator {
   createRouteDoc(route: Omit<RouteType, "handlers">): void {
     if (this.env !== DEV) return;
 
-    const { path, produces, method, description, apiDoc } = route;
+    const { produces, method, description, apiDoc } = route;
     if (!apiDoc) return;
+    let path = route.path;
 
     const { contentType, schema, requestBody, parameters, securitySchemes } = apiDoc;
 
+    if (path.includes(":")) path = path.replace(/:(\w+)/g, "{$1}");
     if (!this.apiDoc.paths[path]) {
       this.apiDoc.paths[path] = {};
     }

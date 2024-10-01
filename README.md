@@ -764,6 +764,7 @@ apiDoc: {
       data: new TypeDescriber<TokenDto>({
         name: TokenDto.name,
         type: PropTypeEnum.OBJECT,
+        // Way one to describe a scheme response type
         props: {
           token: {
             type: PropTypeEnum.STRING,
@@ -771,23 +772,46 @@ apiDoc: {
           expiresIn: {
             type: PropTypeEnum.NUMBER,
           },
+          { ... }
         },
+        // Way two to describe a scheme response type
+        props: TypeDescriber.describeProps<TokenDto>({
+          token: PropTypeEnum.STRING,
+          expiresIn: PropTypeEnum.NUMBER,
+          owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
+            email: PropTypeEnum.STRING,
+            sessionId: PropTypeEnum.STRING,
+          }),
+        }),
       }),
-      error: {
-        type: PropTypeEnum.STRING,
-      },
-      message: {
-        type: PropTypeEnum.STRING,
-      },
-      statusCode: {
-        type: PropTypeEnum.STRING,
-      },
-      success: {
-        type: PropTypeEnum.BOOLEAN,
-      },
+      ...ResultDescriber.default(),
     },
   }),
 },
+
+// Observation about ApiDocs TokenDto class for way two to describe a model
+// TokenDto class
+export class OwnerDto {
+  email: string;
+  sessionId: string;
+
+  constructor(props: { email: string; sessionId: string }) {
+    this.email = props.email;
+    this.sessionId = props.sessionId;
+  }
+}
+
+export class TokenDto {
+  token: string;
+  expiresIn: number;
+  owner: OwnerDto;
+
+  constructor(props: { token: string; expiresIn: number; owner: OwnerDto }) {
+    this.token = props.token;
+    this.expiresIn = props.expiresIn;
+    this.owner = props?.owner;
+  }
+}
 
 // To describe a simple Result type (ResultDescriber helps us to do it)
 apiDoc: {
@@ -795,20 +819,7 @@ apiDoc: {
   requireAuth: false,
   schema: new ResultDescriber({
     type: PropTypeEnum.OBJECT,
-    props: {
-      error: {
-        type: PropTypeEnum.STRING,
-      },
-      message: {
-        type: PropTypeEnum.STRING,
-      },
-      statusCode: {
-        type: PropTypeEnum.STRING,
-      },
-      success: {
-        type: PropTypeEnum.BOOLEAN,
-      },
-    },
+    props: { ...ResultDescriber.default() },
   }),
 },
 
@@ -856,27 +867,17 @@ To get an overall idea, here an example:
             data: new TypeDescriber<TokenDto>({
               name: TokenDto.name,
               type: PropTypeEnum.OBJECT,
-              props: {
-                token: {
-                  type: PropTypeEnum.STRING,
-                },
-                expiresIn: {
-                  type: PropTypeEnum.NUMBER,
-                },
-              },
+              props: TypeDescriber.describeProps<TokenDto>({
+                token: PropTypeEnum.STRING,
+                expiresIn: PropTypeEnum.NUMBER,
+                // This added section is only a demo to show how to use nested objects in the response
+                owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
+                  email: PropTypeEnum.STRING,
+                  sessionId: PropTypeEnum.STRING,
+                }),
+              }),
             }),
-            error: {
-              type: PropTypeEnum.STRING,
-            },
-            message: {
-              type: PropTypeEnum.STRING,
-            },
-            statusCode: {
-              type: PropTypeEnum.STRING,
-            },
-            success: {
-              type: PropTypeEnum.BOOLEAN,
-            },
+            ...ResultDescriber.default(),
           },
         }),
         requestBody: {
@@ -967,11 +968,43 @@ The file is created in the root of the project with the name `openapi.json` and 
   },
   "servers": [
     {
-      "url": "localhost:3003/api",
+      "url": "http://localhost:3003/api",
       "description": "Local server"
     }
   ],
   "paths": {
+    "/v1/auth/logout": {
+      "delete": {
+        "description": "Logout user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTClosedSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTClosedSession"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "description": "Login user",
@@ -1006,8 +1039,7 @@ The file is created in the root of the project with the name `openapi.json` and 
               }
             }
           }
-        },
-        "parameters": []
+        }
       }
     },
     "/status": {
@@ -1024,7 +1056,7 @@ The file is created in the root of the project with the name `openapi.json` and 
               }
             }
           }
-        },
+        }
       }
     },
     "/v1/users/sign-up": {
@@ -1062,58 +1094,49 @@ The file is created in the root of the project with the name `openapi.json` and 
             }
           }
         },
-      }
-    },
-    "/v1/users/:userId": {
-      "get": {
-        "description": "Get a user",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
+        "requestBody": {
+          "description": "User data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDto"
               }
             }
           }
-        },
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "User id",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false
-          }
-        ]
+        }
       }
     }
   },
   "components": {
     "schemas": {
+      "Object": {
+        "type": "object",
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResultTClosedSession": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Object"
+          }
+        }
+      },
       "TokenDto": {
         "type": "object",
         "properties": {
@@ -1122,6 +1145,20 @@ The file is created in the root of the project with the name `openapi.json` and 
           },
           "expiresIn": {
             "type": "number"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Owner"
+          }
+        }
+      },
+      "Owner": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
           }
         }
       },
@@ -1149,13 +1186,16 @@ The file is created in the root of the project with the name `openapi.json` and 
         "type": "object",
         "properties": {
           "email": {
-            "type": "string",
+            "type": "string"
           },
           "passwordB64": {
-            "type": "string",
-          },
-          "required": ["email", "passwordB64"]
-        }
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "passwordB64"
+        ]
       },
       "Result": {
         "type": "object",
@@ -1173,6 +1213,33 @@ The file is created in the root of the project with the name `openapi.json` and 
             "type": "boolean"
           }
         }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "passwordB64": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "bearer"
       }
     }
   }

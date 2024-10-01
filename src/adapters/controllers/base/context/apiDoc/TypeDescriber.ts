@@ -1,8 +1,10 @@
 import { Nulldefined } from "../../../../../domain/shared/types/Nulldefined.type";
-import { SecuritySchemes } from "./IApiDocGenerator";
 import { SchemasSecurityStore } from "./SchemasSecurityStore";
+import { SecuritySchemes } from "./IApiDocGenerator";
+import { MetadataClass } from "./metadataClass";
 import { SchemasStore } from "./SchemasStore";
 import { IResult } from "result-tsk";
+import "reflect-metadata";
 
 export enum PropTypeEnum {
   STRING = "string",
@@ -100,6 +102,23 @@ export class ResultDescriber {
       type: this.schema.type,
       properties: this.schema.properties,
     });
+  }
+
+  static default(): Record<"success" | "message" | "statusCode" | "error", ClassProperty> {
+    return {
+      error: {
+        type: PropTypeEnum.STRING,
+      },
+      message: {
+        type: PropTypeEnum.STRING,
+      },
+      statusCode: {
+        type: PropTypeEnum.STRING,
+      },
+      success: {
+        type: PropTypeEnum.BOOLEAN,
+      },
+    };
   }
 }
 
@@ -200,6 +219,10 @@ export class TypeDescriber<T> {
     required?: string[];
     properties: Record<string, ClassProperty> | { type: PropTypeEnum };
   };
+  static readonly referenceSchemas: Record<
+    string,
+    { type: PropTypeEnum; properties: Record<string, ClassProperty> }
+  > = {};
 
   constructor(obj: {
     name: string;
@@ -228,7 +251,7 @@ export class TypeDescriber<T> {
 
     const schemaType: Record<string, ClassProperty> = {};
     Object.keys(props).forEach((key) => {
-      if (props[key].type) {
+      if (props[key].type && !(props[key].type as any)?.$ref) {
         schemaType[key] = {
           type: props[key].type,
           format: props[key].format,
@@ -238,6 +261,10 @@ export class TypeDescriber<T> {
         if (props[key].required) {
           this.schema.required?.push(key);
         }
+      } else if ((props[key].type as any)?.$ref) {
+        schemaType[key] = {
+          $ref: (props[key].type as any)?.$ref as string,
+        } as ClassProperty;
       }
     });
 
@@ -248,6 +275,38 @@ export class TypeDescriber<T> {
       properties: this.schema.properties,
       required: this.schema.required,
     });
+
+    // Add additional reference schemas
+    Object.entries(TypeDescriber.referenceSchemas).forEach(([key, value]) => {
+      SchemasStore.add(key, value);
+    });
+  }
+
+  static describePrimitive(primitive: Primitive, format?: PropFormatEnum): PrimitiveDefinition {
+    return format ? { primitive, format } : { primitive };
+  }
+
+  static describeProps<T>(
+    input: Record<keyof T, any>,
+  ): Record<keyof T, ClassProperty | TypeDescriber<any>> {
+    const props: Record<string, ClassProperty> = {};
+    const instance = new MetadataClass<T>(input);
+    const keys = Object.keys(instance);
+    keys.forEach((key) => {
+      const type = MetadataClass.getMetadata(instance, key);
+      props[key] = { type };
+    });
+
+    return props as Record<keyof T, ClassProperty | TypeDescriber<any>>;
+  }
+
+  static describeReference<T>(name: string, input: Record<keyof T, any>): { $ref: string } {
+    this.referenceSchemas[name] = {
+      type: PropTypeEnum.OBJECT,
+      properties: this.describeProps(input),
+    };
+
+    return { $ref: "#/components/schemas/".concat(name) };
   }
 }
 
