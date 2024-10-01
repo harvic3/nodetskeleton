@@ -83,7 +83,6 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     const tokenDto: TokenDto = new TokenDto({
       token,
       expiresIn: AppSettings.JWTExpirationTime,
-      owner: { email: session.email, sessionId: session.sessionId },
     });
     return Promise.resolve(tokenDto);
   }

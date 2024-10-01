@@ -1,5 +1,5 @@
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
-import { OwnerDto, TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
+import { TokenDto, TokenDtoType } from "../../../application/modules/auth/dtos/TokenDto";
 import container, { LoginUseCase, LogoutUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
 import {
@@ -126,21 +126,16 @@ export class AuthController extends BaseController {
       apiDoc: {
         contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: false,
-        schema: new ResultTDescriber<TokenDto>({
+        schema: new ResultTDescriber<TokenDtoType>({
           name: TokenDto.name,
           type: PropTypeEnum.OBJECT,
           props: {
-            data: new TypeDescriber<TokenDto>({
+            data: new TypeDescriber<TokenDtoType>({
               name: TokenDto.name,
               type: PropTypeEnum.OBJECT,
-              props: TypeDescriber.describeProps<TokenDto>({
+              props: TypeDescriber.describeProps<TokenDtoType>({
                 token: PropTypeEnum.STRING,
                 expiresIn: PropTypeEnum.NUMBER,
-                // This added section is only a demo to show how to use nested objects in the response
-                owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
-                  email: PropTypeEnum.STRING,
-                  sessionId: PropTypeEnum.STRING,
-                }),
               }),
             }),
             ...ResultDescriber.default(),

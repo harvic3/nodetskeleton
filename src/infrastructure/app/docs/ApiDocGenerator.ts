@@ -14,6 +14,7 @@ import {
   PropFormatEnum,
   PropTypeEnum,
 } from "../../../adapters/controllers/base/context/apiDoc/TypeDescriber";
+import { StringUtil } from "../../../domain/shared/utils/StringUtil";
 import { join, resolve } from "path";
 import { writeFileSync } from "fs";
 
@@ -82,13 +83,13 @@ export class ApiDocGenerator implements IApiDocGenerator {
   apiDoc: OpenApiType = {
     openapi: "3.0.3",
     info: {
-      title: "",
-      version: "",
-      description: "",
+      title: StringUtil.EMPTY,
+      version: StringUtil.EMPTY,
+      description: StringUtil.EMPTY,
       contact: {
-        name: "",
-        url: "",
-        email: "",
+        name: StringUtil.EMPTY,
+        url: StringUtil.EMPTY,
+        email: StringUtil.EMPTY,
       },
       license: {
         name: "BSD 3-Clause",
@@ -175,8 +176,8 @@ export class ApiDocGenerator implements IApiDocGenerator {
       $ref?: string;
     } = {
       type: PropTypeEnum.OBJECT,
-      items: { type: PropTypeEnum.OBJECT, $ref: "" },
-      $ref: "",
+      items: { type: PropTypeEnum.OBJECT, $ref: StringUtil.EMPTY },
+      $ref: StringUtil.EMPTY,
     };
 
     if (schema.type === PropTypeEnum.ARRAY) {

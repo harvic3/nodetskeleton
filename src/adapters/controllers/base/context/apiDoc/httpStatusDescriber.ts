@@ -7,7 +7,6 @@ export default {
   201: "Created",
   202: "Accepted",
   203: "Non Authoritative Information",
-  204: "Not Content",
   205: "Reset Content",
   206: "Partial Content",
   207: "Multi Status",
