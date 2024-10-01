@@ -62,20 +62,7 @@ export class UsersController extends BaseController {
         requireAuth: false,
         schema: new ResultDescriber({
           type: PropTypeEnum.OBJECT,
-          props: {
-            error: {
-              type: PropTypeEnum.STRING,
-            },
-            message: {
-              type: PropTypeEnum.STRING,
-            },
-            statusCode: {
-              type: PropTypeEnum.STRING,
-            },
-            success: {
-              type: PropTypeEnum.BOOLEAN,
-            },
-          },
+          props: ResultDescriber.default(),
         }),
         requestBody: {
           contentType: HttpContentTypeEnum.APPLICATION_JSON,
@@ -83,23 +70,13 @@ export class UsersController extends BaseController {
           schema: new TypeDescriber<IUserDto>({
             name: UserDto.name,
             type: PropTypeEnum.OBJECT,
-            props: {
-              email: {
-                type: PropTypeEnum.STRING,
-              },
-              firstName: {
-                type: PropTypeEnum.STRING,
-              },
-              lastName: {
-                type: PropTypeEnum.STRING,
-              },
-              passwordB64: {
-                type: PropTypeEnum.STRING,
-              },
-              gender: {
-                type: PropTypeEnum.STRING,
-              },
-            },
+            props: TypeDescriber.describeProps<IUserDto>({
+              firstName: PropTypeEnum.STRING,
+              lastName: PropTypeEnum.STRING,
+              gender: PropTypeEnum.STRING,
+              email: PropTypeEnum.STRING,
+              passwordB64: PropTypeEnum.STRING,
+            }),
           }),
         },
       },

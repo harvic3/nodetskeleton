@@ -66,9 +66,7 @@ export class StatusController extends BaseController {
         schema: new TypeDescriber<string>({
           name: PropTypeEnum.STRING,
           type: PropTypeEnum.PRIMITIVE,
-          props: {
-            primitive: PropTypeEnum.STRING,
-          },
+          props: TypeDescriber.describePrimitive(PropTypeEnum.STRING),
         }),
       },
     });

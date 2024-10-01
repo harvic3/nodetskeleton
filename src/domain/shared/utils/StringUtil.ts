@@ -26,4 +26,10 @@ export class StringUtil {
 
     return text.replace(/\s/g, StringUtil.EMPTY);
   }
+
+  static capitalize(text: string): string {
+    if (!text) return StringUtil.EMPTY;
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
 }

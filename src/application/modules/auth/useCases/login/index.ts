@@ -80,7 +80,11 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
     const session: ISession = authenticatedUser.createSession(GuidUtil.getV4());
     const token = await this.authProvider.getJwt(session);
 
-    const tokenDto: TokenDto = new TokenDto(token, AppSettings.JWTExpirationTime);
+    const tokenDto: TokenDto = new TokenDto({
+      token,
+      expiresIn: AppSettings.JWTExpirationTime,
+      owner: { email: session.email, sessionId: session.sessionId },
+    });
     return Promise.resolve(tokenDto);
   }
 }

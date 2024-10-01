@@ -1,5 +1,5 @@
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
-import { TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
+import { OwnerDto, TokenDto } from "../../../application/modules/auth/dtos/TokenDto";
 import container, { LoginUseCase, LogoutUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
 import {
@@ -86,7 +86,7 @@ export class AuthController extends BaseController {
         contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: true,
         schema: new ResultTDescriber<{ closed: boolean }>({
-          name: "CloseSession",
+          name: "ClosedSession",
           type: PropTypeEnum.OBJECT,
           props: {
             data: new TypeDescriber<{ closed: boolean }>({
@@ -98,18 +98,7 @@ export class AuthController extends BaseController {
                 },
               },
             }),
-            error: {
-              type: PropTypeEnum.STRING,
-            },
-            message: {
-              type: PropTypeEnum.STRING,
-            },
-            statusCode: {
-              type: PropTypeEnum.STRING,
-            },
-            success: {
-              type: PropTypeEnum.BOOLEAN,
-            },
+            ...ResultDescriber.default(),
           },
         }),
         securitySchemes: new SecuritySchemesDescriber("bearerAuth", {
@@ -144,27 +133,17 @@ export class AuthController extends BaseController {
             data: new TypeDescriber<TokenDto>({
               name: TokenDto.name,
               type: PropTypeEnum.OBJECT,
-              props: {
-                token: {
-                  type: PropTypeEnum.STRING,
-                },
-                expiresIn: {
-                  type: PropTypeEnum.NUMBER,
-                },
-              },
+              props: TypeDescriber.describeProps<TokenDto>({
+                token: PropTypeEnum.STRING,
+                expiresIn: PropTypeEnum.NUMBER,
+                // This added section is only a demo to show how to use nested objects in the response
+                owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
+                  email: PropTypeEnum.STRING,
+                  sessionId: PropTypeEnum.STRING,
+                }),
+              }),
             }),
-            error: {
-              type: PropTypeEnum.STRING,
-            },
-            message: {
-              type: PropTypeEnum.STRING,
-            },
-            statusCode: {
-              type: PropTypeEnum.STRING,
-            },
-            success: {
-              type: PropTypeEnum.BOOLEAN,
-            },
+            ...ResultDescriber.default(),
           },
         }),
         requestBody: {
