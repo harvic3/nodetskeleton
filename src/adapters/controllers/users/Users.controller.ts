@@ -65,8 +65,9 @@ export class UsersController extends BaseController {
           props: ResultDescriber.default(),
         }),
         requestBody: {
-          contentType: HttpContentTypeEnum.APPLICATION_JSON,
           description: "User data",
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          required: true,
           schema: new TypeDescriber<IUserDto>({
             name: UserDto.name,
             type: PropTypeEnum.OBJECT,

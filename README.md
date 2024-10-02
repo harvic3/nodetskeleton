@@ -775,10 +775,10 @@ apiDoc: {
           { ... }
         },
         // Way two to describe a scheme response type
-        props: TypeDescriber.describeProps<TokenDto>({
+        props: TypeDescriber.describeProps<TokenDtoType>({
           token: PropTypeEnum.STRING,
           expiresIn: PropTypeEnum.NUMBER,
-          owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
+          owner: TypeDescriber.describeReference<OwnerType>(OwnerDto.name, {
             email: PropTypeEnum.STRING,
             sessionId: PropTypeEnum.STRING,
           }),
@@ -789,27 +789,38 @@ apiDoc: {
   }),
 },
 
-// Observation about ApiDocs TokenDto class for way two to describe a model
-// TokenDto class
-export class OwnerDto {
+// Observation about ApiDocs TokenDto class for way two to describe a model as example
+// Token classes
+export type OwnerType = {
+  email: string;
+  sessionId: string;
+};
+
+export class OwnerDto implements OwnerType {
   email: string;
   sessionId: string;
 
-  constructor(props: { email: string; sessionId: string }) {
+  constructor(props: OwnerType) {
     this.email = props.email;
     this.sessionId = props.sessionId;
   }
 }
 
-export class TokenDto {
+export type TokenDtoType = {
+  token: string;
+  expiresIn: number;
+  owner: OwnerDto;
+};
+
+export class TokenDto implements TokenDtoType {
   token: string;
   expiresIn: number;
   owner: OwnerDto;
 
-  constructor(props: { token: string; expiresIn: number; owner: OwnerDto }) {
+  constructor(props: TokenDtoType) {
     this.token = props.token;
     this.expiresIn = props.expiresIn;
-    this.owner = props?.owner;
+    this.owner = props.owner;
   }
 }
 
@@ -886,16 +897,13 @@ To get an overall idea, here an example:
           schema: new TypeDescriber<ICredentials>({
             name: "Credentials",
             type: PropTypeEnum.OBJECT,
-            props: {
-              email: {
-                type: PropTypeEnum.STRING,
-                required: true,
-              },
+            props: TypeDescriber.describeProps<ICredentials>({
+              email: PropTypeEnum.STRING,
               passwordB64: {
                 type: PropTypeEnum.STRING,
-                required: true,
+                format: PropFormatEnum.BASE64,
               },
-            },
+            }),
           }),
         },
       },
@@ -931,7 +939,7 @@ When you have already registered (described) a model, it is not necessary to des
       requireAuth: true,
       schema: new RefTypeDescriber({
         type: PropTypeEnum.OBJECT,
-        name: "Result",
+        name: Result.name,
       }),
       parameters: [
         {

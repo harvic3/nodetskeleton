@@ -1,5 +1,5 @@
-import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import { TokenDto, TokenDtoType } from "../../../application/modules/auth/dtos/TokenDto";
+import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
 import container, { LoginUseCase, LogoutUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
 import {
@@ -8,6 +8,7 @@ import {
   PropTypeEnum,
   SecuritySchemesDescriber,
   ResultDescriber,
+  PropFormatEnum,
 } from "../base/context/apiDoc/TypeDescriber";
 import BaseController, {
   IRequest,
@@ -101,11 +102,10 @@ export class AuthController extends BaseController {
             ...ResultDescriber.default(),
           },
         }),
-        securitySchemes: new SecuritySchemesDescriber("bearerAuth", {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "bearer",
-        }),
+        securitySchemes: new SecuritySchemesDescriber(
+          SecuritySchemesDescriber.HTTP,
+          SecuritySchemesDescriber.defaultHttpBearer(),
+        ),
       },
     });
     this.addRoute({
@@ -143,20 +143,18 @@ export class AuthController extends BaseController {
         }),
         requestBody: {
           description: "Credentials for login",
+          required: true,
           contentType: HttpContentTypeEnum.APPLICATION_JSON,
           schema: new TypeDescriber<ICredentials>({
             name: "Credentials",
             type: PropTypeEnum.OBJECT,
-            props: {
-              email: {
-                type: PropTypeEnum.STRING,
-                required: true,
-              },
+            props: TypeDescriber.describeProps<ICredentials>({
+              email: PropTypeEnum.STRING,
               passwordB64: {
                 type: PropTypeEnum.STRING,
-                required: true,
+                format: PropFormatEnum.BASE64,
               },
-            },
+            }),
           }),
         },
       },

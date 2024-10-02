@@ -1,13 +1,12 @@
 import { MessageKeysDictionaryEnum } from "../../application/shared/locals/messages/keys";
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
+import AppSettings from "../../application/shared/settings/AppSettings";
 import { ServiceContext } from "../../adapters/shared/ServiceContext";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import { BooleanUtil } from "../../domain/shared/utils/BooleanUtil";
 import { Normalize } from "./Normalize";
 
-const DEV = "development";
-
-if (!process.env?.NODE_ENV || BooleanUtil.areEqual(process.env.NODE_ENV, DEV))
+if (!process.env?.NODE_ENV || BooleanUtil.areEqual(process.env.NODE_ENV, AppSettings.DEV))
   console.log("Running in dev mode");
 
 const serviceContext = DefaultValue.evaluateAndGet(
@@ -16,7 +15,7 @@ const serviceContext = DefaultValue.evaluateAndGet(
 );
 
 export default {
-  Environment: DefaultValue.evaluateAndGet(process.env.NODE_ENV, DEV),
+  Environment: DefaultValue.evaluateAndGet(process.env.NODE_ENV, AppSettings.DEV),
   Controllers: {
     ContextPaths: [
       Normalize.pathFromOS(
@@ -51,12 +50,6 @@ export default {
     },
   },
   Params: {
-    Envs: {
-      Dev: DEV,
-      Test: "testing",
-      Release: "release",
-      Production: "production",
-    },
     DefaultApplicationError: {
       Code: "500",
       MessageKey: MessageKeysDictionaryEnum.SOMETHING_WENT_WRONG,

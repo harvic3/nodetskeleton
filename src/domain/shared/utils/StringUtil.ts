@@ -2,12 +2,12 @@ import { Nulldefined } from "../types/Nulldefined.type";
 import { AppConstants } from "../AppConstants";
 
 export class StringUtil {
-  static DOT = ".";
-  static EMPTY = "";
-  static WHITE_SPACE = " ";
-  static COMMA_SPACE_SEPARATOR = ", ";
-  static COMMA = ",";
-  static SLASH = "/";
+  static readonly DOT = ".";
+  static readonly EMPTY = "";
+  static readonly WHITE_SPACE = " ";
+  static readonly COMMA_SPACE_SEPARATOR = ", ";
+  static readonly COMMA = ",";
+  static readonly SLASH = "/";
 
   static decodeBase64(base64: string | Nulldefined): string | Nulldefined {
     if (!base64) return null;

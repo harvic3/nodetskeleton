@@ -24,6 +24,7 @@ import { serve, setup } from "swagger-ui-express";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
+import * as cors from "cors";
 import helmet from "helmet";
 import {
   Router,
@@ -34,7 +35,6 @@ import {
   Application,
   RequestHandler,
 } from "./core/Modules";
-import * as cors from "cors";
 
 export default class AppWrapper {
   #controllersLoadedByConstructor = false;
@@ -45,6 +45,7 @@ export default class AppWrapper {
     this.setup();
     this.app = AppServer();
     this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
+    this.apiDocGenerator.setServerUrl(this.getServerUrl(), "Local server");
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     console.log(
@@ -127,6 +128,10 @@ export default class AppWrapper {
       AppSettings.EncryptionIterations,
       AppSettings.EncryptionKeySize,
     );
+  }
+
+  getServerUrl(): string {
+    return `http://${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`;
   }
 
   initializeServices(): Promise<void> {

@@ -1,5 +1,5 @@
 export class BooleanUtil {
-  static NOT_VERIFIED = false;
+  static readonly NOT_VERIFIED = false;
 
   static areEqual<T>(reference: T, value: T): boolean {
     if (!reference || !value) return false;

@@ -4,6 +4,7 @@ import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.re
 import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
 import { IApiDocGenerator, RouteType } from "./context/apiDoc/IApiDocGenerator";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
+import AppSettings from "../../../application/shared/settings/AppSettings";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
 import { HttpStatusResolver } from "./httpResponse/HttpStatusResolver";
 import { HttpContentTypeEnum } from "./context/HttpContentType.enum";
@@ -41,8 +42,8 @@ export default abstract class BaseController {
   router?: IRouter;
   apiDocGenerator?: IApiDocGenerator;
   serviceContext: ServiceContext;
-  #logProvider: ILogProvider;
-  #useCaseTraceRepository: IUseCaseTraceRepository;
+  readonly #logProvider: ILogProvider;
+  readonly #useCaseTraceRepository: IUseCaseTraceRepository;
 
   constructor(
     readonly CONTEXT: string,
@@ -144,7 +145,7 @@ export default abstract class BaseController {
 
     this.router[method](path, ...handlers);
 
-    if (this.apiDocGenerator) {
+    if (this.apiDocGenerator && AppSettings.isDev()) {
       this.apiDocGenerator.createRouteDoc({
         method,
         path,
