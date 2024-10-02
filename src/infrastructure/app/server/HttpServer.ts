@@ -3,8 +3,8 @@ import { Server, createServer } from "http";
 import AppWrapper from "../AppWrapper";
 
 export class HttpServer {
-  #appWrapper: AppWrapper;
-  server: Server;
+  readonly #appWrapper: AppWrapper;
+  readonly server: Server;
 
   constructor(appWrapper: AppWrapper) {
     this.#appWrapper = appWrapper;
@@ -22,8 +22,11 @@ export class HttpServer {
       });
 
     this.server.on("listening", () => {
-      this.#appWrapper.apiDocGenerator.saveApiDoc().finish();
-      console.log(`Server ${AppSettings.ServiceName} running on ${AppSettings.getServerUrl()}`);
+      if (AppSettings.isDev()) this.#appWrapper.apiDocGenerator.saveApiDoc().finish();
+
+      console.log(
+        `Server ${AppSettings.ServiceName} running on ${this.#appWrapper.getServerUrl()}`,
+      );
 
       const seconds = ((new Date().valueOf() - startAt.valueOf()) / 1000).toFixed(3);
       console.log(

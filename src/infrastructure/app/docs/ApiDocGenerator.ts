@@ -1,15 +1,14 @@
-import { SchemasSecurityStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasSecurityStore";
+import { SecuritySchemesStore } from "../../../adapters/controllers/base/context/apiDoc/SecuritySchemesStore";
 import httpStatusDescriber from "../../../adapters/controllers/base/context/apiDoc/httpStatusDescriber";
 import { SchemasStore } from "../../../adapters/controllers/base/context/apiDoc/SchemasStore";
 import { HttpContentTypeEnum } from "../../../adapters/controllers/base/Base.controller";
 import {
   ApiDoc,
   IApiDocGenerator,
-  ParameterDescriber,
+  UrlParamDescriber,
   RouteType,
-  SecuritySchemes,
+  SecurityScheme,
 } from "../../../adapters/controllers/base/context/apiDoc/IApiDocGenerator";
-import AppSettings from "../../../application/shared/settings/AppSettings";
 import {
   PropFormatEnum,
   PropTypeEnum,
@@ -25,6 +24,7 @@ type SchemaType =
 
 type RequestBodyType = {
   description: string;
+  required: boolean;
   content: Record<string, { schema: { $ref: string } }>;
 };
 
@@ -63,7 +63,7 @@ type OpenApiType = {
           }
         >;
         requestBody: RequestBodyType;
-        parameters: ParameterDescriber[];
+        parameters: UrlParamDescriber[];
         security: Record<string, any[]>[];
       }
     >
@@ -73,11 +73,9 @@ type OpenApiType = {
       string,
       { type: string; properties: { type: PropTypeEnum; format: PropFormatEnum } }
     >;
-    securitySchemes?: Record<string, SecuritySchemes>;
+    securitySchemes?: Record<string, SecurityScheme>;
   };
 };
-
-const DEV = "development";
 
 export class ApiDocGenerator implements IApiDocGenerator {
   apiDoc: OpenApiType = {
@@ -125,13 +123,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.info.license = info.license;
 
     this.setSchemas(SchemasStore.get());
-    this.setSchemasSecurity(SchemasSecurityStore.get());
-
-    this.setServer(AppSettings.getServerUrl(), "Local server");
+    this.setSchemasSecurity(SecuritySchemesStore.get());
   }
 
   saveApiDoc(): this {
-    const wasDocGenerated = !(this.env !== DEV || !Object.keys(this.apiDoc.paths).length);
+    const wasDocGenerated = Object.keys(this.apiDoc.paths).length;
     if (!wasDocGenerated) return this;
 
     const filePath = resolve(join(__dirname, "../../../../openapi.json"));
@@ -144,14 +140,11 @@ export class ApiDocGenerator implements IApiDocGenerator {
     this.apiDoc.components.schemas = schemas;
   }
 
-  private setSchemasSecurity(securitySchemes: Record<string, SecuritySchemes>): void {
+  private setSchemasSecurity(securitySchemes: Record<string, SecurityScheme>): void {
     this.apiDoc.components.securitySchemes = securitySchemes;
   }
 
-  private buildParameters(
-    path: string,
-    parameters: ParameterDescriber[],
-  ): ParameterDescriber[] | [] {
+  private buildParameters(path: string, parameters: UrlParamDescriber[]): UrlParamDescriber[] | [] {
     if (!parameters.length) return [];
 
     const parameterNamesInPath = path.match(/(?<=\/:)\w+/g);
@@ -203,6 +196,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
   private buildRequestBody(requestBody: ApiDoc["requestBody"]): RequestBodyType {
     return {
       description: requestBody?.description as string,
+      required: requestBody?.required as boolean,
       content: {
         [requestBody?.contentType as HttpContentTypeEnum]: {
           schema: { $ref: `#/components/schemas/${requestBody?.schema.schema.name}` },
@@ -212,8 +206,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
   }
 
   createRouteDoc(route: Omit<RouteType, "handlers">): void {
-    if (this.env !== DEV) return;
-
     const { produces, method, description, apiDoc } = route;
     if (!apiDoc) return;
     let path = route.path;
@@ -255,7 +247,7 @@ export class ApiDocGenerator implements IApiDocGenerator {
     }
   }
 
-  private setServer(url: string, description: "Local server"): void {
+  setServerUrl(url: string, description: "Local server"): void {
     this.apiDoc.servers.push({
       url,
       description,
@@ -264,6 +256,6 @@ export class ApiDocGenerator implements IApiDocGenerator {
 
   finish(): void {
     SchemasStore.dispose();
-    SchemasSecurityStore.dispose();
+    SecuritySchemesStore.dispose();
   }
 }

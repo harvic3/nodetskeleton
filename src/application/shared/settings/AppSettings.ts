@@ -1,6 +1,10 @@
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 
 export default class AppSettings {
+  static readonly DEV: string = "development";
+  static readonly TEST: string = "testing";
+  static readonly STAGING: string = "staging";
+  static readonly PROD: string = "production";
   static Environment: string;
   static ServiceContext: string;
   static ServiceName: string;
@@ -33,7 +37,7 @@ export default class AppSettings {
     this.DefaultHealthRemoteService = config.Params.DefaultHealthRemoteService;
   }
 
-  static getServerUrl(): string {
-    return `http://${this.ServerHost}:${this.ServerPort}${this.ServerRoot}`;
+  static isDev(): boolean {
+    return this.Environment === this.DEV;
   }
 }

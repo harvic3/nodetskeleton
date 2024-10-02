@@ -1,6 +1,6 @@
 import { Nulldefined } from "../../../../../domain/shared/types/Nulldefined.type";
-import { SchemasSecurityStore } from "./SchemasSecurityStore";
-import { SecuritySchemes } from "./IApiDocGenerator";
+import { SecurityScheme, SecuritySchemeType } from "./IApiDocGenerator";
+import { SecuritySchemesStore } from "./SecuritySchemesStore";
 import { MetadataClass } from "./MetadataClass";
 import { SchemasStore } from "./SchemasStore";
 import { IResult } from "result-tsk";
@@ -30,6 +30,7 @@ export enum PropFormatEnum {
   UUID = "uuid",
   PASSWORD = "password",
   TEXT = "text",
+  BASE64 = "base64",
 }
 
 export type ClassProperty = {
@@ -38,6 +39,8 @@ export type ClassProperty = {
   nullable?: boolean;
   readonly?: boolean;
   required?: boolean;
+  minimum?: number;
+  maximum?: number;
   items?: { type: PropTypeEnum };
   $ref?: string;
 };
@@ -212,7 +215,9 @@ type PrimitiveDefinition = { primitive: Primitive; format?: PropFormatEnum };
 
 export class TypeDescriber<T> {
   readonly type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY | PropTypeEnum.PRIMITIVE;
-  readonly properties: Record<keyof T, ClassProperty | TypeDescriber<any>> | PrimitiveDefinition;
+  readonly properties:
+    | Record<keyof T, ClassProperty | TypeDescriber<any> | { $ref: string }>
+    | PrimitiveDefinition;
   readonly schema: {
     name: string;
     type: PropTypeEnum;
@@ -221,13 +226,19 @@ export class TypeDescriber<T> {
   };
   static readonly referenceSchemas: Record<
     string,
-    { type: PropTypeEnum; properties: Record<string, ClassProperty> }
+    {
+      type: PropTypeEnum;
+      properties: Record<string, ClassProperty> | { $ref: string };
+      required?: string[];
+    }
   > = {};
 
   constructor(obj: {
     name: string;
     type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY | PropTypeEnum.PRIMITIVE;
-    props: Record<keyof T, ClassProperty | TypeDescriber<any>> | PrimitiveDefinition;
+    props:
+      | Record<keyof T, ClassProperty | TypeDescriber<any> | { $ref: string }>
+      | PrimitiveDefinition;
   }) {
     this.type = obj.type;
     this.properties = obj.props;
@@ -251,19 +262,18 @@ export class TypeDescriber<T> {
 
     const schemaType: Record<string, ClassProperty> = {};
     Object.keys(props).forEach((key) => {
-      if (props[key].type && !(props[key].type as any)?.$ref) {
+      if (props[key].type) {
         schemaType[key] = {
           type: props[key].type,
-          format: props[key].format,
-          nullable: props[key].nullable,
-          readonly: props[key].readonly,
+          nullable: props[key].nullable ?? false,
         };
-        if (props[key].required) {
-          this.schema.required?.push(key);
-        }
-      } else if ((props[key].type as any)?.$ref) {
+        if (props[key].format) schemaType[key].format = props[key].format;
+        if (props[key].minimum) schemaType[key].minimum = props[key].minimum;
+        if (props[key].maximum) schemaType[key].maximum = props[key].maximum;
+        if (props[key].required) this.schema.required?.push(key);
+      } else if (props[key].$ref) {
         schemaType[key] = {
-          $ref: (props[key].type as any)?.$ref as string,
+          $ref: props[key].$ref,
         } as ClassProperty;
       }
     });
@@ -276,7 +286,6 @@ export class TypeDescriber<T> {
       required: this.schema.required,
     });
 
-    // Add additional reference schemas
     Object.entries(TypeDescriber.referenceSchemas).forEach(([key, value]) => {
       SchemasStore.add(key, value);
     });
@@ -287,14 +296,14 @@ export class TypeDescriber<T> {
   }
 
   static describeProps<T>(
-    input: Record<keyof T, any>,
+    input: Record<keyof T, ClassProperty | PropTypeEnum | { $ref: string }>,
   ): Record<keyof T, ClassProperty | TypeDescriber<any>> {
-    const props: Record<string, ClassProperty> = {};
+    const props: Record<string, ClassProperty | { $ref: string }> = {};
     const instance = new MetadataClass<T>(input);
     const keys = Object.keys(instance);
     keys.forEach((key) => {
-      const type = MetadataClass.getMetadata(instance, key);
-      props[key] = { type };
+      const metadata = MetadataClass.getPropMetadata(instance, key);
+      props[key] = metadata;
     });
 
     return props as Record<keyof T, ClassProperty | TypeDescriber<any>>;
@@ -342,10 +351,25 @@ export class RefTypeDescriber {
 }
 
 export class SecuritySchemesDescriber {
-  [key: string]: SecuritySchemes;
+  static readonly HTTP = "http";
+  static readonly API_KEY = "apiKey";
+  static readonly OAUTH2 = "oauth2";
+  static readonly OPEN_ID_CONNECT = "openIdConnect";
+  static readonly MUTUAL_TLS = "mutualTLS";
 
-  constructor(key: string, securitySchemes: SecuritySchemes) {
+  [key: string]: SecurityScheme;
+
+  constructor(key: SecuritySchemeType, securitySchemes: SecurityScheme) {
     this[key] = securitySchemes;
-    SchemasSecurityStore.add(key, securitySchemes);
+    SecuritySchemesStore.add(key, securitySchemes);
+  }
+
+  static defaultHttpBearer(): SecurityScheme {
+    return {
+      type: "http",
+      description: "Bearer token",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+    };
   }
 }

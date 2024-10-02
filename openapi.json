@@ -47,7 +47,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "http": []
           }
         ]
       }
@@ -79,6 +79,7 @@
         },
         "requestBody": {
           "description": "Credentials for login",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -108,7 +109,7 @@
     },
     "/v1/users/sign-up": {
       "post": {
-        "description": "Register a new user",
+        "description": "Self register user",
         "responses": {
           "200": {
             "description": "Success",
@@ -143,6 +144,7 @@
         },
         "requestBody": {
           "description": "User data",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -160,7 +162,8 @@
         "type": "object",
         "properties": {
           "closed": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": false
           }
         }
       },
@@ -188,10 +191,12 @@
         "type": "object",
         "properties": {
           "token": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "expiresIn": {
-            "type": "number"
+            "type": "number",
+            "nullable": false
           }
         }
       },
@@ -219,16 +224,15 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "passwordB64": {
-            "type": "string"
+            "type": "string",
+            "nullable": false,
+            "format": "base64"
           }
-        },
-        "required": [
-          "email",
-          "passwordB64"
-        ]
+        }
       },
       "Result": {
         "type": "object",
@@ -251,28 +255,34 @@
         "type": "object",
         "properties": {
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "gender": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "passwordB64": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           }
         }
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
+      "http": {
         "type": "http",
+        "description": "Bearer token",
         "scheme": "bearer",
-        "bearerFormat": "bearer"
+        "bearerFormat": "JWT"
       }
     }
   }
