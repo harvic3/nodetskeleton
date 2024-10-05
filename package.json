@@ -76,6 +76,7 @@
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.5.0",
     "mapper-tsk": "^2.0.5",
+    "openapi-tsk": "^1.0.4",
     "reflect-metadata": "^0.2.2",
     "resources-tsk": "^2.5.1",
     "result-tsk": "^2.2.1",
