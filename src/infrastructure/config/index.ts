@@ -1,5 +1,6 @@
 import { MessageKeysDictionaryEnum } from "../../application/shared/locals/messages/keys";
 import { LocaleTypeEnum } from "../../application/shared/locals/LocaleType.enum";
+import { HttpStatusEnum } from "../../adapters/controllers/base/Base.controller";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import { ServiceContext } from "../../adapters/shared/ServiceContext";
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
@@ -51,7 +52,7 @@ export default {
   },
   Params: {
     DefaultApplicationError: {
-      Code: "500",
+      Code: HttpStatusEnum.INTERNAL_SERVER_ERROR,
       MessageKey: MessageKeysDictionaryEnum.SOMETHING_WENT_WRONG,
     },
     Security: {

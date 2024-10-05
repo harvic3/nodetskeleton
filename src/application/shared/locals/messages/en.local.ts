@@ -14,4 +14,5 @@ export default {
   INVALID_EMAIL: "Invalid email.",
   INVALID_PASSWORD: "Invalid password.",
   INVALID_SESSION: "Invalid session.",
+  USER_DOES_NOT_EXIST: "User does not exist.",
 };

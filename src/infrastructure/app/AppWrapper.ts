@@ -1,7 +1,7 @@
 import infraContainer from "../container";
 infraContainer.load();
-import { ApiDocGenerator } from "./docs/ApiDocGenerator";
 import statusController from "../../adapters/controllers/status/Status.controller";
+import { ApiDocGenerator } from "../../adapters/controllers/base/apiDoc/types";
 import routeWhiteListMiddleware from "../middleware/authorization/whiteList";
 import AppSettings from "../../application/shared/settings/AppSettings";
 import Encryption from "../../application/shared/security/encryption";
@@ -37,9 +37,9 @@ import {
 } from "./core/Modules";
 
 export default class AppWrapper {
-  #controllersLoadedByConstructor = false;
+  readonly #controllersLoadedByConstructor: boolean = false;
   app: Express;
-  apiDocGenerator: ApiDocGenerator;
+  readonly apiDocGenerator: ApiDocGenerator;
 
   constructor(controllers?: BaseController[]) {
     this.setup();
