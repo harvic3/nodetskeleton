@@ -2,7 +2,7 @@ import { ILogProvider } from "../../../application/shared/log/providerContracts/
 import { IUseCaseTraceRepository } from "../../repositories/trace/IUseCaseTrace.repository";
 import { UseCaseTraceRepository } from "../../repositories/trace/UseCaseTrace.repository";
 import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
-import { IApiDocGenerator, RouteType } from "./context/apiDoc/IApiDocGenerator";
+import { ApiDoc, ApiProduce, IApiDocGenerator, RouteType } from "./apiDoc/types";
 import { UseCaseTrace } from "../../../application/shared/log/UseCaseTrace";
 import AppSettings from "../../../application/shared/settings/AppSettings";
 import { IResult } from "../../../application/shared/useCase/BaseUseCase";
@@ -62,8 +62,10 @@ export default abstract class BaseController {
     this.apiDocGenerator = apiDocGenerator;
   }
 
-  setRouter(router: IRouter): void {
+  setRouter(router: IRouter): BaseController {
     this.router = router;
+
+    return this;
   }
 
   private setTransactionId(res: IResponse): void {
@@ -134,7 +136,7 @@ export default abstract class BaseController {
     }
   }
 
-  addRoute(route: RouteType): void {
+  addRoute(route: RouteType): BaseController {
     const { method, path, handlers, produces, description, apiDoc } = route;
     produces.forEach(({ applicationStatus, httpStatus }) =>
       this.setProducesCode(applicationStatus, httpStatus),
@@ -149,11 +151,13 @@ export default abstract class BaseController {
       this.apiDocGenerator.createRouteDoc({
         method,
         path,
-        produces,
+        produces: produces as ApiProduce[],
         description,
-        apiDoc,
+        apiDoc: apiDoc,
       });
     }
+
+    return this;
   }
 
   async handleResult(

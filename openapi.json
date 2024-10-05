@@ -39,7 +39,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTClosedSession"
+                  "$ref": "#/components/schemas/Result"
                 }
               }
             }
@@ -71,7 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTTokenDto"
+                  "$ref": "#/components/schemas/Result"
                 }
               }
             }
@@ -111,12 +111,12 @@
       "post": {
         "description": "Self register user",
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
@@ -154,6 +154,53 @@
           }
         }
       }
+    },
+    "/v1/users/{email}": {
+      "get": {
+        "description": "Get user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTUserDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email",
+            "required": true,
+            "allowEmptyValue": false,
+            "deprecated": false
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -184,6 +231,24 @@
           },
           "data": {
             "$ref": "#/components/schemas/Object"
+          }
+        }
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
           }
         }
       },
@@ -234,7 +299,32 @@
           }
         }
       },
-      "Result": {
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "maskedUid": {
+            "type": "string",
+            "nullable": false
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": false
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": false
+          },
+          "email": {
+            "type": "string",
+            "nullable": false
+          },
+          "gender": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "ResultTUserDto": {
         "type": "object",
         "properties": {
           "message": {
@@ -248,31 +338,9 @@
           },
           "success": {
             "type": "boolean"
-          }
-        }
-      },
-      "UserDto": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "nullable": false
           },
-          "lastName": {
-            "type": "string",
-            "nullable": false
-          },
-          "gender": {
-            "type": "string",
-            "nullable": false
-          },
-          "email": {
-            "type": "string",
-            "nullable": false
-          },
-          "passwordB64": {
-            "type": "string",
-            "nullable": false
+          "data": {
+            "$ref": "#/components/schemas/UserDto"
           }
         }
       }

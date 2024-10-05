@@ -1,5 +1,5 @@
-import { PropTypeEnum, TypeDescriber } from "../base/context/apiDoc/TypeDescriber";
 import container, { PongUseCase, NotFoundUseCase } from "./container/index";
+import { PropTypeEnum, TypeDescriber } from "../base/apiDoc/types";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
   HttpContentTypeEnum,
@@ -57,17 +57,19 @@ export class StatusController extends BaseController {
         {
           applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
+          model: {
+            contentType: HttpContentTypeEnum.TEXT_PLAIN,
+            scheme: new TypeDescriber<string>({
+              name: PropTypeEnum.STRING,
+              type: PropTypeEnum.PRIMITIVE,
+              props: TypeDescriber.describePrimitive(PropTypeEnum.STRING),
+            }),
+          },
         },
       ],
       description: "API status endpoint",
       apiDoc: {
-        contentType: HttpContentTypeEnum.TEXT_PLAIN,
         requireAuth: false,
-        schema: new TypeDescriber<string>({
-          name: PropTypeEnum.STRING,
-          type: PropTypeEnum.PRIMITIVE,
-          props: TypeDescriber.describePrimitive(PropTypeEnum.STRING),
-        }),
       },
     });
   }

@@ -4,6 +4,7 @@ import { BaseDto, IResult } from "../../../shared/dto/BaseDto";
 import { User } from "../../../../domain/user/User";
 
 export type IUserDto = {
+  maskedUid?: string;
   firstName: string | undefined;
   lastName: string | undefined;
   email: string | undefined;
@@ -33,6 +34,23 @@ export class UserDto extends BaseDto {
     return userDto;
   }
 
+  static fromEmail(email: string): UserDto {
+    const userDto = new UserDto();
+    userDto.email = email.toLowerCase();
+
+    return userDto;
+  }
+
+  static fromDomain(user: User): UserDto {
+    const userDto = new UserDto();
+    userDto.maskedUid = user.maskedUid;
+    userDto.email = user.email?.value as string;
+    userDto.firstName = user.firstName;
+    userDto.lastName = user.lastName;
+
+    return userDto;
+  }
+
   isValid(result: IResult): boolean {
     const validations: Record<string, unknown> = {};
     validations[this.appWords.get(this.appWords.keys.FIRST_NAME)] = this.firstName;
@@ -40,6 +58,13 @@ export class UserDto extends BaseDto {
     validations[this.appWords.get(this.appWords.keys.EMAIL)] = this.email;
     validations[this.appWords.get(this.appWords.keys.PASSWORD)] = this.password;
     validations[this.appWords.get(this.appWords.keys.GENDER)] = this.gender;
+
+    return this.validator.isValidEntry(result, validations);
+  }
+
+  isValidToGet(result: IResult): boolean {
+    const validations: Record<string, unknown> = {};
+    validations[this.appWords.get(this.appWords.keys.EMAIL)] = this.email;
 
     return this.validator.isValidEntry(result, validations);
   }
@@ -58,6 +83,16 @@ export class UserDto extends BaseDto {
     user.password = this.password;
 
     return user;
+  }
+
+  toDto(): IUserDto {
+    return {
+      maskedUid: this.maskedUid,
+      email: this.email,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      gender: this.gender,
+    };
   }
 
   getCredentialsDto(): CredentialsDto {

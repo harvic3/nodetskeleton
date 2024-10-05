@@ -728,66 +728,119 @@ npx run-tsk setup project-name=my-awesome-project
   initializeRoutes(router: IRouter): void {
     // Default way to registering routes (This still works)
     this.router = router();
-    this.router.get("/v1/feelings", this.getFeelingText);
+    this.router.get("/v1/users", this.getUser);
 
     // New proposal to register routes
-    this.setRouter(router());
-    this.addRoute({
-      method: HttpMethodEnum.GET,
-      path: "/v1/feelings",
-      handlers: [this.getFeelingText],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
-        },
-        {
-          applicationStatus: ApplicationStatus.USER_NOT_FOUND,
-          httpStatus: HttpStatusEnum.NOT_FOUND,
-        },
-      ],
-    });
+    this.setRouter(router())
+      .addRoute({
+        method: HttpMethodEnum.GET,
+        path: "/v1/users",
+        handlers: [this.getUser],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+          },
+          {
+            applicationStatus: ApplicationStatus.USER_NOT_FOUND,
+            httpStatus: HttpStatusEnum.NOT_FOUND,
+          },
+        ],
+      });
   }
 ```
 
-Then once you have added your route, the same method is used to configure a property called apiDoc, and in this one you can have the following ways to configure your data models (Request, Response, Parameters) through the following Descriptor Objects:
+Then once you have added your route, the same method is used to configure properties called model inside produce and apiDoc, and in this one you can have the following ways to configure your data models (Request, Response, Parameters) through the following Descriptor Objects:
 
 ```ts
 // To describe a ResultT type (ResultTDescriber and TypeDescriber helps us to do it)
-apiDoc: {
-  contentType: HttpContentTypeEnum.APPLICATION_JSON,
-  requireAuth: false,
-  schema: new ResultTDescriber<TokenDto>({
-    name: TokenDto.name,
-    type: PropTypeEnum.OBJECT,
-    props: {
-      data: new TypeDescriber<TokenDto>({
-        name: TokenDto.name,
+.addRoute({
+  method: HttpMethodEnum.POST,
+  path: "/v1/users/sign-up",
+  handlers: [this.singUp],
+  produces: [
+    {
+      applicationStatus: ApplicationStatus.INVALID_INPUT,
+      httpStatus: HttpStatusEnum.BAD_REQUEST,
+      model: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        scheme: new ResultDescriber({
+          type: PropTypeEnum.OBJECT,
+          props: ResultDescriber.defaultError(),
+        }),
+      },
+    },
+    {
+      applicationStatus: ApplicationStatus.SUCCESS,
+      httpStatus: HttpStatusEnum.CREATED,
+      model: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        scheme: new ResultTDescriber<TokenDto>({
+          name: TokenDto.name,
+          type: PropTypeEnum.OBJECT,
+          props: {
+            data: new TypeDescriber<TokenDto>({
+              name: TokenDto.name,
+              type: PropTypeEnum.OBJECT,
+              // Option one to describe a scheme response type
+              props: {
+                token: {
+                  type: PropTypeEnum.STRING,
+                },
+                expiresIn: {
+                  type: PropTypeEnum.NUMBER,
+                },
+                { ... }
+              },
+              // Option two to describe a scheme response type
+              props: TypeDescriber.describeProps<TokenDtoType>({
+                token: PropTypeEnum.STRING,
+                expiresIn: PropTypeEnum.NUMBER,
+                owner: TypeDescriber.describeReference<OwnerType>(OwnerDto.name, {
+                  email: PropTypeEnum.STRING,
+                  sessionId: PropTypeEnum.STRING,
+                }),
+              }),
+            }),
+            ...ResultDescriber.default(),
+          },
+        }),
+      },
+    },
+    {
+      applicationStatus: ApplicationStatus.UNAUTHORIZED,
+      httpStatus: HttpStatusEnum.UNAUTHORIZED,
+      model: {
+        contentType: HttpContentTypeEnum.APPLICATION_JSON,
+        scheme: new ResultDescriber({
+          type: PropTypeEnum.OBJECT,
+          props: ResultDescriber.defaultError(),
+        }),
+      },
+    },
+  ],
+  description: "Self register user",
+  apiDoc: {
+    requireAuth: false,
+    requestBody: {
+      description: "User data",
+      contentType: HttpContentTypeEnum.APPLICATION_JSON,
+      required: true,
+      scheme: new TypeDescriber<IUserDto>({
+        name: UserDto.name,
         type: PropTypeEnum.OBJECT,
-        // Way one to describe a scheme response type
-        props: {
-          token: {
-            type: PropTypeEnum.STRING,
-          },
-          expiresIn: {
-            type: PropTypeEnum.NUMBER,
-          },
-          { ... }
-        },
-        // Way two to describe a scheme response type
-        props: TypeDescriber.describeProps<TokenDtoType>({
-          token: PropTypeEnum.STRING,
-          expiresIn: PropTypeEnum.NUMBER,
-          owner: TypeDescriber.describeReference<OwnerType>(OwnerDto.name, {
-            email: PropTypeEnum.STRING,
-            sessionId: PropTypeEnum.STRING,
-          }),
+        props: TypeDescriber.describeProps<IUserDto>({
+          maskedUid: PropTypeEnum.STRING,
+          firstName: PropTypeEnum.STRING,
+          lastName: PropTypeEnum.STRING,
+          gender: PropTypeEnum.STRING,
+          email: PropTypeEnum.STRING,
+          passwordB64: PropTypeEnum.STRING,
         }),
       }),
-      ...ResultDescriber.default(),
     },
-  }),
-},
+  },
+}),
 
 // Observation about ApiDocs TokenDto class for way two to describe a model as example
 // Token classes
@@ -825,26 +878,42 @@ export class TokenDto implements TokenDtoType {
 }
 
 // To describe a simple Result type (ResultDescriber helps us to do it)
+produces: [
+  {
+    applicationStatus: ApplicationStatus.INVALID_INPUT,
+    httpStatus: HttpStatusEnum.BAD_REQUEST,
+    model: {
+      contentType: HttpContentTypeEnum.APPLICATION_JSON,
+      scheme: new ResultDescriber({
+        type: PropTypeEnum.OBJECT,
+        props: ResultDescriber.defaultError(),
+      }),
+    },
+  },
+],
 apiDoc: {
-  contentType: HttpContentTypeEnum.APPLICATION_JSON,
   requireAuth: false,
-  schema: new ResultDescriber({
-    type: PropTypeEnum.OBJECT,
-    props: { ...ResultDescriber.default() },
-  }),
 },
 
 // To describe any object (TypeDescriber helps us to do it)
-apiDoc: {
-  contentType: HttpContentTypeEnum.TEXT_PLAIN,
-  requireAuth: false,
-  schema: new TypeDescriber<string>({
-    name: PropTypeEnum.STRING,
-    type: PropTypeEnum.PRIMITIVE,
-    props: {
-      primitive: PropTypeEnum.STRING,
+produces: [
+  {
+    applicationStatus: ApplicationStatus.SUCCESS,
+    httpStatus: HttpStatusEnum.SUCCESS,
+    model: {
+      contentType: HttpContentTypeEnum.TEXT_PLAIN,
+      scheme: new TypeDescriber<string>({
+        name: PropTypeEnum.STRING,
+        type: PropTypeEnum.PRIMITIVE,
+        props: {
+          primitive: PropTypeEnum.STRING,
+        },
+      }),
     },
-  }),
+  },
+],
+apiDoc: {
+  requireAuth: false,
 },
 ```
 
@@ -861,36 +930,45 @@ To get an overall idea, here an example:
         {
           applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
+          model: {
+            contentType: HttpContentTypeEnum.APPLICATION_JSON,
+            scheme: new ResultTDescriber<TokenDto>({
+              name: TokenDto.name,
+              type: PropTypeEnum.OBJECT,
+              props: {
+                data: new TypeDescriber<TokenDto>({
+                  name: TokenDto.name,
+                  type: PropTypeEnum.OBJECT,
+                  props: TypeDescriber.describeProps<TokenDto>({
+                    token: PropTypeEnum.STRING,
+                    expiresIn: PropTypeEnum.NUMBER,
+                    // This added section is only a demo to show how to use nested objects in the response
+                    owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
+                      email: PropTypeEnum.STRING,
+                      sessionId: PropTypeEnum.STRING,
+                    }),
+                  }),
+                }),
+                ...ResultDescriber.default(),
+              },
+            }),
+          },
         },
         {
           applicationStatus: ApplicationStatus.UNAUTHORIZED,
           httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          model: {
+            contentType: HttpContentTypeEnum.APPLICATION_JSON,
+            scheme: new ResultDescriber({
+              type: PropTypeEnum.OBJECT,
+              props: ResultDescriber.defaultError(),
+            }),
+          },
         },
       ],
       description: "Login user",
       apiDoc: {
-        contentType: HttpContentTypeEnum.APPLICATION_JSON,
         requireAuth: false,
-        schema: new ResultTDescriber<TokenDto>({
-          name: TokenDto.name,
-          type: PropTypeEnum.OBJECT,
-          props: {
-            data: new TypeDescriber<TokenDto>({
-              name: TokenDto.name,
-              type: PropTypeEnum.OBJECT,
-              props: TypeDescriber.describeProps<TokenDto>({
-                token: PropTypeEnum.STRING,
-                expiresIn: PropTypeEnum.NUMBER,
-                // This added section is only a demo to show how to use nested objects in the response
-                owner: TypeDescriber.describeReference<OwnerDto>(OwnerDto.name, {
-                  email: PropTypeEnum.STRING,
-                  sessionId: PropTypeEnum.STRING,
-                }),
-              }),
-            }),
-            ...ResultDescriber.default(),
-          },
-        }),
         requestBody: {
           description: "Credentials for login",
           contentType: HttpContentTypeEnum.APPLICATION_JSON,
@@ -921,35 +999,26 @@ When you have already registered (described) a model, it is not necessary to des
     handlers: [this.get],
     produces: [
       {
-        applicationStatus: ApplicationStatus.INVALID_INPUT,
-        httpStatus: HttpStatusEnum.BAD_REQUEST,
-      },
-      {
         applicationStatus: ApplicationStatus.SUCCESS,
         httpStatus: HttpStatusEnum.SUCCESS,
-      },
-      {
-        applicationStatus: ApplicationStatus.UNAUTHORIZED,
-        httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        model: {
+          contentType: HttpContentTypeEnum.APPLICATION_JSON,
+          schema: new RefTypeDescriber({
+            type: PropTypeEnum.OBJECT,
+            name: Result.name,
+          }),
+        },
       },
     ],
     description: "Get a user",
     apiDoc: {
-      contentType: HttpContentTypeEnum.APPLICATION_JSON,
       requireAuth: true,
-      schema: new RefTypeDescriber({
-        type: PropTypeEnum.OBJECT,
-        name: Result.name,
-      }),
       parameters: [
-        {
-          name: "userId",
+        TypeDescriber.describeUrlParam({
+          name: "email",
           in: ParameterIn.PATH,
-          description: "User id",
-          required: true,
-          deprecated: false,
-          allowEmptyValue: false,
-        },
+          description: "User email",
+        }),
       ],
     },
   });
@@ -1000,7 +1069,7 @@ The file is created in the root of the project with the name `openapi.json` and 
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTClosedSession"
+                  "$ref": "#/components/schemas/Result"
                 }
               }
             }
@@ -1008,7 +1077,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         },
         "security": [
           {
-            "bearerAuth": []
+            "http": []
           }
         ]
       }
@@ -1032,7 +1101,7 @@ The file is created in the root of the project with the name `openapi.json` and 
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTTokenDto"
+                  "$ref": "#/components/schemas/Result"
                 }
               }
             }
@@ -1040,6 +1109,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         },
         "requestBody": {
           "description": "Credentials for login",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -1069,14 +1139,14 @@ The file is created in the root of the project with the name `openapi.json` and 
     },
     "/v1/users/sign-up": {
       "post": {
-        "description": "Register a new user",
+        "description": "Self register user",
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
@@ -1104,6 +1174,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         },
         "requestBody": {
           "description": "User data",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -1113,6 +1184,53 @@ The file is created in the root of the project with the name `openapi.json` and 
           }
         }
       }
+    },
+    "/v1/users/{email}": {
+      "get": {
+        "description": "Get user",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultTUserDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email",
+            "required": true,
+            "allowEmptyValue": false,
+            "deprecated": false
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -1121,7 +1239,8 @@ The file is created in the root of the project with the name `openapi.json` and 
         "type": "object",
         "properties": {
           "closed": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": false
           }
         }
       },
@@ -1145,28 +1264,34 @@ The file is created in the root of the project with the name `openapi.json` and 
           }
         }
       },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
       "TokenDto": {
         "type": "object",
         "properties": {
           "token": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "expiresIn": {
-            "type": "number"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/Owner"
-          }
-        }
-      },
-      "Owner": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "sessionId": {
-            "type": "string"
+            "type": "number",
+            "nullable": false
           }
         }
       },
@@ -1194,18 +1319,42 @@ The file is created in the root of the project with the name `openapi.json` and 
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "nullable": false
           },
           "passwordB64": {
-            "type": "string"
+            "type": "string",
+            "nullable": false,
+            "format": "base64"
           }
-        },
-        "required": [
-          "email",
-          "passwordB64"
-        ]
+        }
       },
-      "Result": {
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "maskedUid": {
+            "type": "string",
+            "nullable": false
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": false
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": false
+          },
+          "email": {
+            "type": "string",
+            "nullable": false
+          },
+          "gender": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "ResultTUserDto": {
         "type": "object",
         "properties": {
           "message": {
@@ -1219,35 +1368,19 @@ The file is created in the root of the project with the name `openapi.json` and 
           },
           "success": {
             "type": "boolean"
-          }
-        }
-      },
-      "UserDto": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string"
           },
-          "lastName": {
-            "type": "string"
-          },
-          "gender": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "passwordB64": {
-            "type": "string"
+          "data": {
+            "$ref": "#/components/schemas/UserDto"
           }
         }
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
+      "http": {
         "type": "http",
+        "description": "Bearer token",
         "scheme": "bearer",
-        "bearerFormat": "bearer"
+        "bearerFormat": "JWT"
       }
     }
   }

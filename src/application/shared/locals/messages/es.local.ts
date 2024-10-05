@@ -14,4 +14,5 @@ export default {
   INVALID_EMAIL: "El correo electrónico es inválido.",
   INVALID_PASSWORD: "La contraseña es inválida.",
   INVALID_SESSION: "La sesión es inválida.",
+  USER_DOES_NOT_EXIST: "El usuario no existe.",
 };

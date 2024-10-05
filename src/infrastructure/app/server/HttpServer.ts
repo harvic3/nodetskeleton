@@ -22,7 +22,8 @@ export class HttpServer {
       });
 
     this.server.on("listening", () => {
-      if (AppSettings.isDev()) this.#appWrapper.apiDocGenerator.saveApiDoc().finish();
+      if (AppSettings.isDev())
+        this.#appWrapper.apiDocGenerator.saveApiDoc(__dirname, "../../../../openapi.json").finish();
 
       console.log(
         `Server ${AppSettings.ServiceName} running on ${this.#appWrapper.getServerUrl()}`,

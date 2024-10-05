@@ -1,15 +1,8 @@
 import { TokenDto, TokenDtoType } from "../../../application/modules/auth/dtos/TokenDto";
 import { ICredentials } from "../../../application/modules/auth/dtos/Credentials.dto";
+import { ResultDescriber, ResultTDescriber } from "../base/apiDoc/ResultDescriber";
 import container, { LoginUseCase, LogoutUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
-import {
-  TypeDescriber,
-  ResultTDescriber,
-  PropTypeEnum,
-  SecuritySchemesDescriber,
-  ResultDescriber,
-  PropFormatEnum,
-} from "../base/context/apiDoc/TypeDescriber";
 import BaseController, {
   IRequest,
   IResponse,
@@ -23,6 +16,12 @@ import BaseController, {
   ApplicationStatus,
   HttpStatusEnum,
 } from "../base/Base.controller";
+import {
+  SecuritySchemesDescriber,
+  PropFormatEnum,
+  TypeDescriber,
+  PropTypeEnum,
+} from "../base/apiDoc/types";
 
 export class AuthController extends BaseController {
   constructor(serviceContainer: IServiceContainer) {
@@ -67,98 +66,116 @@ export class AuthController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.setRouter(router());
-    this.addRoute({
-      method: HttpMethodEnum.DELETE,
-      path: "/v1/auth/logout",
-      handlers: [this.logout],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-      description: "Logout user",
-      apiDoc: {
-        contentType: HttpContentTypeEnum.APPLICATION_JSON,
-        requireAuth: true,
-        schema: new ResultTDescriber<{ closed: boolean }>({
-          name: "ClosedSession",
-          type: PropTypeEnum.OBJECT,
-          props: {
-            data: new TypeDescriber<{ closed: boolean }>({
-              name: "Object",
-              type: PropTypeEnum.OBJECT,
-              props: {
-                closed: {
-                  type: PropTypeEnum.BOOLEAN,
+    this.setRouter(router())
+      .addRoute({
+        method: HttpMethodEnum.DELETE,
+        path: "/v1/auth/logout",
+        handlers: [this.logout],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+            model: {
+              contentType: HttpContentTypeEnum.APPLICATION_JSON,
+              scheme: new ResultTDescriber<{ closed: boolean }>({
+                name: "ClosedSession",
+                type: PropTypeEnum.OBJECT,
+                props: {
+                  data: new TypeDescriber<{ closed: boolean }>({
+                    name: "Object",
+                    type: PropTypeEnum.OBJECT,
+                    props: {
+                      closed: {
+                        type: PropTypeEnum.BOOLEAN,
+                      },
+                    },
+                  }),
+                  ...ResultDescriber.default(),
                 },
-              },
-            }),
-            ...ResultDescriber.default(),
+              }),
+            },
           },
-        }),
-        securitySchemes: new SecuritySchemesDescriber(
-          SecuritySchemesDescriber.HTTP,
-          SecuritySchemesDescriber.defaultHttpBearer(),
-        ),
-      },
-    });
-    this.addRoute({
-      method: HttpMethodEnum.POST,
-      path: "/v1/auth/login",
-      handlers: [this.login],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+            model: {
+              contentType: HttpContentTypeEnum.APPLICATION_JSON,
+              scheme: new ResultDescriber({
+                type: PropTypeEnum.OBJECT,
+                props: ResultDescriber.defaultError(),
+              }),
+            },
+          },
+        ],
+        description: "Logout user",
+        apiDoc: {
+          requireAuth: true,
+          securitySchemes: new SecuritySchemesDescriber(
+            SecuritySchemesDescriber.HTTP,
+            SecuritySchemesDescriber.defaultHttpBearer(),
+          ),
         },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-      description: "Login user",
-      apiDoc: {
-        contentType: HttpContentTypeEnum.APPLICATION_JSON,
-        requireAuth: false,
-        schema: new ResultTDescriber<TokenDtoType>({
-          name: TokenDto.name,
-          type: PropTypeEnum.OBJECT,
-          props: {
-            data: new TypeDescriber<TokenDtoType>({
-              name: TokenDto.name,
+      })
+      .addRoute({
+        method: HttpMethodEnum.POST,
+        path: "/v1/auth/login",
+        handlers: [this.login],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+            model: {
+              contentType: HttpContentTypeEnum.APPLICATION_JSON,
+              scheme: new ResultTDescriber<TokenDtoType>({
+                name: TokenDto.name,
+                type: PropTypeEnum.OBJECT,
+                props: {
+                  data: new TypeDescriber<TokenDtoType>({
+                    name: TokenDto.name,
+                    type: PropTypeEnum.OBJECT,
+                    props: TypeDescriber.describeProps<TokenDtoType>({
+                      token: PropTypeEnum.STRING,
+                      expiresIn: PropTypeEnum.NUMBER,
+                    }),
+                  }),
+                  ...ResultDescriber.default(),
+                },
+              }),
+            },
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+            model: {
+              contentType: HttpContentTypeEnum.APPLICATION_JSON,
+              scheme: new ResultDescriber({
+                type: PropTypeEnum.OBJECT,
+                props: ResultDescriber.defaultError(),
+              }),
+            },
+          },
+        ],
+        description: "Login user",
+        apiDoc: {
+          requireAuth: false,
+          requestBody: {
+            description: "Credentials for login",
+            required: true,
+            contentType: HttpContentTypeEnum.APPLICATION_JSON,
+            scheme: new TypeDescriber<ICredentials>({
+              name: "Credentials",
               type: PropTypeEnum.OBJECT,
-              props: TypeDescriber.describeProps<TokenDtoType>({
-                token: PropTypeEnum.STRING,
-                expiresIn: PropTypeEnum.NUMBER,
+              props: TypeDescriber.describeProps<ICredentials>({
+                email: PropTypeEnum.STRING,
+                passwordB64: {
+                  type: PropTypeEnum.STRING,
+                  format: PropFormatEnum.BASE64,
+                },
               }),
             }),
-            ...ResultDescriber.default(),
           },
-        }),
-        requestBody: {
-          description: "Credentials for login",
-          required: true,
-          contentType: HttpContentTypeEnum.APPLICATION_JSON,
-          schema: new TypeDescriber<ICredentials>({
-            name: "Credentials",
-            type: PropTypeEnum.OBJECT,
-            props: TypeDescriber.describeProps<ICredentials>({
-              email: PropTypeEnum.STRING,
-              passwordB64: {
-                type: PropTypeEnum.STRING,
-                format: PropFormatEnum.BASE64,
-              },
-            }),
-          }),
         },
-      },
-    });
+      });
   }
 }
 
