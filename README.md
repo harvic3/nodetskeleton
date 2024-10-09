@@ -1387,6 +1387,10 @@ The file is created in the root of the project with the name `openapi.json` and 
 }
 ```
 
+This tool is now available as an **NPM package**.
+
+<a href="https://www.npmjs.com/package/openapi-tsk" target="_blank" >See in NPM</a>
+
 **[⬆ go to the future](#table-of-contents)**
 
 
@@ -1493,22 +1497,22 @@ export class TextFeelingController extends BaseController {
     this.router.get("/v1/feelings", this.getFeelingText);
 
     // New way to register routes
-    this.setRouter(router());
-    this.addRoute({
-      method: HttpMethodEnum.GET,
-      path: "/v1/feelings",
-      handlers: [this.getFeelingText],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-    });
+    this.setRouter(router())
+      .addRoute({
+        method: HttpMethodEnum.GET,
+        path: "/v1/feelings",
+        handlers: [this.getFeelingText],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          },
+        ],
+      });
   }
 }
 
@@ -1609,7 +1613,7 @@ The strategy is to manage the routes **within** the same **controller**, this al
 /*...*/
 initializeRoutes(router: IRouter): void {
   this.router = router;
-  this.router.post("/v1/cars", authorization(), this.create);
+  this.router.post("/v1/cars", this.create);
   this.router.get("/v1/cars/:idMask", authorization(), this.get);
   this.router.post("/v1/cars/:idMask", authorization(), this.buy);
   this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
@@ -1694,7 +1698,7 @@ Example of the handling of the **controllers** in the **index** file of our appl
 /*...*/
 // Region controllers
 import shoppingCarController from "./adapters/controllers/shoppingCart/ShoppingCar.controller";
-import categoryController from "./adapters/controllers/category/CategoryController";
+import categoryController from "./adapters/controllers/category/Category.controller";
 import productController from "./adapters/controllers/product/Product.controller";
 /*...*/
 // End controllers
@@ -1718,45 +1722,45 @@ The strategy is to manage the routes **within** the **controller**, this allows 
 /*...*/
 initializeRoutes(router: IRouter): void {
   this.router = router();
-  this.router.post("/v1/cars", authorization(), this.create);
-  this.router.get("/v1/cars/:idMask", authorization(), this.get);
-  this.router.post("/v1/cars/:idMask", authorization(), this.buy);
-  this.router.post("/v1/cars/:idMask/items", authorization(), this.add);
-  this.router.put("/v1/cars/:idMask/items", authorization(), this.remove);
-  this.router.delete("/v1/cars/:idMask", authorization(), this.empty);
+  this.router.post("/v1/cars", this.create);
+  this.router.get("/v1/cars/:idMask", this.get);
+  this.router.post("/v1/cars/:idMask", this.buy);
+  this.router.post("/v1/cars/:idMask/items", this.add);
+  this.router.put("/v1/cars/:idMask/items", this.remove);
+  this.router.delete("/v1/cars/:idMask", this.empty);
   /*...*/
   // Or a new way like following:
-  this.setRouter(router());
-  this.addRoute({
-    method: HttpMethodEnum.POST,
-    path: "/v1/cars",
-    handlers: [authorization(), this.create],
-    produces: [
-      {
-        applicationStatus: ApplicationStatus.CREATED,
-        httpStatus: HttpStatusEnum.CREATED,
-      },
-      {
-        applicationStatus: ApplicationStatus.UNAUTHORIZED,
-        httpStatus: HttpStatusEnum.UNAUTHORIZED,
-      },
-    ],
-  });
-  this.addRoute({
-    method: HttpMethodEnum.GET,
-    path: "/v1/cars/:idMask",
-    handlers: [authorization(), this.get],
-    produces: [
-      {
-        applicationStatus: ApplicationStatus.SUCCESS,
-        httpStatus: HttpStatusEnum.SUCCESS,
-      },
-      {
-        applicationStatus: ApplicationStatus.UNAUTHORIZED,
-        httpStatus: HttpStatusEnum.UNAUTHORIZED,
-      },
-    ],
-  });
+  this.setRouter(router())
+    .addRoute({
+      method: HttpMethodEnum.POST,
+      path: "/v1/cars",
+      handlers: [this.create],
+      produces: [
+        {
+          applicationStatus: ApplicationStatus.CREATED,
+          httpStatus: HttpStatusEnum.CREATED,
+        },
+        {
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    })
+    .addRoute({
+      method: HttpMethodEnum.GET,
+      path: "/v1/cars/:idMask",
+      handlers: [this.get],
+      produces: [
+        {
+          applicationStatus: ApplicationStatus.SUCCESS,
+          httpStatus: HttpStatusEnum.SUCCESS,
+        },
+        {
+          applicationStatus: ApplicationStatus.UNAUTHORIZED,
+          httpStatus: HttpStatusEnum.UNAUTHORIZED,
+        },
+      ],
+    });
   /*...*/
 }
 /*...*/
@@ -1933,37 +1937,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.setRouter(router());
-    this.addRoute({
-      method: HttpMethodEnum.POST,
-      path: "/v1/users/sign-up",
-      handlers: [authorization(), this.singUp],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.CREATED,
-          httpStatus: HttpStatusEnum.CREATED,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-    });
-    this.addRoute({
-      method: HttpMethodEnum.GET,
-      path: "/v1/users/:userId",
-      handlers: [authorization(), this.get],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-    });
+    this.setRouter(router())
+      .addRoute({
+        method: HttpMethodEnum.POST,
+        path: "/v1/users/sign-up",
+        handlers: [authorization(), this.singUp],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.CREATED,
+            httpStatus: HttpStatusEnum.CREATED,
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          },
+        ],
+      })
+      .addRoute({
+        method: HttpMethodEnum.GET,
+        path: "/v1/users/:userId",
+        handlers: [authorization(), this.get],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          },
+        ],
+      });
   }
 }
 ```
@@ -2012,37 +2016,37 @@ export class UsersController extends BaseController {
   };
 
   initializeRoutes(router: IRouter): void {
-    this.setRouter(router());
-    this.addRoute({
-      method: HttpMethodEnum.POST,
-      path: "/v1/users/sign-up",
-      handlers: [authorization(), this.singUp],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.CREATED,
-          httpStatus: HttpStatusEnum.CREATED,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-    });
-    this.addRoute({
-      method: HttpMethodEnum.GET,
-      path: "/v1/users/:userId",
-      handlers: [authorization(), this.get],
-      produces: [
-        {
-          applicationStatus: ApplicationStatus.SUCCESS,
-          httpStatus: HttpStatusEnum.SUCCESS,
-        },
-        {
-          applicationStatus: ApplicationStatus.UNAUTHORIZED,
-          httpStatus: HttpStatusEnum.UNAUTHORIZED,
-        },
-      ],
-    });
+    this.setRouter(router())
+      .addRoute({
+        method: HttpMethodEnum.POST,
+        path: "/v1/users/sign-up",
+        handlers: [this.singUp],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.CREATED,
+            httpStatus: HttpStatusEnum.CREATED,
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          },
+        ],
+      })
+      .addRoute({
+        method: HttpMethodEnum.GET,
+        path: "/v1/users/:userId",
+        handlers: [this.get],
+        produces: [
+          {
+            applicationStatus: ApplicationStatus.SUCCESS,
+            httpStatus: HttpStatusEnum.SUCCESS,
+          },
+          {
+            applicationStatus: ApplicationStatus.UNAUTHORIZED,
+            httpStatus: HttpStatusEnum.UNAUTHORIZED,
+          },
+        ],
+      });
   }
 }
 ```
@@ -2760,8 +2764,9 @@ The Contributor Covenant Code of Conduct for this project is based on Covenant C
 
 
 ## Future tasks
-- Update documentation about many topics and features of the project.
-- Implement other necessary OpenApi data schema models for service documentation. 
+- [x] Update documentation about many topics and features of the project.
+- [x] Implement other necessary OpenApi data schemes models for service documentation. 
+- [x] Implement security schemes for OpenApi documentation.
 
 
 ## Acknowledgments
