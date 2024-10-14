@@ -14,7 +14,7 @@ import {
   ResultExecutionPromise,
 } from "../../../../shared/useCase/BaseUseCase";
 
-export class GetUserUseCase extends BaseUseCase<{ email: string }> {
+export class GetUserUseCase extends BaseUseCase<{ maskedUid: string }> {
   constructor(
     readonly logProvider: ILogProvider,
     private readonly userRepository: IUserRepository,
@@ -25,19 +25,16 @@ export class GetUserUseCase extends BaseUseCase<{ email: string }> {
   async execute(
     locale: LocaleTypeEnum,
     trace: UseCaseTrace,
-    args: { email: string },
+    args: { maskedUid: string },
   ): Promise<IResultT<IUserDto>> {
     this.setLocale(locale);
     const result = new ResultT<IUserDto>();
 
-    const userDto = UserDto.fromEmail(args?.email);
+    const userDto = UserDto.fromMaskedUid(args?.maskedUid);
     if (!userDto.isValidToGet(result)) return result;
     this.initializeUseCaseTrace(trace, args, ["password"]);
 
-    const email = new Email(userDto.email as string);
-    this.validateEmail(email);
-
-    const { value: userFound } = await result.execute(this.getUser(email.value as string));
+    const { value: userFound } = await result.execute(this.getUser(userDto.maskedUid as string));
     if (!userFound) return result;
 
     result.setData(UserDto.fromDomain(userFound).toDto(), ApplicationStatus.SUCCESS);
@@ -55,8 +52,8 @@ export class GetUserUseCase extends BaseUseCase<{ email: string }> {
     );
   }
 
-  private async getUser(email: string): ResultExecutionPromise<User> {
-    const userFound = await this.userRepository.getByEmail(email);
+  private async getUser(maskedUid: string): ResultExecutionPromise<User> {
+    const userFound = await this.userRepository.getByMaskedUid(maskedUid);
     if (!userFound) {
       return {
         error: this.appMessages.get(this.appMessages.keys.USER_DOES_NOT_EXIST),

@@ -11,6 +11,7 @@ export {
   SecuritySchemesDescriber,
   SchemeDescription,
   IApiDocGenerator,
+  RefTypeDescriber,
   ApiDocGenerator,
   PropFormatEnum,
   ClassProperty,

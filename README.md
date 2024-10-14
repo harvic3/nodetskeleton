@@ -826,16 +826,15 @@ Then once you have added your route, the same method is used to configure proper
       description: "User data",
       contentType: HttpContentTypeEnum.APPLICATION_JSON,
       required: true,
-      scheme: new TypeDescriber<IUserDto>({
-        name: UserDto.name,
+      scheme: new TypeDescriber<Omit<IUserDto, "passwordB64">>({
+        name: "User",
         type: PropTypeEnum.OBJECT,
-        props: TypeDescriber.describeProps<IUserDto>({
+        props: TypeDescriber.describeProps<Omit<IUserDto, "passwordB64">>({
           maskedUid: PropTypeEnum.STRING,
           firstName: PropTypeEnum.STRING,
           lastName: PropTypeEnum.STRING,
           gender: PropTypeEnum.STRING,
           email: PropTypeEnum.STRING,
-          passwordB64: PropTypeEnum.STRING,
         }),
       }),
     },
@@ -995,7 +994,7 @@ When you have already registered (described) a model, it is not necessary to des
 ```ts
   this.addRoute({
     method: HttpMethodEnum.GET,
-    path: "/v1/users/:userId",
+    path: "/v1/users/:maskedUid",
     handlers: [this.get],
     produces: [
       {
@@ -1015,9 +1014,12 @@ When you have already registered (described) a model, it is not necessary to des
       requireAuth: true,
       parameters: [
         TypeDescriber.describeUrlParam({
-          name: "email",
+          name: "maskedUid",
           in: ParameterIn.PATH,
-          description: "User email",
+          description: "User maskedUid",
+          schema: {
+            type: PropTypeEnum.STRING,
+          },
         }),
       ],
     },
@@ -1185,7 +1187,7 @@ The file is created in the root of the project with the name `openapi.json` and 
         }
       }
     },
-    "/v1/users/{email}": {
+    "/v1/users/{maskedUid}": {
       "get": {
         "description": "Get user",
         "responses": {
@@ -1194,7 +1196,7 @@ The file is created in the root of the project with the name `openapi.json` and 
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTUserDto"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
@@ -1222,9 +1224,12 @@ The file is created in the root of the project with the name `openapi.json` and 
         },
         "parameters": [
           {
-            "name": "email",
+            "name": "maskedUid",
             "in": "path",
-            "description": "User email",
+            "description": "User maskedUid",
+            "schema": {
+              "type": "string"
+            },
             "required": true,
             "allowEmptyValue": false,
             "deprecated": false

@@ -34,9 +34,9 @@ export class UserDto extends BaseDto {
     return userDto;
   }
 
-  static fromEmail(email: string): UserDto {
+  static fromMaskedUid(maskedUid: string): UserDto {
     const userDto = new UserDto();
-    userDto.email = email.toLowerCase();
+    userDto.maskedUid = maskedUid;
 
     return userDto;
   }
@@ -64,7 +64,7 @@ export class UserDto extends BaseDto {
 
   isValidToGet(result: IResult): boolean {
     const validations: Record<string, unknown> = {};
-    validations[this.appWords.get(this.appWords.keys.EMAIL)] = this.email;
+    validations[this.appWords.get(this.appWords.keys.UID)] = this.maskedUid;
 
     return this.validator.isValidEntry(result, validations);
   }

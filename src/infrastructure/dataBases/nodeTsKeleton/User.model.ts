@@ -21,6 +21,19 @@ export class UserModel implements IUserModel {
     });
   }
 
+  async getByMaskedUid(maskedUid: string | Nulldefined): Promise<User | null> {
+    return new Promise((resolve) => {
+      const founded = dbData.users.find((element) =>
+        BooleanUtil.areEqual(element.maskedUid, maskedUid),
+      );
+      if (!founded) {
+        return resolve(null);
+      }
+      const user = mapper.mapObject(founded, new User());
+      return resolve(user);
+    });
+  }
+
   async getByAuthentication(email: string, encryptedPassword: string | null): Promise<User | null> {
     return new Promise((resolve) => {
       const founded = dbData.users.find(
