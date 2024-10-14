@@ -116,7 +116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDto"
+                  "$ref": "#/components/schemas/ResultTUserDto"
                 }
               }
             }
@@ -155,7 +155,7 @@
         }
       }
     },
-    "/v1/users/{email}": {
+    "/v1/users/{maskedUid}": {
       "get": {
         "description": "Get user",
         "responses": {
@@ -164,7 +164,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResultTUserDto"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
@@ -192,9 +192,12 @@
         },
         "parameters": [
           {
-            "name": "email",
+            "name": "maskedUid",
             "in": "path",
-            "description": "User email",
+            "description": "User maskedUid",
+            "schema": {
+              "type": "string"
+            },
             "required": true,
             "allowEmptyValue": false,
             "deprecated": false
@@ -299,7 +302,7 @@
           }
         }
       },
-      "UserDto": {
+      "User": {
         "type": "object",
         "properties": {
           "maskedUid": {
@@ -340,7 +343,36 @@
             "type": "boolean"
           },
           "data": {
-            "$ref": "#/components/schemas/UserDto"
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "maskedUid": {
+            "type": "string",
+            "nullable": false
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": false
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": false
+          },
+          "gender": {
+            "type": "string",
+            "nullable": false
+          },
+          "email": {
+            "type": "string",
+            "nullable": false
+          },
+          "passwordB64": {
+            "type": "string",
+            "nullable": false
           }
         }
       }

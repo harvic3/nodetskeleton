@@ -1,6 +1,6 @@
+import { ParameterIn, PropTypeEnum, TypeDescriber, RefTypeDescriber } from "../base/apiDoc/types";
 import { IUserDto, UserDto } from "../../../application/modules/users/dtos/User.dto";
 import { ResultDescriber, ResultTDescriber } from "../base/apiDoc/ResultDescriber";
-import { ParameterIn, PropTypeEnum, TypeDescriber } from "../base/apiDoc/types";
 import container, { GetUserUseCase, RegisterUserUseCase } from "./container";
 import { IServiceContainer } from "../../shared/kernel";
 import BaseController, {
@@ -47,7 +47,7 @@ export class UsersController extends BaseController {
       next,
       this.servicesContainer
         .get<GetUserUseCase>(this.CONTEXT, GetUserUseCase.name)
-        .execute(req.locale, res.trace, { email: req.params.email }),
+        .execute(req.locale, res.trace, { maskedUid: req.params.maskedUid }),
     );
   };
 
@@ -74,17 +74,23 @@ export class UsersController extends BaseController {
             httpStatus: HttpStatusEnum.CREATED,
             model: {
               contentType: HttpContentTypeEnum.APPLICATION_JSON,
-              scheme: new TypeDescriber<IUserDto>({
+              scheme: new ResultTDescriber<IUserDto>({
                 name: UserDto.name,
                 type: PropTypeEnum.OBJECT,
-                props: TypeDescriber.describeProps<IUserDto>({
-                  maskedUid: PropTypeEnum.STRING,
-                  firstName: PropTypeEnum.STRING,
-                  lastName: PropTypeEnum.STRING,
-                  gender: PropTypeEnum.STRING,
-                  email: PropTypeEnum.STRING,
-                  passwordB64: PropTypeEnum.STRING,
-                }),
+                props: {
+                  data: new TypeDescriber<Omit<IUserDto, "passwordB64">>({
+                    name: "User",
+                    type: PropTypeEnum.OBJECT,
+                    props: TypeDescriber.describeProps<Omit<IUserDto, "passwordB64">>({
+                      maskedUid: PropTypeEnum.STRING,
+                      firstName: PropTypeEnum.STRING,
+                      lastName: PropTypeEnum.STRING,
+                      email: PropTypeEnum.STRING,
+                      gender: PropTypeEnum.STRING,
+                    }),
+                  }),
+                  ...ResultDescriber.default(),
+                },
               }),
             },
           },
@@ -124,7 +130,7 @@ export class UsersController extends BaseController {
       })
       .addRoute({
         method: HttpMethodEnum.GET,
-        path: "/v1/users/:email",
+        path: "/v1/users/:maskedUid",
         handlers: [this.get],
         produces: [
           {
@@ -143,23 +149,9 @@ export class UsersController extends BaseController {
             httpStatus: HttpStatusEnum.SUCCESS,
             model: {
               contentType: HttpContentTypeEnum.APPLICATION_JSON,
-              scheme: new ResultTDescriber<IUserDto>({
+              scheme: new RefTypeDescriber({
                 name: UserDto.name,
                 type: PropTypeEnum.OBJECT,
-                props: {
-                  data: new TypeDescriber<Omit<IUserDto, "passwordB64">>({
-                    name: UserDto.name,
-                    type: PropTypeEnum.OBJECT,
-                    props: TypeDescriber.describeProps<Omit<IUserDto, "passwordB64">>({
-                      maskedUid: PropTypeEnum.STRING,
-                      firstName: PropTypeEnum.STRING,
-                      lastName: PropTypeEnum.STRING,
-                      email: PropTypeEnum.STRING,
-                      gender: PropTypeEnum.STRING,
-                    }),
-                  }),
-                  ...ResultDescriber.default(),
-                },
               }),
             },
           },
@@ -180,9 +172,12 @@ export class UsersController extends BaseController {
           requireAuth: true,
           parameters: [
             TypeDescriber.describeUrlParam({
-              name: "email",
+              name: "maskedUid",
               in: ParameterIn.PATH,
-              description: "User email",
+              description: "User maskedUid",
+              schema: {
+                type: PropTypeEnum.STRING,
+              },
             }),
           ],
         },

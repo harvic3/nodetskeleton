@@ -8,4 +8,5 @@ export enum WordKeysDictionaryEnum {
   SESSION = "SESSION",
   SESSION_ID = "SESSION_ID",
   SESSION_EXP = "SESSION_EXP",
+  UID = "UID",
 }

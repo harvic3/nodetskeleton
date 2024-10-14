@@ -8,4 +8,5 @@ export default {
   SESSION: "Sesión",
   SESSION_ID: "ID de sesión",
   SESSION_EXP: "Sesión expirada",
+  UID: "ID de usuario",
 };
