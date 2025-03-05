@@ -18,21 +18,25 @@ export class HttpServer {
         this.server.listen(AppSettings.ServerPort);
       })
       .catch((error) => {
-        console.log("Server starting error:", error);
+        console.error(`[ERROR]: Server starting error: ${JSON.stringify(error)}`);
       });
 
     this.server.on("listening", () => {
       if (AppSettings.isDev())
         this.#appWrapper.apiDocGenerator.saveApiDoc(__dirname, "../../../../openapi.json").finish();
 
-      console.log(
-        `Server ${AppSettings.ServiceName} running on ${this.#appWrapper.getServerUrl()}`,
-      );
-
       const seconds = ((new Date().valueOf() - startAt.valueOf()) / 1000).toFixed(3);
-      console.log(
+      console.info(
         `Started Application in ${process.uptime().toFixed(3)} seconds (${AppSettings.ServiceName} running for ${seconds})`,
       );
+      console.info(
+        `Server ${AppSettings.ServiceName} running on ${this.#appWrapper.getServerUrl()}`,
+      );
     });
+  }
+
+  stop(): void {
+    this.server.close();
+    this.#appWrapper.closeServices();
   }
 }

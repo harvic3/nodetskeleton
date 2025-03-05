@@ -5,7 +5,8 @@ import { BaseRepository } from "../base/Base.repository";
 export class UseCaseTraceRepository extends BaseRepository implements IUseCaseTraceRepository {
   async register(trace: UseCaseTrace): Promise<void> {
     // TODO: implement this repository method
-    console.log(JSON.stringify(trace.toJSON()));
+    console.log(`[TRACE]: ${JSON.stringify(trace.toJSON())}`);
+
     return Promise.resolve();
   }
 }

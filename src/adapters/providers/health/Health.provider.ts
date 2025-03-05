@@ -18,12 +18,10 @@ export class HealthProvider implements IStatusProvider {
         },
       );
       return Promise.resolve(
-        `<div><h2>TSkeleton ${context} service context online at ${date} with remote request status ${result.statusCode}</h2></div>`,
+        `TSkeleton ${context} service context online at ${date} with remote request status ${result.statusCode}`,
       );
     }
 
-    return Promise.resolve(
-      `<div><h2>TSkeleton ${context} service context online at ${date}</h2></div>`,
-    );
+    return Promise.resolve(`TSkeleton ${context} service context online at ${date}`);
   }
 }

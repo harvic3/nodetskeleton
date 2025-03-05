@@ -53,13 +53,11 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     const { value: userRegistered } = await result.execute(this.registerUser(user));
     if (!userRegistered) return result;
 
-    result.setMessage(
+    trace.setSuccessful();
+    return result.setMessage(
       this.appMessages.get(this.appMessages.keys.USER_WAS_CREATED),
       this.applicationStatus.SUCCESS,
     );
-    trace.setSuccessful();
-
-    return result;
   }
 
   private validateEmail(email: Email | undefined): void {

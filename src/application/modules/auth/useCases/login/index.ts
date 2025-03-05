@@ -48,10 +48,8 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
 
     const tokenDto: TokenDto = await this.createSession(authenticatedResult?.value as User);
 
-    result.setData(tokenDto, this.applicationStatus.SUCCESS);
     trace.setSuccessful();
-
-    return result;
+    return result.setData(tokenDto, this.applicationStatus.SUCCESS);
   }
 
   private async userLogin(

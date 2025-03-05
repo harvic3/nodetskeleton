@@ -92,8 +92,8 @@ export default class AppWrapper {
       const controllerPath = resolvePath(filePath);
       const { default: controller } = await import(controllerPath);
       controller.setApiDocGenerator(this.apiDocGenerator);
-      controller.initializeRoutes(TypeParser.cast<IRouter>(Router));
-      this.app.use(AppSettings.ServerRoot, TypeParser.cast<Application>(controller.router));
+      controller.initializeRoutes(Router);
+      this.app.use(AppSettings.ServerRoot, controller.router);
       console.log(`${controller?.constructor?.name} was loaded`);
     }
     this.loadLastHandlers();
@@ -107,16 +107,23 @@ export default class AppWrapper {
     };
 
     this.app
-      .use(cors(options))
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: true }))
+      .use(cors(options))
       .use(clientInfoMiddleware.handle)
       .use(localizationMiddleware.handle)
       .use(routeWhiteListMiddleware.handle)
       .use(authorizationMiddleware.handle)
       .use(sessionMiddleware.handle)
       .use(useCaseTraceMiddleware.handle);
+  }
+
+  private loadLastHandlers(): void {
+    this.app
+      .use(`${config.Server.Root}/docs`, serve, setup(this.apiDocGenerator.apiDoc))
+      .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
+      .use(errorHandlerMiddleware.handle);
   }
 
   private setup(): void {
@@ -134,24 +141,19 @@ export default class AppWrapper {
     return `http://${AppSettings.ServerHost}:${AppSettings.ServerPort}${AppSettings.ServerRoot}`;
   }
 
-  initializeServices(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.loadControllersDynamically()
-        .then(() => {
-          // Initialize database service and other services here. For do it you should add a try catch block.
-          // reject if any error with database or other service.
-          return resolve();
-        })
-        .catch((error) => {
-          return reject(new Error(error));
-        });
-    });
+  async initializeServices(): Promise<void> {
+    return this.loadControllersDynamically()
+      .then(() => {
+        // Initialize database service and other services here. For do it you should add a try catch block.
+        // reject if any error with database or other service.
+        return Promise.resolve();
+      })
+      .catch((error) => {
+        return Promise.reject(new Error(error));
+      });
   }
 
-  private loadLastHandlers(): void {
-    this.app
-      .use(`${config.Server.Root}/docs`, serve, setup(this.apiDocGenerator.apiDoc))
-      .use(TypeParser.cast<RequestHandler>(statusController.resourceNotFound))
-      .use(errorHandlerMiddleware.handle);
+  closeServices(): void {
+    // Stop all services here
   }
 }

@@ -1,10 +1,10 @@
 import { LocaleTypeEnum } from "../locals/LocaleType.enum";
 
 export default class AppSettings {
-  static readonly DEV: string = "development";
+  static readonly DEV: string = "dev";
   static readonly TEST: string = "testing";
   static readonly STAGING: string = "staging";
-  static readonly PROD: string = "production";
+  static readonly PROD: string = "prod";
   static Environment: string;
   static ServiceContext: string;
   static ServiceName: string;
