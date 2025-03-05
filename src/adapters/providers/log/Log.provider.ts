@@ -11,7 +11,7 @@ export class LogProvider implements ILogProvider {
     return this.logger.info(event);
   }
 
-  async logError(error: ErrorLog): Promise<void> {
+  async logError(error: ErrorLog | ApplicationError): Promise<void> {
     return this.logger.error(error);
   }
 

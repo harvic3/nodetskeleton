@@ -4,7 +4,6 @@ import { ApplicationStatus } from "../../../application/shared/status/applicatio
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import kernel, { LogProvider } from "../../../adapters/providers/container";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
-import { TypeParser } from "../../../domain/shared/utils/TypeParser";
 import resources from "../../../application/shared/locals/messages";
 import { ErrorLog } from "../../../application/shared/log/ErrorLog";
 import { ErrorHandler } from "../types";
@@ -21,7 +20,7 @@ export class ErrorHandlerMiddleware {
     next: NextFunction,
   ) => {
     const result = new Result();
-    if (err?.name.includes(ApplicationError.name)) {
+    if (err?.name?.includes(ApplicationError.name)) {
       this.logProvider.logWarning(err);
       result.setError(err.message, err.errorCode);
     } else {
@@ -40,25 +39,35 @@ export class ErrorHandlerMiddleware {
         config.Params.DefaultApplicationError.Code,
       );
     }
-    if (res.headersSent) {
-      return next(result);
-    }
+    if (res.headersSent) return next(result);
 
     return res
-      .status(HttpStatusResolver.getCode(result.statusCode.toString() as ApplicationStatus))
+      .status(HttpStatusResolver.getCode(config.Params.DefaultApplicationError.Code))
       .send(result);
   };
 
   manageNodeException(
     exceptionType: string,
-    exception: NodeJS.UncaughtExceptionListener | NodeJS.UnhandledRejectionListener,
+    error: Error,
+    origin: NodeJS.UncaughtExceptionOrigin,
   ): void {
-    // Send to your logger system or repository this error
-    const { message, stack, name } =
-      typeof exception !== "object"
-        ? { message: exception?.toString(), stack: undefined, name: undefined }
-        : TypeParser.cast<Error>(exception ?? {});
-    console.error(`Node ${exceptionType}:`, { message, stack, name });
+    this.logProvider.logError({
+      context: ErrorHandlerMiddleware.name,
+      name: exceptionType,
+      message: `Node ${exceptionType}`,
+      stack: undefined,
+      metadata: { error: new Error(exceptionType, { cause: error }), origin },
+    });
+  }
+
+  manageNodeRejection(exceptionType: string, reason: unknown, promise: Promise<unknown>): void {
+    this.logProvider.logError({
+      context: ErrorHandlerMiddleware.name,
+      name: exceptionType,
+      message: `Node ${exceptionType}`,
+      stack: undefined,
+      metadata: { error: new Error(exceptionType, { cause: reason }), promise },
+    });
   }
 }
 

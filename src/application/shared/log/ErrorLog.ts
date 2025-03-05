@@ -9,7 +9,7 @@ export class ErrorLog extends EventLog {
     name: string;
     message: string;
     stack?: string;
-    metadata?: Record<string, unknown>;
+    metadata?: Record<string, any>;
   }) {
     super({
       context: props.context,

@@ -4,7 +4,7 @@ import { ApplicationError } from "../base/Base.provider";
 
 export interface ILogger {
   info(event: EventLog): void;
-  error(error: ErrorLog): void;
+  error(error: ErrorLog | ApplicationError): void;
   warning(warning: ApplicationError): void;
   message(message: string): void;
 }

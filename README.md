@@ -2143,7 +2143,7 @@ Depending on your need you have two options, **local** and with **docker compose
 Go to project root directory, create a **.env file** and inside it copy and paste this content:
 
 ```txt
-NODE_ENV=development
+NODE_ENV=dev
 SERVICE_CONTEXT=
 SERVER_ROOT=/api
 SERVER_HOST=localhost
@@ -2595,7 +2595,7 @@ For example, the application have the SECURITY context and you can get it as fol
 
 ```ts
 // In your ENV file set context as users, like this:
-NODE_ENV=development
+NODE_ENV=dev
 SERVICE_CONTEXT=users
 SERVER_ROOT=/api
 ```

@@ -24,11 +24,11 @@ export class StatusController extends BaseController {
     res: IResponse,
     next: INextFunction,
   ): Promise<void> => {
-    return this.handleResultData(
+    return this.handleResult(
       res,
       next,
       this.servicesContainer.get<PongUseCase>(this.CONTEXT, PongUseCase.name).execute(req.locale),
-      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.APPLICATION_JSON },
     );
   };
 
@@ -43,7 +43,7 @@ export class StatusController extends BaseController {
       this.servicesContainer
         .get<NotFoundUseCase>(this.CONTEXT, NotFoundUseCase.name)
         .execute(req.locale),
-      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.TEXT_PLAIN },
+      { [HttpHeaderEnum.CONTENT_TYPE]: HttpContentTypeEnum.APPLICATION_JSON },
     );
   };
 
@@ -58,7 +58,7 @@ export class StatusController extends BaseController {
           applicationStatus: ApplicationStatus.SUCCESS,
           httpStatus: HttpStatusEnum.SUCCESS,
           model: {
-            contentType: HttpContentTypeEnum.TEXT_PLAIN,
+            contentType: HttpContentTypeEnum.APPLICATION_JSON,
             scheme: new TypeDescriber<string>({
               name: PropTypeEnum.STRING,
               type: PropTypeEnum.PRIMITIVE,

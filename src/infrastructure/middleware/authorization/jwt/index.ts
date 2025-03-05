@@ -11,8 +11,8 @@ import { ISession } from "../../../../domain/session/ISession";
 import { Middleware } from "../../types";
 
 class AuthorizationMiddleware {
-  private static TOKEN_PARTS = 2;
-  private static TOKEN_POSITION_VALUE = 1;
+  private static readonly TOKEN_PARTS = 2;
+  private static readonly TOKEN_POSITION_VALUE = 1;
 
   handle: Middleware = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     if (TypeParser.cast<IRequest>(req).isWhiteList) return next();

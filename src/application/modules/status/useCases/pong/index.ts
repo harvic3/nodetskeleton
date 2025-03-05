@@ -21,8 +21,7 @@ export class PongUseCase extends BaseUseCase<undefined> {
       AppSettings.ServiceContext,
       DateTimeUtils.getISONow(),
     );
-    result.setData(message, this.applicationStatus.SUCCESS);
 
-    return result;
+    return result.setData(message, this.applicationStatus.SUCCESS);
   }
 }

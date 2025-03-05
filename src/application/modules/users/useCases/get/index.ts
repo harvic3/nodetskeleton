@@ -37,10 +37,8 @@ export class GetUserUseCase extends BaseUseCase<{ maskedUid: string }> {
     const { value: userFound } = await result.execute(this.getUser(userDto.maskedUid as string));
     if (!userFound) return result;
 
-    result.setData(UserDto.fromDomain(userFound).toDto(), ApplicationStatus.SUCCESS);
     trace.setSuccessful();
-
-    return result;
+    return result.setData(UserDto.fromDomain(userFound).toDto(), ApplicationStatus.SUCCESS);
   }
 
   private validateEmail(email: Email | undefined): void {
