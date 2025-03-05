@@ -1,4 +1,3 @@
-import "express-async-errors";
 import AppWrapper from "./infrastructure/app/AppWrapper";
 import { HttpServer } from "./infrastructure/app/server/HttpServer";
 import errorHandlerMiddleware from "./infrastructure/middleware/error";
