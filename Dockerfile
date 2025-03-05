@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /usr/node/tsk
 
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Install
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /usr/node/tsk
 

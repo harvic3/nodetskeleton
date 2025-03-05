@@ -8,6 +8,8 @@ type Client = {
 };
 
 type Payload = {
+  path?: string;
+  httpMethod?: string;
   params?: Record<string, unknown>;
   query?: Record<string, unknown>;
   body?: unknown;
@@ -21,6 +23,8 @@ export class UseCaseTrace {
   success: boolean = false;
   payload: Payload | undefined;
   metadata: Record<string, unknown>;
+  url: string | undefined;
+  statusCode?: number;
 
   constructor(
     readonly session: ISession,
@@ -54,6 +58,12 @@ export class UseCaseTrace {
     if (this.payload) return this;
 
     this.payload = value;
+
+    return this;
+  }
+
+  setHttpStatus(value: number): UseCaseTrace {
+    this.statusCode = value;
 
     return this;
   }

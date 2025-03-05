@@ -4,7 +4,7 @@ import { Email } from "./Email";
 import { IUser } from "./IUser";
 
 export class User implements IUser {
-  [optional: string]: unknown | undefined;
+  [optional: string]: unknown;
   uid: string | undefined;
   maskedUid: string | undefined;
   firstName: string | undefined;
