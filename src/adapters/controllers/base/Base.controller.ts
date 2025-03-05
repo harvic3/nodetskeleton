@@ -171,7 +171,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace.setHttpStatus(res.statusCode));
     }
   }
 
@@ -186,7 +186,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace.setHttpStatus(res.statusCode));
     }
   }
 
@@ -201,7 +201,7 @@ export default abstract class BaseController {
     } catch (error) {
       return next(error);
     } finally {
-      this.manageUseCaseTrace(res.trace);
+      this.manageUseCaseTrace(res.trace.setHttpStatus(res.statusCode));
     }
   }
 

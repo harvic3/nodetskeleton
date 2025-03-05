@@ -19,6 +19,8 @@ class UseCaseTraceMiddleware {
       (req.headers[HttpHeaderEnum.TRANSACTION_ID] as string) || GuidUtil.getV4WithoutDashes(),
     )
       .setRequest({
+        path: req.url,
+        httpMethod: req.method,
         params: req.params,
         query: req.query,
         body: undefined,
