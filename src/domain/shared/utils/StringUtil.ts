@@ -32,4 +32,15 @@ export class StringUtil {
 
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
+
+  static getRandomString(params: { min: number; max: number }): string {
+    const characters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ";
+    const length = Math.floor(Math.random() * (params.max - params.min + 1)) + params.min;
+    let result = StringUtil.EMPTY;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return result;
+  }
 }
