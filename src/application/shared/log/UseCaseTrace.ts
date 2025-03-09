@@ -12,13 +12,13 @@ type Payload = {
   httpMethod?: string;
   params?: Record<string, unknown>;
   query?: Record<string, unknown>;
-  body?: unknown;
+  body?: any;
 };
 
 export class UseCaseTrace {
+  readonly startDate: string;
   context: string | undefined;
   client: Client | undefined;
-  startDate: string;
   endDate: string | undefined;
   success: boolean = false;
   payload: Payload | undefined;
@@ -71,7 +71,9 @@ export class UseCaseTrace {
   setArgs(args: unknown, propsToRemove: string[] | undefined): void {
     if (!args) return;
 
-    (this.payload as Payload).body = { ...args };
+    if (!this.payload) this.payload = { path: undefined, httpMethod: undefined };
+
+    Reflect.set(this.payload, "body", { ...args });
     ObjectPropertyUtil.remove((this.payload as Payload).body, propsToRemove as string[]);
   }
 

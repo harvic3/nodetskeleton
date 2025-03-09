@@ -1,14 +1,17 @@
 import { StringUtil } from "../../domain/shared/utils/StringUtil";
 import { Gender } from "../../domain/user/genre/Gender.enum";
-import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { IUserDto } from "../modules/users/dtos/User.dto";
-import { MockConstants } from "./MockConstants";
+import { MockBuilder } from "./builder/mockBuilder.mock";
+import { MockConstants } from "./MockConstants.mock";
 
-export class UserDtoMock implements IMockBuilder<IUserDto> {
-  private userDto: IUserDto;
-
+export class UserDtoMock extends MockBuilder<IUserDto> {
   constructor() {
-    this.userDto = {
+    super();
+    this.reset();
+  }
+
+  private initialize(): IUserDto {
+    return {
       firstName: undefined,
       lastName: undefined,
       email: undefined,
@@ -18,36 +21,43 @@ export class UserDtoMock implements IMockBuilder<IUserDto> {
   }
 
   reset(): IUserDto {
-    this.userDto = {
-      firstName: undefined,
-      lastName: undefined,
-      email: undefined,
-      passwordB64: undefined,
-      gender: undefined,
-    };
-    return this.userDto;
+    this.mock = this.initialize();
+
+    return this.mock;
   }
-  build(): IUserDto {
-    return this.userDto;
-  }
-  withFirstName(firstName = MockConstants.USER_FIRST_NAME): UserDtoMock {
-    this.userDto.firstName = firstName;
+
+  byDefault(): UserDtoMock {
+    this.create(this.initialize())
+      .setStrProp("firstName")
+      .setStrProp("lastName")
+      .setStrProp("email", MockConstants.USER_EMAIL)
+      .setStrProp("gender", Gender.FEMALE)
+      .setStrProp("passwordB64", StringUtil.encodeBase64(MockConstants.EXAMPLE_PASSWORD) as string);
+
     return this;
   }
-  withLastName(lastName = MockConstants.USER_LAST_NAME): UserDtoMock {
-    this.userDto.lastName = lastName;
+
+  withoutPassword(): UserDtoMock {
+    this.byDefault().deleteProp("passwordB64");
+
     return this;
   }
-  withEmail(email = MockConstants.USER_EMAIL): UserDtoMock {
-    this.userDto.email = email;
+
+  withSpecificName(firstName: string, lastName: string): UserDtoMock {
+    this.byDefault().setStrProp("firstName", firstName).setStrProp("lastName", lastName);
+
     return this;
   }
-  withGender(gender = Gender.MALE): UserDtoMock {
-    this.userDto.gender = gender;
+
+  withWrongEmail(wrongEmail: string): UserDtoMock {
+    this.byDefault().setStrProp("email", wrongEmail);
+
     return this;
   }
-  withPassword(password = MockConstants.EXAMPLE_PASSWORD): UserDtoMock {
-    this.userDto.passwordB64 = StringUtil.encodeBase64(password) as string;
+
+  withWrongPassword(wrongPassword: string): UserDtoMock {
+    this.byDefault().setStrProp("passwordB64", StringUtil.encodeBase64(wrongPassword) as string);
+
     return this;
   }
 }

@@ -2,7 +2,7 @@ import { ApplicationStatus } from "../../../../application/shared/status/applica
 import { HttpStatusEnum } from "./HttpStatusEnum";
 
 const statusMapping: Record<string, number> & { DEFAULT: number } = {
-  DEFAULT: HttpStatusEnum.CONTINUE,
+  DEFAULT: HttpStatusEnum.I_AM_A_TEAPOT,
 };
 
 /* 

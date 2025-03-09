@@ -1,13 +1,12 @@
-import { IMockBuilder } from "./mockContracts/IMockBuilder";
+import { MockBuilder } from "./builder/mockBuilder.mock";
 import { ISession } from "../../domain/session/ISession";
-import { MockConstants } from "./MockConstants";
+import { MockConstants } from "./MockConstants.mock";
 import GuidUtil from "../shared/utils/GuidUtil";
 
-export class SessionMock implements IMockBuilder<ISession> {
-  #session: ISession;
-
+export class SessionMock extends MockBuilder<ISession> {
   constructor() {
-    this.#session = this.initialize();
+    super();
+    this.reset();
   }
 
   private initialize(): ISession {
@@ -18,49 +17,20 @@ export class SessionMock implements IMockBuilder<ISession> {
   }
 
   reset(): ISession {
-    this.#session = this.initialize();
+    this.mock = this.initialize();
 
-    return this.#session;
-  }
-
-  build(): ISession {
-    return this.#session;
-  }
-
-  withMaskedUid(value = MockConstants.USER_ID): SessionMock {
-    this.#session.maskedUserUid = value;
-
-    return this;
-  }
-
-  withEmail(value = MockConstants.USER_EMAIL): SessionMock {
-    this.#session.email = value;
-
-    return this;
-  }
-
-  withEmailVerified(value = true): SessionMock {
-    this.#session.emailVerified = value;
-
-    return this;
-  }
-
-  withName(
-    value = `${MockConstants.USER_FIRST_NAME} ${MockConstants.USER_LAST_NAME}`,
-  ): SessionMock {
-    this.#session.name = value;
-
-    return this;
-  }
-
-  withExpiration(value = new Date().getTime() + 60 * 60 * 1000): SessionMock {
-    this.#session.exp = value;
-
-    return this;
+    return this.mock;
   }
 
   byDefault(): SessionMock {
-    this.withMaskedUid().withEmail().withEmailVerified().withName().withExpiration();
+    this.create({} as ISession)
+      .setStrProp("sessionId", GuidUtil.getV4WithoutDashes())
+      .setStrProp("iat", new Date().getTime().toString())
+      .setStrProp("exp", (new Date().getTime() + 60 * 60 * 1000).toString())
+      .setStrProp("email", MockConstants.USER_EMAIL)
+      .setBoolProp("emailVerified")
+      .setStrProp("name", `${MockConstants.USER_FIRST_NAME} ${MockConstants.USER_LAST_NAME}`)
+      .setStrProp("maskedUserUid", MockConstants.USER_MASKED_ID);
 
     return this;
   }
