@@ -1,15 +1,14 @@
 import { DefaultValue } from "../../domain/shared/utils/DefaultValue";
 import GuidUtil from "../../application/shared/utils/GuidUtil";
-import { IMockBuilder } from "./mockContracts/IMockBuilder";
 import { UseCaseTrace } from "../shared/log/UseCaseTrace";
+import { MockBuilder } from "./builder/mockBuilder.mock";
 import { ISession } from "../../domain/session/ISession";
-import { MockConstants } from "./MockConstants";
+import { MockConstants } from "./MockConstants.mock";
 
-export class UseCaseTraceMock implements IMockBuilder<UseCaseTrace> {
-  #audit: UseCaseTrace;
-
+export class UseCaseTraceMock extends MockBuilder<UseCaseTrace> {
   constructor() {
-    this.#audit = this.initialize(undefined);
+    super();
+    this.reset();
   }
 
   private initialize(session?: ISession, transactionId?: string): UseCaseTrace {
@@ -25,17 +24,23 @@ export class UseCaseTraceMock implements IMockBuilder<UseCaseTrace> {
   }
 
   reset(): UseCaseTrace {
-    this.#audit = this.initialize(undefined);
+    this.mock = this.initialize();
 
-    return this.#audit;
+    return this.mock;
   }
 
-  build(): UseCaseTrace {
-    return this.#audit;
-  }
-
-  withSession(session: ISession): UseCaseTraceMock {
-    this.#audit = this.initialize(session);
+  byDefault(
+    session: ISession,
+    transactionId = GuidUtil.getV4(),
+    context: string = MockConstants.SOME_CONTEXT,
+  ): UseCaseTraceMock {
+    this.create(this.initialize(session, transactionId))
+      .setProp("session", session)
+      .setProp("transactionId", transactionId)
+      .setProp("origin", MockConstants.ORIGIN)
+      .setProp("startDate", new Date().toISOString())
+      .setProp("metadata", {})
+      .setProp("context", context);
 
     return this;
   }
@@ -43,14 +48,7 @@ export class UseCaseTraceMock implements IMockBuilder<UseCaseTrace> {
   withClient(
     value = { ip: MockConstants.CLIENT_IP, agent: MockConstants.WEB_AGENT },
   ): UseCaseTraceMock {
-    this.#audit.setClient(value);
-
-    return this;
-  }
-
-  byDefault(session: ISession, transactionId = GuidUtil.getV4()): UseCaseTraceMock {
-    this.#audit = this.initialize(session, transactionId);
-    this.withClient();
+    this.setProp("client", value);
 
     return this;
   }

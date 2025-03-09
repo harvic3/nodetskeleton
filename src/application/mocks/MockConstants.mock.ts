@@ -8,4 +8,7 @@ export class MockConstants {
   static readonly ORIGIN = "your-super-web-app.com";
   static readonly WEB_AGENT = "fireFox-browser";
   static readonly CLIENT_IP = "127.0.0.2";
+  static readonly TRANSACTION_ID = "a1b2c3d4e5f6g7h8i9j0";
+  static readonly SESSION_ID = "a1b2c3d4e5f6";
+  static readonly SOME_CONTEXT = "SomeContext";
 }

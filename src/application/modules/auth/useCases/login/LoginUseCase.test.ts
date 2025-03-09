@@ -128,7 +128,7 @@ describe("when try to login", () => {
   });
   it("should return a session response if user and password are valid", async () => {
     // Arrange
-    const user = new UserMock().withEmail().withFirstName().withGender().build();
+    const user = new UserMock().byDefault().build();
     authProviderMock.login.mockResolvedValueOnce(user);
     authProviderMock.getJwt.mockResolvedValueOnce(jwt);
 

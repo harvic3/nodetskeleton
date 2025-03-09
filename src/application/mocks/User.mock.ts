@@ -1,41 +1,55 @@
 import { Gender } from "../../domain/user/genre/Gender.enum";
-import { IMockBuilder } from "./mockContracts/IMockBuilder";
-import { MockConstants } from "./MockConstants";
+import { IUserDto } from "../modules/users/dtos/User.dto";
+import { MockBuilder } from "./builder/mockBuilder.mock";
+import { MockConstants } from "./MockConstants.mock";
 import { Email } from "../../domain/user/Email";
 import { User } from "../../domain/user/User";
 
-export class UserMock implements IMockBuilder<User> {
-  private user: User;
-
+export class UserMock extends MockBuilder<User> {
   constructor() {
-    this.user = new User();
-    this.user.uid = MockConstants.USER_ID;
-    this.user.maskedUid = MockConstants.USER_MASKED_ID;
+    super();
+    this.reset();
+  }
+
+  private initialize(): User {
+    const user = new User();
+    user.uid = MockConstants.USER_ID;
+    user.maskedUid = MockConstants.USER_MASKED_ID;
+
+    return user;
   }
 
   reset(): User {
-    this.user = new User();
-    this.user.uid = MockConstants.USER_ID;
-    this.user.maskedUid = MockConstants.USER_MASKED_ID;
-    return this.user;
+    this.mock = this.initialize();
+
+    return this.mock;
   }
-  build(): User {
-    return this.user;
-  }
-  withFirstName(firstName = MockConstants.USER_FIRST_NAME): UserMock {
-    this.user.firstName = firstName;
+
+  byDefault(): UserMock {
+    this.create(this.initialize())
+      .setStrProp("firstName")
+      .setStrProp("lastName")
+      .setProp("email", new Email(MockConstants.USER_EMAIL))
+      .setStrProp("gender", Gender.MALE);
+
     return this;
   }
-  withLastName(lastName = MockConstants.USER_LAST_NAME): UserMock {
-    this.user.firstName = lastName;
+
+  withSpecificName(firstName: string, lastName: string): UserMock {
+    this.byDefault().setStrProp("firstName", firstName).setStrProp("lastName", lastName);
+
     return this;
   }
-  withEmail(email = MockConstants.USER_EMAIL): UserMock {
-    this.user.email = new Email(email);
-    return this;
-  }
-  withGender(gender = Gender.MALE): UserMock {
-    this.user.gender = gender;
+
+  fromJSON(user: IUserDto, uid: string, maskedUid: string): UserMock {
+    this.create(new User())
+      .setStrProp("uid", uid)
+      .setStrProp("maskedUid", maskedUid)
+      .setStrProp("firstName", user.firstName)
+      .setStrProp("lastName", user.lastName)
+      .setProp("email", new Email(user.email as string))
+      .setStrProp("gender", user.gender);
+
     return this;
   }
 }
