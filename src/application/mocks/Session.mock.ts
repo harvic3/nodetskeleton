@@ -28,7 +28,7 @@ export class SessionMock extends MockBuilder<ISession> {
       .setStrProp("iat", new Date().getTime().toString())
       .setStrProp("exp", (new Date().getTime() + 60 * 60 * 1000).toString())
       .setStrProp("email", MockConstants.USER_EMAIL)
-      .setBoolProp("emailVerified")
+      .setProp("emailVerified", true)
       .setStrProp("name", `${MockConstants.USER_FIRST_NAME} ${MockConstants.USER_LAST_NAME}`)
       .setStrProp("maskedUserUid", MockConstants.USER_MASKED_ID);
 

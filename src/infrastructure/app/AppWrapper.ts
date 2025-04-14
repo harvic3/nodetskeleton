@@ -74,7 +74,7 @@ export default class AppWrapper {
   }
 
   private async loadControllersDynamically(): Promise<void> {
-    if (this.#controllersLoadedByConstructor) return Promise.resolve();
+    if (this.#controllersLoadedByConstructor) return;
 
     const controllerPaths = config.Server.ServiceContext.LoadWithContext
       ? config.Controllers.ContextPaths.map((serviceContext) => {
@@ -97,8 +97,6 @@ export default class AppWrapper {
       console.log(`${controller?.constructor?.name} was loaded`);
     }
     this.loadLastHandlers();
-
-    return Promise.resolve();
   }
 
   private loadMiddleware(): void {
@@ -146,7 +144,7 @@ export default class AppWrapper {
       .then(() => {
         // Initialize database service and other services here. For do it you should add a try catch block.
         // reject if any error with database or other service.
-        return Promise.resolve();
+        return;
       })
       .catch((error) => {
         return Promise.reject(new Error(error));
