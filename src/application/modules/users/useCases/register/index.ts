@@ -117,9 +117,7 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
       iterations: AppSettings.EncryptionIterations,
     };
     task.setArgs(workerArgs);
-    const workerResult = await this.workerProvider.executeTask<string>(task);
-
-    return Promise.resolve(workerResult);
+    return this.workerProvider.executeTask<string>(task);
   }
 
   private async registerUser(user: IUser): ResultExecutionPromise<boolean> {

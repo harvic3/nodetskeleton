@@ -17,11 +17,9 @@ export class HealthProvider implements IStatusProvider {
           serializationMethod: this.httpClient.SerializationMethod.TEXT,
         },
       );
-      return Promise.resolve(
-        `TSkeleton ${context} service context online at ${date} with remote request status ${result.statusCode}`,
-      );
+      return `TSkeleton ${context} service context online at ${date} with remote request status ${result.statusCode}`;
     }
 
-    return Promise.resolve(`TSkeleton ${context} service context online at ${date}`);
+    return `TSkeleton ${context} service context online at ${date}`;
   }
 }

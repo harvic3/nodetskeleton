@@ -117,7 +117,7 @@ export default abstract class BaseController {
   private async manageUseCaseTrace(trace: UseCaseTrace): Promise<void> {
     if (trace?.context) {
       trace.finish(new Date());
-      return Promise.resolve(this.#useCaseTraceRepository.register(trace)).catch((error) => {
+      return this.#useCaseTraceRepository.register(trace).catch((error) => {
         this.#logProvider.logError(
           new ErrorLog({
             context: this.CONTEXT,

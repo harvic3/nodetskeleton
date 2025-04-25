@@ -495,7 +495,7 @@ export abstract class BaseIterator<InputType, OutputType> {
       // If you need to change the input for each use case, so contact me to get support ;)
     }
 
-    return Promise.resolve(result);
+    return result;
   }
 ```
 So, to use it, is important to take into account the following considerations:
@@ -2079,7 +2079,7 @@ For cpu intensive tasks you have the possibility to use the **WorkerProvider** w
     task.setArgs(workerArgs);
     const workerResult = await this.workerProvider.executeTask<string>(task);
 
-    return Promise.resolve(workerResult);
+    return workerResult;
   }
 ```
 

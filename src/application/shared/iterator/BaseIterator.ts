@@ -40,6 +40,6 @@ export abstract class BaseIterator<InputType, OutputType> {
       // If you need to change the input for each use case, so contact me to get support ;)
     }
 
-    return Promise.resolve(result);
+    return result;
   }
 }
