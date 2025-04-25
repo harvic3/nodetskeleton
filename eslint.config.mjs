@@ -15,7 +15,7 @@ export default [
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "commonjs",
-        project: ["./tsconfig.json"],
+        project: ["./tsconfig.json", "./tsconfig.test.json"],
       },
     },
     plugins: {
