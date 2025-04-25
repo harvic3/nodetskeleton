@@ -24,7 +24,7 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
       expiresIn: AppSettings.JWTExpirationTime,
     });
 
-    return Promise.resolve(token);
+    return token;
   }
 
   verifyJwt(jwt: string): ISession {
@@ -37,7 +37,7 @@ export class AuthProvider extends BaseProvider implements IAuthProvider {
 
     userFound.email = new Email(TypeParser.cast<string>(userFound.email));
 
-    return Promise.resolve(userFound);
+    return userFound;
   }
 
   async registerLogout(session: ISession): Promise<boolean> {

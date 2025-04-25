@@ -14,25 +14,24 @@ export class UserRepository extends BaseRepository implements IUserRepository {
 
   async getByEmail(email: string | Nulldefined): Promise<IUser | null> {
     const founded = await this.userModel.getByEmail(email);
-    if (!founded) return Promise.resolve(null);
+    if (!founded) return null;
 
     founded.email = new Email(TypeParser.cast<string>(founded.email));
-    return Promise.resolve(founded);
+    return founded;
   }
 
   async getByMaskedUid(maskedUid: string | Nulldefined): Promise<IUser | null> {
     const founded = await this.userModel.getByMaskedUid(maskedUid);
-    if (!founded) return Promise.resolve(null);
+    if (!founded) return null;
 
     founded.email = new Email(TypeParser.cast<string>(founded.email));
-    return Promise.resolve(founded);
+    return founded;
   }
 
   async register(user: User): Promise<IUser> {
     const userData = { ...user } as IUser;
     userData.email = user.email?.value as string;
 
-    const created = await this.userModel.create(userData);
-    return Promise.resolve(created);
+    return this.userModel.create(userData);
   }
 }

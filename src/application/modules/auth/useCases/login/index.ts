@@ -82,6 +82,7 @@ export class LoginUseCase extends BaseUseCase<ICredentials> {
       token,
       expiresIn: AppSettings.JWTExpirationTime,
     });
-    return Promise.resolve(tokenDto);
+
+    return tokenDto;
   }
 }

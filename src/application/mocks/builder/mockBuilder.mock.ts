@@ -60,12 +60,6 @@ export class MockBuilder<T extends object | ObjectConstructor> {
     return this;
   }
 
-  setBoolProp<K extends keyof T>(propName: K, value: boolean = true): MockBuilder<T> {
-    Reflect.set(this.mock, propName, value);
-
-    return this;
-  }
-
   deleteProp<K extends keyof T>(propName: K): MockBuilder<T> {
     Reflect.deleteProperty(this.mock, propName);
 
