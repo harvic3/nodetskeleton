@@ -20,6 +20,7 @@ import BaseController, {
   IRouter,
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
+import loggerMiddleware from "../middleware/logger";
 import { serve, setup } from "swagger-ui-express";
 import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
@@ -105,6 +106,7 @@ export default class AppWrapper {
     };
 
     this.app
+      .use(loggerMiddleware.handle)
       .use(helmet())
       .use(bodyParser())
       .use(urlencoded({ extended: true }))
@@ -146,8 +148,8 @@ export default class AppWrapper {
         // reject if any error with database or other service.
         return;
       })
-      .catch((error) => {
-        return Promise.reject(new Error(error));
+      .catch((error: Error) => {
+        return Promise.reject(error);
       });
   }
 

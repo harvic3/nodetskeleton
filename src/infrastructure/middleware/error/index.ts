@@ -1,6 +1,5 @@
 import { HttpStatusResolver } from "../../../adapters/controllers/base/httpResponse/HttpStatusResolver";
 import { ILogProvider } from "../../../application/shared/log/providerContracts/ILogProvider";
-import { ApplicationStatus } from "../../../application/shared/status/applicationStatus";
 import { ApplicationError } from "../../../application/shared/errors/ApplicationError";
 import kernel, { LogProvider } from "../../../adapters/providers/container";
 import { Request, Response, NextFunction } from "../../app/core/Modules";
@@ -39,7 +38,7 @@ export class ErrorHandlerMiddleware {
         config.Params.DefaultApplicationError.Code,
       );
     }
-    if (res.headersSent) return next(result);
+    if (res.headersSent) return next();
 
     return res
       .status(HttpStatusResolver.getCode(config.Params.DefaultApplicationError.Code))
