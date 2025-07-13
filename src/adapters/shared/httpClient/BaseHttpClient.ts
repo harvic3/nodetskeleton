@@ -1,5 +1,5 @@
 import { HttpMethodEnum } from "../../controllers/base/context/HttpMethod.enum";
-import { SerializationType } from "./SerializationType";
+import { SerializationTypeEnum } from "./SerializationType";
 import { Headers, ITResponse } from "./ITResponse";
 
 export type BodyType =
@@ -10,14 +10,15 @@ export type BodyType =
   | URLSearchParams;
 export type ReqArgs = {
   method: string;
-  serializationMethod: string;
+  serializationMethod: SerializationTypeEnum;
   body?: BodyType;
   headers?: Headers;
   options?: RequestInit;
+  timeout?: number;
 };
 
 export abstract class BaseHttpClient {
-  SerializationMethod = SerializationType;
+  SerializationMethod = SerializationTypeEnum;
   Methods = HttpMethodEnum;
 
   abstract send<ResType, ErrType>(
