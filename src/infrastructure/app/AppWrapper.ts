@@ -46,6 +46,7 @@ export default class AppWrapper {
     this.setup();
     this.app = AppServer();
     this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
+    this.apiDocGenerator.setApiRootPath(AppSettings.ServerRoot);
     this.apiDocGenerator.setServerUrl(this.getServerUrl(), "Local server");
     this.app.set("trust proxy", true);
     this.loadMiddleware();

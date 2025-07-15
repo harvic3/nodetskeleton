@@ -8,7 +8,7 @@ class LoggerMiddleware {
 
     res.on("finish", () => {
       const duration = new Date().getTime() - startTime;
-      console.log(`[${req.method}]: ${path} - Status: ${res.statusCode} - Duration: ${duration}ms`);
+      console.log(`[${req.method}:${path}] - Status: ${res.statusCode} - Duration: ${duration}ms`);
     });
 
     return next();
