@@ -64,7 +64,7 @@
     "pretty-quick": "^4.2.2",
     "ts-jest": "^29.4.5",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "~5.9.3"
   },
   "dependencies": {
     "@fastify/busboy": "^3.2.0",
