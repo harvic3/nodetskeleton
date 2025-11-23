@@ -120,12 +120,9 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
     task.setArgs(workerArgs);
     // IWorkerProvider NO work in debug mode (dev mode) because of ts-node limitations with worker threads.
     if (AppSettings.isDev()) {
-      return Encryption.encrypt(
-        passwordBuilder.value,
-        AppSettings.EncryptionKey,
-      );
+      return Encryption.encrypt(passwordBuilder.value, AppSettings.EncryptionKey);
     } else {
-      return this.workerProvider.executeTask<string>(task); 
+      return this.workerProvider.executeTask<string>(task);
     }
   }
 

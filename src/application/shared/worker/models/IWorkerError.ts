@@ -1,5 +1,5 @@
 export interface IWorkerResult<O> {
-  error?: { 
+  error?: {
     message: string;
     statusCode: string | number;
   };
