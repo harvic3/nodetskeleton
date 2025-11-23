@@ -15,7 +15,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3005/api",
+      "url": "http://localhost:3003/api",
       "description": "Local server"
     }
   ],

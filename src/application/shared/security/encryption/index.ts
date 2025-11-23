@@ -4,7 +4,7 @@ import { ApplicationStatus } from "../../status/applicationStatus";
 import { ApplicationError } from "../../errors/ApplicationError";
 import appMessages from "../../locals/messages";
 import appWords from "../../locals/words";
-import { pbkdf2Sync } from "crypto";
+import { pbkdf2Sync } from "node:crypto";
 
 export default class Encryption {
   private static defaultEncryptionKey: string;

@@ -2063,6 +2063,8 @@ And following these steps you can add all the use cases that your application re
 
 ## Workers
 
+**Important**: WorkerProvider NO work in dev mode because of ts-node limitations with worker threads, so try to use strategies to separate dev and production environments.
+
 For cpu intensive tasks you have the possibility to use the **WorkerProvider** which enables you to run any script in an abstracted way, for example:
 
 ```ts

@@ -15,6 +15,7 @@ import { WorkerTask } from "../../../../shared/worker/models/WorkerTask";
 import { UseCaseTrace } from "../../../../shared/log/UseCaseTrace";
 import DateTimeUtils from "../../../../shared/utils/DateTimeUtil";
 import AppSettings from "../../../../shared/settings/AppSettings";
+import Encryption from "../../../../shared/security/encryption";
 import GuidUtil from "../../../../shared/utils/GuidUtil";
 import { IUser } from "../../../../../domain/user/IUser";
 import { Email } from "../../../../../domain/user/Email";
@@ -117,7 +118,15 @@ export class RegisterUserUseCase extends BaseUseCase<IUserDto> {
       iterations: AppSettings.EncryptionIterations,
     };
     task.setArgs(workerArgs);
-    return this.workerProvider.executeTask<string>(task);
+    // IWorkerProvider NO work in debug mode (dev mode) because of ts-node limitations with worker threads.
+    if (AppSettings.isDev()) {
+      return Encryption.encrypt(
+        passwordBuilder.value,
+        AppSettings.EncryptionKey,
+      );
+    } else {
+      return this.workerProvider.executeTask<string>(task); 
+    }
   }
 
   private async registerUser(user: IUser): ResultExecutionPromise<boolean> {
