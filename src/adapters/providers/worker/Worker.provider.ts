@@ -1,9 +1,9 @@
 import { IWorkerProvider } from "../../../application/shared/worker/providerContracts/IWorkerProvider";
-import { IWorkerError } from "../../../application/shared/worker/models/IWorkerError";
+import { IWorkerResult } from "../../../application/shared/worker/models/IWorkerError";
 import { WorkerTask } from "../../../application/shared/worker/models/WorkerTask";
 import { ApplicationError, BaseProvider } from "../base/Base.provider";
 import { TaskDictionary } from "./models/TaskDictionary";
-import { Worker } from "worker_threads";
+import { Worker } from "node:worker_threads";
 
 export class WorkerProvider extends BaseProvider implements IWorkerProvider {
   async executeTask<ET>(task: WorkerTask): Promise<ET> {
@@ -12,21 +12,21 @@ export class WorkerProvider extends BaseProvider implements IWorkerProvider {
         workerData: { task },
       });
 
-      worker.on("message", (data: ET | IWorkerError) => {
-        if ((data as IWorkerError).statusCode) {
+      worker.on("message", (result: IWorkerResult<ET>) => {
+        if (result?.error) {
           return reject(
             new ApplicationError(
               WorkerProvider.name,
-              (data as IWorkerError).message,
-              (data as IWorkerError).statusCode,
+              result?.error?.message,
+              result?.error?.statusCode,
             ),
           );
         }
-        resolve(data as ET);
+        return resolve(result as ET);
       });
 
       worker.on("error", (error) => {
-        reject(
+        return reject(
           new ApplicationError(
             WorkerProvider.name,
             error.message,
@@ -37,7 +37,7 @@ export class WorkerProvider extends BaseProvider implements IWorkerProvider {
 
       worker.on("exit", (exitCode) => {
         if (exitCode !== 0) {
-          reject(
+          return reject(
             new ApplicationError(
               WorkerProvider.name,
               `Worker exited with code ${exitCode}`,

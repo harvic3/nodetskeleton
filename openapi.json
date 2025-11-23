@@ -15,7 +15,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3005/api",
+      "url": "http://localhost:3003/api",
       "description": "Local server"
     }
   ],
@@ -23,9 +23,7 @@
     "/v1/auth/logout": {
       "delete": {
         "description": "Logout user",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "Success",
@@ -58,9 +56,7 @@
     "/v1/auth/login": {
       "post": {
         "description": "Login user",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "Success",
@@ -99,9 +95,7 @@
     "/status": {
       "get": {
         "description": "API status endpoint",
-        "tags": [
-          "Status"
-        ],
+        "tags": ["Status"],
         "responses": {
           "200": {
             "description": "Success",
@@ -119,9 +113,7 @@
     "/v1/users/sign-up": {
       "post": {
         "description": "Self register user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "responses": {
           "201": {
             "description": "Created",
@@ -170,9 +162,7 @@
     "/v1/users/{maskedUid}": {
       "get": {
         "description": "Get user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "responses": {
           "200": {
             "description": "Success",

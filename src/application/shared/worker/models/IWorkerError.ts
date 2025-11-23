@@ -1,4 +1,7 @@
-export interface IWorkerError {
-  message: string;
-  statusCode: string | number;
+export interface IWorkerResult<O> {
+  error?: {
+    message: string;
+    statusCode: string | number;
+  };
+  data?: O;
 }
