@@ -1,5 +1,13 @@
-import { PropTypeEnum, ClassProperty, PropFormatEnum, TypeDescriber, SchemasStore } from "./types";
 import { Nulldefined } from "../../../../domain/shared/types/Nulldefined.type";
+import {
+  PrimitiveDefinition,
+  PropFormatEnum,
+  ClassProperty,
+  TypeDescriber,
+  PropTypeEnum,
+  SchemasStore,
+  Primitive,
+} from "./types";
 import { IResult } from "result-tsk";
 
 type ResultWrapper = Pick<IResult, "success" | "message" | "statusCode" | "error">;
@@ -137,8 +145,9 @@ export class ResultTDescriber<T> {
     type: PropTypeEnum;
     properties: Record<keyof ResultWrapper, ClassProperty> & {
       data:
-        | { $ref: string }
-        | { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items: { $ref: string } };
+      | { $ref: string }
+      | { type: Primitive }
+      | { type: PropTypeEnum.OBJECT | PropTypeEnum.ARRAY; items: { $ref: string } };
     };
   };
 
@@ -173,6 +182,18 @@ export class ResultTDescriber<T> {
             : { $ref: reference },
       },
     };
+    if ((obj.props.data.type as PropTypeEnum) === PropTypeEnum.UNDEFINED) {
+      Reflect.deleteProperty(this?.schema?.properties, "data");
+    } else if (
+      [PropTypeEnum.STRING, PropTypeEnum.NUMBER, PropTypeEnum.BOOLEAN].includes(
+        obj.props.data?.type as PropTypeEnum,
+      )
+    ) {
+      this.schema.properties.data = {
+        type: (obj.props.data?.properties as PrimitiveDefinition).primitive,
+      };
+    }
+
     SchemasStore.add(this.schema.name, {
       type: this.schema.type,
       properties: this.schema.properties,

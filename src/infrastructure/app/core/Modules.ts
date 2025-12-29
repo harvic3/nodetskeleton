@@ -1,4 +1,4 @@
-import * as AppServer from "express";
+import * as server from "express";
 
 export {
   Request,
@@ -11,6 +11,6 @@ export {
   ErrorRequestHandler,
   json as bodyParser,
   urlencoded,
-  Express,
+  Express as App,
 } from "express";
-export { AppServer };
+export { server as AppServer };

@@ -9,6 +9,7 @@ import {
 } from "../Base.controller";
 export {
   SecuritySchemesDescriber,
+  PrimitiveDefinition,
   SchemeDescription,
   IApiDocGenerator,
   RefTypeDescriber,
@@ -20,6 +21,7 @@ export {
   PropTypeEnum,
   ParameterIn,
   ApiProduce,
+  Primitive,
   ApiDoc,
 } from "openapi-tsk";
 
