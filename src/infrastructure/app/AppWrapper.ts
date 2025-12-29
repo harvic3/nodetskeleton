@@ -21,15 +21,15 @@ import BaseController, {
   ServiceContext,
 } from "../../adapters/controllers/base/Base.controller";
 import loggerMiddleware from "../middleware/logger";
+import { resolve as resolvePath } from "node:path";
 import { serve, setup } from "swagger-ui-express";
-import { resolve as resolvePath } from "path";
 import { sync } from "fast-glob";
 import config from "../config";
 import * as cors from "cors";
 import helmet from "helmet";
 import {
+  App,
   Router,
-  Express,
   AppServer,
   bodyParser,
   urlencoded,
@@ -39,7 +39,7 @@ import {
 
 export default class AppWrapper {
   readonly #controllersLoadedByConstructor: boolean = false;
-  app: Express;
+  app: App;
   readonly apiDocGenerator: ApiDocGenerator;
 
   constructor(controllers?: BaseController[]) {
@@ -47,7 +47,8 @@ export default class AppWrapper {
     this.app = AppServer();
     this.apiDocGenerator = new ApiDocGenerator(AppSettings.Environment, config.Params.ApiDocsInfo);
     this.apiDocGenerator.setApiRootPath(AppSettings.ServerRoot);
-    this.apiDocGenerator.setServerUrl(this.getServerUrl(), "Local server");
+    this.apiDocGenerator.addServerUrl(this.getServerUrl(), "Local server");
+    this.apiDocGenerator.addServerUrl("/", "Current server");
     this.app.set("trust proxy", true);
     this.loadMiddleware();
     console.log(
@@ -79,12 +80,12 @@ export default class AppWrapper {
     if (this.#controllersLoadedByConstructor) return;
 
     const controllerPaths = config.Server.ServiceContext.LoadWithContext
-      ? config.Controllers.ContextPaths.map((serviceContext) => {
+      ? config.Controllers.ContextPaths.flatMap((serviceContext) => {
           return sync(serviceContext, {
             onlyFiles: true,
             ignore: config.Controllers.Ignore,
           });
-        }).flat()
+        })
       : sync(config.Controllers.DefaultPath, {
           onlyFiles: true,
           ignore: config.Controllers.Ignore,
