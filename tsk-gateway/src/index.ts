@@ -1,5 +1,4 @@
 import * as gateway from "fast-gateway";
-import "dotenv/config";
 
 type Service = { name: string; entryPath: string; dockerHost: string; port: number };
 
